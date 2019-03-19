@@ -461,7 +461,7 @@ func (s *Service) deleteDomainWAFResponseBody(domainName string) (*connection.AP
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{204}, body)
 }
 
 // GetDomainWAFRuleSets retrieves a paginated list of waf advanced rule sets for a domain
