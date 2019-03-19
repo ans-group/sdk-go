@@ -1,0 +1,1951 @@
+package ecloud
+
+import (
+	"bytes"
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ukfast/sdk-go/pkg/ptr"
+	"github.com/ukfast/sdk-go/test/mocks"
+)
+
+func TestGetSolutions(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		solutions, err := s.GetSolutions(connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, solutions, 1)
+		assert.Equal(t, 123, solutions[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		solutions, err := s.GetSolutions(connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, solutions, 2)
+		assert.Equal(t, 123, solutions[0].ID)
+		assert.Equal(t, 456, solutions[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutions(connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionsPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		solutions, err := s.GetSolutionsPaginated(connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, solutions[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionsPaginated(connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolution(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		solution, err := s.GetSolution(123)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, solution.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolution(123)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolution(0)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolution(123)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestPatchSolution(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		patch := PatchSolutionRequest{
+			Name: ptr.String("new test name 1"),
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123", gomock.Eq(&patch)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		_, err := s.PatchSolution(123, patch)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.PatchSolution(123, PatchSolutionRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.PatchSolution(0, PatchSolutionRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.PatchSolution(123, PatchSolutionRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionVirtualMachines(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		vms, err := s.GetSolutionVirtualMachines(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, vms, 1)
+		assert.Equal(t, 123, vms[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		vms, err := s.GetSolutionVirtualMachines(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, vms, 2)
+		assert.Equal(t, 123, vms[0].ID)
+		assert.Equal(t, 456, vms[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionVirtualMachines(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionVirtualMachinesPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		vms, err := s.GetSolutionVirtualMachinesPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, vms[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionVirtualMachinesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionVirtualMachines(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/vms", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionVirtualMachinesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionSites(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		sites, err := s.GetSolutionSites(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, sites, 1)
+		assert.Equal(t, 123, sites[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		sites, err := s.GetSolutionSites(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, sites, 2)
+		assert.Equal(t, 123, sites[0].ID)
+		assert.Equal(t, 456, sites[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionSites(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionSitesPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		sites, err := s.GetSolutionSitesPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, sites[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionSitesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionSites(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/sites", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionSitesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionDatastores(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		datastores, err := s.GetSolutionDatastores(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, datastores, 1)
+		assert.Equal(t, 123, datastores[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		datastores, err := s.GetSolutionDatastores(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, datastores, 2)
+		assert.Equal(t, 123, datastores[0].ID)
+		assert.Equal(t, 456, datastores[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionDatastores(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionDatastoresPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		datastores, err := s.GetSolutionDatastoresPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, datastores[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionDatastoresPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionDatastores(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/datastores", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionDatastoresPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionHosts(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		hosts, err := s.GetSolutionHosts(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, hosts, 1)
+		assert.Equal(t, 123, hosts[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		hosts, err := s.GetSolutionHosts(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, hosts, 2)
+		assert.Equal(t, 123, hosts[0].ID)
+		assert.Equal(t, 456, hosts[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionHosts(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionHostsPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		hosts, err := s.GetSolutionHostsPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, hosts[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionHostsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionHosts(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/hosts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionHostsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionNetworks(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		networks, err := s.GetSolutionNetworks(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, networks, 1)
+		assert.Equal(t, 123, networks[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		networks, err := s.GetSolutionNetworks(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, networks, 2)
+		assert.Equal(t, 123, networks[0].ID)
+		assert.Equal(t, 456, networks[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionNetworks(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionNetworksPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		networks, err := s.GetSolutionNetworksPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, networks[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionNetworksPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionNetworks(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/networks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionNetworksPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionFirewalls(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		firewalls, err := s.GetSolutionFirewalls(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, firewalls, 1)
+		assert.Equal(t, 123, firewalls[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		firewalls, err := s.GetSolutionFirewalls(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, firewalls, 2)
+		assert.Equal(t, 123, firewalls[0].ID)
+		assert.Equal(t, 456, firewalls[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionFirewalls(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionFirewallsPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		firewalls, err := s.GetSolutionFirewallsPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, firewalls[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionFirewallsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionFirewalls(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/firewalls", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionFirewallsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+func TestGetSolutionTemplates(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testtemplate1\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		templates, err := s.GetSolutionTemplates(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, templates, 1)
+		assert.Equal(t, "testtemplate1", templates[0].Name)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testtemplate1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testtemplate2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		templates, err := s.GetSolutionTemplates(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, templates, 2)
+		assert.Equal(t, "testtemplate1", templates[0].Name)
+		assert.Equal(t, "testtemplate2", templates[1].Name)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionTemplates(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionTemplatesPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testtemplate1\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		templates, err := s.GetSolutionTemplatesPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, "testtemplate1", templates[0].Name)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionTemplatesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTemplates(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionTemplatesPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionTags(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		tags, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, tags, 1)
+		assert.Equal(t, "testkey1", tags[0].Key)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		tags, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, tags, 2)
+		assert.Equal(t, "testkey1", tags[0].Key)
+		assert.Equal(t, "testkey2", tags[1].Key)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetSolutionTagsPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		tags, err := s.GetSolutionTagsPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, "testkey1", tags[0].Key)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionTagsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTags(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionTagsPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestGetSolutionTag(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"key\":\"testkey1\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		solution, err := s.GetSolutionTag(123, "testkey1")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "testkey1", solution.Key)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionTag(123, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTag(0, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTagKey_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTag(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid tag key", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionTag(123, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
+	})
+}
+
+func TestCreateSolutionTag(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Eq(&CreateTagRequest{Key: "testkey1", Value: "test value 1"})).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 201,
+			},
+		}, nil).Times(1)
+
+		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.CreateSolutionTag(0, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &SolutionNotFoundError{}, err)
+	})
+}
+
+func TestPatchSolutionTag(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		patch := PatchTagRequest{
+			Value: "new test value 1",
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123/tags/testkey1", gomock.Eq(&patch)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchSolutionTag(123, "testkey1", patch)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchSolutionTag(123, "testkey1", PatchTagRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchSolutionTag(0, "testkey1", PatchTagRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTagKey_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchSolutionTag(123, "", PatchTagRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid tag key", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchSolutionTag(123, "testkey1", PatchTagRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
+	})
+}
+
+func TestDeleteSolutionTag(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 204,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteSolutionTag(123, "testkey1")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteSolutionTag(123, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteSolutionTag(0, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTagKey_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteSolutionTag(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid tag key", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteSolutionTag(123, "testkey1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
+	})
+}
