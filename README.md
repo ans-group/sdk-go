@@ -2,7 +2,7 @@
 
 This is an SDK for interacting with UKFast APIs from Go applications.
 
-You should refer to the `Getting Started` section of the API documentation before proceeding below ([link](https://developers.ukfast.io/getting-started))
+You should refer to the [Getting Started](https://developers.ukfast.io/getting-started) section of the API documentation before proceeding below
 
 
 ### Basic usage
