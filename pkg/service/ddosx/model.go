@@ -257,7 +257,7 @@ type Record struct {
 	ID              string     `json:"id"`
 	DomainName      string     `json:"domain_name"`
 	SafeDNSRecordID *int       `json:"safedns_record_id"`
-	SSLID           string     `json:"ssl_id"`
+	SSLID           *string    `json:"ssl_id"`
 	Name            string     `json:"name"`
 	Type            RecordType `json:"type"`
 	Content         string     `json:"content"`
