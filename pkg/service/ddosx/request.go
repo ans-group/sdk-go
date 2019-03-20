@@ -95,7 +95,7 @@ func (c *CreateACLIPRuleRequest) Validate() *connection.ValidationError {
 // PatchACLIPRuleRequest represents a DDoSX IP ACL rule patch request
 type PatchACLIPRuleRequest struct {
 	IP   connection.IPAddress `json:"ip,omitempty"`
-	URI  string               `json:"uri,omitempty"`
+	URI  *string              `json:"uri,omitempty"`
 	Mode ACLIPMode            `json:"mode,omitempty"`
 }
 

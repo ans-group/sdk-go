@@ -322,7 +322,7 @@ type ACLGeoIPRule struct {
 type ACLIPRule struct {
 	ID   string               `json:"id"`
 	IP   connection.IPAddress `json:"ip"`
-	URI  string               `json:"uri"`
+	URI  *string              `json:"uri"`
 	Mode ACLIPMode            `json:"mode"`
 }
 
