@@ -140,7 +140,7 @@ func (s *Service) patchVirtualMachineResponseBody(vmID int, patch PatchVirtualMa
 		return body, &VirtualMachineNotFoundError{ID: vmID}
 	}
 
-	return body, response.HandleResponse([]int{202}, body)
+	return body, response.HandleResponse([]int{200, 202}, body)
 }
 
 // CloneVirtualMachine clones a virtual machine
