@@ -83,7 +83,7 @@ type CreateACLIPRuleRequest struct {
 	connection.APIRequestBodyDefaultValidator
 
 	IP   connection.IPAddress `json:"ip" validate:"required"`
-	URI  string               `json:"uri" validate:"required"`
+	URI  string               `json:"uri"`
 	Mode ACLIPMode            `json:"mode" validate:"required"`
 }
 
