@@ -182,3 +182,85 @@ func TestGetDomain(t *testing.T) {
 		assert.IsType(t, &DomainNotFoundError{}, err)
 	})
 }
+
+func TestGetDomainNameservers(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk/nameservers", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"host\":\"ns0.example.com\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		nameservers, err := s.GetDomainNameservers("testdomain1.co.uk")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "ns0.example.com", nameservers[0].Host)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk/nameservers", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainNameservers("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainNameservers("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk/nameservers", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainNameservers("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainNotFoundError{}, err)
+	})
+}
