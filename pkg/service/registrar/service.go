@@ -4,6 +4,17 @@ import "github.com/ukfast/sdk-go/pkg/connection"
 
 // RegistrarService is an interface for managing the registrar service
 type RegistrarService interface {
+	// Domains
+	//
+	GetDomains(parameters connection.APIRequestParameters) ([]Domain, error)
+	GetDomainsPaginated(parameters connection.APIRequestParameters) ([]Domain, error)
+	GetDomain(domainName string) (Domain, error)
+	GetDomainNameservers(domainName string) ([]Nameserver, error)
+
+	// WHOIS
+	//
+	GetWhois(domainName string) (Whois, error)
+	GetWhoisRaw(domainName string) (string, error)
 }
 
 // Service implements RegistrarService for managing

@@ -50,7 +50,7 @@ func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIReque
 	return body, response.HandleResponse([]int{200}, body)
 }
 
-// GetDomain retrieves a single domain by id
+// GetDomain retrieves a single domain by name
 func (s *Service) GetDomain(domainName string) (Domain, error) {
 	body, err := s.getDomainResponseBody(domainName)
 
