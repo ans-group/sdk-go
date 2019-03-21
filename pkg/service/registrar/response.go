@@ -22,3 +22,17 @@ type GetNameserversResponseBody struct {
 
 	Data []Nameserver `json:"data"`
 }
+
+// GetWhoisResponseBody represents the API response body from the GetWhois resource
+type GetWhoisResponseBody struct {
+	connection.APIResponseBody
+
+	Data Whois `json:"data"`
+}
+
+// GetWhoisRawResponseBody represents the API response body from the GetWhoisRaw resource
+type GetWhoisRawResponseBody struct {
+	connection.APIResponseBody
+
+	Data string `json:"data"`
+}
