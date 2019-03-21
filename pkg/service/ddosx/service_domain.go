@@ -974,7 +974,7 @@ func (s *Service) deleteDomainACLGeoIPRuleResponseBody(domainName string, ruleID
 func (s *Service) GetDomainACLGeoIPRulesMode(domainName string) (ACLGeoIPRulesMode, error) {
 	body, err := s.getDomainACLGeoIPRulesModeResponseBody(domainName)
 
-	return body.Data, err
+	return body.Data.Mode, err
 }
 
 func (s *Service) getDomainACLGeoIPRulesModeResponseBody(domainName string) (*GetACLGeoIPRulesModeResponseBody, error) {
