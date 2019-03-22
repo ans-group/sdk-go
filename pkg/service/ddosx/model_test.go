@@ -317,42 +317,42 @@ func TestParseACLIPMode(t *testing.T) {
 	})
 }
 
-func TestACLGeoIPRulesFilteringMode_String_Expected(t *testing.T) {
-	v := ACLGeoIPRulesFilteringModeWhitelist
+func TestACLGeoIPRulesMode_String_Expected(t *testing.T) {
+	v := ACLGeoIPRulesModeWhitelist
 
 	s := v.String()
 
 	assert.Equal(t, "Whitelist", s)
 }
 
-func TestParseACLGeoIPRulesFilteringMode(t *testing.T) {
+func TestParseACLGeoIPRulesMode(t *testing.T) {
 	t.Run("ParsesWhitelist", func(t *testing.T) {
 		v := "whitelist"
-		s, err := ParseACLGeoIPRulesFilteringMode(v)
+		s, err := ParseACLGeoIPRulesMode(v)
 
 		assert.Nil(t, err)
-		assert.Equal(t, ACLGeoIPRulesFilteringModeWhitelist, s)
+		assert.Equal(t, ACLGeoIPRulesModeWhitelist, s)
 	})
 
 	t.Run("ParsesBlacklist", func(t *testing.T) {
 		v := "blacklist"
-		s, err := ParseACLGeoIPRulesFilteringMode(v)
+		s, err := ParseACLGeoIPRulesMode(v)
 
 		assert.Nil(t, err)
-		assert.Equal(t, ACLGeoIPRulesFilteringModeBlacklist, s)
+		assert.Equal(t, ACLGeoIPRulesModeBlacklist, s)
 	})
 
 	t.Run("MixedCase_Parses", func(t *testing.T) {
 		v := "Blacklist"
-		s, err := ParseACLGeoIPRulesFilteringMode(v)
+		s, err := ParseACLGeoIPRulesMode(v)
 
 		assert.Nil(t, err)
-		assert.Equal(t, ACLGeoIPRulesFilteringModeBlacklist, s)
+		assert.Equal(t, ACLGeoIPRulesModeBlacklist, s)
 	})
 
 	t.Run("Invalid_ReturnsError", func(t *testing.T) {
 		v := "invalidmode"
-		_, err := ParseACLGeoIPRulesFilteringMode(v)
+		_, err := ParseACLGeoIPRulesMode(v)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "Invalid ACL GeoIP rules filtering mode", err.Error())
