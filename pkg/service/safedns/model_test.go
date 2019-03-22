@@ -33,6 +33,14 @@ func TestRecordTTL_String_Expected(t *testing.T) {
 	assert.Equal(t, "300", s)
 }
 
+func TestRecordType_String_Expected(t *testing.T) {
+	v := RecordTypeAAAA
+
+	s := v.String()
+
+	assert.Equal(t, "AAAA", s)
+}
+
 func TestRecord_Validate(t *testing.T) {
 	t.Run("Valid_NoError", func(t *testing.T) {
 		c := Record{
