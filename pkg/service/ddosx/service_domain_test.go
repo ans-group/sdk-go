@@ -1414,7 +1414,7 @@ func TestDeleteDomainWAF(t *testing.T) {
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 201,
+				StatusCode: 204,
 			},
 		}, nil).Times(1)
 
@@ -3181,7 +3181,7 @@ func TestGetDomainACLGeoIPRulesMode(t *testing.T) {
 		mode, err := s.GetDomainACLGeoIPRulesMode("testdomain1.co.uk")
 
 		assert.Nil(t, err)
-		assert.Equal(t, ACLGeoIPRulesFilteringModeWhitelist, mode.Mode)
+		assert.Equal(t, ACLGeoIPRulesModeWhitelist, mode)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -3254,7 +3254,7 @@ func TestPatchDomainACLGeoIPRulesMode(t *testing.T) {
 		}
 
 		patchRequest := PatchACLGeoIPRulesModeRequest{
-			Mode: ACLGeoIPRulesFilteringModeWhitelist,
+			Mode: ACLGeoIPRulesModeWhitelist,
 		}
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/mode", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
