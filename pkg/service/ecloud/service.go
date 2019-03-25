@@ -19,6 +19,7 @@ type ECloudService interface {
 	PowerResetVirtualMachine(vmID int) error
 	PowerShutdownVirtualMachine(vmID int) error
 	PowerRestartVirtualMachine(vmID int) error
+	CreateVirtualMachineTemplate(vmID int, req CreateVirtualMachineTemplateRequest) error
 	GetVirtualMachineTags(vmID int, parameters connection.APIRequestParameters) ([]Tag, error)
 	GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) ([]Tag, error)
 	GetVirtualMachineTag(vmID int, tagKey string) (Tag, error)
