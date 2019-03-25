@@ -922,6 +922,91 @@ func TestPowerRestartVirtualMachine(t *testing.T) {
 	})
 }
 
+func TestCreateVirtualMachineTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateVirtualMachineTemplateRequest{
+			TemplateName: "test template 1",
+		}
+
+		c.EXPECT().Post("/ecloud/v1/vms/123/clone-to-template", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		err := s.CreateVirtualMachineTemplate(123, expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/vms/123/clone-to-template", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.CreateVirtualMachineTemplate(123, CreateVirtualMachineTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidVirtualMachineID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.CreateVirtualMachineTemplate(0, CreateVirtualMachineTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid virtual machine id", err.Error())
+	})
+
+	t.Run("404_ReturnsVirtualMachineNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/vms/123/clone-to-template", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.CreateVirtualMachineTemplate(123, CreateVirtualMachineTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VirtualMachineNotFoundError{}, err)
+	})
+}
+
 func TestGetVirtualMachineTags(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
