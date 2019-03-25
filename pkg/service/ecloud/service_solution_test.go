@@ -1414,6 +1414,301 @@ func TestGetSolutionTemplatesPaginated(t *testing.T) {
 	})
 }
 
+func TestGetSolutionTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testname1\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		template, err := s.GetSolutionTemplate(123, "testname1")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "testname1", template.Name)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetSolutionTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTemplate(0, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetSolutionTemplate(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/solutions/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetSolutionTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
+
+func TestRenameSolutionTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := RenameTemplateRequest{
+			NewTemplateName: "testname2",
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/templates/testname1/move", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte{})),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		err := s.RenameSolutionTemplate(123, "testname1", expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/templates/testname1/move", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.RenameSolutionTemplate(123, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.RenameSolutionTemplate(0, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.RenameSolutionTemplate(123, "", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/solutions/123/templates/testname1/move", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		err := s.RenameSolutionTemplate(123, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
+func TestDeleteSolutionTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/templates/testname1", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte{})),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		err := s.DeleteSolutionTemplate(123, "testname1")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteSolutionTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteSolutionTemplate(0, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteSolutionTemplate(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsSolutionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/solutions/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		err := s.DeleteSolutionTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
+
 func TestGetSolutionTags(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

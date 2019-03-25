@@ -45,6 +45,9 @@ type ECloudService interface {
 	GetSolutionFirewallsPaginated(solutionID int, parameters connection.APIRequestParameters) ([]Firewall, error)
 	GetSolutionTemplates(solutionID int, parameters connection.APIRequestParameters) ([]Template, error)
 	GetSolutionTemplatesPaginated(solutionID int, parameters connection.APIRequestParameters) ([]Template, error)
+	GetSolutionTemplate(solutionID int, templateName string) (Template, error)
+	DeleteSolutionTemplate(solutionID int, templateName string) error
+	RenameSolutionTemplate(solutionID int, templateName string, req RenameTemplateRequest) error
 	GetSolutionTags(solutionID int, parameters connection.APIRequestParameters) ([]Tag, error)
 	GetSolutionTagsPaginated(solutionID int, parameters connection.APIRequestParameters) ([]Tag, error)
 	GetSolutionTag(solutionID int, tagKey string) (Tag, error)
