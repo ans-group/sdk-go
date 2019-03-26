@@ -70,7 +70,7 @@ func TestPatchSolutionRequest_Validate_NoError(t *testing.T) {
 func TestRenameTemplateRequest_Validate(t *testing.T) {
 	t.Run("Valid_NoError", func(t *testing.T) {
 		c := RenameTemplateRequest{
-			NewTemplateName: "testtemplate1",
+			Destination: "testtemplate1",
 		}
 
 		err := c.Validate()
