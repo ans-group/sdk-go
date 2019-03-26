@@ -74,3 +74,40 @@ func TestFirewallRole_String_Expected(t *testing.T) {
 
 	assert.Equal(t, "Master", s)
 }
+
+func TestTemplateType_String_Expected(t *testing.T) {
+	v := TemplateTypeSolution
+
+	s := v.String()
+
+	assert.Equal(t, "solution", s)
+}
+
+func TestParseTemplateType(t *testing.T) {
+	t.Run("ExactSolution_Parses", func(t *testing.T) {
+		templateType, err := ParseTemplateType("solution")
+
+		assert.Nil(t, err)
+		assert.Equal(t, TemplateTypeSolution, templateType)
+	})
+
+	t.Run("ExactPod_Parses", func(t *testing.T) {
+		templateType, err := ParseTemplateType("pod")
+
+		assert.Nil(t, err)
+		assert.Equal(t, TemplateTypePod, templateType)
+	})
+
+	t.Run("MixedCase_Parses", func(t *testing.T) {
+		templateType, err := ParseTemplateType("SoLuTiOn")
+
+		assert.Nil(t, err)
+		assert.Equal(t, TemplateTypeSolution, templateType)
+	})
+
+	t.Run("Invalid_Error", func(t *testing.T) {
+		_, err := ParseTemplateType("invalid")
+
+		assert.NotNil(t, err)
+	})
+}
