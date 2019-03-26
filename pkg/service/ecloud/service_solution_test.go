@@ -1524,7 +1524,7 @@ func TestRenameSolutionTemplate(t *testing.T) {
 		}
 
 		expectedRequest := RenameTemplateRequest{
-			NewTemplateName: "testname2",
+			Destination: "testname2",
 		}
 
 		c.EXPECT().Post("/ecloud/v1/solutions/123/templates/testname1/move", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
