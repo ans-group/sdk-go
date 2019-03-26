@@ -1612,6 +1612,7 @@ func TestRenameSolutionTemplate(t *testing.T) {
 		assert.IsType(t, &TemplateNotFoundError{}, err)
 	})
 }
+
 func TestDeleteSolutionTemplate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

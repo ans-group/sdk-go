@@ -350,3 +350,299 @@ func TestGetPodTemplatesPaginated(t *testing.T) {
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
+
+func TestGetPodTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testname1\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		template, err := s.GetPodTemplate(123, "testname1")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "testname1", template.Name)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetPodTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetPodTemplate(0, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid pod id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetPodTemplate(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsPodNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetPodTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
+
+func TestRenamePodTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := RenameTemplateRequest{
+			Destination: "testname2",
+		}
+
+		c.EXPECT().Post("/ecloud/v1/pods/123/templates/testname1/move", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte{})),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		err := s.RenamePodTemplate(123, "testname1", expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/pods/123/templates/testname1/move", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.RenamePodTemplate(123, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.RenamePodTemplate(0, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid pod id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.RenamePodTemplate(123, "", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsPodNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v1/pods/123/templates/testname1/move", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		err := s.RenamePodTemplate(123, "testname1", RenameTemplateRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
+
+func TestDeletePodTemplate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/pods/123/templates/testname1", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte{})),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		err := s.DeletePodTemplate(123, "testname1")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/pods/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeletePodTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeletePodTemplate(0, "testname1")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid pod id", err.Error())
+	})
+
+	t.Run("InvalidTemplateName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeletePodTemplate(123, "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid template name", err.Error())
+	})
+
+	t.Run("404_ReturnsPodNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v1/pods/123/templates/testname1", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		err := s.DeletePodTemplate(123, "testname1")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &TemplateNotFoundError{}, err)
+	})
+}
