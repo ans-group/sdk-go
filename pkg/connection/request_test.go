@@ -125,6 +125,18 @@ func TestParseOperator(t *testing.T) {
 			Operator:         "IN",
 			ExpectedOperator: INOperator,
 		},
+		testoperator{
+			Operator:         "NEQ",
+			ExpectedOperator: NEQOperator,
+		},
+		testoperator{
+			Operator:         "NIN",
+			ExpectedOperator: NINOperator,
+		},
+		testoperator{
+			Operator:         "NLK",
+			ExpectedOperator: NLKOperator,
+		},
 	}
 
 	for _, operator := range operators {
