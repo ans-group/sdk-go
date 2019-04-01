@@ -31,3 +31,4 @@ There are currently 5 services available:
 - SafeDNS
 - SSL
 - Registrar
+- PSS
