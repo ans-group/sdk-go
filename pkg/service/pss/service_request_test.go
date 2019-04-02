@@ -233,7 +233,7 @@ func TestGetRequestConversation(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		replies, err := s.GetRequestConversation(123)
+		replies, err := s.GetRequestConversation(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Equal(t, "test 1", replies[0].Description)
@@ -251,7 +251,7 @@ func TestGetRequestConversation(t *testing.T) {
 
 		c.EXPECT().Get("/pss/v1/requests/123/conversation", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetRequestConversation(123)
+		_, err := s.GetRequestConversation(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -267,7 +267,7 @@ func TestGetRequestConversation(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetRequestConversation(0)
+		_, err := s.GetRequestConversation(0, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid request id", err.Error())
@@ -290,7 +290,7 @@ func TestGetRequestConversation(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetRequestConversation(123)
+		_, err := s.GetRequestConversation(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &RequestNotFoundError{}, err)
