@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -51,7 +52,11 @@ type Enum interface {
 }
 
 // ParseEnum parses string s against array of enums, returning parsed enum and nil error, or nil with error
-func ParseEnum(name string, s string, enums []Enum) (Enum, error) {
+func ParseEnum(s string, enums []Enum) (Enum, error) {
+	if len(enums) < 1 {
+		return nil, errors.New("Must provide at least one enum")
+	}
+
 	var validValues []string
 	for _, e := range enums {
 		if strings.ToUpper(s) == strings.ToUpper(e.String()) {
@@ -61,5 +66,5 @@ func ParseEnum(name string, s string, enums []Enum) (Enum, error) {
 		validValues = append(validValues, e.String())
 	}
 
-	return nil, fmt.Errorf("Invalid %s. Valid values: %s", name, strings.Join(validValues, ", "))
+	return nil, fmt.Errorf("Invalid %T. Valid values: %s", enums[0], strings.Join(validValues, ", "))
 }

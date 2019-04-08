@@ -101,7 +101,7 @@ func (t testEnum) String() string {
 func TestEnum_ParseEnum(t *testing.T) {
 	t.Run("ParsesExact", func(t *testing.T) {
 		v := "One"
-		s, err := ParseEnum("", v, testEnums)
+		s, err := ParseEnum(v, testEnums)
 
 		assert.Nil(t, err)
 		assert.Equal(t, testEnumOne, s)
@@ -109,17 +109,25 @@ func TestEnum_ParseEnum(t *testing.T) {
 
 	t.Run("ParsesMixedCase", func(t *testing.T) {
 		v := "OnE"
-		s, err := ParseEnum("", v, testEnums)
+		s, err := ParseEnum(v, testEnums)
 
 		assert.Nil(t, err)
 		assert.Equal(t, testEnumOne, s)
 	})
 
-	t.Run("Invalid_ReturnsError", func(t *testing.T) {
-		v := "invalid"
-		_, err := ParseEnum("testEnum", v, testEnums)
+	t.Run("NoEnumsSupplied_ReturnsError", func(t *testing.T) {
+		v := "OnE"
+		_, err := ParseEnum(v, []Enum{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid testEnum. Valid values: One, Two", err.Error())
+		assert.Equal(t, "Must provide at least one enum", err.Error())
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseEnum(v, testEnums)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid connection.testEnum. Valid values: One, Two", err.Error())
 	})
 }

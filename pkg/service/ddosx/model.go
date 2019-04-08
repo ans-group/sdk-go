@@ -22,6 +22,36 @@ const (
 	DomainStatusCancelled     DomainStatus = "Cancelled"
 )
 
+type DomainPropertyName string
+
+func (e DomainPropertyName) String() string {
+	return string(e)
+}
+
+const (
+	DomainPropertyNameClientMaxBodySize DomainPropertyName = "client_max_body_size"
+	DomainPropertyNameProxyTimeout      DomainPropertyName = "proxy_timeout"
+	DomainPropertyNameIPv6Enabled       DomainPropertyName = "ipv6_enabled"
+	DomainPropertyNameSecureOrigin      DomainPropertyName = "secure_origin"
+)
+
+var DomainPropertyNameEnum = []connection.Enum{
+	DomainPropertyNameClientMaxBodySize,
+	DomainPropertyNameProxyTimeout,
+	DomainPropertyNameIPv6Enabled,
+	DomainPropertyNameSecureOrigin,
+}
+
+// ParseDomainPropertyName attempts to parse a DomainPropertyName from string
+func ParseDomainPropertyName(s string) (DomainPropertyName, error) {
+	e, err := connection.ParseEnum(s, DomainPropertyNameEnum)
+	if e != nil {
+		return e.(DomainPropertyName), err
+	}
+
+	return "", err
+}
+
 type RecordType string
 
 func (s RecordType) String() string {
@@ -202,6 +232,7 @@ func ParseACLIPMode(s string) (ACLIPMode, error) {
 	}
 
 	return "", errors.New("Invalid ACL IP mode")
+
 }
 
 type ACLGeoIPRulesMode string
@@ -227,6 +258,52 @@ func ParseACLGeoIPRulesMode(s string) (ACLGeoIPRulesMode, error) {
 	return "", errors.New("Invalid ACL GeoIP rules filtering mode")
 }
 
+type CDNRuleCacheControl string
+
+func (e CDNRuleCacheControl) String() string {
+	return string(e)
+}
+
+const (
+	CDNRuleCacheControlCustom CDNRuleCacheControl = "Custom"
+	CDNRuleCacheControlOrigin CDNRuleCacheControl = "Origin"
+)
+
+var CDNRuleCacheControlEnum = []connection.Enum{CDNRuleCacheControlCustom, CDNRuleCacheControlOrigin}
+
+// ParseCDNRuleCacheControl attempts to parse a CDNRuleCacheControl from string
+func ParseCDNRuleCacheControl(s string) (CDNRuleCacheControl, error) {
+	e, err := connection.ParseEnum(s, CDNRuleCacheControlEnum)
+	if e != nil {
+		return e.(CDNRuleCacheControl), err
+	}
+
+	return "", err
+}
+
+type CDNRuleType string
+
+func (e CDNRuleType) String() string {
+	return string(e)
+}
+
+const (
+	CDNRuleTypeGlobal CDNRuleType = "global"
+	CDNRuleTypePerURI CDNRuleType = "per-uri"
+)
+
+var CDNRuleTypeEnum = []connection.Enum{CDNRuleTypeGlobal, CDNRuleTypePerURI}
+
+// ParseCDNRuleType attempts to parse a CDNRuleType from string
+func ParseCDNRuleType(s string) (CDNRuleType, error) {
+	e, err := connection.ParseEnum(s, CDNRuleTypeEnum)
+	if e != nil {
+		return e.(CDNRuleType), err
+	}
+
+	return "", err
+}
+
 // Domain represents a DDoSX domain
 type Domain struct {
 	SafeDNSZoneID *int               `json:"safedns_zone_id"`
@@ -247,9 +324,9 @@ type DomainExternalDNS struct {
 
 // DomainProperty represents a DDoSX domain property
 type DomainProperty struct {
-	ID    string      `json:"id"`
-	Name  string      `json:"name"`
-	Value interface{} `json:"value"`
+	ID    string             `json:"id"`
+	Name  DomainPropertyName `json:"name"`
+	Value interface{}        `json:"value"`
 }
 
 // Record represents a DDoSX record
@@ -324,4 +401,23 @@ type ACLIPRule struct {
 	IP   connection.IPAddress `json:"ip"`
 	URI  string               `json:"uri"`
 	Mode ACLIPMode            `json:"mode"`
+}
+
+// CDNRule represents a DDoSX CDN rule
+type CDNRule struct {
+	ID                   string                      `json:"id"`
+	URI                  string                      `json:"uri"`
+	CacheControl         CDNRuleCacheControl         `json:"cache_control"`
+	CacheControlDuration CDNRuleCacheControlDuration `json:"cache_control_duration"`
+	MimeTypes            string                      `json:"mime_types"`
+	Type                 CDNRuleType                 `json:"type"`
+}
+
+// CDNRuleCacheControlDuration represents a DDoSX CDN rule duration
+type CDNRuleCacheControlDuration struct {
+	Years   int `json:"years"`
+	Months  int `json:"months"`
+	Days    int `json:"days"`
+	Hours   int `json:"hours"`
+	Minutes int `json:"minutes"`
 }
