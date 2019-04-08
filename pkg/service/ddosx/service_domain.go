@@ -1206,3 +1206,52 @@ func (s *Service) downloadDomainVerificationFileResponse(domainName string) (*co
 
 	return response, response.ValidateStatusCode([]int{200}, body)
 }
+
+// GetDomainCDNRules retrieves a list of IP ACLs for a domain
+func (s *Service) GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error) {
+	r := connection.RequestAll{}
+
+	var rules []CDNRule
+	r.GetNext = func(parameters connection.APIRequestParameters) (connection.ResponseBody, error) {
+		response, err := s.getDomainCDNRulesPaginatedResponseBody(domainName, parameters)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, rule := range response.Data {
+			rules = append(rules, rule)
+		}
+
+		return response, nil
+	}
+
+	err := r.Invoke(parameters)
+
+	return rules, err
+}
+
+// GetDomainCDNRulesPaginated retrieves paginated list of waf advanced rules for a domain
+func (s *Service) GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error) {
+	body, err := s.getDomainCDNRulesPaginatedResponseBody(domainName, parameters)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainCDNRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetCDNRulesResponseBody, error) {
+	body := &GetCDNRulesResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainWAFNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{200}, body)
+}

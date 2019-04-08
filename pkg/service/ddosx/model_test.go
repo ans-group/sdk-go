@@ -14,6 +14,32 @@ func TestDomainStatus_String_Expected(t *testing.T) {
 	assert.Equal(t, "Configured", s)
 }
 
+func TestDomainPropertyName_String_Expected(t *testing.T) {
+	v := DomainPropertyNameSecureOrigin
+
+	s := v.String()
+
+	assert.Equal(t, "secure_origin", s)
+}
+
+func TestParseDomainPropertyName(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "secure_origin"
+		s, err := ParseDomainPropertyName(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, DomainPropertyNameSecureOrigin, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseDomainPropertyName(v)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid ddosx.DomainPropertyName. Valid values: client_max_body_size, proxy_timeout, ipv6_enabled, secure_origin", err.Error())
+	})
+}
+
 func TestRecordType_String_Expected(t *testing.T) {
 	v := RecordTypeAAAA
 
@@ -356,5 +382,57 @@ func TestParseACLGeoIPRulesMode(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "Invalid ACL GeoIP rules filtering mode", err.Error())
+	})
+}
+
+func TestCDNRuleCacheControl_String_Expected(t *testing.T) {
+	v := CDNRuleCacheControlCustom
+
+	s := v.String()
+
+	assert.Equal(t, "Custom", s)
+}
+
+func TestParseCDNRuleCacheControl(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "custom"
+		s, err := ParseCDNRuleCacheControl(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, CDNRuleCacheControlCustom, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseCDNRuleCacheControl(v)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid ddosx.CDNRuleCacheControl. Valid values: Custom, Origin", err.Error())
+	})
+}
+
+func TestCDNRuleType_String_Expected(t *testing.T) {
+	v := CDNRuleTypeGlobal
+
+	s := v.String()
+
+	assert.Equal(t, "global", s)
+}
+
+func TestParseCDNRuleType(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "global"
+		s, err := ParseCDNRuleType(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, CDNRuleTypeGlobal, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseCDNRuleType(v)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid ddosx.CDNRuleType. Valid values: global, per-uri", err.Error())
 	})
 }

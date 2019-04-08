@@ -87,3 +87,47 @@ func TestIPAddress_String_Expected(t *testing.T) {
 
 	assert.Equal(t, "1.2.3.4", s)
 }
+
+type testEnum string
+
+var testEnumOne testEnum = "One"
+var testEnumTwo testEnum = "Two"
+var testEnums = []Enum{testEnumOne, testEnumTwo}
+
+func (t testEnum) String() string {
+	return string(t)
+}
+
+func TestEnum_ParseEnum(t *testing.T) {
+	t.Run("ParsesExact", func(t *testing.T) {
+		v := "One"
+		s, err := ParseEnum(v, testEnums)
+
+		assert.Nil(t, err)
+		assert.Equal(t, testEnumOne, s)
+	})
+
+	t.Run("ParsesMixedCase", func(t *testing.T) {
+		v := "OnE"
+		s, err := ParseEnum(v, testEnums)
+
+		assert.Nil(t, err)
+		assert.Equal(t, testEnumOne, s)
+	})
+
+	t.Run("NoEnumsSupplied_ReturnsError", func(t *testing.T) {
+		v := "OnE"
+		_, err := ParseEnum(v, []Enum{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Must provide at least one enum", err.Error())
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseEnum(v, testEnums)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid connection.testEnum. Valid values: One, Two", err.Error())
+	})
+}
