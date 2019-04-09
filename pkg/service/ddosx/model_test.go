@@ -436,3 +436,18 @@ func TestParseCDNRuleType(t *testing.T) {
 		assert.Equal(t, "Invalid ddosx.CDNRuleType. Valid values: global, per-uri", err.Error())
 	})
 }
+
+func TestCDNRuleCacheControlDuration_Duration_ReturnsExpected(t *testing.T) {
+	d := CDNRuleCacheControlDuration{
+		Years:   1,
+		Months:  2,
+		Days:    3,
+		Hours:   4,
+		Minutes: 5,
+	}
+
+	duration := d.Duration()
+	str := duration.String()
+
+	assert.Equal(t, "10324h5m0s", str)
+}

@@ -3,6 +3,7 @@ package ddosx
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
@@ -405,9 +406,10 @@ type ACLIPRule struct {
 
 // CDNRule represents a DDoSX CDN rule
 type CDNRule struct {
-	ID                   string                      `json:"id"`
-	URI                  string                      `json:"uri"`
-	CacheControl         CDNRuleCacheControl         `json:"cache_control"`
+	ID           string              `json:"id"`
+	URI          string              `json:"uri"`
+	CacheControl CDNRuleCacheControl `json:"cache_control"`
+	// CacheControlDuration specifies the cache control duration. May be nil if duration not applicable
 	CacheControlDuration CDNRuleCacheControlDuration `json:"cache_control_duration"`
 	MimeTypes            []string                    `json:"mime_types"`
 	Type                 CDNRuleType                 `json:"type"`
@@ -420,4 +422,15 @@ type CDNRuleCacheControlDuration struct {
 	Days    int `json:"days"`
 	Hours   int `json:"hours"`
 	Minutes int `json:"minutes"`
+}
+
+// Duration returns the cache control duration as time.Duration
+func (d *CDNRuleCacheControlDuration) Duration() time.Duration {
+	now := time.Now().UTC()
+	t := time.Now().UTC()
+	t = t.AddDate(d.Years, d.Months, d.Days)
+	t = t.Add(time.Duration(d.Hours) * time.Hour)
+	t = t.Add(time.Duration(d.Minutes) * time.Minute)
+
+	return t.Sub(now)
 }
