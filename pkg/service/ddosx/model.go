@@ -409,7 +409,7 @@ type CDNRule struct {
 	URI                  string                      `json:"uri"`
 	CacheControl         CDNRuleCacheControl         `json:"cache_control"`
 	CacheControlDuration CDNRuleCacheControlDuration `json:"cache_control_duration"`
-	MimeTypes            string                      `json:"mime_types"`
+	MimeTypes            []string                    `json:"mime_types"`
 	Type                 CDNRuleType                 `json:"type"`
 }
 
