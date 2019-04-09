@@ -34,7 +34,7 @@ type DDoSXService interface {
 
 	GetDomainWAFRuleSets(domainName string, parameters connection.APIRequestParameters) ([]WAFRuleSet, error)
 	GetDomainWAFRuleSetsPaginated(domainName string, parameters connection.APIRequestParameters) ([]WAFRuleSet, error)
-	GetDomainWAFRuleSet(domainName string, ruleSetID string, parameters connection.APIRequestParameters) (WAFRuleSet, error)
+	GetDomainWAFRuleSet(domainName string, ruleSetID string) (WAFRuleSet, error)
 	PatchDomainWAFRuleSet(domainName string, ruleSetID string, req PatchWAFRuleSetRequest) error
 
 	GetDomainWAFRules(domainName string, parameters connection.APIRequestParameters) ([]WAFRule, error)
@@ -75,8 +75,14 @@ type DDoSXService interface {
 	DownloadDomainVerificationFile(domainName string) (string, string, error)
 	DownloadDomainVerificationFileStream(domainName string) (io.ReadCloser, string, error)
 
+	AddDomainCDNConfiguration(domainName string) error
+	DeleteDomainCDNConfiguration(domainName string) error
+	CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error)
 	GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
 	GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
+	GetDomainCDNRule(domainName string, ruleID string) (CDNRule, error)
+	PatchDomainCDNRule(domainName string, ruleID string, req PatchCDNRuleRequest) error
+	DeleteDomainCDNRule(domainName string, ruleID string) error
 }
 
 // Service implements DDoSXService for managing
