@@ -1658,7 +1658,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		ruleset, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
+		ruleset, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "00000000-0000-0000-0000-000000000000", ruleset.ID)
@@ -1674,7 +1674,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetDomainWAFRuleSet("", "00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
+		_, err := s.GetDomainWAFRuleSet("", "00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid domain name", err.Error())
@@ -1690,7 +1690,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "", connection.APIRequestParameters{})
+		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid rule set ID", err.Error())
@@ -1708,7 +1708,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
+		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1731,7 +1731,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
+		_, err := s.GetDomainWAFRuleSet("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &WAFRuleSetNotFoundError{}, err)
@@ -4045,7 +4045,7 @@ func TestGetDomainCDNRulesPaginated(t *testing.T) {
 		assert.Equal(t, "invalid domain name", err.Error())
 	})
 
-	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsDomainCDNConfigurationNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -4065,6 +4065,6 @@ func TestGetDomainCDNRulesPaginated(t *testing.T) {
 		_, err := s.GetDomainCDNRulesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &DomainWAFNotFoundError{}, err)
+		assert.IsType(t, &DomainCDNConfigurationNotFoundError{}, err)
 	})
 }

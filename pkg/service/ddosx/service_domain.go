@@ -501,7 +501,7 @@ func (s *Service) getDomainWAFRuleSetsPaginatedResponseBody(domainName string, p
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/rulesets", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/rulesets", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
@@ -514,13 +514,13 @@ func (s *Service) getDomainWAFRuleSetsPaginatedResponseBody(domainName string, p
 }
 
 // GetDomainWAFRuleSet retrieves a waf advanced rule set for a domain
-func (s *Service) GetDomainWAFRuleSet(domainName string, ruleSetID string, parameters connection.APIRequestParameters) (WAFRuleSet, error) {
-	body, err := s.getDomainWAFRuleSetResponseBody(domainName, ruleSetID, parameters)
+func (s *Service) GetDomainWAFRuleSet(domainName string, ruleSetID string) (WAFRuleSet, error) {
+	body, err := s.getDomainWAFRuleSetResponseBody(domainName, ruleSetID)
 
 	return body.Data, err
 }
 
-func (s *Service) getDomainWAFRuleSetResponseBody(domainName string, ruleSetID string, parameters connection.APIRequestParameters) (*GetWAFRuleSetResponseBody, error) {
+func (s *Service) getDomainWAFRuleSetResponseBody(domainName string, ruleSetID string) (*GetWAFRuleSetResponseBody, error) {
 	body := &GetWAFRuleSetResponseBody{}
 
 	if domainName == "" {
@@ -608,7 +608,7 @@ func (s *Service) getDomainWAFRulesPaginatedResponseBody(domainName string, para
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/rules", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/rules", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
@@ -741,7 +741,7 @@ func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName stri
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/advanced-rules", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/advanced-rules", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
@@ -874,7 +874,7 @@ func (s *Service) getDomainACLGeoIPRulesPaginatedResponseBody(domainName string,
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/geo-ips", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/geo-ips", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
@@ -1059,7 +1059,7 @@ func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, pa
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/ips", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/ips", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
@@ -1244,13 +1244,42 @@ func (s *Service) getDomainCDNRulesPaginatedResponseBody(domainName string, para
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), parameters)
 	if err != nil {
 		return body, err
 	}
 
 	if response.StatusCode == 404 {
-		return body, &DomainWAFNotFoundError{DomainName: domainName}
+		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{200}, body)
+}
+
+// GetDomainCDNRule retrieves a CDN rule
+func (s *Service) GetDomainCDNRule(domainName string, ruleID string) (CDNRule, error) {
+	body, err := s.getDomainCDNRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainCDNRuleResponseBody(domainName string, ruleID string) (*GetCDNRuleResponseBody, error) {
+	body := &GetCDNRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &CDNRuleNotFoundError{ID: ruleID}
 	}
 
 	return body, response.HandleResponse([]int{200}, body)

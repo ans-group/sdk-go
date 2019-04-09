@@ -34,7 +34,7 @@ type DDoSXService interface {
 
 	GetDomainWAFRuleSets(domainName string, parameters connection.APIRequestParameters) ([]WAFRuleSet, error)
 	GetDomainWAFRuleSetsPaginated(domainName string, parameters connection.APIRequestParameters) ([]WAFRuleSet, error)
-	GetDomainWAFRuleSet(domainName string, ruleSetID string, parameters connection.APIRequestParameters) (WAFRuleSet, error)
+	GetDomainWAFRuleSet(domainName string, ruleSetID string) (WAFRuleSet, error)
 	PatchDomainWAFRuleSet(domainName string, ruleSetID string, req PatchWAFRuleSetRequest) error
 
 	GetDomainWAFRules(domainName string, parameters connection.APIRequestParameters) ([]WAFRule, error)
