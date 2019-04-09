@@ -1420,3 +1420,55 @@ func (s *Service) deleteDomainCDNRuleResponseBody(domainName string, ruleID stri
 
 	return body, response.HandleResponse([]int{204}, body)
 }
+
+// AddDomainHSTSConfiguration adds HSTS headers to a domain
+func (s *Service) AddDomainHSTSConfiguration(domainName string) error {
+	_, err := s.addDomainHSTSConfigurationResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) addDomainHSTSConfigurationResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/hsts", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainNotFoundError{Name: domainName}
+	}
+
+	return body, response.HandleResponse([]int{200}, body)
+}
+
+// DeleteDomainHSTSConfiguration removes HSTS headers to a domain
+func (s *Service) DeleteDomainHSTSConfiguration(domainName string) error {
+	_, err := s.deleteDomainHSTSConfigurationResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) deleteDomainHSTSConfigurationResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s/hsts", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &HSTSConfigurationNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{200}, body)
+}

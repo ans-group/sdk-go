@@ -4615,3 +4615,165 @@ func TestDeleteDomainCDNRule(t *testing.T) {
 		assert.IsType(t, &CDNRuleNotFoundError{}, err)
 	})
 }
+
+func TestAddDomainHSTSConfiguration(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.AddDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.AddDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.AddDomainHSTSConfiguration("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.AddDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainNotFoundError{}, err)
+	})
+}
+
+func TestDeleteDomainHSTSConfiguration(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteDomainHSTSConfiguration("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsHSTSConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &HSTSConfigurationNotFoundError{}, err)
+	})
+}
