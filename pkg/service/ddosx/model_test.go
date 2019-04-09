@@ -2,6 +2,7 @@ package ddosx
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -447,7 +448,21 @@ func TestCDNRuleCacheControlDuration_Duration_ReturnsExpected(t *testing.T) {
 	}
 
 	duration := d.Duration()
-	str := duration.String()
+	str := duration.Round(time.Minute).String()
+
+	assert.Equal(t, "10324h5m0s", str)
+}
+
+func TestCDNRuleCacheControlDuration_String_ReturnsExpected(t *testing.T) {
+	d := CDNRuleCacheControlDuration{
+		Years:   1,
+		Months:  2,
+		Days:    3,
+		Hours:   4,
+		Minutes: 5,
+	}
+
+	str := d.String()
 
 	assert.Equal(t, "10324h5m0s", str)
 }

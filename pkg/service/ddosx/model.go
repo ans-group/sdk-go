@@ -434,3 +434,7 @@ func (d *CDNRuleCacheControlDuration) Duration() time.Duration {
 
 	return t.Sub(now)
 }
+
+func (d *CDNRuleCacheControlDuration) String() string {
+	return d.Duration().Round(time.Minute).String()
+}
