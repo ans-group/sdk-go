@@ -83,6 +83,9 @@ type DDoSXService interface {
 	GetDomainCDNRule(domainName string, ruleID string) (CDNRule, error)
 	PatchDomainCDNRule(domainName string, ruleID string, req PatchCDNRuleRequest) error
 	DeleteDomainCDNRule(domainName string, ruleID string) error
+
+	AddDomainHSTSConfiguration(domainName string) error
+	DeleteDomainHSTSConfiguration(domainName string) error
 }
 
 // Service implements DDoSXService for managing
