@@ -279,3 +279,26 @@ func TestPatchSSLRequest_Validate_NoError(t *testing.T) {
 
 	assert.Nil(t, err)
 }
+
+func TestCreateCDNRuleRequest_Validate(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		c := CreateCDNRuleRequest{
+			URI:          "/testuri",
+			CacheControl: CDNRuleCacheControlCustom,
+			MimeTypes:    []string{"application/test"},
+			Type:         CDNRuleTypePerURI,
+		}
+
+		err := c.Validate()
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("Invalid_Error", func(t *testing.T) {
+		c := CreateCDNRuleRequest{}
+
+		err := c.Validate()
+
+		assert.NotNil(t, err)
+	})
+}

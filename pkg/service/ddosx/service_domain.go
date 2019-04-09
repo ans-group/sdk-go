@@ -1207,6 +1207,58 @@ func (s *Service) downloadDomainVerificationFileResponse(domainName string) (*co
 	return response, response.ValidateStatusCode([]int{200}, body)
 }
 
+// AddDomainCDNConfiguration adds CDN configuration to a domain
+func (s *Service) AddDomainCDNConfiguration(domainName string) error {
+	_, err := s.addDomainCDNConfigurationResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) addDomainCDNConfigurationResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/cdn", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainNotFoundError{Name: domainName}
+	}
+
+	return body, response.HandleResponse([]int{201}, body)
+}
+
+// DeleteDomainCDNConfiguration removes CDN configuration from a domain
+func (s *Service) DeleteDomainCDNConfiguration(domainName string) error {
+	_, err := s.deleteDomainCDNConfigurationResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) deleteDomainCDNConfigurationResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s/cdn", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{204}, body)
+}
+
 // GetDomainCDNRules retrieves a list of IP ACLs for a domain
 func (s *Service) GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error) {
 	r := connection.RequestAll{}
@@ -1283,4 +1335,30 @@ func (s *Service) getDomainCDNRuleResponseBody(domainName string, ruleID string)
 	}
 
 	return body, response.HandleResponse([]int{200}, body)
+}
+
+// CreateDomainCDNRule creates a CDN rule
+func (s *Service) CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error) {
+	body, err := s.createDomainCDNRuleResponseBody(domainName, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createDomainCDNRuleResponseBody(domainName string, req CreateCDNRuleRequest) (*GetCDNRuleResponseBody, error) {
+	body := &GetCDNRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), &req)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{201}, body)
 }

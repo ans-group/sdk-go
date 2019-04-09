@@ -75,8 +75,12 @@ type DDoSXService interface {
 	DownloadDomainVerificationFile(domainName string) (string, string, error)
 	DownloadDomainVerificationFileStream(domainName string) (io.ReadCloser, string, error)
 
+	AddDomainCDNConfiguration(domainName string) error
+	DeleteDomainCDNConfiguration(domainName string) error
 	GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
 	GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
+	GetDomainCDNRule(domainName string, ruleID string) (CDNRule, error)
+	CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error)
 }
 
 // Service implements DDoSXService for managing
