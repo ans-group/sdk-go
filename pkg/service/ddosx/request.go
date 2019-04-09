@@ -254,3 +254,17 @@ type CreateCDNRuleRequest struct {
 func (c *CreateCDNRuleRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
+
+// PatchCDNRuleRequest represents a DDoSX CDN rule patch request
+type PatchCDNRuleRequest struct {
+	URI                  string                       `json:"uri"`
+	CacheControl         CDNRuleCacheControl          `json:"cache_control"`
+	CacheControlDuration *CDNRuleCacheControlDuration `json:"cache_control_duration"`
+	MimeTypes            []string                     `json:"mime_types"`
+	Type                 CDNRuleType                  `json:"type"`
+}
+
+// Validate returns an error if struct properties are missing/invalid
+func (c *PatchCDNRuleRequest) Validate() *connection.ValidationError {
+	return nil
+}

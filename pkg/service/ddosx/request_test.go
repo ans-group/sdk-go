@@ -302,3 +302,11 @@ func TestCreateCDNRuleRequest_Validate(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func TestPatchCDNRuleRequest_Validate_NoError(t *testing.T) {
+	req := PatchCDNRuleRequest{}
+
+	err := req.Validate()
+
+	assert.Nil(t, err)
+}

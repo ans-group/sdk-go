@@ -4072,6 +4072,95 @@ func TestDeleteDomainCDNConfiguration(t *testing.T) {
 	})
 }
 
+func TestCreateDomainCDNRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateCDNRuleRequest{
+			URI:          "/testuri",
+			CacheControl: CDNRuleCacheControlCustom,
+			MimeTypes:    []string{"application/test"},
+			Type:         CDNRuleTypePerURI,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 201,
+			},
+		}, nil).Times(1)
+
+		id, err := s.CreateDomainCDNRule("testdomain1.co.uk", expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateDomainCDNRule("testdomain1.co.uk", CreateCDNRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateDomainCDNRule("", CreateCDNRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainCDNConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.CreateDomainCDNRule("testdomain1.co.uk", CreateCDNRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainCDNConfigurationNotFoundError{}, err)
+	})
+}
+
 func TestGetDomainCDNRules(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -4329,7 +4418,7 @@ func TestGetDomainCDNRule(t *testing.T) {
 	})
 }
 
-func TestCreateDomainCDNRule(t *testing.T) {
+func TestPatchDomainCDNRule(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -4340,24 +4429,20 @@ func TestCreateDomainCDNRule(t *testing.T) {
 			connection: c,
 		}
 
-		expectedRequest := CreateCDNRuleRequest{
-			URI:          "/testuri",
-			CacheControl: CDNRuleCacheControlCustom,
-			MimeTypes:    []string{"application/test"},
-			Type:         CDNRuleTypePerURI,
+		expectedRequest := PatchCDNRuleRequest{
+			URI: "/testuri",
 		}
 
-		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
-				StatusCode: 201,
+				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		id, err := s.CreateDomainCDNRule("testdomain1.co.uk", expectedRequest)
+		err := s.PatchDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", expectedRequest)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", id)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -4370,9 +4455,9 @@ func TestCreateDomainCDNRule(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateDomainCDNRule("testdomain1.co.uk", CreateCDNRuleRequest{})
+		err := s.PatchDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", PatchCDNRuleRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -4388,13 +4473,13 @@ func TestCreateDomainCDNRule(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.CreateDomainCDNRule("", CreateCDNRuleRequest{})
+		err := s.PatchDomainCDNRule("", "00000000-0000-0000-0000-000000000000", PatchCDNRuleRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid domain name", err.Error())
 	})
 
-	t.Run("404_ReturnsDomainCDNConfigurationNotFoundError", func(t *testing.T) {
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -4404,16 +4489,129 @@ func TestCreateDomainCDNRule(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
+		err := s.PatchDomainCDNRule("testdomain1.co.uk", "", PatchCDNRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ReturnsCDNRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.CreateDomainCDNRule("testdomain1.co.uk", CreateCDNRuleRequest{})
+		err := s.PatchDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", PatchCDNRuleRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &DomainCDNConfigurationNotFoundError{}, err)
+		assert.IsType(t, &CDNRuleNotFoundError{}, err)
+	})
+}
+
+func TestDeleteDomainCDNRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 204,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteDomainCDNRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteDomainCDNRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ReturnsCDNRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainCDNRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &CDNRuleNotFoundError{}, err)
 	})
 }

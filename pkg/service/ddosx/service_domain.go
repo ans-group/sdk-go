@@ -1259,6 +1259,32 @@ func (s *Service) deleteDomainCDNConfigurationResponseBody(domainName string) (*
 	return body, response.HandleResponse([]int{204}, body)
 }
 
+// CreateDomainCDNRule creates a CDN rule
+func (s *Service) CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error) {
+	body, err := s.createDomainCDNRuleResponseBody(domainName, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createDomainCDNRuleResponseBody(domainName string, req CreateCDNRuleRequest) (*GetCDNRuleResponseBody, error) {
+	body := &GetCDNRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), &req)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{201}, body)
+}
+
 // GetDomainCDNRules retrieves a list of IP ACLs for a domain
 func (s *Service) GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error) {
 	r := connection.RequestAll{}
@@ -1337,28 +1363,60 @@ func (s *Service) getDomainCDNRuleResponseBody(domainName string, ruleID string)
 	return body, response.HandleResponse([]int{200}, body)
 }
 
-// CreateDomainCDNRule creates a CDN rule
-func (s *Service) CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error) {
-	body, err := s.createDomainCDNRuleResponseBody(domainName, req)
+// PatchDomainCDNRule patches a CDN rule
+func (s *Service) PatchDomainCDNRule(domainName string, ruleID string, req PatchCDNRuleRequest) error {
+	_, err := s.patchDomainCDNRuleResponseBody(domainName, ruleID, req)
 
-	return body.Data.ID, err
+	return err
 }
 
-func (s *Service) createDomainCDNRuleResponseBody(domainName string, req CreateCDNRuleRequest) (*GetCDNRuleResponseBody, error) {
-	body := &GetCDNRuleResponseBody{}
+func (s *Service) patchDomainCDNRuleResponseBody(domainName string, ruleID string, req PatchCDNRuleRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
 	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
 
-	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules", domainName), &req)
+	response, err := s.connection.Patch(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules/%s", domainName, ruleID), &req)
 	if err != nil {
 		return body, err
 	}
 
 	if response.StatusCode == 404 {
-		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
+		return body, &CDNRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{200}, body)
+}
+
+// DeleteDomainCDNRule removes a CDN rule
+func (s *Service) DeleteDomainCDNRule(domainName string, ruleID string) error {
+	_, err := s.deleteDomainCDNRuleResponseBody(domainName, ruleID)
+
+	return err
+}
+
+func (s *Service) deleteDomainCDNRuleResponseBody(domainName string, ruleID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s/cdn/rules/%s", domainName, ruleID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &CDNRuleNotFoundError{ID: ruleID}
+	}
+
+	return body, response.HandleResponse([]int{204}, body)
 }

@@ -77,10 +77,12 @@ type DDoSXService interface {
 
 	AddDomainCDNConfiguration(domainName string) error
 	DeleteDomainCDNConfiguration(domainName string) error
+	CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error)
 	GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
 	GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error)
 	GetDomainCDNRule(domainName string, ruleID string) (CDNRule, error)
-	CreateDomainCDNRule(domainName string, req CreateCDNRuleRequest) (string, error)
+	PatchDomainCDNRule(domainName string, ruleID string, req PatchCDNRuleRequest) error
+	DeleteDomainCDNRule(domainName string, ruleID string) error
 }
 
 // Service implements DDoSXService for managing
