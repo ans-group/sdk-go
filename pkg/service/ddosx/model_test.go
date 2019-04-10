@@ -482,3 +482,25 @@ func TestCDNRuleCacheControlDuration_String_ReturnsExpected(t *testing.T) {
 
 	assert.Equal(t, "10276h5m0s", str)
 }
+
+func TestParseCDNRuleCacheControlDuration_Parses(t *testing.T) {
+	d, err := ParseCDNRuleCacheControlDuration("1y42h")
+
+	assert.Nil(t, err)
+	assert.Equal(t, 1, d.Years)
+	assert.Equal(t, 42, d.Hours)
+}
+
+func TestParseCDNRuleCacheControlDuration_MissingDigit_ReturnsError(t *testing.T) {
+	_, err := ParseCDNRuleCacheControlDuration("y42h")
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "Digit not supplied for unit 'y'", err.Error())
+}
+
+func TestParseCDNRuleCacheControlDuration_MissingUnit_ReturnsError(t *testing.T) {
+	_, err := ParseCDNRuleCacheControlDuration("42")
+
+	assert.NotNil(t, err)
+	// assert.Equal(t, "Unit not supplied for digit '42'", err.Error())
+}

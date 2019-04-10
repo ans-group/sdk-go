@@ -1,9 +1,13 @@
 package ddosx
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/ukfast/sdk-go/internal/pkg/elapsed"
 	"github.com/ukfast/sdk-go/pkg/connection"
@@ -425,6 +429,15 @@ type CDNRuleCacheControlDuration struct {
 	Minutes int `json:"minutes"`
 }
 
+// Duration returns the cache control duration as time.Duration
+func (d *CDNRuleCacheControlDuration) Duration() time.Duration {
+	return elapsed.NewDuration(d.Years, d.Months, d.Days, d.Hours, d.Minutes, 0, 0)
+}
+
+func (d *CDNRuleCacheControlDuration) String() string {
+	return d.Duration().Round(time.Minute).String()
+}
+
 // NewCDNRuleCacheControlDurationFromDuration returns a new instance of CDNRuleCacheControlDuration, initialized
 // from provided duration d
 func NewCDNRuleCacheControlDurationFromDuration(d time.Duration) *CDNRuleCacheControlDuration {
@@ -439,11 +452,70 @@ func NewCDNRuleCacheControlDurationFromDuration(d time.Duration) *CDNRuleCacheCo
 	}
 }
 
-// Duration returns the cache control duration as time.Duration
-func (d *CDNRuleCacheControlDuration) Duration() time.Duration {
-	return elapsed.NewDuration(d.Years, d.Months, d.Days, d.Hours, d.Minutes, 0, 0)
-}
+func ParseCDNRuleCacheControlDuration(s string) (*CDNRuleCacheControlDuration, error) {
+	var digitBuf bytes.Buffer
+	var unitBuf bytes.Buffer
 
-func (d *CDNRuleCacheControlDuration) String() string {
-	return d.Duration().Round(time.Minute).String()
+	flushBuffers := func() {
+		digitBuf = bytes.Buffer{}
+		unitBuf = bytes.Buffer{}
+	}
+
+	d := &CDNRuleCacheControlDuration{}
+	flush := func() error {
+		digit := digitBuf.String()
+		unit := unitBuf.String()
+		flushBuffers()
+
+		if len(digit) < 1 {
+			return fmt.Errorf("Digit not supplied for unit '%s'", unit)
+		}
+		if len(unit) < 1 {
+			return fmt.Errorf("Unit not supplied for digit '%s'", digit)
+		}
+
+		digitInt, err := strconv.Atoi(digit)
+		if err != nil {
+			return fmt.Errorf("Failed to parse digit '%s' as int", digit)
+		}
+
+		switch strings.ToUpper(unit) {
+		case "Y":
+			d.Years = digitInt
+		case "MO":
+			d.Months = digitInt
+		case "D":
+			d.Days = digitInt
+		case "H":
+			d.Hours = digitInt
+		case "M":
+			d.Minutes = digitInt
+		default:
+			return fmt.Errorf("invalid unit '%s'", unit)
+		}
+
+		return nil
+	}
+
+	isUnit := false
+	flushBuffers()
+	for i, char := range s {
+		if unicode.IsDigit(char) {
+			digitBuf.WriteRune(char)
+			isUnit = false
+		} else {
+			unitBuf.WriteRune(char)
+			isUnit = true
+		}
+
+		// if we're looking at a unit, and either we're at the last rune in iteration or next rune is a digit, flush
+		if isUnit && (len(s)-1 == i || unicode.IsDigit(rune(s[i+1]))) {
+			err := flush()
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return d, nil
 }
