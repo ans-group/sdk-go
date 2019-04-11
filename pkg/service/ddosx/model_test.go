@@ -438,22 +438,6 @@ func TestParseCDNRuleType(t *testing.T) {
 	})
 }
 
-func TestNewCDNRuleCacheControlDurationFromDuration(t *testing.T) {
-	d := time.Duration(time.Hour * 24 * 365)
-	d = d + time.Duration(time.Hour*24*30*2)
-	d = d + time.Duration(time.Hour*24*3)
-	d = d + time.Duration(time.Hour*4)
-	d = d + time.Duration(time.Minute*5)
-
-	a := NewCDNRuleCacheControlDurationFromDuration(d)
-
-	assert.Equal(t, 1, a.Years)
-	assert.Equal(t, 2, a.Months)
-	assert.Equal(t, 3, a.Days)
-	assert.Equal(t, 4, a.Hours)
-	assert.Equal(t, 5, a.Minutes)
-}
-
 func TestCDNRuleCacheControlDuration_Duration_ReturnsExpected(t *testing.T) {
 	d := CDNRuleCacheControlDuration{
 		Years:   1,
@@ -480,5 +464,5 @@ func TestCDNRuleCacheControlDuration_String_ReturnsExpected(t *testing.T) {
 
 	str := d.String()
 
-	assert.Equal(t, "10276h5m0s", str)
+	assert.Equal(t, "1y2mo3d4h5m", str)
 }

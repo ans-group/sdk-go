@@ -8,6 +8,7 @@ require (
 	github.com/golang/mock v1.2.0
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/stretchr/testify v1.3.0
-	gopkg.in/go-playground/assert.v1 v1.2.1
+	github.com/ukfast/go-durationstring v1.0.0
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.27.0
 )
