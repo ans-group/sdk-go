@@ -4616,6 +4616,92 @@ func TestDeleteDomainCDNRule(t *testing.T) {
 	})
 }
 
+func TestPurgeDomainCDN(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := PurgeCDNRequest{
+			RecordName: "sub.example.com",
+			URI:        "/testuri",
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/purge", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				StatusCode: 204,
+			},
+		}, nil).Times(1)
+
+		err := s.PurgeDomainCDN("testdomain1.co.uk", expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/purge", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PurgeDomainCDN("testdomain1.co.uk", PurgeCDNRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PurgeDomainCDN("", PurgeCDNRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainCDNConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/purge", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.PurgeDomainCDN("testdomain1.co.uk", PurgeCDNRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainCDNConfigurationNotFoundError{}, err)
+	})
+}
+
 func TestAddDomainHSTSConfiguration(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
