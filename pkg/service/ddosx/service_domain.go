@@ -47,7 +47,7 @@ func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIReque
 		return body, err
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomain retrieves a single domain by name
@@ -73,7 +73,7 @@ func (s *Service) getDomainResponseBody(domainName string) (*GetDomainResponseBo
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomain creates a new domain
@@ -91,7 +91,7 @@ func (s *Service) createDomainResponseBody(req CreateDomainRequest) (*connection
 		return body, err
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeployDomain deploys/commits changes to a domain
@@ -117,7 +117,7 @@ func (s *Service) deployDomainResponseBody(domainName string) (*connection.APIRe
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainRecords retrieves a list of domain records
@@ -166,7 +166,7 @@ func (s *Service) getDomainRecordsPaginatedResponseBody(domainName string, param
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainRecord creates a new record for a domain
@@ -192,7 +192,7 @@ func (s *Service) createDomainRecordResponseBody(domainName string, req CreateRe
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainRecord patches a single domain record by ID
@@ -221,7 +221,7 @@ func (s *Service) patchDomainRecordResponseBody(domainName string, recordID stri
 		return body, &DomainRecordNotFoundError{ID: recordID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainRecord deletes a single domain record by ID
@@ -250,7 +250,7 @@ func (s *Service) deleteDomainRecordResponseBody(domainName string, recordID str
 		return body, &DomainRecordNotFoundError{ID: recordID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainProperties retrieves a list of domain properties
@@ -299,7 +299,7 @@ func (s *Service) getDomainPropertiesPaginatedResponseBody(domainName string, pa
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainProperty retrieves a single domain property by ID
@@ -328,7 +328,7 @@ func (s *Service) getDomainPropertyResponseBody(domainName string, propertyID st
 		return body, &DomainPropertyNotFoundError{ID: propertyID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainProperty patches a single domain property by ID
@@ -357,7 +357,7 @@ func (s *Service) patchDomainPropertyResponseBody(domainName string, propertyID 
 		return body, &DomainPropertyNotFoundError{ID: propertyID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainWAF retrieves the WAF configuration for a domain
@@ -383,7 +383,7 @@ func (s *Service) getDomainWAFResponseBody(domainName string) (*GetWAFResponseBo
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainWAF creates the WAF configuration for a domain
@@ -409,7 +409,7 @@ func (s *Service) createDomainWAFResponseBody(domainName string, req CreateWAFRe
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainWAF patches the WAF configuration for a domain
@@ -435,7 +435,7 @@ func (s *Service) patchDomainWAFResponseBody(domainName string, req PatchWAFRequ
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainWAF deletes the WAF configuration for a domain
@@ -461,7 +461,7 @@ func (s *Service) deleteDomainWAFResponseBody(domainName string) (*connection.AP
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainWAFRuleSets retrieves a paginated list of waf advanced rule sets for a domain
@@ -510,7 +510,7 @@ func (s *Service) getDomainWAFRuleSetsPaginatedResponseBody(domainName string, p
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainWAFRuleSet retrieves a waf advanced rule set for a domain
@@ -539,7 +539,7 @@ func (s *Service) getDomainWAFRuleSetResponseBody(domainName string, ruleSetID s
 		return body, &WAFRuleSetNotFoundError{ID: ruleSetID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainWAFRuleSet patches a waf advanced rule set for a domain
@@ -568,7 +568,7 @@ func (s *Service) patchDomainWAFRuleSetResponseBody(domainName string, ruleSetID
 		return body, &WAFRuleSetNotFoundError{ID: ruleSetID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainWAFRules retrieves a list of waf rules for a domain
@@ -617,7 +617,7 @@ func (s *Service) getDomainWAFRulesPaginatedResponseBody(domainName string, para
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainWAFRule creates a WAF rule
@@ -643,7 +643,7 @@ func (s *Service) createDomainWAFRuleResponseBody(domainName string, req CreateW
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainWAFRule patches a waf rule for a domain
@@ -672,7 +672,7 @@ func (s *Service) patchDomainWAFRuleResponseBody(domainName string, ruleID strin
 		return body, &WAFRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainWAFRule deletes a waf rule for a domain
@@ -701,7 +701,7 @@ func (s *Service) deleteDomainWAFRuleResponseBody(domainName string, ruleID stri
 		return body, &WAFRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainWAFAdvancedRules retrieves a list of waf advanced rules for a domain
@@ -750,7 +750,7 @@ func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName stri
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainWAFAdvancedRule creates a WAF rule
@@ -776,7 +776,7 @@ func (s *Service) createDomainWAFAdvancedRuleResponseBody(domainName string, req
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainWAFAdvancedRule patches a waf advanced rule for a domain
@@ -805,7 +805,7 @@ func (s *Service) patchDomainWAFAdvancedRuleResponseBody(domainName string, rule
 		return body, &WAFAdvancedRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainWAFAdvancedRule deletees a waf advanced rule for a domain
@@ -834,7 +834,7 @@ func (s *Service) deleteDomainWAFAdvancedRuleResponseBody(domainName string, rul
 		return body, &WAFAdvancedRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainACLGeoIPRules retrieves a list of GeoIP ACLs for a domain
@@ -883,7 +883,7 @@ func (s *Service) getDomainACLGeoIPRulesPaginatedResponseBody(domainName string,
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainACLGeoIPRule creates an ACL GeoIP rule
@@ -909,7 +909,7 @@ func (s *Service) createDomainACLGeoIPRuleResponseBody(domainName string, req Cr
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainACLGeoIPRule patches an ACL GeoIP rule
@@ -938,7 +938,7 @@ func (s *Service) patchDomainACLGeoIPRuleResponseBody(domainName string, ruleID 
 		return body, &ACLGeoIPRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainACLGeoIPRule deletes an ACL GeoIP rule
@@ -967,7 +967,7 @@ func (s *Service) deleteDomainACLGeoIPRuleResponseBody(domainName string, ruleID
 		return body, &ACLGeoIPRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainACLGeoIPRulesMode retrieves the mode for ACL GeoIP rules
@@ -993,7 +993,7 @@ func (s *Service) getDomainACLGeoIPRulesModeResponseBody(domainName string) (*Ge
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainACLGeoIPRulesMode patches the mode for ACL GeoIP rules
@@ -1019,7 +1019,7 @@ func (s *Service) patchDomainACLGeoIPRulesModeResponseBody(domainName string, re
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainACLIPRules retrieves a list of IP ACLs for a domain
@@ -1068,7 +1068,7 @@ func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, pa
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainACLIPRule creates an ACL IP rule
@@ -1094,7 +1094,7 @@ func (s *Service) createDomainACLIPRuleResponseBody(domainName string, req Creat
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainACLIPRule patches an ACL IP rule
@@ -1123,7 +1123,7 @@ func (s *Service) patchDomainACLIPRuleResponseBody(domainName string, ruleID str
 		return body, &ACLIPRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainACLIPRule deletes an ACL IP rule
@@ -1152,7 +1152,7 @@ func (s *Service) deleteDomainACLIPRuleResponseBody(domainName string, ruleID st
 		return body, &ACLIPRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DownloadDomainVerificationFile downloads the verification file for a domain, returning
@@ -1204,7 +1204,7 @@ func (s *Service) downloadDomainVerificationFileResponse(domainName string) (*co
 		return response, &DomainNotFoundError{Name: domainName}
 	}
 
-	return response, response.ValidateStatusCode([]int{200}, body)
+	return response, response.ValidateStatusCode([]int{}, body)
 }
 
 // AddDomainCDNConfiguration adds CDN configuration to a domain
@@ -1230,7 +1230,7 @@ func (s *Service) addDomainCDNConfigurationResponseBody(domainName string) (*con
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainCDNConfiguration removes CDN configuration from a domain
@@ -1256,7 +1256,7 @@ func (s *Service) deleteDomainCDNConfigurationResponseBody(domainName string) (*
 		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // CreateDomainCDNRule creates a CDN rule
@@ -1282,7 +1282,7 @@ func (s *Service) createDomainCDNRuleResponseBody(domainName string, req CreateC
 		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{201}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainCDNRules retrieves a list of IP ACLs for a domain
@@ -1331,7 +1331,7 @@ func (s *Service) getDomainCDNRulesPaginatedResponseBody(domainName string, para
 		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // GetDomainCDNRule retrieves a CDN rule
@@ -1360,7 +1360,7 @@ func (s *Service) getDomainCDNRuleResponseBody(domainName string, ruleID string)
 		return body, &CDNRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PatchDomainCDNRule patches a CDN rule
@@ -1389,7 +1389,7 @@ func (s *Service) patchDomainCDNRuleResponseBody(domainName string, ruleID strin
 		return body, &CDNRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainCDNRule removes a CDN rule
@@ -1418,7 +1418,7 @@ func (s *Service) deleteDomainCDNRuleResponseBody(domainName string, ruleID stri
 		return body, &CDNRuleNotFoundError{ID: ruleID}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // PurgeDomainCDN purges cached content
@@ -1444,7 +1444,7 @@ func (s *Service) purgeDomainCDNRuleResponseBody(domainName string, req PurgeCDN
 		return body, &DomainCDNConfigurationNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{204}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // AddDomainHSTSConfiguration adds HSTS headers to a domain
@@ -1470,7 +1470,7 @@ func (s *Service) addDomainHSTSConfigurationResponseBody(domainName string) (*co
 		return body, &DomainNotFoundError{Name: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }
 
 // DeleteDomainHSTSConfiguration removes HSTS headers to a domain
@@ -1496,5 +1496,5 @@ func (s *Service) deleteDomainHSTSConfigurationResponseBody(domainName string) (
 		return body, &HSTSConfigurationNotFoundError{DomainName: domainName}
 	}
 
-	return body, response.HandleResponse([]int{200}, body)
+	return body, response.HandleResponse([]int{}, body)
 }

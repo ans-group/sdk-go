@@ -20,9 +20,7 @@ func TestGetTemplates(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -44,9 +42,7 @@ func TestGetTemplates(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
@@ -77,9 +73,7 @@ func TestGetTemplates(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
@@ -97,9 +91,7 @@ func TestGetTemplatesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -120,9 +112,7 @@ func TestGetTemplatesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -140,9 +130,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -163,9 +151,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -181,9 +167,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetTemplate(0)
 
@@ -197,9 +181,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -222,9 +204,7 @@ func TestCreateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		createRequest := CreateTemplateRequest{
 			Name: "test template 1",
@@ -249,9 +229,7 @@ func TestCreateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -269,9 +247,7 @@ func TestUpdateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		template := Template{
 			ID:   123,
@@ -297,9 +273,7 @@ func TestUpdateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -315,9 +289,7 @@ func TestUpdateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.UpdateTemplate(Template{ID: 0})
 
@@ -331,9 +303,7 @@ func TestUpdateTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -356,9 +326,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		patch := PatchTemplateRequest{
 			Name: "new test template name 1",
@@ -383,9 +351,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -401,9 +367,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.PatchTemplate(0, PatchTemplateRequest{})
 
@@ -417,9 +381,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -442,9 +404,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -464,9 +424,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -482,9 +440,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteTemplate(0)
 
@@ -498,9 +454,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -523,9 +477,7 @@ func TestGetTemplateRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -547,9 +499,7 @@ func TestGetTemplateRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
@@ -580,9 +530,7 @@ func TestGetTemplateRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
@@ -600,9 +548,7 @@ func TestGetTemplateRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -623,9 +569,7 @@ func TestGetTemplateRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -641,9 +585,7 @@ func TestGetTemplateRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetTemplateRecords(0, connection.APIRequestParameters{})
 
@@ -657,9 +599,7 @@ func TestGetTemplateRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -682,9 +622,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -705,9 +643,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -723,9 +659,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetTemplateRecord(0, 456)
 
@@ -739,9 +673,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetTemplateRecord(123, 0)
 
@@ -755,9 +687,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -780,9 +710,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		createReq := CreateRecordRequest{
 			Name: "test.123",
@@ -807,9 +735,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -825,9 +751,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.CreateTemplateRecord(0, CreateRecordRequest{})
 
@@ -841,9 +765,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -866,9 +788,7 @@ func TestUpdateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		record := Record{
 			ID:      456,
@@ -893,9 +813,7 @@ func TestUpdateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -911,9 +829,7 @@ func TestUpdateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.UpdateTemplateRecord(0, Record{ID: 456})
 
@@ -927,9 +843,7 @@ func TestUpdateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.UpdateTemplateRecord(123, Record{ID: 0})
 
@@ -943,9 +857,7 @@ func TestUpdateTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -968,9 +880,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		patch := PatchRecordRequest{
 			Content: "1.2.3.4",
@@ -994,9 +904,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -1012,9 +920,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.PatchTemplateRecord(0, 456, PatchRecordRequest{})
 
@@ -1028,9 +934,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.PatchTemplateRecord(123, 0, PatchRecordRequest{})
 
@@ -1044,9 +948,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1069,9 +971,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1091,9 +991,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -1109,9 +1007,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteTemplateRecord(0, 456)
 
@@ -1125,9 +1021,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteTemplateRecord(123, 0)
 
@@ -1141,9 +1035,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{

@@ -121,12 +121,28 @@ func TestAPIResponse_ValidateStatusCode(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
-	t.Run("NoCodeExpected_NoError", func(t *testing.T) {
-		resp := APIResponse{}
+	t.Run("NoCodeExpected_ValidStatusCode_NoError", func(t *testing.T) {
+		resp := APIResponse{
+			Response: &http.Response{
+				StatusCode: 200,
+			},
+		}
 
 		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
 
 		assert.Nil(t, err)
+	})
+
+	t.Run("NoCodeExpected_InvalidStatusCode_Error", func(t *testing.T) {
+		resp := APIResponse{
+			Response: &http.Response{
+				StatusCode: 500,
+			},
+		}
+
+		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
+
+		assert.NotNil(t, err)
 	})
 }
 

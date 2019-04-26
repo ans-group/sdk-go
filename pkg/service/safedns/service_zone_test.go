@@ -21,9 +21,7 @@ func TestGetZones(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -45,9 +43,7 @@ func TestGetZones(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
@@ -78,9 +74,7 @@ func TestGetZones(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
@@ -98,9 +92,7 @@ func TestGetZonesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -121,9 +113,7 @@ func TestGetZonesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -141,9 +131,7 @@ func TestGetZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -164,9 +152,7 @@ func TestGetZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -182,9 +168,7 @@ func TestGetZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZone("")
 
@@ -198,9 +182,7 @@ func TestGetZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -223,9 +205,7 @@ func TestCreateZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		createRequest := CreateZoneRequest{
 			Name: "testdomain1.co.uk",
@@ -249,9 +229,7 @@ func TestCreateZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -262,6 +240,62 @@ func TestCreateZone(t *testing.T) {
 	})
 }
 
+func TestPatchZone(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		patchRequest := PatchZoneRequest{
+			Description: "testdomain1.co.uk",
+		}
+
+		c.EXPECT().Patch("/safedns/v1/zones/testdomain1.co.uk", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchZone("testdomain1.co.uk", patchRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		c.EXPECT().Patch("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchZone("testdomain1.co.uk", PatchZoneRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidZoneName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		err := s.PatchZone("", PatchZoneRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid zone name", err.Error())
+	})
+}
+
 func TestDeleteZone(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -269,9 +303,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -291,9 +323,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -309,9 +339,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteZone("")
 
@@ -325,9 +353,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -350,9 +376,7 @@ func TestGetZoneRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -374,9 +398,7 @@ func TestGetZoneRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
@@ -407,9 +429,7 @@ func TestGetZoneRecords(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
@@ -427,9 +447,7 @@ func TestGetZoneRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -450,9 +468,7 @@ func TestGetZoneRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -468,9 +484,7 @@ func TestGetZoneRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneRecords("", connection.APIRequestParameters{})
 
@@ -484,9 +498,7 @@ func TestGetZoneRecordsPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -509,9 +521,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -532,9 +542,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -550,9 +558,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneRecord("", 123)
 
@@ -566,9 +572,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneRecord("testdomain1.co.uk", 0)
 
@@ -582,9 +586,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -607,9 +609,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		createReq := CreateRecordRequest{
 			Name: "test.testdomain1.co.uk",
@@ -634,9 +634,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -652,9 +650,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.CreateZoneRecord("", CreateRecordRequest{})
 
@@ -668,9 +664,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -693,9 +687,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		record := Record{
 			ID:      123,
@@ -720,9 +712,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -738,9 +728,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.UpdateZoneRecord("", Record{ID: 123})
 
@@ -754,9 +742,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.UpdateZoneRecord("testdomain1.co.uk", Record{ID: 0})
 
@@ -770,9 +756,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -795,9 +779,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		patch := PatchRecordRequest{
 			Content: "1.2.3.4",
@@ -821,9 +803,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -839,9 +819,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.PatchZoneRecord("", 123, PatchRecordRequest{})
 
@@ -855,9 +833,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.PatchZoneRecord("testdomain1.co.uk", 0, PatchRecordRequest{})
 
@@ -871,9 +847,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -896,9 +870,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -918,9 +890,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -936,9 +906,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteZoneRecord("", 123)
 
@@ -952,9 +920,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		err := s.DeleteZoneRecord("testdomain1.co.uk", 0)
 
@@ -968,9 +934,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -993,9 +957,7 @@ func TestGetZoneNotes(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1017,9 +979,7 @@ func TestGetZoneNotes(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
@@ -1050,9 +1010,7 @@ func TestGetZoneNotes(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
@@ -1070,9 +1028,7 @@ func TestGetZoneNotesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1093,9 +1049,7 @@ func TestGetZoneNotesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -1111,9 +1065,7 @@ func TestGetZoneNotesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneNotes("", connection.APIRequestParameters{})
 
@@ -1127,9 +1079,7 @@ func TestGetZoneNotesPaginated(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1152,9 +1102,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1175,9 +1123,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -1193,9 +1139,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneNote("", 123)
 
@@ -1209,9 +1153,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.GetZoneNote("testdomain1.co.uk", 0)
 
@@ -1225,9 +1167,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
@@ -1250,9 +1190,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		createReq := CreateNoteRequest{
 			Notes: "test note 1",
@@ -1277,9 +1215,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
@@ -1295,9 +1231,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		_, err := s.CreateZoneNote("", CreateNoteRequest{})
 
@@ -1311,9 +1245,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c := mocks.NewMockConnection(mockCtrl)
 
-		s := Service{
-			connection: c,
-		}
+		s := NewService(c)
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
