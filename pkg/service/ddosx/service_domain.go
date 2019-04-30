@@ -169,6 +169,35 @@ func (s *Service) getDomainRecordsPaginatedResponseBody(domainName string, param
 	return body, response.HandleResponse([]int{}, body)
 }
 
+// GetDomainRecord retrieves a single domain record by ID
+func (s *Service) GetDomainRecord(domainName string, recordID string) (Record, error) {
+	body, err := s.getDomainRecordResponseBody(domainName, recordID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainRecordResponseBody(domainName string, recordID string) (*GetRecordResponseBody, error) {
+	body := &GetRecordResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if recordID == "" {
+		return body, fmt.Errorf("invalid record ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/records/%s", domainName, recordID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &DomainRecordNotFoundError{DomainName: domainName, ID: recordID}
+	}
+
+	return body, response.HandleResponse([]int{}, body)
+}
+
 // CreateDomainRecord creates a new record for a domain
 func (s *Service) CreateDomainRecord(domainName string, req CreateRecordRequest) (string, error) {
 	body, err := s.createDomainRecordResponseBody(domainName, req)
@@ -886,6 +915,35 @@ func (s *Service) getDomainACLGeoIPRulesPaginatedResponseBody(domainName string,
 	return body, response.HandleResponse([]int{}, body)
 }
 
+// GetDomainACLGeoIPRule retrieves a single ACL GeoIP rule for a domain
+func (s *Service) GetDomainACLGeoIPRule(domainName string, ruleID string) (ACLGeoIPRule, error) {
+	body, err := s.getDomainACLGeoIPRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainACLGeoIPRuleResponseBody(domainName string, ruleID string) (*GetACLGeoIPRuleResponseBody, error) {
+	body := &GetACLGeoIPRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/geo-ips/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &ACLGeoIPRuleNotFoundError{ID: ruleID}
+	}
+
+	return body, response.HandleResponse([]int{}, body)
+}
+
 // CreateDomainACLGeoIPRule creates an ACL GeoIP rule
 func (s *Service) CreateDomainACLGeoIPRule(domainName string, req CreateACLGeoIPRuleRequest) (string, error) {
 	body, err := s.createDomainACLGeoIPRuleResponseBody(domainName, req)
@@ -1066,6 +1124,35 @@ func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, pa
 
 	if response.StatusCode == 404 {
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{}, body)
+}
+
+// GetDomainACLIPRule retrieves a single ACL IP rule for a domain
+func (s *Service) GetDomainACLIPRule(domainName string, ruleID string) (ACLIPRule, error) {
+	body, err := s.getDomainACLIPRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainACLIPRuleResponseBody(domainName string, ruleID string) (*GetACLIPRuleResponseBody, error) {
+	body := &GetACLIPRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/acls/ips/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &ACLIPRuleNotFoundError{ID: ruleID}
 	}
 
 	return body, response.HandleResponse([]int{}, body)
@@ -1285,7 +1372,7 @@ func (s *Service) createDomainCDNRuleResponseBody(domainName string, req CreateC
 	return body, response.HandleResponse([]int{}, body)
 }
 
-// GetDomainCDNRules retrieves a list of IP ACLs for a domain
+// GetDomainCDNRules retrieves a list of CDL rules for a domain
 func (s *Service) GetDomainCDNRules(domainName string, parameters connection.APIRequestParameters) ([]CDNRule, error) {
 	r := connection.RequestAll{}
 
