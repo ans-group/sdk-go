@@ -2092,6 +2092,104 @@ func TestGetDomainWAFRulesPaginated(t *testing.T) {
 	})
 }
 
+func TestGetDomainWAFRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rule, err := s.GetDomainWAFRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rule.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainWAFRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainWAFRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainWAFRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_WAFRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainWAFRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &WAFRuleNotFoundError{}, err)
+	})
+}
+
 func TestCreateDomainWAFRule(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -2529,6 +2627,104 @@ func TestGetDomainWAFAdvancedRulesPaginated(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &DomainWAFNotFoundError{}, err)
+	})
+}
+
+func TestGetDomainWAFAdvancedRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rule, err := s.GetDomainWAFAdvancedRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rule.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainWAFAdvancedRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainWAFAdvancedRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainWAFAdvancedRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_WAFAdvancedRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainWAFAdvancedRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &WAFAdvancedRuleNotFoundError{}, err)
 	})
 }
 

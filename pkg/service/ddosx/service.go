@@ -41,12 +41,14 @@ type DDoSXService interface {
 
 	GetDomainWAFRules(domainName string, parameters connection.APIRequestParameters) ([]WAFRule, error)
 	GetDomainWAFRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]WAFRule, error)
+	GetDomainWAFRule(domainName string, ruleID string) (WAFRule, error)
 	CreateDomainWAFRule(domainName string, req CreateWAFRuleRequest) (string, error)
 	PatchDomainWAFRule(domainName string, ruleSetID string, req PatchWAFRuleRequest) error
 	DeleteDomainWAFRule(domainName string, ruleID string) error
 
 	GetDomainWAFAdvancedRules(domainName string, parameters connection.APIRequestParameters) ([]WAFAdvancedRule, error)
 	GetDomainWAFAdvancedRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]WAFAdvancedRule, error)
+	GetDomainWAFAdvancedRule(domainName string, ruleID string) (WAFAdvancedRule, error)
 	CreateDomainWAFAdvancedRule(domainName string, req CreateWAFAdvancedRuleRequest) (string, error)
 	PatchDomainWAFAdvancedRule(domainName string, ruleID string, req PatchWAFAdvancedRuleRequest) error
 	DeleteDomainWAFAdvancedRule(domainName string, ruleID string) error

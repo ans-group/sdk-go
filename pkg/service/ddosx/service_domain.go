@@ -649,6 +649,35 @@ func (s *Service) getDomainWAFRulesPaginatedResponseBody(domainName string, para
 	return body, response.HandleResponse([]int{}, body)
 }
 
+// GetDomainWAFRule retrieves a waf rule for a domain
+func (s *Service) GetDomainWAFRule(domainName string, ruleID string) (WAFRule, error) {
+	body, err := s.getDomainWAFRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainWAFRuleResponseBody(domainName string, ruleID string) (*GetWAFRuleResponseBody, error) {
+	body := &GetWAFRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/rules/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &WAFRuleNotFoundError{ID: ruleID}
+	}
+
+	return body, response.HandleResponse([]int{}, body)
+}
+
 // CreateDomainWAFRule creates a WAF rule
 func (s *Service) CreateDomainWAFRule(domainName string, req CreateWAFRuleRequest) (string, error) {
 	body, err := s.createDomainWAFRuleResponseBody(domainName, req)
@@ -777,6 +806,35 @@ func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName stri
 
 	if response.StatusCode == 404 {
 		return body, &DomainWAFNotFoundError{DomainName: domainName}
+	}
+
+	return body, response.HandleResponse([]int{}, body)
+}
+
+// GetDomainWAFAdvancedRule retrieves a waf rule for a domain
+func (s *Service) GetDomainWAFAdvancedRule(domainName string, ruleID string) (WAFAdvancedRule, error) {
+	body, err := s.getDomainWAFAdvancedRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainWAFAdvancedRuleResponseBody(domainName string, ruleID string) (*GetWAFAdvancedRuleResponseBody, error) {
+	body := &GetWAFAdvancedRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/waf/advanced-rules/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &WAFAdvancedRuleNotFoundError{ID: ruleID}
 	}
 
 	return body, response.HandleResponse([]int{}, body)
