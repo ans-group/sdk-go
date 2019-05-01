@@ -147,7 +147,7 @@ func TestAPIResponse_ValidateStatusCode(t *testing.T) {
 }
 
 func TestAPIResponse_HandleResponse(t *testing.T) {
-	t.Run("Expected_NoError", func(t *testing.T) {
+	t.Run("ValidResponseCode_NoError", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
@@ -155,7 +155,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 			},
 		}
 
-		err := resp.HandleResponse([]int{200}, &APIResponseBody{})
+		err := resp.HandleResponse(&APIResponseBody{}, nil)
 
 		assert.Nil(t, err)
 	})
@@ -168,12 +168,12 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 			},
 		}
 
-		err := resp.HandleResponse([]int{200}, &APIResponseBody{})
+		err := resp.HandleResponse(&APIResponseBody{}, nil)
 
 		assert.NotNil(t, err)
 	})
 
-	t.Run("ValidateStatusCodeError_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidResponseCode_ReturnsError", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
@@ -181,9 +181,25 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 			},
 		}
 
-		err := resp.HandleResponse([]int{200}, &APIResponseBody{})
+		err := resp.HandleResponse(&APIResponseBody{}, nil)
 
 		assert.NotNil(t, err)
+	})
+
+	t.Run("HandlerError_ReturnsError", func(t *testing.T) {
+		resp := APIResponse{
+			Response: &http.Response{
+				StatusCode: 200,
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+			},
+		}
+
+		err := resp.HandleResponse(&APIResponseBody{}, func(resp *APIResponse) error {
+			return errors.New("test error")
+		})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error", err.Error())
 	})
 }
 
