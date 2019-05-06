@@ -1686,6 +1686,34 @@ func (s *Service) purgeDomainCDNRuleResponseBody(domainName string, req PurgeCDN
 	})
 }
 
+// GetDomainHSTSConfiguration retrieves the HSTS configuration for a domain
+func (s *Service) GetDomainHSTSConfiguration(domainName string) (HSTSConfiguration, error) {
+	body, err := s.getDomainHSTSConfigurationResponseBody(domainName)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainHSTSConfigurationResponseBody(domainName string) (*GetHSTSConfigurationResponseBody, error) {
+	body := &GetHSTSConfigurationResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/hsts", domainName), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainHSTSConfigurationNotFoundError{DomainName: domainName}
+		}
+
+		return nil
+	})
+}
+
 // AddDomainHSTSConfiguration adds HSTS headers to a domain
 func (s *Service) AddDomainHSTSConfiguration(domainName string) error {
 	_, err := s.addDomainHSTSConfigurationResponseBody(domainName)
@@ -1735,7 +1763,179 @@ func (s *Service) deleteDomainHSTSConfigurationResponseBody(domainName string) (
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &HSTSConfigurationNotFoundError{DomainName: domainName}
+			return &DomainHSTSConfigurationNotFoundError{DomainName: domainName}
+		}
+
+		return nil
+	})
+}
+
+// CreateDomainHSTSRule creates a HSTS rule
+func (s *Service) CreateDomainHSTSRule(domainName string, req CreateHSTSRuleRequest) (string, error) {
+	body, err := s.createDomainHSTSRuleResponseBody(domainName, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createDomainHSTSRuleResponseBody(domainName string, req CreateHSTSRuleRequest) (*GetHSTSRuleResponseBody, error) {
+	body := &GetHSTSRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/hsts/rules", domainName), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainHSTSConfigurationNotFoundError{DomainName: domainName}
+		}
+
+		return nil
+	})
+}
+
+// GetDomainHSTSRules retrieves a list of CDL rules for a domain
+func (s *Service) GetDomainHSTSRules(domainName string, parameters connection.APIRequestParameters) ([]HSTSRule, error) {
+	r := connection.RequestAll{}
+
+	var rules []HSTSRule
+	r.GetNext = func(parameters connection.APIRequestParameters) (connection.ResponseBody, error) {
+		response, err := s.getDomainHSTSRulesPaginatedResponseBody(domainName, parameters)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, rule := range response.Data {
+			rules = append(rules, rule)
+		}
+
+		return response, nil
+	}
+
+	err := r.Invoke(parameters)
+
+	return rules, err
+}
+
+// GetDomainHSTSRulesPaginated retrieves paginated list of waf advanced rules for a domain
+func (s *Service) GetDomainHSTSRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]HSTSRule, error) {
+	body, err := s.getDomainHSTSRulesPaginatedResponseBody(domainName, parameters)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainHSTSRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetHSTSRulesResponseBody, error) {
+	body := &GetHSTSRulesResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/hsts/rules", domainName), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainHSTSConfigurationNotFoundError{DomainName: domainName}
+		}
+
+		return nil
+	})
+}
+
+// GetDomainHSTSRule retrieves a HSTS rule
+func (s *Service) GetDomainHSTSRule(domainName string, ruleID string) (HSTSRule, error) {
+	body, err := s.getDomainHSTSRuleResponseBody(domainName, ruleID)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainHSTSRuleResponseBody(domainName string, ruleID string) (*GetHSTSRuleResponseBody, error) {
+	body := &GetHSTSRuleResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/hsts/rules/%s", domainName, ruleID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &HSTSRuleNotFoundError{ID: ruleID}
+		}
+
+		return nil
+	})
+}
+
+// PatchDomainHSTSRule patches a HSTS rule
+func (s *Service) PatchDomainHSTSRule(domainName string, ruleID string, req PatchHSTSRuleRequest) error {
+	_, err := s.patchDomainHSTSRuleResponseBody(domainName, ruleID, req)
+
+	return err
+}
+
+func (s *Service) patchDomainHSTSRuleResponseBody(domainName string, ruleID string, req PatchHSTSRuleRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ddosx/v1/domains/%s/hsts/rules/%s", domainName, ruleID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &HSTSRuleNotFoundError{ID: ruleID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteDomainHSTSRule removes a HSTS rule
+func (s *Service) DeleteDomainHSTSRule(domainName string, ruleID string) error {
+	_, err := s.deleteDomainHSTSRuleResponseBody(domainName, ruleID)
+
+	return err
+}
+
+func (s *Service) deleteDomainHSTSRuleResponseBody(domainName string, ruleID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+	if ruleID == "" {
+		return body, fmt.Errorf("invalid rule ID")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s/hsts/rules/%s", domainName, ruleID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &HSTSRuleNotFoundError{ID: ruleID}
 		}
 
 		return nil

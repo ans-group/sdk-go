@@ -438,6 +438,32 @@ func TestParseCDNRuleType(t *testing.T) {
 	})
 }
 
+func TestHSTSRuleType_String_Expected(t *testing.T) {
+	v := HSTSRuleTypeDomain
+
+	s := v.String()
+
+	assert.Equal(t, "domain", s)
+}
+
+func TestParseHSTSRuleType(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "domain"
+		s, err := ParseHSTSRuleType(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, HSTSRuleTypeDomain, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseHSTSRuleType(v)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Invalid ddosx.HSTSRuleType. Valid values: domain, record", err.Error())
+	})
+}
+
 func TestCDNRuleCacheControlDuration_Duration_ReturnsExpected(t *testing.T) {
 	d := CDNRuleCacheControlDuration{
 		Years:   1,

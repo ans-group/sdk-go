@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ukfast/sdk-go/pkg/ptr"
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
@@ -5094,6 +5095,88 @@ func TestPurgeDomainCDN(t *testing.T) {
 	})
 }
 
+func TestGetDomainHSTSConfiguration(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"enabled\":true}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		configuration, err := s.GetDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.Nil(t, err)
+		assert.Equal(t, true, configuration.Enabled)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainHSTSConfiguration("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_DomainHSTSConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainHSTSConfiguration("testdomain1.co.uk")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainHSTSConfigurationNotFoundError{}, err)
+	})
+}
+
 func TestAddDomainHSTSConfiguration(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -5232,7 +5315,7 @@ func TestDeleteDomainHSTSConfiguration(t *testing.T) {
 		assert.Equal(t, "invalid domain name", err.Error())
 	})
 
-	t.Run("404_ReturnsHSTSConfigurationNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsDomainHSTSConfigurationNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -5252,6 +5335,547 @@ func TestDeleteDomainHSTSConfiguration(t *testing.T) {
 		err := s.DeleteDomainHSTSConfiguration("testdomain1.co.uk")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &HSTSConfigurationNotFoundError{}, err)
+		assert.IsType(t, &DomainHSTSConfigurationNotFoundError{}, err)
+	})
+}
+
+func TestCreateDomainHSTSRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateHSTSRuleRequest{
+			RuleType: HSTSRuleTypeDomain,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 201,
+			},
+		}, nil).Times(1)
+
+		id, err := s.CreateDomainHSTSRule("testdomain1.co.uk", expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateDomainHSTSRule("testdomain1.co.uk", CreateHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateDomainHSTSRule("", CreateHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainHSTSConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.CreateDomainHSTSRule("testdomain1.co.uk", CreateHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainHSTSConfigurationNotFoundError{}, err)
+	})
+}
+
+func TestGetDomainHSTSRules(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rules, err := s.GetDomainHSTSRules("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, rules, 1)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rules[0].ID)
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		gomock.InOrder(
+			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+				Response: &http.Response{
+					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					StatusCode: 200,
+				},
+			}, nil),
+		)
+
+		rules, err := s.GetDomainHSTSRules("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, rules, 2)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rules[0].ID)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000001", rules[1].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetDomainHSTSRules("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetDomainHSTSRulesPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rules, err := s.GetDomainHSTSRulesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rules[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainHSTSRulesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainHSTSRules("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainHSTSConfigurationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainHSTSRulesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainHSTSConfigurationNotFoundError{}, err)
+	})
+}
+
+func TestGetDomainHSTSRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rule, err := s.GetDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rule.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainHSTSRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainHSTSRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ReturnsHSTSRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &HSTSRuleNotFoundError{}, err)
+	})
+}
+
+func TestPatchDomainHSTSRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := PatchHSTSRuleRequest{
+			MaxAge: ptr.Int(300),
+		}
+
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", PatchHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchDomainHSTSRule("", "00000000-0000-0000-0000-000000000000", PatchHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchDomainHSTSRule("testdomain1.co.uk", "", PatchHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ReturnsHSTSRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000", PatchHSTSRuleRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &HSTSRuleNotFoundError{}, err)
+	})
+}
+
+func TestDeleteDomainHSTSRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 204,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteDomainHSTSRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteDomainHSTSRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ReturnsHSTSRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteDomainHSTSRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &HSTSRuleNotFoundError{}, err)
 	})
 }
