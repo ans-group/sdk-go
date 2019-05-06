@@ -91,6 +91,7 @@ type DDoSXService interface {
 	DeleteDomainCDNRule(domainName string, ruleID string) error
 	PurgeDomainCDN(domainName string, req PurgeCDNRequest) error
 
+	GetDomainHSTSConfiguration(domainName string) (HSTSConfiguration, error)
 	AddDomainHSTSConfiguration(domainName string) error
 	DeleteDomainHSTSConfiguration(domainName string) error
 }

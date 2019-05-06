@@ -1686,6 +1686,34 @@ func (s *Service) purgeDomainCDNRuleResponseBody(domainName string, req PurgeCDN
 	})
 }
 
+// GetDomainHSTSConfiguration retrieves the HSTS configuration for a domain
+func (s *Service) GetDomainHSTSConfiguration(domainName string) (HSTSConfiguration, error) {
+	body, err := s.getDomainHSTSConfigurationResponseBody(domainName)
+
+	return body.Data, err
+}
+
+func (s *Service) getDomainHSTSConfigurationResponseBody(domainName string) (*GetHSTSConfigurationResponseBody, error) {
+	body := &GetHSTSConfigurationResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ddosx/v1/domains/%s/hsts", domainName), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &HSTSConfigurationNotFoundError{DomainName: domainName}
+		}
+
+		return nil
+	})
+}
+
 // AddDomainHSTSConfiguration adds HSTS headers to a domain
 func (s *Service) AddDomainHSTSConfiguration(domainName string) error {
 	_, err := s.addDomainHSTSConfigurationResponseBody(domainName)

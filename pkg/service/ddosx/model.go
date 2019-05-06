@@ -455,3 +455,8 @@ func ParseCDNRuleCacheControlDuration(s string) (*CDNRuleCacheControlDuration, e
 		Minutes: minutes,
 	}, nil
 }
+
+// HSTSConfiguration represents HSTS configuration for a DDoSX domain
+type HSTSConfiguration struct {
+	Enabled bool `json:"enabled"`
+}

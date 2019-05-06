@@ -171,3 +171,10 @@ type GetCDNRuleResponseBody struct {
 
 	Data CDNRule `json:"data"`
 }
+
+// GetHSTSConfigurationResponseBody represents an API response body containing HSTSConfiguration data
+type GetHSTSConfigurationResponseBody struct {
+	connection.APIResponseBody
+
+	Data HSTSConfiguration `json:"data"`
+}
