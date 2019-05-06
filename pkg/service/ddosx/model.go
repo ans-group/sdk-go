@@ -491,5 +491,5 @@ type HSTSRule struct {
 	Preload           bool         `json:"preload"`
 	IncludeSubdomains bool         `json:"include_subdomains"`
 	RuleType          HSTSRuleType `json:"rule_type"`
-	RecordName        string       `json:"record_name"`
+	RecordName        *string      `json:"record_name"`
 }

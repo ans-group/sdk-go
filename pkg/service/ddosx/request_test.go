@@ -310,3 +310,31 @@ func TestPatchCDNRuleRequest_Validate_NoError(t *testing.T) {
 
 	assert.Nil(t, err)
 }
+
+func TestPatchHSTSRuleRequest_Validate_NoError(t *testing.T) {
+	req := PatchHSTSRuleRequest{}
+
+	err := req.Validate()
+
+	assert.Nil(t, err)
+}
+
+func TestCreateHSTSRuleRequest_Validate(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		c := CreateHSTSRuleRequest{
+			RuleType: HSTSRuleTypeDomain,
+		}
+
+		err := c.Validate()
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("Invalid_Error", func(t *testing.T) {
+		c := CreateHSTSRuleRequest{}
+
+		err := c.Validate()
+
+		assert.NotNil(t, err)
+	})
+}

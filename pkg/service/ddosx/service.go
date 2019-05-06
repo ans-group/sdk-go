@@ -94,6 +94,12 @@ type DDoSXService interface {
 	GetDomainHSTSConfiguration(domainName string) (HSTSConfiguration, error)
 	AddDomainHSTSConfiguration(domainName string) error
 	DeleteDomainHSTSConfiguration(domainName string) error
+	CreateDomainHSTSRule(domainName string, req CreateHSTSRuleRequest) (string, error)
+	GetDomainHSTSRules(domainName string, parameters connection.APIRequestParameters) ([]HSTSRule, error)
+	GetDomainHSTSRulesPaginated(domainName string, parameters connection.APIRequestParameters) ([]HSTSRule, error)
+	GetDomainHSTSRule(domainName string, ruleID string) (HSTSRule, error)
+	PatchDomainHSTSRule(domainName string, ruleID string, req PatchHSTSRuleRequest) error
+	DeleteDomainHSTSRule(domainName string, ruleID string) error
 }
 
 // Service implements DDoSXService for managing
