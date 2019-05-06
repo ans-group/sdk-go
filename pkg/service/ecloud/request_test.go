@@ -50,12 +50,26 @@ func TestCreateVirtualMachineRequest_Validate(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("Invalid_Error", func(t *testing.T) {
-		c := CreateVirtualMachineRequest{}
+	t.Run("HDDAndDisksMissing_ReturnsError", func(t *testing.T) {
+		c := CreateVirtualMachineRequest{
+			Template: "testtemplate",
+		}
 
 		err := c.Validate()
 
 		assert.NotNil(t, err)
+		assert.Equal(t, "HDD or Disks must be provided", err.Error())
+	})
+
+	t.Run("TemplateAndApplianceIDMissing_Error", func(t *testing.T) {
+		c := CreateVirtualMachineRequest{
+			HDD: 20,
+		}
+
+		err := c.Validate()
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Template or ApplianceID must be provided", err.Error())
 	})
 }
 
@@ -155,6 +169,26 @@ func TestParseTemplateType(t *testing.T) {
 
 	t.Run("Invalid_Error", func(t *testing.T) {
 		_, err := ParseTemplateType("invalid")
+
+		assert.NotNil(t, err)
+	})
+}
+
+func TestCreateVirtualMachineTemplateRequest_Validate(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		c := CreateVirtualMachineTemplateRequest{
+			TemplateName: "testtemplate1",
+		}
+
+		err := c.Validate()
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("Invalid_Error", func(t *testing.T) {
+		c := CreateVirtualMachineTemplateRequest{}
+
+		err := c.Validate()
 
 		assert.NotNil(t, err)
 	})

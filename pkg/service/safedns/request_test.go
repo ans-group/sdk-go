@@ -26,6 +26,14 @@ func TestCreateZoneRequest_Validate(t *testing.T) {
 	})
 }
 
+func TestPatchZoneRequest_Validate_NoError(t *testing.T) {
+	r := PatchZoneRequest{}
+
+	err := r.Validate()
+
+	assert.Nil(t, err)
+}
+
 func TestPatchRecordRequest_Validate_NoError(t *testing.T) {
 	r := PatchRecordRequest{}
 

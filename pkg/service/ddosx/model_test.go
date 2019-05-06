@@ -492,3 +492,22 @@ func TestCDNRuleCacheControlDuration_String_ReturnsExpected(t *testing.T) {
 
 	assert.Equal(t, "1y2mo3d4h5m", str)
 }
+
+func TestParseCDNRuleCacheControlDuration(t *testing.T) {
+	t.Run("Valid_ReturnsParsedDuration", func(t *testing.T) {
+		v := "4h1m"
+		d, err := ParseCDNRuleCacheControlDuration(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 4, d.Hours)
+		assert.Equal(t, 1, d.Minutes)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseCDNRuleCacheControlDuration(v)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Digit not supplied for unit 'invalid'", err.Error())
+	})
+}

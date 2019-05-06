@@ -296,3 +296,62 @@ func TestGetRequestConversation(t *testing.T) {
 		assert.IsType(t, &RequestNotFoundError{}, err)
 	})
 }
+
+func TestGetRequestConversationPaginated(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v1/requests/123/conversation", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"description\":\"test description\"}]}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		replies, err := s.GetRequestConversationPaginated(123, connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Equal(t, "test description", replies[0].Description)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v1/requests/123/conversation", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetRequestConversationPaginated(123, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetRequestConversationPaginated(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid request id", err.Error())
+	})
+}

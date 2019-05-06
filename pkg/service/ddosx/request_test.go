@@ -311,6 +311,27 @@ func TestPatchCDNRuleRequest_Validate_NoError(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestPurgeCDNRequest_Validate(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		c := PurgeCDNRequest{
+			RecordName: "testrecord.com",
+			URI:        "/someuri",
+		}
+
+		err := c.Validate()
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("Invalid_Error", func(t *testing.T) {
+		c := PurgeCDNRequest{}
+
+		err := c.Validate()
+
+		assert.NotNil(t, err)
+	})
+}
+
 func TestPatchHSTSRuleRequest_Validate_NoError(t *testing.T) {
 	req := PatchHSTSRuleRequest{}
 

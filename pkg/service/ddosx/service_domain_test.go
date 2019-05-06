@@ -3171,6 +3171,104 @@ func TestGetDomainACLGeoIPRulesPaginated(t *testing.T) {
 	})
 }
 
+func TestGetDomainACLGeoIPRule(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		rule, err := s.GetDomainACLGeoIPRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", rule.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetDomainACLGeoIPRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainACLGeoIPRule("", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain name", err.Error())
+	})
+
+	t.Run("InvalidRuleID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetDomainACLGeoIPRule("testdomain1.co.uk", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid rule ID", err.Error())
+	})
+
+	t.Run("404_ACLGeoIPRuleNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetDomainACLGeoIPRule("testdomain1.co.uk", "00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ACLGeoIPRuleNotFoundError{}, err)
+	})
+}
+
 func TestCreateDomainACLGeoIPRule(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
