@@ -5449,7 +5449,7 @@ func TestCreateDomainHSTSRule(t *testing.T) {
 		}
 
 		expectedRequest := CreateHSTSRuleRequest{
-			RuleType: HSTSRuleTypeDomain,
+			Type: HSTSRuleTypeDomain,
 		}
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{

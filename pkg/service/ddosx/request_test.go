@@ -343,12 +343,23 @@ func TestPatchHSTSRuleRequest_Validate_NoError(t *testing.T) {
 func TestCreateHSTSRuleRequest_Validate(t *testing.T) {
 	t.Run("Valid_NoError", func(t *testing.T) {
 		c := CreateHSTSRuleRequest{
-			RuleType: HSTSRuleTypeDomain,
+			Type: HSTSRuleTypeDomain,
 		}
 
 		err := c.Validate()
 
 		assert.Nil(t, err)
+	})
+
+	t.Run("TypeRecordMissingRecordName_ReturnsValidationError", func(t *testing.T) {
+		c := CreateHSTSRuleRequest{
+			Type: HSTSRuleTypeRecord,
+		}
+
+		err := c.Validate()
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "RecordName must be specified with Type 'HSTSRuleTypeRecord'", err.Error())
 	})
 
 	t.Run("Invalid_Error", func(t *testing.T) {
