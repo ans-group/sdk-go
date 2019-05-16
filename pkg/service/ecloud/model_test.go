@@ -14,6 +14,14 @@ func TestVirtualMachineStatus_String_Expected(t *testing.T) {
 	assert.Equal(t, "Failed", s)
 }
 
+func TestVirtualMachineDiskType_String_Expected(t *testing.T) {
+	v := VirtualMachineDiskTypeCluster
+
+	s := v.String()
+
+	assert.Equal(t, "Cluster", s)
+}
+
 func TestVirtualMachinePowerStatus_String_Expected(t *testing.T) {
 	v := VirtualMachinePowerStatusOffline
 
