@@ -1,5 +1,7 @@
 package account
 
+import "github.com/ukfast/sdk-go/pkg/connection"
+
 type ContactType string
 
 func (t ContactType) String() string {
@@ -34,4 +36,17 @@ type Credit struct {
 	Type      string `json:"type"`
 	Total     int    `json:"total"`
 	Remaining int    `json:"remaining"`
+}
+
+type PaginatedContacts struct {
+	*connection.PaginatedBase
+
+	Contacts []Contact
+}
+
+func NewPaginatedContacts(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, contacts []Contact) *PaginatedContacts {
+	return &PaginatedContacts{
+		Contacts:      contacts,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
 }

@@ -83,6 +83,15 @@ func (p *APIRequestParameters) WithFilters(filters []APIRequestFiltering) *APIRe
 	return p
 }
 
+func (p *APIRequestParameters) Copy() APIRequestParameters {
+	newParameters := APIRequestParameters{}
+	newParameters.Sorting = p.Sorting
+	newParameters.Pagination = p.Pagination
+	newParameters.Filtering = p.Filtering
+
+	return newParameters
+}
+
 type APIRequestPagination struct {
 	PerPage int
 	Page    int
@@ -180,4 +189,59 @@ func (r *RequestAll) Invoke(parameters APIRequestParameters) error {
 	}
 
 	return nil
+}
+
+// RequestAll would accept Paginated interface (with method Next())
+
+// type PaginatedBase struct {
+// 	next func(parameters APIRequestParameters) (ResponseBody, error)
+// }
+
+type PaginatedGetFunc func(parameters APIRequestParameters) (Paginated, error)
+
+type Paginated interface {
+	TotalPages() int
+	CurrentPage() int
+	Total() int
+	Next() (Paginated, error)
+}
+
+type PaginatedBase struct {
+	parameters APIRequestParameters
+	pagination APIResponseMetadataPagination
+	getFunc    PaginatedGetFunc
+}
+
+func NewPaginatedBase(parameters APIRequestParameters, pagination APIResponseMetadataPagination, getFunc PaginatedGetFunc) *PaginatedBase {
+	return &PaginatedBase{
+		parameters: parameters,
+		pagination: pagination,
+		getFunc:    getFunc,
+	}
+}
+
+func (p *PaginatedBase) TotalPages() int {
+	return p.pagination.TotalPages
+}
+
+func (p *PaginatedBase) CurrentPage() int {
+	if p.parameters.Pagination.Page > 0 {
+		return p.parameters.Pagination.Page
+	}
+
+	return 1
+}
+
+func (p *PaginatedBase) Total() int {
+	return p.pagination.Total
+}
+
+func (p *PaginatedBase) Next() (Paginated, error) {
+	if p.CurrentPage() >= p.TotalPages() {
+		return nil, nil
+	}
+
+	newParameters := p.parameters.Copy()
+	newParameters.Pagination.Page = p.CurrentPage() + 1
+	return p.getFunc(newParameters)
 }

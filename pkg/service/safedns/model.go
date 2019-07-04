@@ -7,6 +7,19 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
+type PaginatedZones struct {
+	*connection.PaginatedBase
+
+	Zones []Zone
+}
+
+func NewPaginatedZones(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, zones []Zone) *PaginatedZones {
+	return &PaginatedZones{
+		Zones:         zones,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // RecordTTL represents the record TTL time in seconds
 type RecordTTL int
 

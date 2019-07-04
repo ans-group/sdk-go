@@ -6,6 +6,15 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
+// GetContactsTestPaginated retrieves a paginated list of contacts
+func (s *Service) GetZonesTestPaginated(parameters connection.APIRequestParameters) (*PaginatedZones, error) {
+	body, err := s.getZonesPaginatedResponseBody(parameters)
+
+	return NewPaginatedZones(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetZonesTestPaginated(p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
 // GetZones retrieves a list of zones
 func (s *Service) GetZones(parameters connection.APIRequestParameters) ([]Zone, error) {
 	r := connection.RequestAll{}

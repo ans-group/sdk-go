@@ -29,6 +29,15 @@ func (s *Service) GetContacts(parameters connection.APIRequestParameters) ([]Con
 	return contacts, err
 }
 
+// GetContactsTestPaginated retrieves a paginated list of contacts
+func (s *Service) GetContactsTestPaginated(parameters connection.APIRequestParameters) (*PaginatedContacts, error) {
+	body, err := s.getContactsPaginatedResponseBody(parameters)
+
+	return NewPaginatedContacts(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetContactsTestPaginated(p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
 // GetContactsPaginated retrieves a paginated list of contacts
 func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameters) ([]Contact, error) {
 	body, err := s.getContactsPaginatedResponseBody(parameters)
