@@ -6,10 +6,8 @@ import (
 
 // SafeDNSService is an interface for managing SafeDNS
 type SafeDNSService interface {
-	GetZonesTestPaginated(parameters connection.APIRequestParameters) (*PaginatedZones, error)
-
 	GetZones(parameters connection.APIRequestParameters) ([]Zone, error)
-	GetZonesPaginated(parameters connection.APIRequestParameters) ([]Zone, error)
+	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZones, error)
 	GetZone(zoneName string) (Zone, error)
 	CreateZone(req CreateZoneRequest) error
 	PatchZone(zoneName string, req PatchZoneRequest) error

@@ -38,12 +38,14 @@ type Credit struct {
 	Remaining int    `json:"remaining"`
 }
 
+// PaginatedContacts represents a paginated collection of contacts
 type PaginatedContacts struct {
 	*connection.PaginatedBase
 
 	Contacts []Contact
 }
 
+// NewPaginatedContacts returns a pointer to an initialized PaginatedContacts struct
 func NewPaginatedContacts(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, contacts []Contact) *PaginatedContacts {
 	return &PaginatedContacts{
 		Contacts:      contacts,

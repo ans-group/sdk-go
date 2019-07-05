@@ -8,32 +8,28 @@ import (
 
 // GetDatastores retrieves a list of datastores
 func (s *Service) GetDatastores(parameters connection.APIRequestParameters) ([]Datastore, error) {
-	r := connection.RequestAll{}
-
 	var datastores []Datastore
-	r.GetNext = func(parameters connection.APIRequestParameters) (connection.ResponseBody, error) {
-		response, err := s.getDatastoresPaginatedResponseBody(parameters)
-		if err != nil {
-			return nil, err
-		}
 
-		for _, datastore := range response.Data {
-			datastores = append(datastores, datastore)
-		}
-
-		return response, nil
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDatastoresPaginated(p)
 	}
 
-	err := r.Invoke(parameters)
+	responseFunc := func(response connection.Paginated) {
+		for _, datastore := range response.(*PaginatedDatastores).Datastores {
+			datastores = append(datastores, datastore)
+		}
+	}
 
-	return datastores, err
+	return datastores, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetDatastoresPaginated retrieves a paginated list of datastores
-func (s *Service) GetDatastoresPaginated(parameters connection.APIRequestParameters) ([]Datastore, error) {
+func (s *Service) GetDatastoresPaginated(parameters connection.APIRequestParameters) (*PaginatedDatastores, error) {
 	body, err := s.getDatastoresPaginatedResponseBody(parameters)
 
-	return body.Data, err
+	return NewPaginatedDatastores(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDatastoresPaginated(p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
 func (s *Service) getDatastoresPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDatastoresResponseBody, error) {

@@ -7,19 +7,6 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-type PaginatedZones struct {
-	*connection.PaginatedBase
-
-	Zones []Zone
-}
-
-func NewPaginatedZones(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, zones []Zone) *PaginatedZones {
-	return &PaginatedZones{
-		Zones:         zones,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // RecordTTL represents the record TTL time in seconds
 type RecordTTL int
 
@@ -63,6 +50,19 @@ type Zone struct {
 	Description string `json:"description"`
 }
 
+type PaginatedZones struct {
+	*connection.PaginatedBase
+
+	Zones []Zone
+}
+
+func NewPaginatedZones(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, zones []Zone) *PaginatedZones {
+	return &PaginatedZones{
+		Zones:         zones,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // Record represents a SafeDNS record
 type Record struct {
 	connection.APIRequestBodyDefaultValidator
@@ -82,6 +82,19 @@ func (c *Record) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
 
+type PaginatedRecords struct {
+	*connection.PaginatedBase
+
+	Records []Record
+}
+
+func NewPaginatedRecords(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, records []Record) *PaginatedRecords {
+	return &PaginatedRecords{
+		Records:       records,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // Note represents a SafeDNS note
 type Note struct {
 	ID        int                  `json:"id"`
@@ -89,6 +102,19 @@ type Note struct {
 	Notes     string               `json:"notes"`
 	CreatedAt connection.DateTime  `json:"created_at"`
 	IP        connection.IPAddress `json:"ip"`
+}
+
+type PaginatedNotes struct {
+	*connection.PaginatedBase
+
+	Notes []Note
+}
+
+func NewPaginatedNotes(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, notes []Note) *PaginatedNotes {
+	return &PaginatedNotes{
+		Notes:         notes,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
 }
 
 // Template represents a SafeDNS template
@@ -104,4 +130,17 @@ type Template struct {
 // Validate returns an error if struct properties are missing/invalid
 func (c *Template) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
+}
+
+type PaginatedTemplates struct {
+	*connection.PaginatedBase
+
+	Templates []Template
+}
+
+func NewPaginatedTemplates(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, templates []Template) *PaginatedTemplates {
+	return &PaginatedTemplates{
+		Templates:     templates,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
 }

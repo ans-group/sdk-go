@@ -172,31 +172,6 @@ func ParseOperator(o string) (APIRequestFilteringOperator, error) {
 	return 0, errors.New("Invalid filtering operator")
 }
 
-type RequestAll struct {
-	GetNext func(parameters APIRequestParameters) (ResponseBody, error)
-}
-
-func (r *RequestAll) Invoke(parameters APIRequestParameters) error {
-	totalPages := 1
-	for currentPage := 1; currentPage <= totalPages; currentPage++ {
-		parameters.Pagination.Page = currentPage
-		response, err := r.GetNext(parameters)
-		if err != nil {
-			return err
-		}
-
-		totalPages = response.Pagination().TotalPages
-	}
-
-	return nil
-}
-
-// RequestAll would accept Paginated interface (with method Next())
-
-// type PaginatedBase struct {
-// 	next func(parameters APIRequestParameters) (ResponseBody, error)
-// }
-
 type PaginatedGetFunc func(parameters APIRequestParameters) (Paginated, error)
 
 type Paginated interface {
@@ -244,4 +219,40 @@ func (p *PaginatedBase) Next() (Paginated, error) {
 	newParameters := p.parameters.Copy()
 	newParameters.Pagination.Page = p.CurrentPage() + 1
 	return p.getFunc(newParameters)
+}
+
+type RequestAllResponseFunc func(Paginated)
+
+type RequestAll struct {
+	getFunc      PaginatedGetFunc
+	responseFunc RequestAllResponseFunc
+}
+
+func NewRequestAll(getFunc PaginatedGetFunc, responseFunc RequestAllResponseFunc) *RequestAll {
+	return &RequestAll{
+		getFunc:      getFunc,
+		responseFunc: responseFunc,
+	}
+}
+
+func (r *RequestAll) Invoke(parameters APIRequestParameters) error {
+	totalPages := 1
+	for currentPage := 1; currentPage <= totalPages; currentPage++ {
+		parameters.Pagination.Page = currentPage
+		paginated, err := r.getFunc(parameters)
+		if err != nil {
+			return err
+		}
+
+		r.responseFunc(paginated)
+		totalPages = paginated.TotalPages()
+	}
+
+	return nil
+}
+
+func InvokeRequestAll(getFunc PaginatedGetFunc, responseFunc RequestAllResponseFunc, parameters APIRequestParameters) error {
+	r := NewRequestAll(getFunc, responseFunc)
+
+	return r.Invoke(parameters)
 }
