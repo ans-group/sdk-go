@@ -15,7 +15,7 @@ func (s *Service) GetContacts(parameters connection.APIRequestParameters) ([]Con
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, contact := range response.(*PaginatedContacts).Contacts {
+		for _, contact := range response.(*PaginatedContact).Items {
 			contacts = append(contacts, contact)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetContacts(parameters connection.APIRequestParameters) ([]Con
 }
 
 // GetContactsPaginated retrieves a paginated list of contacts
-func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameters) (*PaginatedContacts, error) {
+func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameters) (*PaginatedContact, error) {
 	body, err := s.getContactsPaginatedResponseBody(parameters)
 
-	return NewPaginatedContacts(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedContact(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetContactsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

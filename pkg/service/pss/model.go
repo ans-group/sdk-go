@@ -1,3 +1,5 @@
+//go:generate go run ../../gen/paginated_model_gen.go -package pss -typename Request,Reply -destination model_paginated.go
+
 package pss
 
 import "github.com/ukfast/sdk-go/pkg/connection"

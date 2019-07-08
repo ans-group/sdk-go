@@ -15,7 +15,7 @@ func (s *Service) GetAppliances(parameters connection.APIRequestParameters) ([]A
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, appliance := range response.(*PaginatedAppliances).Appliances {
+		for _, appliance := range response.(*PaginatedAppliance).Items {
 			appliances = append(appliances, appliance)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetAppliances(parameters connection.APIRequestParameters) ([]A
 }
 
 // GetAppliancesPaginated retrieves a paginated list of appliances
-func (s *Service) GetAppliancesPaginated(parameters connection.APIRequestParameters) (*PaginatedAppliances, error) {
+func (s *Service) GetAppliancesPaginated(parameters connection.APIRequestParameters) (*PaginatedAppliance, error) {
 	body, err := s.getAppliancesPaginatedResponseBody(parameters)
 
-	return NewPaginatedAppliances(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedAppliance(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetAppliancesPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -80,7 +80,7 @@ func (s *Service) GetApplianceParameters(applianceID string, parameters connecti
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, parameter := range response.(*PaginatedApplianceParameters).ApplianceParameters {
+		for _, parameter := range response.(*PaginatedApplianceParameter).Items {
 			appParameters = append(appParameters, parameter)
 		}
 	}
@@ -89,10 +89,10 @@ func (s *Service) GetApplianceParameters(applianceID string, parameters connecti
 }
 
 // GetApplianceParametersPaginated retrieves a paginated list of domains
-func (s *Service) GetApplianceParametersPaginated(applianceID string, parameters connection.APIRequestParameters) (*PaginatedApplianceParameters, error) {
+func (s *Service) GetApplianceParametersPaginated(applianceID string, parameters connection.APIRequestParameters) (*PaginatedApplianceParameter, error) {
 	body, err := s.getApplianceParametersPaginatedResponseBody(applianceID, parameters)
 
-	return NewPaginatedApplianceParameters(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedApplianceParameter(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetApplianceParametersPaginated(applianceID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

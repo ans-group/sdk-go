@@ -15,7 +15,7 @@ func (s *Service) GetSites(parameters connection.APIRequestParameters) ([]Site, 
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedSites).Sites {
+		for _, site := range response.(*PaginatedSite).Items {
 			sites = append(sites, site)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetSites(parameters connection.APIRequestParameters) ([]Site, 
 }
 
 // GetSitesPaginated retrieves a paginated list of sites
-func (s *Service) GetSitesPaginated(parameters connection.APIRequestParameters) (*PaginatedSites, error) {
+func (s *Service) GetSitesPaginated(parameters connection.APIRequestParameters) (*PaginatedSite, error) {
 	body, err := s.getSitesPaginatedResponseBody(parameters)
 
-	return NewPaginatedSites(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedSite(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSitesPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

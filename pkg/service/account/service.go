@@ -6,10 +6,8 @@ import (
 
 // AccountService is an interface for managing account
 type AccountService interface {
-	GetContactsTestPaginated(parameters connection.APIRequestParameters) (*PaginatedContacts, error)
-
 	GetContacts(parameters connection.APIRequestParameters) ([]Contact, error)
-	GetContactsPaginated(parameters connection.APIRequestParameters) ([]Contact, error)
+	GetContactsPaginated(parameters connection.APIRequestParameters) (*PaginatedContact, error)
 	GetContact(contactID int) (Contact, error)
 
 	GetDetails() (Details, error)

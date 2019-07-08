@@ -1,6 +1,6 @@
-package account
+//go:generate go run ../../gen/paginated_model_gen.go -package account -typename Contact -destination model_paginated.go
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+package account
 
 type ContactType string
 
@@ -36,19 +36,4 @@ type Credit struct {
 	Type      string `json:"type"`
 	Total     int    `json:"total"`
 	Remaining int    `json:"remaining"`
-}
-
-// PaginatedContacts represents a paginated collection of contacts
-type PaginatedContacts struct {
-	*connection.PaginatedBase
-
-	Contacts []Contact
-}
-
-// NewPaginatedContacts returns a pointer to an initialized PaginatedContacts struct
-func NewPaginatedContacts(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, contacts []Contact) *PaginatedContacts {
-	return &PaginatedContacts{
-		Contacts:      contacts,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
 }

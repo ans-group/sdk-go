@@ -15,7 +15,7 @@ func (s *Service) GetVirtualMachines(parameters connection.APIRequestParameters)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, vm := range response.(*PaginatedVirtualMachines).VirtualMachines {
+		for _, vm := range response.(*PaginatedVirtualMachine).Items {
 			vms = append(vms, vm)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetVirtualMachines(parameters connection.APIRequestParameters)
 }
 
 // GetVirtualMachinesPaginated retrieves a paginated list of vms
-func (s *Service) GetVirtualMachinesPaginated(parameters connection.APIRequestParameters) (*PaginatedVirtualMachines, error) {
+func (s *Service) GetVirtualMachinesPaginated(parameters connection.APIRequestParameters) (*PaginatedVirtualMachine, error) {
 	body, err := s.getVirtualMachinesPaginatedResponseBody(parameters)
 
-	return NewPaginatedVirtualMachines(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedVirtualMachine(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVirtualMachinesPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -350,7 +350,7 @@ func (s *Service) GetVirtualMachineTags(vmID int, parameters connection.APIReque
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, tag := range response.(*PaginatedTags).Tags {
+		for _, tag := range response.(*PaginatedTag).Items {
 			tags = append(tags, tag)
 		}
 	}
@@ -359,10 +359,10 @@ func (s *Service) GetVirtualMachineTags(vmID int, parameters connection.APIReque
 }
 
 // GetVirtualMachineTagsPaginated retrieves a paginated list of domains
-func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*PaginatedTags, error) {
+func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*PaginatedTag, error) {
 	body, err := s.getVirtualMachineTagsPaginatedResponseBody(vmID, parameters)
 
-	return NewPaginatedTags(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedTag(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVirtualMachineTagsPaginated(vmID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

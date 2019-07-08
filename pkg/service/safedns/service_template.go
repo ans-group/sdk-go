@@ -15,7 +15,7 @@ func (s *Service) GetTemplates(parameters connection.APIRequestParameters) ([]Te
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, template := range response.(*PaginatedTemplates).Templates {
+		for _, template := range response.(*PaginatedTemplate).Items {
 			templates = append(templates, template)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetTemplates(parameters connection.APIRequestParameters) ([]Te
 }
 
 // GetTemplatesPaginated retrieves a paginated list of templates
-func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParameters) (*PaginatedTemplates, error) {
+func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParameters) (*PaginatedTemplate, error) {
 	body, err := s.getTemplatesPaginatedResponseBody(parameters)
 
-	return NewPaginatedTemplates(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedTemplate(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetTemplatesPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -183,7 +183,7 @@ func (s *Service) GetTemplateRecords(templateID int, parameters connection.APIRe
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, record := range response.(*PaginatedRecords).Records {
+		for _, record := range response.(*PaginatedRecord).Items {
 			records = append(records, record)
 		}
 	}
@@ -192,10 +192,10 @@ func (s *Service) GetTemplateRecords(templateID int, parameters connection.APIRe
 }
 
 // GetTemplateRecordsPaginated retrieves a paginated list of templates
-func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*PaginatedRecords, error) {
+func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*PaginatedRecord, error) {
 	body, err := s.getTemplateRecordsPaginatedResponseBody(templateID, parameters)
 
-	return NewPaginatedRecords(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedRecord(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetTemplateRecordsPaginated(templateID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

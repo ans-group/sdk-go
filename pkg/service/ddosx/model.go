@@ -1,3 +1,5 @@
+//go:generate go run ../../gen/paginated_model_gen.go -package ddosx -typename Domain,DomainProperty,Record,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSRule -destination model_paginated.go
+
 package ddosx
 
 import (
@@ -340,21 +342,6 @@ type Domain struct {
 	ExternalDNS   *DomainExternalDNS `json:"external_dns"`
 }
 
-// PaginatedDomains represents a paginated collection of domains
-type PaginatedDomains struct {
-	*connection.PaginatedBase
-
-	Domains []Domain
-}
-
-// NewPaginatedDomains returns a pointer to an initialized PaginatedDomains struct
-func NewPaginatedDomains(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, domains []Domain) *PaginatedDomains {
-	return &PaginatedDomains{
-		Domains:       domains,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // DomainExternalDNS represents a DDoSX domain external DNS configuration
 type DomainExternalDNS struct {
 	Verified           bool   `json:"verified"`
@@ -369,21 +356,6 @@ type DomainProperty struct {
 	Value interface{}        `json:"value"`
 }
 
-// PaginatedDomainProperties represents a paginated collection of domain properties
-type PaginatedDomainProperties struct {
-	*connection.PaginatedBase
-
-	DomainProperties []DomainProperty
-}
-
-// NewPaginatedDomainProperties returns a pointer to an initialized PaginatedDomainProperties struct
-func NewPaginatedDomainProperties(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, properties []DomainProperty) *PaginatedDomainProperties {
-	return &PaginatedDomainProperties{
-		DomainProperties: properties,
-		PaginatedBase:    connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // Record represents a DDoSX record
 type Record struct {
 	ID              string     `json:"id"`
@@ -393,21 +365,6 @@ type Record struct {
 	Name            string     `json:"name"`
 	Type            RecordType `json:"type"`
 	Content         string     `json:"content"`
-}
-
-// PaginatedRecords represents a paginated collection of records
-type PaginatedRecords struct {
-	*connection.PaginatedBase
-
-	Records []Record
-}
-
-// NewPaginatedRecords returns a pointer to an initialized PaginatedRecords struct
-func NewPaginatedRecords(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, records []Record) *PaginatedRecords {
-	return &PaginatedRecords{
-		Records:       records,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
 }
 
 // WAF represents a DDoSX WAF configuration
@@ -423,41 +380,11 @@ type WAFRuleSet struct {
 	Active bool           `json:"active"`
 }
 
-// PaginatedWAFRuleSets represents a paginated collection of rulesets
-type PaginatedWAFRuleSets struct {
-	*connection.PaginatedBase
-
-	WAFRuleSets []WAFRuleSet
-}
-
-// NewPaginatedWAFRuleSets returns a pointer to an initialized PaginatedWAFRuleSets struct
-func NewPaginatedWAFRuleSets(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rulesets []WAFRuleSet) *PaginatedWAFRuleSets {
-	return &PaginatedWAFRuleSets{
-		WAFRuleSets:   rulesets,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // WAFRule represents a DDoSX WAF rule
 type WAFRule struct {
 	ID  string               `json:"id"`
 	URI string               `json:"uri"`
 	IP  connection.IPAddress `json:"ip"`
-}
-
-// PaginatedWAFRules represents a paginated collection of rules
-type PaginatedWAFRules struct {
-	*connection.PaginatedBase
-
-	WAFRules []WAFRule
-}
-
-// NewPaginatedWAFRules returns a pointer to an initialized PaginatedWAFRules struct
-func NewPaginatedWAFRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []WAFRule) *PaginatedWAFRules {
-	return &PaginatedWAFRules{
-		WAFRules:      rules,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
 }
 
 // WAFAdvancedRule represents a DDoSX WAF advanced rule
@@ -495,21 +422,6 @@ type ACLGeoIPRule struct {
 	Code string `json:"code"`
 }
 
-// PaginatedACLGeoIPRules represents a paginated collection of rules
-type PaginatedACLGeoIPRules struct {
-	*connection.PaginatedBase
-
-	ACLGeoIPRules []ACLGeoIPRule
-}
-
-// NewPaginatedACLGeoIPRules returns a pointer to an initialized PaginatedACLGeoIPRules struct
-func NewPaginatedACLGeoIPRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []ACLGeoIPRule) *PaginatedACLGeoIPRules {
-	return &PaginatedACLGeoIPRules{
-		ACLGeoIPRules: rules,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // ACLIPRule represents a DDoSX ACL IP rule
 type ACLIPRule struct {
 	ID   string               `json:"id"`
@@ -527,21 +439,6 @@ type CDNRule struct {
 	CacheControlDuration CDNRuleCacheControlDuration `json:"cache_control_duration"`
 	MimeTypes            []string                    `json:"mime_types"`
 	Type                 CDNRuleType                 `json:"type"`
-}
-
-// PaginatedCDNRules represents a paginated collection of rules
-type PaginatedCDNRules struct {
-	*connection.PaginatedBase
-
-	CDNRules []CDNRule
-}
-
-// NewPaginatedCDNRules returns a pointer to an initialized PaginatedCDNRules struct
-func NewPaginatedCDNRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []CDNRule) *PaginatedCDNRules {
-	return &PaginatedCDNRules{
-		CDNRules:      rules,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
 }
 
 // CDNRuleCacheControlDuration represents a DDoSX CDN rule duration
@@ -597,19 +494,4 @@ type HSTSRule struct {
 	IncludeSubdomains bool         `json:"include_subdomains"`
 	Type              HSTSRuleType `json:"type"`
 	RecordName        *string      `json:"record_name"`
-}
-
-// PaginatedHSTSRules represents a paginated collection of rules
-type PaginatedHSTSRules struct {
-	*connection.PaginatedBase
-
-	HSTSRules []HSTSRule
-}
-
-// NewPaginatedHSTSRules returns a pointer to an initialized PaginatedHSTSRules struct
-func NewPaginatedHSTSRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []HSTSRule) *PaginatedHSTSRules {
-	return &PaginatedHSTSRules{
-		HSTSRules:     rules,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
 }

@@ -15,7 +15,7 @@ func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, 
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedHosts).Hosts {
+		for _, host := range response.(*PaginatedHost).Items {
 			hosts = append(hosts, host)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, 
 }
 
 // GetHostsPaginated retrieves a paginated list of hosts
-func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHosts, error) {
+func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error) {
 	body, err := s.getHostsPaginatedResponseBody(parameters)
 
-	return NewPaginatedHosts(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedHost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetHostsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

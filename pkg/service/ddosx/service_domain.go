@@ -18,7 +18,7 @@ func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Doma
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, domain := range response.(*PaginatedDomains).Domains {
+		for _, domain := range response.(*PaginatedDomain).Items {
 			domains = append(domains, domain)
 		}
 	}
@@ -27,10 +27,10 @@ func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Doma
 }
 
 // GetDomainsPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomains, error) {
+func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error) {
 	body, err := s.getDomainsPaginatedResponseBody(parameters)
 
-	return NewPaginatedDomains(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedDomain(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -157,7 +157,7 @@ func (s *Service) GetDomainRecords(domainName string, parameters connection.APIR
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, record := range response.(*PaginatedRecords).Records {
+		for _, record := range response.(*PaginatedRecord).Items {
 			records = append(records, record)
 		}
 	}
@@ -166,10 +166,10 @@ func (s *Service) GetDomainRecords(domainName string, parameters connection.APIR
 }
 
 // GetDomainRecordsPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainRecordsPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedRecords, error) {
+func (s *Service) GetDomainRecordsPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedRecord, error) {
 	body, err := s.getDomainRecordsPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedRecords(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedRecord(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainRecordsPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -325,7 +325,7 @@ func (s *Service) GetDomainProperties(domainName string, parameters connection.A
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, property := range response.(*PaginatedDomainProperties).DomainProperties {
+		for _, property := range response.(*PaginatedDomainProperty).Items {
 			properties = append(properties, property)
 		}
 	}
@@ -334,10 +334,10 @@ func (s *Service) GetDomainProperties(domainName string, parameters connection.A
 }
 
 // GetDomainPropertiesPaginated retrieves a paginated list of domain properties
-func (s *Service) GetDomainPropertiesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedDomainProperties, error) {
+func (s *Service) GetDomainPropertiesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedDomainProperty, error) {
 	body, err := s.getDomainPropertiesPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedDomainProperties(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedDomainProperty(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainPropertiesPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -546,7 +546,7 @@ func (s *Service) GetDomainWAFRuleSets(domainName string, parameters connection.
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, ruleset := range response.(*PaginatedWAFRuleSets).WAFRuleSets {
+		for _, ruleset := range response.(*PaginatedWAFRuleSet).Items {
 			rulesets = append(rulesets, ruleset)
 		}
 	}
@@ -555,10 +555,10 @@ func (s *Service) GetDomainWAFRuleSets(domainName string, parameters connection.
 }
 
 // GetDomainWAFRuleSetsPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainWAFRuleSetsPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedWAFRuleSets, error) {
+func (s *Service) GetDomainWAFRuleSetsPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedWAFRuleSet, error) {
 	body, err := s.getDomainWAFRuleSetsPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedWAFRuleSets(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedWAFRuleSet(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainWAFRuleSetsPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -655,7 +655,7 @@ func (s *Service) GetDomainWAFRules(domainName string, parameters connection.API
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedWAFRules).WAFRules {
+		for _, rule := range response.(*PaginatedWAFRule).Items {
 			rules = append(rules, rule)
 		}
 	}
@@ -664,10 +664,10 @@ func (s *Service) GetDomainWAFRules(domainName string, parameters connection.API
 }
 
 // GetDomainWAFRulesPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainWAFRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedWAFRules, error) {
+func (s *Service) GetDomainWAFRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedWAFRule, error) {
 	body, err := s.getDomainWAFRulesPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedWAFRules(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedWAFRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainWAFRulesPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -814,19 +814,30 @@ func (s *Service) deleteDomainWAFRuleResponseBody(domainName string, ruleID stri
 	})
 }
 
-// PaginatedWAFAdvancedRules represents a paginated collection of rules
-type PaginatedWAFAdvancedRules struct {
-	*connection.PaginatedBase
+// GetDomainWAFAdvancedRules retrieves a list of rules
+func (s *Service) GetDomainWAFAdvancedRules(domainName string, parameters connection.APIRequestParameters) ([]WAFAdvancedRule, error) {
+	var rules []WAFAdvancedRule
 
-	WAFAdvancedRules []WAFAdvancedRule
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDomainWAFAdvancedRulesPaginated(domainName, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, rule := range response.(*PaginatedWAFAdvancedRule).Items {
+			rules = append(rules, rule)
+		}
+	}
+
+	return rules, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// NewPaginatedWAFAdvancedRules returns a pointer to an initialized PaginatedWAFAdvancedRules struct
-func NewPaginatedWAFAdvancedRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []WAFAdvancedRule) *PaginatedWAFAdvancedRules {
-	return &PaginatedWAFAdvancedRules{
-		WAFAdvancedRules: rules,
-		PaginatedBase:    connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
+// GetDomainWAFAdvancedRulesPaginated retrieves a paginated list of domains
+func (s *Service) GetDomainWAFAdvancedRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedWAFAdvancedRule, error) {
+	body, err := s.getDomainWAFAdvancedRulesPaginatedResponseBody(domainName, parameters)
+
+	return NewPaginatedWAFAdvancedRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDomainWAFAdvancedRulesPaginated(domainName, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
 func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFAdvancedRulesResponseBody, error) {
@@ -980,7 +991,7 @@ func (s *Service) GetDomainACLGeoIPRules(domainName string, parameters connectio
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedACLGeoIPRules).ACLGeoIPRules {
+		for _, rule := range response.(*PaginatedACLGeoIPRule).Items {
 			rules = append(rules, rule)
 		}
 	}
@@ -989,10 +1000,10 @@ func (s *Service) GetDomainACLGeoIPRules(domainName string, parameters connectio
 }
 
 // GetDomainACLGeoIPRulesPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainACLGeoIPRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedACLGeoIPRules, error) {
+func (s *Service) GetDomainACLGeoIPRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedACLGeoIPRule, error) {
 	body, err := s.getDomainACLGeoIPRulesPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedACLGeoIPRules(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedACLGeoIPRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainACLGeoIPRulesPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -1195,19 +1206,30 @@ func (s *Service) patchDomainACLGeoIPRulesModeResponseBody(domainName string, re
 	})
 }
 
-// PaginatedACLIPRules represents a paginated collection of rules
-type PaginatedACLIPRules struct {
-	*connection.PaginatedBase
+// GetDomainACLIPRules retrieves a list of rules
+func (s *Service) GetDomainACLIPRules(domainName string, parameters connection.APIRequestParameters) ([]ACLIPRule, error) {
+	var rules []ACLIPRule
 
-	ACLIPRules []ACLIPRule
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDomainACLIPRulesPaginated(domainName, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, rule := range response.(*PaginatedACLIPRule).Items {
+			rules = append(rules, rule)
+		}
+	}
+
+	return rules, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// NewPaginatedACLIPRules returns a pointer to an initialized PaginatedACLIPRules struct
-func NewPaginatedACLIPRules(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, rules []ACLIPRule) *PaginatedACLIPRules {
-	return &PaginatedACLIPRules{
-		ACLIPRules:    rules,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
+// GetDomainACLIPRulesPaginated retrieves a paginated list of domains
+func (s *Service) GetDomainACLIPRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedACLIPRule, error) {
+	body, err := s.getDomainACLIPRulesPaginatedResponseBody(domainName, parameters)
+
+	return NewPaginatedACLIPRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetDomainACLIPRulesPaginated(domainName, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
 func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetACLIPRulesResponseBody, error) {
@@ -1497,7 +1519,7 @@ func (s *Service) GetDomainCDNRules(domainName string, parameters connection.API
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedCDNRules).CDNRules {
+		for _, rule := range response.(*PaginatedCDNRule).Items {
 			rules = append(rules, rule)
 		}
 	}
@@ -1506,10 +1528,10 @@ func (s *Service) GetDomainCDNRules(domainName string, parameters connection.API
 }
 
 // GetDomainCDNRulesPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedCDNRules, error) {
+func (s *Service) GetDomainCDNRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedCDNRule, error) {
 	body, err := s.getDomainCDNRulesPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedCDNRules(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedCDNRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainCDNRulesPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
@@ -1777,7 +1799,7 @@ func (s *Service) GetDomainHSTSRules(domainName string, parameters connection.AP
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedHSTSRules).HSTSRules {
+		for _, rule := range response.(*PaginatedHSTSRule).Items {
 			rules = append(rules, rule)
 		}
 	}
@@ -1786,10 +1808,10 @@ func (s *Service) GetDomainHSTSRules(domainName string, parameters connection.AP
 }
 
 // GetDomainHSTSRulesPaginated retrieves a paginated list of domains
-func (s *Service) GetDomainHSTSRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedHSTSRules, error) {
+func (s *Service) GetDomainHSTSRulesPaginated(domainName string, parameters connection.APIRequestParameters) (*PaginatedHSTSRule, error) {
 	body, err := s.getDomainHSTSRulesPaginatedResponseBody(domainName, parameters)
 
-	return NewPaginatedHSTSRules(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedHSTSRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainHSTSRulesPaginated(domainName, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

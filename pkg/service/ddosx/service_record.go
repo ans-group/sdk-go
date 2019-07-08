@@ -13,7 +13,7 @@ func (s *Service) GetRecords(parameters connection.APIRequestParameters) ([]Reco
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, record := range response.(*PaginatedRecords).Records {
+		for _, record := range response.(*PaginatedRecord).Items {
 			records = append(records, record)
 		}
 	}
@@ -22,10 +22,10 @@ func (s *Service) GetRecords(parameters connection.APIRequestParameters) ([]Reco
 }
 
 // GetRecordsPaginated retrieves a paginated list of domains
-func (s *Service) GetRecordsPaginated(parameters connection.APIRequestParameters) (*PaginatedRecords, error) {
+func (s *Service) GetRecordsPaginated(parameters connection.APIRequestParameters) (*PaginatedRecord, error) {
 	body, err := s.getRecordsPaginatedResponseBody(parameters)
 
-	return NewPaginatedRecords(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedRecord(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetRecordsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

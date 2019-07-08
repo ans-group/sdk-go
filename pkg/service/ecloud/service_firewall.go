@@ -15,7 +15,7 @@ func (s *Service) GetFirewalls(parameters connection.APIRequestParameters) ([]Fi
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, firewall := range response.(*PaginatedFirewalls).Firewalls {
+		for _, firewall := range response.(*PaginatedFirewall).Items {
 			firewalls = append(firewalls, firewall)
 		}
 	}
@@ -24,10 +24,10 @@ func (s *Service) GetFirewalls(parameters connection.APIRequestParameters) ([]Fi
 }
 
 // GetFirewallsPaginated retrieves a paginated list of firewalls
-func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewalls, error) {
+func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewall, error) {
 	body, err := s.getFirewallsPaginatedResponseBody(parameters)
 
-	return NewPaginatedFirewalls(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedFirewall(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetFirewallsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }

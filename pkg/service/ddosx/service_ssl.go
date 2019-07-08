@@ -6,19 +6,30 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// PaginatedSSLs represents a paginated collection of ssls
-type PaginatedSSLs struct {
-	*connection.PaginatedBase
+// GetSSLs retrieves a list of ssls
+func (s *Service) GetSSLs(parameters connection.APIRequestParameters) ([]SSL, error) {
+	var ssls []SSL
 
-	SSLs []SSL
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetSSLsPaginated(p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, ssl := range response.(*PaginatedSSL).Items {
+			ssls = append(ssls, ssl)
+		}
+	}
+
+	return ssls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// NewPaginatedSSLs returns a pointer to an initialized PaginatedSSLs struct
-func NewPaginatedSSLs(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, ssls []SSL) *PaginatedSSLs {
-	return &PaginatedSSLs{
-		SSLs:          ssls,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
+// GetSSLsPaginated retrieves a paginated list of ssls
+func (s *Service) GetSSLsPaginated(parameters connection.APIRequestParameters) (*PaginatedSSL, error) {
+	body, err := s.getSSLsPaginatedResponseBody(parameters)
+
+	return NewPaginatedSSL(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetSSLsPaginated(p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
 func (s *Service) getSSLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSSLsResponseBody, error) {
