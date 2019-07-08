@@ -6,7 +6,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// GetCertificates retrieves a list of sites
+// GetCertificates retrieves a list of certificates
 func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([]Certificate, error) {
 	var sites []Certificate
 
@@ -23,7 +23,7 @@ func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([
 	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetCertificatesPaginated retrieves a paginated list of sites
+// GetCertificatesPaginated retrieves a paginated list of certificates
 func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParameters) (*PaginatedCertificate, error) {
 	body, err := s.getCertificatesPaginatedResponseBody(parameters)
 
