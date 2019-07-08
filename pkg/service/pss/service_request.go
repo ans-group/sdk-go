@@ -71,6 +71,16 @@ func (s *Service) getRequestResponseBody(requestID int) (*GetRequestResponseBody
 	})
 }
 
+// GetRequestReplies is an alias for GetRequestConversation
+func (s *Service) GetRequestReplies(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error) {
+	return s.GetRequestConversation(solutionID, parameters)
+}
+
+// GetRequestRepliesPaginated is an alias for GetRequestConversationPaginated
+func (s *Service) GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error) {
+	return s.GetRequestConversationPaginated(solutionID, parameters)
+}
+
 // GetRequestConversation retrieves a list of replies
 func (s *Service) GetRequestConversation(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error) {
 	var replies []Reply

@@ -9,6 +9,9 @@ type PSSService interface {
 	GetRequests(parameters connection.APIRequestParameters) ([]Request, error)
 	GetRequestsPaginated(parameters connection.APIRequestParameters) (*PaginatedRequest, error)
 	GetRequest(requestID int) (Request, error)
+
+	GetRequestReplies(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error)
+	GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
 	GetRequestConversation(requestID int, parameters connection.APIRequestParameters) ([]Reply, error)
 	GetRequestConversationPaginated(requestID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
 
