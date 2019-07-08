@@ -1,3 +1,5 @@
+//go:generate go run ../../gen/paginated_model_gen.go -package ssl -typename Certificate -destination model_paginated.go
+
 package ssl
 
 import (

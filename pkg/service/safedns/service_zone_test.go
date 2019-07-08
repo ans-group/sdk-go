@@ -85,45 +85,6 @@ func TestGetZones(t *testing.T) {
 	})
 }
 
-func TestGetZonesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		zones, err := s.GetZonesPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "testdomain1.co.uk", zones[0].Name)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetZonesPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetZone(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -437,80 +398,6 @@ func TestGetZoneRecords(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetZoneRecordsPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		records, err := s.GetZoneRecordsPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, records[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetZoneRecordsPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-
-	t.Run("InvalidZoneName_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		_, err := s.GetZoneRecords("", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid zone name", err.Error())
-	})
-
-	t.Run("404_ReturnsZoneNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		_, err := s.GetZoneRecordsPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &ZoneNotFoundError{}, err)
 	})
 }
 
@@ -1018,80 +905,6 @@ func TestGetZoneNotes(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetZoneNotesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		notes, err := s.GetZoneNotesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, notes[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetZoneNotesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-
-	t.Run("InvalidZoneName_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		_, err := s.GetZoneNotes("", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid zone name", err.Error())
-	})
-
-	t.Run("404_ReturnsZoneNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		_, err := s.GetZoneNotesPaginated("testdomain1.co.uk", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &ZoneNotFoundError{}, err)
 	})
 }
 

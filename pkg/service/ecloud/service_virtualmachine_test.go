@@ -91,49 +91,6 @@ func TestGetVirtualMachines(t *testing.T) {
 	})
 }
 
-func TestGetVirtualMachinesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/vms", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		vms, err := s.GetVirtualMachinesPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, vms[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/vms", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetVirtualMachinesPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetVirtualMachine(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -1081,88 +1038,6 @@ func TestGetVirtualMachineTags(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetVirtualMachineTagsPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		tags, err := s.GetVirtualMachineTagsPaginated(123, connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "testkey1", tags[0].Key)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetVirtualMachineTagsPaginated(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-
-	t.Run("InvalidVirtualMachineID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		_, err := s.GetVirtualMachineTags(0, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid virtual machine id", err.Error())
-	})
-
-	t.Run("404_ReturnsVirtualMachineNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		_, err := s.GetVirtualMachineTagsPaginated(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &VirtualMachineNotFoundError{}, err)
 	})
 }
 

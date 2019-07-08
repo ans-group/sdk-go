@@ -84,45 +84,6 @@ func TestGetTemplates(t *testing.T) {
 	})
 }
 
-func TestGetTemplatesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		templates, err := s.GetTemplatesPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, templates[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetTemplatesPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetTemplate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -538,80 +499,6 @@ func TestGetTemplateRecords(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetTemplateRecordsPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		records, err := s.GetTemplateRecordsPaginated(123, connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 456, records[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetTemplateRecordsPaginated(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-
-	t.Run("InvalidTemplateID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		_, err := s.GetTemplateRecords(0, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid template id", err.Error())
-	})
-
-	t.Run("404_ReturnsTemplateNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := NewService(c)
-
-		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		_, err := s.GetTemplateRecordsPaginated(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &TemplateNotFoundError{}, err)
 	})
 }
 

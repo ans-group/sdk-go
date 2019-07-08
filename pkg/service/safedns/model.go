@@ -1,3 +1,5 @@
+//go:generate go run ../../gen/paginated_model_gen.go -package safedns -typename Record,Zone,Note,Template -destination model_paginated.go
+
 package safedns
 
 import (

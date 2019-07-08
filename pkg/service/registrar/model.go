@@ -1,3 +1,5 @@
+//go:generate go run ../../gen/paginated_model_gen.go -package registrar -typename Domain -destination model_paginated.go
+
 package registrar
 
 import "github.com/ukfast/sdk-go/pkg/connection"
