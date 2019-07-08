@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/paginated_model_gen.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter -destination model_paginated.go
 
 package ecloud
 

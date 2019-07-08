@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/paginated_model_gen.go -package ddosx -typename Domain,DomainProperty,Record,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSRule -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package ddosx -typename Domain,DomainProperty,Record,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSRule -destination model_paginated.go
 
 package ddosx
 

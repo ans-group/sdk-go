@@ -11,6 +11,8 @@ type PSSService interface {
 	GetRequest(requestID int) (Request, error)
 	GetRequestConversation(requestID int, parameters connection.APIRequestParameters) ([]Reply, error)
 	GetRequestConversationPaginated(requestID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
+
+	GetReply(replyID int) (Reply, error)
 }
 
 // Service implements PSSService for managing

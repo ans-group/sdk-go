@@ -10,3 +10,12 @@ type RequestNotFoundError struct {
 func (e *RequestNotFoundError) Error() string {
 	return fmt.Sprintf("Request not found with id [%d]", e.ID)
 }
+
+// ReplyNotFoundError indicates a reply was not found
+type ReplyNotFoundError struct {
+	ID int
+}
+
+func (e *ReplyNotFoundError) Error() string {
+	return fmt.Sprintf("Reply not found with id [%d]", e.ID)
+}
