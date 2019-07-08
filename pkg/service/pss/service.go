@@ -1,6 +1,8 @@
 package pss
 
 import (
+	"io"
+
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
@@ -15,7 +17,9 @@ type PSSService interface {
 	GetRequestConversation(requestID int, parameters connection.APIRequestParameters) ([]Reply, error)
 	GetRequestConversationPaginated(requestID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
 
-	GetReply(replyID int) (Reply, error)
+	GetReply(replyID string) (Reply, error)
+
+	DownloadReplyAttachmentFileStream(replyID string, attachmentName string) (contentStream io.ReadCloser, err error)
 }
 
 // Service implements PSSService for managing

@@ -13,9 +13,18 @@ func (e *RequestNotFoundError) Error() string {
 
 // ReplyNotFoundError indicates a reply was not found
 type ReplyNotFoundError struct {
-	ID int
+	ID string
 }
 
 func (e *ReplyNotFoundError) Error() string {
-	return fmt.Sprintf("Reply not found with id [%d]", e.ID)
+	return fmt.Sprintf("Reply not found with id [%s]", e.ID)
+}
+
+// AttachmentNotFoundError indicates a attachment was not found
+type AttachmentNotFoundError struct {
+	Name string
+}
+
+func (e *AttachmentNotFoundError) Error() string {
+	return fmt.Sprintf("Attachment not found with name [%s]", e.Name)
 }
