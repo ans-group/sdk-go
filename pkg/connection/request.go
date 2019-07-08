@@ -23,7 +23,7 @@ func (e *ValidationError) Error() string {
 	return e.Message
 }
 
-type RequestBody interface {
+type APIRequestBody interface {
 	Validatable
 }
 
@@ -45,7 +45,7 @@ func (a *APIRequestBodyDefaultValidator) Validate(v interface{}) *ValidationErro
 type APIRequest struct {
 	Method     string
 	Resource   string
-	Body       RequestBody
+	Body       interface{}
 	Parameters APIRequestParameters
 }
 

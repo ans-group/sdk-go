@@ -1,7 +1,9 @@
 package connection
 
 import (
+	"bytes"
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -184,6 +186,23 @@ func TestAPIConnection_Delete_ExpectedMethod(t *testing.T) {
 	})
 
 	_, err := c.Delete("/some/test/resource", nil)
+
+	assert.Nil(t, err)
+}
+
+func TestAPIConnection_Invoke_WithReader_ExpectedBody(t *testing.T) {
+	testRequestBody := ioutil.NopCloser(bytes.NewReader([]byte("test content")))
+
+	c := NewAPIKeyCredentialsAPIConnection("testkey")
+	c.HTTPClient = test.NewTestClient(func(req *http.Request) (*http.Response, error) {
+		assert.Equal(t, testRequestBody, req.Body)
+
+		return &http.Response{}, nil
+	})
+
+	_, err := c.Invoke(APIRequest{
+		Body: testRequestBody,
+	})
 
 	assert.Nil(t, err)
 }
