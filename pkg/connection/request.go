@@ -172,8 +172,10 @@ func ParseOperator(o string) (APIRequestFilteringOperator, error) {
 	return 0, errors.New("Invalid filtering operator")
 }
 
+// PaginatedGetFunc represents a function which can be called for returning an implementation of Paginated
 type PaginatedGetFunc func(parameters APIRequestParameters) (Paginated, error)
 
+// Paginated represents a paginated API response
 type Paginated interface {
 	TotalPages() int
 	CurrentPage() int
@@ -184,12 +186,14 @@ type Paginated interface {
 	Last() (Paginated, error)
 }
 
+// PaginatedBase implements the Paginated interface, and can be embedded to represent different paginated types
 type PaginatedBase struct {
 	parameters APIRequestParameters
 	pagination APIResponseMetadataPagination
 	getFunc    PaginatedGetFunc
 }
 
+// NewPaginatedBase returns a pointer to an initialised PaginatedBase
 func NewPaginatedBase(parameters APIRequestParameters, pagination APIResponseMetadataPagination, getFunc PaginatedGetFunc) *PaginatedBase {
 	return &PaginatedBase{
 		parameters: parameters,
@@ -198,10 +202,12 @@ func NewPaginatedBase(parameters APIRequestParameters, pagination APIResponseMet
 	}
 }
 
+// TotalPages returns the total number of pages
 func (p *PaginatedBase) TotalPages() int {
 	return p.pagination.TotalPages
 }
 
+// CurrentPage returns the current page
 func (p *PaginatedBase) CurrentPage() int {
 	if p.parameters.Pagination.Page > 0 {
 		return p.parameters.Pagination.Page
@@ -210,16 +216,19 @@ func (p *PaginatedBase) CurrentPage() int {
 	return 1
 }
 
+// Total returns the total number of items for current page
 func (p *PaginatedBase) Total() int {
 	return p.pagination.Total
 }
 
+// First returns the the first page
 func (p *PaginatedBase) First() (Paginated, error) {
 	newParameters := p.parameters.Copy()
 	newParameters.Pagination.Page = 1
 	return p.getFunc(newParameters)
 }
 
+// Previous returns the the previous page, or nil if current page is the first page
 func (p *PaginatedBase) Previous() (Paginated, error) {
 	if p.CurrentPage() <= 1 {
 		return nil, nil
@@ -230,6 +239,7 @@ func (p *PaginatedBase) Previous() (Paginated, error) {
 	return p.getFunc(newParameters)
 }
 
+// Next returns the the next page, or nil if current page is the last page
 func (p *PaginatedBase) Next() (Paginated, error) {
 	if p.CurrentPage() >= p.TotalPages() {
 		return nil, nil
@@ -240,19 +250,23 @@ func (p *PaginatedBase) Next() (Paginated, error) {
 	return p.getFunc(newParameters)
 }
 
+// Last returns the the last page
 func (p *PaginatedBase) Last() (Paginated, error) {
 	newParameters := p.parameters.Copy()
 	newParameters.Pagination.Page = p.TotalPages()
 	return p.getFunc(newParameters)
 }
 
+// RequestAllResponseFunc represents a function which is called after every request within Invoke()
 type RequestAllResponseFunc func(Paginated)
 
+// RequestAll contains a single method Invoke(), which is a convenience method for iterating over paginated API responses
 type RequestAll struct {
 	getFunc      PaginatedGetFunc
 	responseFunc RequestAllResponseFunc
 }
 
+// NewRequestAll returns a pointer to an initialised RequestAll struct
 func NewRequestAll(getFunc PaginatedGetFunc, responseFunc RequestAllResponseFunc) *RequestAll {
 	return &RequestAll{
 		getFunc:      getFunc,
@@ -260,6 +274,7 @@ func NewRequestAll(getFunc PaginatedGetFunc, responseFunc RequestAllResponseFunc
 	}
 }
 
+// Invoke iterates over all pages using provided parameters and the getFunc which RequestAll was intialised with
 func (r *RequestAll) Invoke(parameters APIRequestParameters) error {
 	totalPages := 1
 	for currentPage := 1; currentPage <= totalPages; currentPage++ {
@@ -276,6 +291,7 @@ func (r *RequestAll) Invoke(parameters APIRequestParameters) error {
 	return nil
 }
 
+// InvokeRequestAll is a convenience method for initialising RequestAll and calling Invoke()
 func InvokeRequestAll(getFunc PaginatedGetFunc, responseFunc RequestAllResponseFunc, parameters APIRequestParameters) error {
 	r := NewRequestAll(getFunc, responseFunc)
 
