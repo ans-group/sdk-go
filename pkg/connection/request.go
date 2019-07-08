@@ -178,7 +178,10 @@ type Paginated interface {
 	TotalPages() int
 	CurrentPage() int
 	Total() int
+	First() (Paginated, error)
+	Previous() (Paginated, error)
 	Next() (Paginated, error)
+	Last() (Paginated, error)
 }
 
 type PaginatedBase struct {
