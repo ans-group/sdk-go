@@ -1382,6 +1382,8 @@ func (s *Service) DownloadDomainVerificationFile(domainName string) (content str
 		return "", "", err
 	}
 
+	defer stream.Close()
+
 	bodyBytes, err := ioutil.ReadAll(stream)
 	if err != nil {
 		return "", "", err
