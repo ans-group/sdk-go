@@ -211,6 +211,22 @@ func (p *PaginatedBase) Total() int {
 	return p.pagination.Total
 }
 
+func (p *PaginatedBase) First() (Paginated, error) {
+	newParameters := p.parameters.Copy()
+	newParameters.Pagination.Page = 1
+	return p.getFunc(newParameters)
+}
+
+func (p *PaginatedBase) Previous() (Paginated, error) {
+	if p.CurrentPage() <= 1 {
+		return nil, nil
+	}
+
+	newParameters := p.parameters.Copy()
+	newParameters.Pagination.Page = p.CurrentPage() - 1
+	return p.getFunc(newParameters)
+}
+
 func (p *PaginatedBase) Next() (Paginated, error) {
 	if p.CurrentPage() >= p.TotalPages() {
 		return nil, nil
@@ -218,6 +234,12 @@ func (p *PaginatedBase) Next() (Paginated, error) {
 
 	newParameters := p.parameters.Copy()
 	newParameters.Pagination.Page = p.CurrentPage() + 1
+	return p.getFunc(newParameters)
+}
+
+func (p *PaginatedBase) Last() (Paginated, error) {
+	newParameters := p.parameters.Copy()
+	newParameters.Pagination.Page = p.TotalPages()
 	return p.getFunc(newParameters)
 }
 

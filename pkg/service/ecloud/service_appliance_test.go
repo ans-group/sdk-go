@@ -90,49 +90,6 @@ func TestGetAppliances(t *testing.T) {
 	})
 }
 
-func TestGetAppliancesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/appliances", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		appliances, err := s.GetAppliancesPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", appliances[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/appliances", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetAppliancesPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetAppliance(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -286,89 +243,6 @@ func TestGetApplianceParameters(t *testing.T) {
 		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetApplianceParameters("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetApplianceParametersPaginated(t *testing.T) {
-	t.Run("Single", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		parameters, err := s.GetApplianceParametersPaginated("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Len(t, parameters, 1)
-		assert.Equal(t, "testkey", parameters[0].Key)
-	})
-
-	t.Run("InvalidApplianceID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		_, err := s.GetApplianceParametersPaginated("", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid appliance id", err.Error())
-	})
-
-	t.Run("404_ReturnsApplianceNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		_, err := s.GetApplianceParametersPaginated("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &ApplianceNotFoundError{}, err)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
-
-		_, err := s.GetApplianceParametersPaginated("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())

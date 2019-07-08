@@ -91,49 +91,6 @@ func TestGetPods(t *testing.T) {
 	})
 }
 
-func TestGetPodsPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		pods, err := s.GetPodsPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, pods[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetPodsPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetPod(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -287,64 +244,6 @@ func TestGetPodTemplates(t *testing.T) {
 		c.EXPECT().Get("/ecloud/v1/pods/123/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetPodTemplates(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetPodTemplatesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods/123/templates", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testtemplate1\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		templates, err := s.GetPodTemplatesPaginated(123, connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "testtemplate1", templates[0].Name)
-	})
-
-	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-		_, err := s.GetPodTemplatesPaginated(0, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid pod id", err.Error())
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods/123/templates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetPodTemplatesPaginated(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -718,64 +617,6 @@ func TestGetPodAppliances(t *testing.T) {
 		c.EXPECT().Get("/ecloud/v1/pods/123/appliances", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetPodAppliances(123, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
-func TestGetPodAppliancesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods/123/appliances", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		appliances, err := s.GetPodAppliancesPaginated(123, connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", appliances[0].ID)
-	})
-
-	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-		_, err := s.GetPodAppliancesPaginated(0, connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid pod id", err.Error())
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/pods/123/appliances", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetPodAppliancesPaginated(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())

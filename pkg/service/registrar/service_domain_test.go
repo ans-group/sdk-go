@@ -58,49 +58,6 @@ func TestGetDomains(t *testing.T) {
 	})
 }
 
-func TestGetDomainsPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/registrar/v1/domains", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"example.co.uk\"}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		domains, err := s.GetDomainsPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, "example.co.uk", domains[0].Name)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/registrar/v1/domains", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetDomainsPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetDomain(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

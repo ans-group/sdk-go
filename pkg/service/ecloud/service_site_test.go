@@ -91,49 +91,6 @@ func TestGetSites(t *testing.T) {
 	})
 }
 
-func TestGetSitesPaginated(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/sites", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		sites, err := s.GetSitesPaginated(connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 123, sites[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v1/sites", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
-
-		_, err := s.GetSitesPaginated(connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
-	})
-}
-
 func TestGetSite(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
