@@ -34,7 +34,7 @@ func (m *MockConnection) EXPECT() *MockConnectionMockRecorder {
 }
 
 // Delete mocks base method
-func (m *MockConnection) Delete(arg0 string, arg1 connection.APIRequestBody) (*connection.APIResponse, error) {
+func (m *MockConnection) Delete(arg0 string, arg1 interface{}) (*connection.APIResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
 	ret0, _ := ret[0].(*connection.APIResponse)
@@ -79,7 +79,7 @@ func (mr *MockConnectionMockRecorder) Invoke(arg0 interface{}) *gomock.Call {
 }
 
 // Patch mocks base method
-func (m *MockConnection) Patch(arg0 string, arg1 connection.APIRequestBody) (*connection.APIResponse, error) {
+func (m *MockConnection) Patch(arg0 string, arg1 interface{}) (*connection.APIResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Patch", arg0, arg1)
 	ret0, _ := ret[0].(*connection.APIResponse)
@@ -94,7 +94,7 @@ func (mr *MockConnectionMockRecorder) Patch(arg0, arg1 interface{}) *gomock.Call
 }
 
 // Post mocks base method
-func (m *MockConnection) Post(arg0 string, arg1 connection.APIRequestBody) (*connection.APIResponse, error) {
+func (m *MockConnection) Post(arg0 string, arg1 interface{}) (*connection.APIResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Post", arg0, arg1)
 	ret0, _ := ret[0].(*connection.APIResponse)
@@ -109,7 +109,7 @@ func (mr *MockConnectionMockRecorder) Post(arg0, arg1 interface{}) *gomock.Call 
 }
 
 // Put mocks base method
-func (m *MockConnection) Put(arg0 string, arg1 connection.APIRequestBody) (*connection.APIResponse, error) {
+func (m *MockConnection) Put(arg0 string, arg1 interface{}) (*connection.APIResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Put", arg0, arg1)
 	ret0, _ := ret[0].(*connection.APIResponse)

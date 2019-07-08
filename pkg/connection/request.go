@@ -23,10 +23,6 @@ func (e *ValidationError) Error() string {
 	return e.Message
 }
 
-type APIRequestBody interface {
-	Validatable
-}
-
 // APIRequestBodyDefaultValidator provides convenience method Validate() for
 // validating a struct/item, utilising the validator.v9 package
 type APIRequestBodyDefaultValidator struct {

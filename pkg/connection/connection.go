@@ -21,10 +21,10 @@ const userAgent = "ukfast-sdk-go"
 
 type Connection interface {
 	Get(resource string, parameters APIRequestParameters) (*APIResponse, error)
-	Post(resource string, body APIRequestBody) (*APIResponse, error)
-	Put(resource string, body APIRequestBody) (*APIResponse, error)
-	Patch(resource string, body APIRequestBody) (*APIResponse, error)
-	Delete(resource string, body APIRequestBody) (*APIResponse, error)
+	Post(resource string, body interface{}) (*APIResponse, error)
+	Put(resource string, body interface{}) (*APIResponse, error)
+	Patch(resource string, body interface{}) (*APIResponse, error)
+	Delete(resource string, body interface{}) (*APIResponse, error)
 	Invoke(request APIRequest) (*APIResponse, error)
 }
 
@@ -107,7 +107,7 @@ func (c *APIConnection) Get(resource string, parameters APIRequestParameters) (*
 }
 
 // Post invokes a POST request, returning an APIResponse
-func (c *APIConnection) Post(resource string, body APIRequestBody) (*APIResponse, error) {
+func (c *APIConnection) Post(resource string, body interface{}) (*APIResponse, error) {
 	return c.Invoke(APIRequest{
 		Method:   "POST",
 		Resource: resource,
@@ -116,7 +116,7 @@ func (c *APIConnection) Post(resource string, body APIRequestBody) (*APIResponse
 }
 
 // Put invokes a PUT request, returning an APIResponse
-func (c *APIConnection) Put(resource string, body APIRequestBody) (*APIResponse, error) {
+func (c *APIConnection) Put(resource string, body interface{}) (*APIResponse, error) {
 	return c.Invoke(APIRequest{
 		Method:   "PUT",
 		Resource: resource,
@@ -125,7 +125,7 @@ func (c *APIConnection) Put(resource string, body APIRequestBody) (*APIResponse,
 }
 
 // Patch invokes a PATCH request, returning an APIResponse
-func (c *APIConnection) Patch(resource string, body APIRequestBody) (*APIResponse, error) {
+func (c *APIConnection) Patch(resource string, body interface{}) (*APIResponse, error) {
 	return c.Invoke(APIRequest{
 		Method:   "PATCH",
 		Resource: resource,
@@ -134,7 +134,7 @@ func (c *APIConnection) Patch(resource string, body APIRequestBody) (*APIRespons
 }
 
 // Delete invokes a DELETE request, returning an APIResponse
-func (c *APIConnection) Delete(resource string, body APIRequestBody) (*APIResponse, error) {
+func (c *APIConnection) Delete(resource string, body interface{}) (*APIResponse, error) {
 	return c.Invoke(APIRequest{
 		Method:   "DELETE",
 		Resource: resource,
