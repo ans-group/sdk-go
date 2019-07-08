@@ -35,9 +35,9 @@ func (s *Service) getReplyResponseBody(replyID string) (*GetReplyResponseBody, e
 	})
 }
 
-// DownloadReplyAttachmentFileStream downloads the provided attachment, returning
+// DownloadReplyAttachmentStream downloads the provided attachment, returning
 // a stream of the file contents and an error
-func (s *Service) DownloadReplyAttachmentFileStream(replyID string, attachmentName string) (contentStream io.ReadCloser, err error) {
+func (s *Service) DownloadReplyAttachmentStream(replyID string, attachmentName string) (contentStream io.ReadCloser, err error) {
 	response, err := s.downloadReplyAttachmentResponse(replyID, attachmentName)
 	if err != nil {
 		return nil, err
@@ -67,4 +67,36 @@ func (s *Service) downloadReplyAttachmentResponse(replyID string, attachmentName
 	}
 
 	return response, response.ValidateStatusCode([]int{}, body)
+}
+
+// UploadReplyAttachmentStream uploads the provided attachment
+func (s *Service) UploadReplyAttachmentStream(replyID string, attachmentName string, stream io.Reader) (err error) {
+	_, err = s.uploadReplyAttachmentStreamResponseBody(replyID, attachmentName, stream)
+
+	return err
+}
+
+func (s *Service) uploadReplyAttachmentStreamResponseBody(replyID string, attachmentName string, stream io.Reader) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if replyID == "" {
+		return body, fmt.Errorf("invalid reply id")
+	}
+	if attachmentName == "" {
+		return body, fmt.Errorf("invalid attachment name")
+	}
+	if stream == nil {
+		return body, fmt.Errorf("invalid stream")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/pss/v1/replies/%s/attachments/%s", replyID, attachmentName), stream)
+	if err != nil {
+		return body, err
+	}
+
+	if response.StatusCode == 404 {
+		return body, &ReplyNotFoundError{ID: replyID}
+	}
+
+	return body, response.HandleResponse(body, nil)
 }

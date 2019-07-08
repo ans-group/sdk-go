@@ -95,7 +95,7 @@ func TestGetReply(t *testing.T) {
 	})
 }
 
-func TestDownloadReplyAttachmentFileStream(t *testing.T) {
+func TestDownloadReplyAttachmentStream(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -115,7 +115,7 @@ func TestDownloadReplyAttachmentFileStream(t *testing.T) {
 			Response: response,
 		}, nil)
 
-		contentStream, err := s.DownloadReplyAttachmentFileStream("abc", "test.txt")
+		contentStream, err := s.DownloadReplyAttachmentStream("abc", "test.txt")
 		assert.Nil(t, err)
 
 		content, err := ioutil.ReadAll(contentStream)
@@ -134,7 +134,7 @@ func TestDownloadReplyAttachmentFileStream(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.DownloadReplyAttachmentFileStream("", "test.txt")
+		_, err := s.DownloadReplyAttachmentStream("", "test.txt")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid reply id", err.Error())
@@ -150,7 +150,7 @@ func TestDownloadReplyAttachmentFileStream(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.DownloadReplyAttachmentFileStream("abc", "")
+		_, err := s.DownloadReplyAttachmentStream("abc", "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid attachment name", err.Error())
@@ -168,7 +168,7 @@ func TestDownloadReplyAttachmentFileStream(t *testing.T) {
 
 		c.EXPECT().Get("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.DownloadReplyAttachmentFileStream("abc", "test.txt")
+		_, err := s.DownloadReplyAttachmentStream("abc", "test.txt")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -191,9 +191,123 @@ func TestDownloadReplyAttachmentFileStream(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.DownloadReplyAttachmentFileStream("abc", "test.txt")
+		_, err := s.DownloadReplyAttachmentStream("abc", "test.txt")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &AttachmentNotFoundError{}, err)
+	})
+}
+
+func TestUploadReplyAttachmentStream(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		fileStream := ioutil.NopCloser(bytes.NewReader([]byte("test content")))
+
+		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", fileStream).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", fileStream)
+		assert.Nil(t, err)
+	})
+
+	t.Run("InvalidReplyID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UploadReplyAttachmentStream("", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid reply id", err.Error())
+	})
+
+	t.Run("InvalidAttachmentName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UploadReplyAttachmentStream("abc", "", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid attachment name", err.Error())
+	})
+
+	t.Run("InvalidStream_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", nil)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid stream", err.Error())
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("404_ReturnsAttachmentNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ReplyNotFoundError{}, err)
 	})
 }
