@@ -6,6 +6,24 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
+// CreateRequest creates a new request
+func (s *Service) CreateRequest(req CreateRequestRequest) (int, error) {
+	body, err := s.createRequestResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createRequestResponseBody(req CreateRequestRequest) (*GetRequestResponseBody, error) {
+	body := &GetRequestResponseBody{}
+
+	response, err := s.connection.Post("/pss/v1/requests", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // GetRequests retrieves a list of requests
 func (s *Service) GetRequests(parameters connection.APIRequestParameters) ([]Request, error) {
 	var requests []Request
@@ -58,6 +76,62 @@ func (s *Service) getRequestResponseBody(requestID int) (*GetRequestResponseBody
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/pss/v1/requests/%d", requestID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RequestNotFoundError{ID: requestID}
+		}
+
+		return nil
+	})
+}
+
+// PatchRequest patches a request
+func (s *Service) PatchRequest(requestID int, req PatchRequestRequest) error {
+	_, err := s.patchRequestResponseBody(requestID, req)
+
+	return err
+}
+
+func (s *Service) patchRequestResponseBody(requestID int, req PatchRequestRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if requestID < 1 {
+		return body, fmt.Errorf("invalid request id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/pss/v1/requests/%d", requestID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RequestNotFoundError{ID: requestID}
+		}
+
+		return nil
+	})
+}
+
+// CreateRequestReply creates a new request reply
+func (s *Service) CreateRequestReply(requestID int, req CreateReplyRequest) (string, error) {
+	body, err := s.createRequestReplyResponseBody(requestID, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createRequestReplyResponseBody(requestID int, req CreateReplyRequest) (*GetReplyResponseBody, error) {
+	body := &GetReplyResponseBody{}
+
+	if requestID < 1 {
+		return body, fmt.Errorf("invalid request id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/pss/v1/requests/%d/replies", requestID), &req)
 	if err != nil {
 		return body, err
 	}
