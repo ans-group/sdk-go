@@ -8,10 +8,13 @@ import (
 
 // PSSService is an interface for managing PSS
 type PSSService interface {
+	CreateRequest(req CreateRequestRequest) (int, error)
 	GetRequests(parameters connection.APIRequestParameters) ([]Request, error)
 	GetRequestsPaginated(parameters connection.APIRequestParameters) (*PaginatedRequest, error)
 	GetRequest(requestID int) (Request, error)
+	PatchRequest(requestID int, req PatchRequestRequest) error
 
+	CreateRequestReply(requestID int, req CreateReplyRequest) (string, error)
 	GetRequestReplies(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error)
 	GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
 	GetRequestConversation(requestID int, parameters connection.APIRequestParameters) ([]Reply, error)

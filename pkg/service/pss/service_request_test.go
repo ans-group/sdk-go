@@ -13,6 +13,56 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
+func TestCreateRequest(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateRequestRequest{
+			ContactID: 1,
+			Priority:  RequestPriorityNormal,
+			Subject:   "testsubject",
+			Details:   "testdetails",
+		}
+
+		c.EXPECT().Post("/pss/v1/requests", &expectedRequest).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		id, err := s.CreateRequest(expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateRequest(CreateRequestRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
 func TestGetRequests(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -166,6 +216,180 @@ func TestGetRequest(t *testing.T) {
 		}, nil).Times(1)
 
 		_, err := s.GetRequest(123)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &RequestNotFoundError{}, err)
+	})
+}
+
+func TestPatchRequest(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := PatchRequestRequest{
+			Priority: RequestPriorityHigh,
+		}
+
+		c.EXPECT().Patch("/pss/v1/requests/123", &expectedRequest).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchRequest(123, expectedRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/pss/v1/requests/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchRequest(123, PatchRequestRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchRequest(0, PatchRequestRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid request id", err.Error())
+	})
+
+	t.Run("404_ReturnsRequestNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/pss/v1/requests/123", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchRequest(123, PatchRequestRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &RequestNotFoundError{}, err)
+	})
+}
+
+func TestCreateRequestReply(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateReplyRequest{
+			Author: Author{
+				ID: 456,
+			},
+			Description: "testdescription",
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/replies", &expectedRequest).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc123\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		id, err := s.CreateRequestReply(123, expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "abc123", id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/replies", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateRequestReply(123, CreateReplyRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateRequestReply(0, CreateReplyRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid request id", err.Error())
+	})
+
+	t.Run("404_ReturnsRequestNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/replies", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.CreateRequestReply(123, CreateReplyRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &RequestNotFoundError{}, err)
