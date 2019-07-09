@@ -28,6 +28,18 @@ const (
 	RequestPriorityCritical RequestPriority = "Critical"
 )
 
+var RequestPriorityEnum = []connection.Enum{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
+
+// ParseRequestPriority attempts to parse a RequestPriority from string
+func ParseRequestPriority(s string) (RequestPriority, error) {
+	e, err := connection.ParseEnum(s, RequestPriorityEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(RequestPriority), err
+}
+
 type RequestStatus string
 
 func (s RequestStatus) String() string {
