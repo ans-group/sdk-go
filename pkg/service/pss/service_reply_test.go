@@ -311,3 +311,90 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 		assert.IsType(t, &ReplyNotFoundError{}, err)
 	})
 }
+
+func TestDeleteReplyAttachment(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		c.EXPECT().Delete("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 204,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteReplyAttachment("abc", "test.txt")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		c.EXPECT().Delete("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteReplyAttachment("abc", "test.txt")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidReplyID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		err := s.DeleteReplyAttachment("", "test.txt")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid reply id", err.Error())
+	})
+
+	t.Run("InvalidAttachmentName_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		err := s.DeleteReplyAttachment("abc", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid attachment name", err.Error())
+	})
+
+	t.Run("404_ReturnsReplyAttachmentNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := NewService(c)
+
+		c.EXPECT().Delete("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteReplyAttachment("abc", "test.txt")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &AttachmentNotFoundError{}, err)
+	})
+}

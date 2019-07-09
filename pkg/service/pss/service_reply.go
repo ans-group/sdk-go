@@ -100,3 +100,34 @@ func (s *Service) uploadReplyAttachmentStreamResponseBody(replyID string, attach
 
 	return body, response.HandleResponse(body, nil)
 }
+
+// DeleteReplyAttachment removes a reply attachment
+func (s *Service) DeleteReplyAttachment(replyID string, attachmentName string) error {
+	_, err := s.deleteReplyAttachmentResponseBody(replyID, attachmentName)
+
+	return err
+}
+
+func (s *Service) deleteReplyAttachmentResponseBody(replyID string, attachmentName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if replyID == "" {
+		return body, fmt.Errorf("invalid reply id")
+	}
+	if attachmentName == "" {
+		return body, fmt.Errorf("invalid attachment name")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/pss/v1/replies/%s/attachments/%s", replyID, attachmentName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &AttachmentNotFoundError{Name: attachmentName}
+		}
+
+		return nil
+	})
+}

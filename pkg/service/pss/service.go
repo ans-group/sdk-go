@@ -21,6 +21,7 @@ type PSSService interface {
 
 	DownloadReplyAttachmentStream(replyID string, attachmentName string) (contentStream io.ReadCloser, err error)
 	UploadReplyAttachmentStream(replyID string, attachmentName string, fileStream io.Reader) (err error)
+	DeleteReplyAttachment(replyID string, attachmentName string) error
 }
 
 // Service implements PSSService for managing
