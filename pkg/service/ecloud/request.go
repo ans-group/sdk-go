@@ -59,7 +59,7 @@ type CreateVirtualMachineRequest struct {
 	ExternalIPRequired bool                                   `json:"external_ip_required"`
 	SSHKeys            []string                               `json:"ssh_keys,omitempty"`
 	Parameters         []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
-	Encrypted          bool                                   `json:"encrypted"`
+	Encrypt            bool                                   `json:"encrypt"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
