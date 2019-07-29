@@ -60,6 +60,7 @@ type CreateVirtualMachineRequest struct {
 	SSHKeys            []string                               `json:"ssh_keys,omitempty"`
 	Parameters         []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
 	Encrypt            bool                                   `json:"encrypt"`
+	Role               string                                 `json:"role"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
@@ -133,6 +134,7 @@ type PatchVirtualMachineRequest struct {
 	RAM int `json:"ram,omitempty"`
 	// KV map of hard disks, key being hard disk name, value being size in GB
 	Disks []PatchVirtualMachineRequestDisk `json:"hdd_disks,omitempty"`
+	Role  string                           `json:"role,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
