@@ -11,6 +11,15 @@ func (e *DomainNotFoundError) Error() string {
 	return fmt.Sprintf("Domain not found with name [%s]", e.Name)
 }
 
+// DomainAlreadyVerifiedError indicates a domain is already verified
+type DomainAlreadyVerifiedError struct {
+	Name string
+}
+
+func (e *DomainAlreadyVerifiedError) Error() string {
+	return fmt.Sprintf("Domain already verified with name [%s]", e.Name)
+}
+
 // DomainPropertyNotFoundError indicates a domain property was not found
 type DomainPropertyNotFoundError struct {
 	ID string

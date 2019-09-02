@@ -1428,6 +1428,68 @@ func (s *Service) downloadDomainVerificationFileResponse(domainName string) (*co
 	return response, response.ValidateStatusCode([]int{}, body)
 }
 
+// VerifyDomainDNS verifies a domain via DNS method
+func (s *Service) VerifyDomainDNS(domainName string) error {
+	_, err := s.verifyDomainDNSResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) verifyDomainDNSResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/verify/dns", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{Name: domainName}
+		}
+		if response.StatusCode == 400 {
+			return &DomainAlreadyVerifiedError{Name: domainName}
+		}
+
+		return nil
+	})
+}
+
+// VerifyDomainFileUpload verifies a domain via file-upload method
+func (s *Service) VerifyDomainFileUpload(domainName string) error {
+	_, err := s.verifyDomainFileUploadResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) verifyDomainFileUploadResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/verify/file-upload", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{Name: domainName}
+		}
+		if response.StatusCode == 400 {
+			return &DomainAlreadyVerifiedError{Name: domainName}
+		}
+
+		return nil
+	})
+}
+
 // AddDomainCDNConfiguration adds CDN configuration to a domain
 func (s *Service) AddDomainCDNConfiguration(domainName string) error {
 	_, err := s.addDomainCDNConfigurationResponseBody(domainName)

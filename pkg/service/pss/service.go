@@ -28,7 +28,7 @@ type PSSService interface {
 }
 
 // Service implements PSSService for managing
-// PSS certificates via the UKFast API
+// PSS via the UKFast API
 type Service struct {
 	connection connection.Connection
 }

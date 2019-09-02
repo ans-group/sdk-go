@@ -81,6 +81,8 @@ type DDoSXService interface {
 
 	DownloadDomainVerificationFile(domainName string) (string, string, error)
 	DownloadDomainVerificationFileStream(domainName string) (io.ReadCloser, string, error)
+	VerifyDomainDNS(domainName string) error
+	VerifyDomainFileUpload(domainName string) error
 
 	AddDomainCDNConfiguration(domainName string) error
 	DeleteDomainCDNConfiguration(domainName string) error
