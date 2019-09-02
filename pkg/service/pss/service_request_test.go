@@ -25,10 +25,12 @@ func TestCreateRequest(t *testing.T) {
 		}
 
 		expectedRequest := CreateRequestRequest{
-			ContactID: 1,
-			Priority:  RequestPriorityNormal,
-			Subject:   "testsubject",
-			Details:   "testdetails",
+			Author: Author{
+				ID: 1,
+			},
+			Priority: RequestPriorityNormal,
+			Subject:  "testsubject",
+			Details:  "testdetails",
 		}
 
 		c.EXPECT().Post("/pss/v1/requests", &expectedRequest).Return(&connection.APIResponse{
