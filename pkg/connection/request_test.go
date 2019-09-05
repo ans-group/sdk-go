@@ -77,7 +77,7 @@ func TestAPIRequestParameters_WithFilter_AddsFilter(t *testing.T) {
 	assert.Equal(t, f, params.Filtering[0])
 }
 
-func TestAPIRequestParameters_WithFilters_AddsFilters(t *testing.T) {
+func TestAPIRequestParameters_WithUnpackedFilters_AddsFilters(t *testing.T) {
 	f1 := APIRequestFiltering{
 		Property: "testproperty1",
 		Operator: EQOperator,
@@ -92,7 +92,28 @@ func TestAPIRequestParameters_WithFilters_AddsFilters(t *testing.T) {
 	f := []APIRequestFiltering{f1, f2}
 	params := APIRequestParameters{}
 
-	params.WithFilters(f)
+	params.WithFilters(f...)
+
+	assert.Len(t, params.Filtering, 2)
+	assert.Equal(t, f1, params.Filtering[0])
+	assert.Equal(t, f2, params.Filtering[1])
+}
+
+func TestAPIRequestParameters_WithPackedFilters_AddsFilters(t *testing.T) {
+	f1 := APIRequestFiltering{
+		Property: "testproperty1",
+		Operator: EQOperator,
+		Value:    []string{"testvalue1"},
+	}
+	f2 := APIRequestFiltering{
+		Property: "testproperty2",
+		Operator: EQOperator,
+		Value:    []string{"testvalue2"},
+	}
+
+	params := APIRequestParameters{}
+
+	params.WithFilters(f1, f2)
 
 	assert.Len(t, params.Filtering, 2)
 	assert.Equal(t, f1, params.Filtering[0])

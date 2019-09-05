@@ -71,10 +71,8 @@ func (p *APIRequestParameters) WithFilter(filter APIRequestFiltering) *APIReques
 }
 
 // WithFilters is a fluent method for adding a set of filters to request parameters
-func (p *APIRequestParameters) WithFilters(filters []APIRequestFiltering) *APIRequestParameters {
-	for _, filter := range filters {
-		p.Filtering = append(p.Filtering, filter)
-	}
+func (p *APIRequestParameters) WithFilters(filters ...APIRequestFiltering) *APIRequestParameters {
+	p.Filtering = append(p.Filtering, filters...)
 
 	return p
 }
