@@ -59,9 +59,9 @@ type CreateVirtualMachineRequest struct {
 	ExternalIPRequired bool                                   `json:"external_ip_required"`
 	SSHKeys            []string                               `json:"ssh_keys,omitempty"`
 	Parameters         []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
-	Encrypt            bool                                   `json:"encrypt"`
-	Role               string                                 `json:"role"`
-	BootstrapScript    string                                 `json:"bootstrap_script"`
+	Encrypt            *bool                                  `json:"encrypt,omitempty"`
+	Role               string                                 `json:"role,omitempty"`
+	BootstrapScript    string                                 `json:"bootstrap_script,omitempty"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
