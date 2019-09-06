@@ -61,6 +61,7 @@ type CreateVirtualMachineRequest struct {
 	Parameters         []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
 	Encrypt            bool                                   `json:"encrypt"`
 	Role               string                                 `json:"role"`
+	BootstrapScript    string                                 `json:"bootstrap_script"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
