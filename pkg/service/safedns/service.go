@@ -27,14 +27,12 @@ type SafeDNSService interface {
 	GetTemplatesPaginated(parameters connection.APIRequestParameters) (*PaginatedTemplate, error)
 	GetTemplate(templateID int) (Template, error)
 	CreateTemplate(req CreateTemplateRequest) (int, error)
-	UpdateTemplate(template Template) (int, error)
 	PatchTemplate(templateID int, patch PatchTemplateRequest) (int, error)
 	DeleteTemplate(templateID int) error
 	GetTemplateRecords(templateID int, parameters connection.APIRequestParameters) ([]Record, error)
 	GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*PaginatedRecord, error)
 	GetTemplateRecord(templateID int, recordID int) (Record, error)
 	CreateTemplateRecord(templateID int, req CreateRecordRequest) (int, error)
-	UpdateTemplateRecord(templateID int, record Record) (int, error)
 	PatchTemplateRecord(templateID int, recordID int, patch PatchRecordRequest) (int, error)
 	DeleteTemplateRecord(templateID int, recordID int) error
 }
