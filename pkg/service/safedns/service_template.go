@@ -89,34 +89,6 @@ func (s *Service) createTemplateResponseBody(req CreateTemplateRequest) (*GetTem
 	return body, response.HandleResponse(body, nil)
 }
 
-// UpdateTemplate updates a SafeDNS template
-func (s *Service) UpdateTemplate(template Template) (int, error) {
-	body, err := s.updateTemplateResponseBody(template)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) updateTemplateResponseBody(template Template) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
-
-	if template.ID < 1 {
-		return body, fmt.Errorf("invalid template id")
-	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/safedns/v1/templates/%d", template.ID), &template)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TemplateNotFoundError{TemplateID: template.ID}
-		}
-
-		return nil
-	})
-}
-
 // PatchTemplate patches a SafeDNS template
 func (s *Service) PatchTemplate(templateID int, patch PatchTemplateRequest) (int, error) {
 	body, err := s.patchTemplateResponseBody(templateID, patch)
@@ -131,8 +103,7 @@ func (s *Service) patchTemplateResponseBody(templateID int, patch PatchTemplateR
 		return body, fmt.Errorf("invalid template id")
 	}
 
-	// Currently uses PUT
-	response, err := s.connection.Put(fmt.Sprintf("/safedns/v1/templates/%d", templateID), &patch)
+	response, err := s.connection.Patch(fmt.Sprintf("/safedns/v1/templates/%d", templateID), &patch)
 	if err != nil {
 		return body, err
 	}
@@ -280,37 +251,6 @@ func (s *Service) createTemplateRecordResponseBody(templateID int, req CreateRec
 	})
 }
 
-// UpdateTemplateRecord updates a SafeDNS template record
-func (s *Service) UpdateTemplateRecord(templateID int, record Record) (int, error) {
-	body, err := s.updateTemplateRecordResponseBody(templateID, record)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) updateTemplateRecordResponseBody(templateID int, record Record) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
-
-	if templateID < 1 {
-		return body, fmt.Errorf("invalid template id")
-	}
-	if record.ID < 1 {
-		return body, fmt.Errorf("invalid record id")
-	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, record.ID), &record)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TemplateRecordNotFoundError{TemplateID: templateID, RecordID: record.ID}
-		}
-
-		return nil
-	})
-}
-
 // PatchTemplateRecord patches a SafeDNS template record
 func (s *Service) PatchTemplateRecord(templateID int, recordID int, patch PatchRecordRequest) (int, error) {
 	body, err := s.patchTemplateRecordResponseBody(templateID, recordID, patch)
@@ -328,8 +268,7 @@ func (s *Service) patchTemplateRecordResponseBody(templateID int, recordID int, 
 		return body, fmt.Errorf("invalid record id")
 	}
 
-	// Currently uses PUT
-	response, err := s.connection.Put(fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, recordID), &patch)
+	response, err := s.connection.Patch(fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, recordID), &patch)
 	if err != nil {
 		return body, err
 	}

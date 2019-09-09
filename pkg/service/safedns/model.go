@@ -58,17 +58,12 @@ type Record struct {
 
 	ID         int                 `json:"id"`
 	TemplateID int                 `json:"template_id"`
-	Name       string              `json:"name" validate:"required"`
+	Name       string              `json:"name"`
 	Type       RecordType          `json:"type"`
-	Content    string              `json:"content" validate:"required"`
+	Content    string              `json:"content"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 	TTL        RecordTTL           `json:"ttl"`
 	Priority   int                 `json:"priority"`
-}
-
-// Validate returns an error if struct properties are missing/invalid
-func (c *Record) Validate() *connection.ValidationError {
-	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
 
 // Note represents a SafeDNS note
@@ -85,12 +80,7 @@ type Template struct {
 	connection.APIRequestBodyDefaultValidator
 
 	ID        int             `json:"id"`
-	Name      string          `json:"name" validate:"required"`
+	Name      string          `json:"name"`
 	Default   bool            `json:"default"`
 	CreatedAt connection.Date `json:"created_at"`
-}
-
-// Validate returns an error if struct properties are missing/invalid
-func (c *Template) Validate() *connection.ValidationError {
-	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
