@@ -35,6 +35,7 @@ type SafeDNSService interface {
 	CreateTemplateRecord(templateID int, req CreateRecordRequest) (int, error)
 	PatchTemplateRecord(templateID int, recordID int, patch PatchRecordRequest) (int, error)
 	DeleteTemplateRecord(templateID int, recordID int) error
+	GetSettings() (Settings, error)
 }
 
 // Service implements SafeDNSService for managing

@@ -54,8 +54,6 @@ type Zone struct {
 
 // Record represents a SafeDNS record
 type Record struct {
-	connection.APIRequestBodyDefaultValidator
-
 	ID         int                 `json:"id"`
 	TemplateID int                 `json:"template_id"`
 	Name       string              `json:"name"`
@@ -77,10 +75,34 @@ type Note struct {
 
 // Template represents a SafeDNS template
 type Template struct {
-	connection.APIRequestBodyDefaultValidator
-
 	ID        int             `json:"id"`
 	Name      string          `json:"name"`
 	Default   bool            `json:"default"`
 	CreatedAt connection.Date `json:"created_at"`
+}
+
+// Settings represents SafeDNS account settings/configuration
+type Settings struct {
+	ID                  int                `json:"id"`
+	ResellerID          int                `json:"reseller_id"`
+	Email               string             `json:"email"`
+	Nameservers         []Nameserver       `json:"nameservers"`
+	CustomSOAAllowed    bool               `json:"custom_soa_allowed"`
+	CustomBaseNSAllowed bool               `json:"custom_base_ns_allowed"`
+	CustomAXFR          CustomAXFRSettings `json:"custom_axfr"`
+	DelegationAllowed   bool               `json:"delegation_allowed"`
+	Product             string             `json:"product"`
+}
+
+// Nameserver represents a SafeDNS nameserver
+type Nameserver struct {
+	Name string               `json:"name"`
+	IP   connection.IPAddress `json:"ip"`
+}
+
+// CustomAXFRSettings represents SafeDNS account AXFR settings
+type CustomAXFRSettings struct {
+	Allowed bool                   `json:"allowed"`
+	Name    []string               `json:"name"`
+	IP      []connection.IPAddress `json:"ip"`
 }
