@@ -57,3 +57,10 @@ type GetTemplateResponseBody struct {
 
 	Data Template `json:"data"`
 }
+
+// GetSettingsResponseBody represents the API response body from the GetSettings resource
+type GetSettingsResponseBody struct {
+	connection.APIResponseBody
+
+	Data Settings `json:"data"`
+}
