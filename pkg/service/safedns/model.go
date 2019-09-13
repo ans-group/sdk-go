@@ -84,7 +84,6 @@ type Template struct {
 // Settings represents SafeDNS account settings/configuration
 type Settings struct {
 	ID                  int                `json:"id"`
-	ResellerID          int                `json:"reseller_id"`
 	Email               string             `json:"email"`
 	Nameservers         []Nameserver       `json:"nameservers"`
 	CustomSOAAllowed    bool               `json:"custom_soa_allowed"`
