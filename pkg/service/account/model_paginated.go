@@ -17,3 +17,18 @@ func NewPaginatedContact(getFunc connection.PaginatedGetFunc, parameters connect
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedInvoice represents a paginated collection of Invoice
+type PaginatedInvoice struct {
+	*connection.PaginatedBase
+
+	Items []Invoice
+}
+
+// NewPaginatedInvoice returns a pointer to an initialized PaginatedInvoice struct
+func NewPaginatedInvoice(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Invoice) *PaginatedInvoice {
+	return &PaginatedInvoice{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
