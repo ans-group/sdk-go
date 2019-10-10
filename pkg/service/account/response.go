@@ -29,3 +29,17 @@ type GetCreditsResponseBody struct {
 
 	Data []Credit `json:"data"`
 }
+
+// GetInvoicesResponseBody represents the API response body from the GetInvoices resource
+type GetInvoicesResponseBody struct {
+	connection.APIResponseBody
+
+	Data []Invoice `json:"data"`
+}
+
+// GetInvoiceResponseBody represents the API response body from the GetInvoice resource
+type GetInvoiceResponseBody struct {
+	connection.APIResponseBody
+
+	Data Invoice `json:"data"`
+}

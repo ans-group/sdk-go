@@ -1,6 +1,8 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package account -typename Contact -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package account -typename Contact,Invoice -destination model_paginated.go
 
 package account
+
+import "github.com/ukfast/sdk-go/pkg/connection"
 
 type ContactType string
 
@@ -36,4 +38,14 @@ type Credit struct {
 	Type      string `json:"type"`
 	Total     int    `json:"total"`
 	Remaining int    `json:"remaining"`
+}
+
+// Invoice represents a UKFast account invoice
+type Invoice struct {
+	ID    int             `json:"id"`
+	Date  connection.Date `json:"date"`
+	Paid  bool            `json:"paid"`
+	Net   float32         `json:"net"`
+	VAT   float32         `json:"vat"`
+	Gross float32         `json:"gross"`
 }
