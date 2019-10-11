@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package account -typename Contact,Invoice -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package account -typename Contact,Invoice,InvoiceQuery -destination model_paginated.go
 
 package account
 
@@ -48,4 +48,15 @@ type Invoice struct {
 	Net   float32         `json:"net"`
 	VAT   float32         `json:"vat"`
 	Gross float32         `json:"gross"`
+}
+
+// InvoiceQuery represents a UKFast account invoice query
+type InvoiceQuery struct {
+	ID               int     `json:"id"`
+	ContactID        int     `json:"contact_id"`
+	Amount           float32 `json:"amount"`
+	WhatWasExpected  string  `json:"what_was_expected"`
+	WhatWasReceived  string  `json:"what_was_received"`
+	ProposedSolution string  `json:"proposed_solution"`
+	InvoiceIDs       []int   `json:"invoice_ids"`
 }

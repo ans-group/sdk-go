@@ -43,3 +43,17 @@ type GetInvoiceResponseBody struct {
 
 	Data Invoice `json:"data"`
 }
+
+// GetInvoiceQueriesResponseBody represents the API response body from the GetInvoiceQueries resource
+type GetInvoiceQueriesResponseBody struct {
+	connection.APIResponseBody
+
+	Data []InvoiceQuery `json:"data"`
+}
+
+// GetInvoiceQueryResponseBody represents the API response body from the GetInvoiceQuery resource
+type GetInvoiceQueryResponseBody struct {
+	connection.APIResponseBody
+
+	Data InvoiceQuery `json:"data"`
+}
