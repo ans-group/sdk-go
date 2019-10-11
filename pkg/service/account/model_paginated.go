@@ -32,3 +32,18 @@ func NewPaginatedInvoice(getFunc connection.PaginatedGetFunc, parameters connect
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedInvoiceQuery represents a paginated collection of InvoiceQuery
+type PaginatedInvoiceQuery struct {
+	*connection.PaginatedBase
+
+	Items []InvoiceQuery
+}
+
+// NewPaginatedInvoiceQuery returns a pointer to an initialized PaginatedInvoiceQuery struct
+func NewPaginatedInvoiceQuery(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []InvoiceQuery) *PaginatedInvoiceQuery {
+	return &PaginatedInvoiceQuery{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
