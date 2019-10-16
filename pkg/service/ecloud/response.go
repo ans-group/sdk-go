@@ -169,3 +169,17 @@ type GetApplianceParametersResponseBody struct {
 
 	Data []ApplianceParameter `json:"data"`
 }
+
+// GetActiveDirectoryDomainsResponseBody represents the API response body from the GetActiveDirectoryDomains resource
+type GetActiveDirectoryDomainsResponseBody struct {
+	connection.APIResponseBody
+
+	Data []ActiveDirectoryDomain `json:"data"`
+}
+
+// GetActiveDirectoryDomainResponseBody represents the API response body from the GetActiveDirectoryDomain resource
+type GetActiveDirectoryDomainResponseBody struct {
+	connection.APIResponseBody
+
+	Data ActiveDirectoryDomain `json:"data"`
+}

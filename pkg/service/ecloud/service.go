@@ -99,6 +99,10 @@ type ECloudService interface {
 
 	// Credit
 	GetCredits(parameters connection.APIRequestParameters) ([]account.Credit, error)
+
+	GetActiveDirectoryDomains(parameters connection.APIRequestParameters) ([]ActiveDirectoryDomain, error)
+	GetActiveDirectoryDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedActiveDirectoryDomain, error)
+	GetActiveDirectoryDomain(domainID int) (ActiveDirectoryDomain, error)
 }
 
 // Service implements ECloudService for managing

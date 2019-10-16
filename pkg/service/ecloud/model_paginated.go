@@ -182,3 +182,18 @@ func NewPaginatedApplianceParameter(getFunc connection.PaginatedGetFunc, paramet
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedActiveDirectoryDomain represents a paginated collection of ActiveDirectoryDomain
+type PaginatedActiveDirectoryDomain struct {
+	*connection.PaginatedBase
+
+	Items []ActiveDirectoryDomain
+}
+
+// NewPaginatedActiveDirectoryDomain returns a pointer to an initialized PaginatedActiveDirectoryDomain struct
+func NewPaginatedActiveDirectoryDomain(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ActiveDirectoryDomain) *PaginatedActiveDirectoryDomain {
+	return &PaginatedActiveDirectoryDomain{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
