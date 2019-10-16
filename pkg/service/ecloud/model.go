@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain -destination model_paginated.go
 
 package ecloud
 
@@ -258,4 +258,10 @@ type ApplianceParameter struct {
 	Description    string `json:"description"`
 	Required       bool   `json:"required"`
 	ValidationRule string `json:"validation_rule"`
+}
+
+// ActiveDirectoryDomain represents an eCloud active directory domain
+type ActiveDirectoryDomain struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }

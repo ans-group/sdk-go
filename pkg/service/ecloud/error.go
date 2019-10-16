@@ -91,3 +91,12 @@ type ApplianceNotFoundError struct {
 func (e *ApplianceNotFoundError) Error() string {
 	return fmt.Sprintf("appliance not found with ID [%s]", e.ID)
 }
+
+// ActiveDirectoryDomainNotFoundError indicates an Active Directory Domain was not found
+type ActiveDirectoryDomainNotFoundError struct {
+	ID int
+}
+
+func (e *ActiveDirectoryDomainNotFoundError) Error() string {
+	return fmt.Sprintf("domain not found with ID [%d]", e.ID)
+}
