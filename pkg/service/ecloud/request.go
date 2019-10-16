@@ -43,25 +43,26 @@ type CreateVirtualMachineRequest struct {
 	// Size in GB
 	RAM int `json:"ram" validate:"required"`
 	// Size in GB
-	HDD                int                                    `json:"hdd,omitempty"`
-	Disks              []CreateVirtualMachineRequestDisk      `json:"hdd_disks,omitempty"`
-	Name               string                                 `json:"name,omitempty"`
-	ComputerName       string                                 `json:"computername,omitempty"`
-	Tags               []CreateTagRequest                     `json:"tags,omitempty"`
-	Backup             bool                                   `json:"backup"`
-	Support            bool                                   `json:"support"`
-	Monitoring         bool                                   `json:"monitoring"`
-	MonitoringContacts []int                                  `json:"monitoring_contacts"`
-	SolutionID         int                                    `json:"solution_id,omitempty"`
-	DatastoreID        int                                    `json:"datastore_id,omitempty"`
-	SiteID             int                                    `json:"site_id,omitempty"`
-	NetworkID          int                                    `json:"network_id,omitempty"`
-	ExternalIPRequired bool                                   `json:"external_ip_required"`
-	SSHKeys            []string                               `json:"ssh_keys,omitempty"`
-	Parameters         []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
-	Encrypt            *bool                                  `json:"encrypt,omitempty"`
-	Role               string                                 `json:"role,omitempty"`
-	BootstrapScript    string                                 `json:"bootstrap_script,omitempty"`
+	HDD                     int                                    `json:"hdd,omitempty"`
+	Disks                   []CreateVirtualMachineRequestDisk      `json:"hdd_disks,omitempty"`
+	Name                    string                                 `json:"name,omitempty"`
+	ComputerName            string                                 `json:"computername,omitempty"`
+	Tags                    []CreateTagRequest                     `json:"tags,omitempty"`
+	Backup                  bool                                   `json:"backup"`
+	Support                 bool                                   `json:"support"`
+	Monitoring              bool                                   `json:"monitoring"`
+	MonitoringContacts      []int                                  `json:"monitoring_contacts"`
+	SolutionID              int                                    `json:"solution_id,omitempty"`
+	DatastoreID             int                                    `json:"datastore_id,omitempty"`
+	SiteID                  int                                    `json:"site_id,omitempty"`
+	NetworkID               int                                    `json:"network_id,omitempty"`
+	ExternalIPRequired      bool                                   `json:"external_ip_required"`
+	SSHKeys                 []string                               `json:"ssh_keys,omitempty"`
+	Parameters              []CreateVirtualMachineRequestParameter `json:"parameters,omitempty"`
+	Encrypt                 *bool                                  `json:"encrypt,omitempty"`
+	Role                    string                                 `json:"role,omitempty"`
+	BootstrapScript         string                                 `json:"bootstrap_script,omitempty"`
+	ActiveDirectoryDomainID int                                    `json:"ad_domain_id,omitempty"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
