@@ -59,11 +59,8 @@ func (c *CreateRecordRequest) Validate() *connection.ValidationError {
 type CreateNoteRequest struct {
 	connection.APIRequestBodyDefaultValidator
 
-	DomainID int    `json:"domain_id,omitempty"`
-	RecordID int    `json:"record_id,omitempty"`
-	UserID   int    `json:"user_id,omitempty"`
-	Notes    string `json:"notes" validate:"required"`
-	IP       string `json:"ip,omitempty"`
+	ContactID int    `json:"contact_id,omitempty"`
+	Notes     string `json:"notes" validate:"required"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
