@@ -17,7 +17,7 @@ func (c *CreateZoneRequest) Validate() *connection.ValidationError {
 
 // PatchZoneRequest represents a SafeDNS zone patch request
 type PatchZoneRequest struct {
-	Description string `json:"default,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
