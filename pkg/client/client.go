@@ -9,6 +9,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/registrar"
 	"github.com/ukfast/sdk-go/pkg/service/safedns"
 	"github.com/ukfast/sdk-go/pkg/service/ssl"
+	"github.com/ukfast/sdk-go/pkg/service/storage"
 )
 
 type Client interface {
@@ -19,6 +20,7 @@ type Client interface {
 	AccountService() account.AccountService
 	RegistrarService() registrar.RegistrarService
 	PSSService() pss.PSSService
+	StorageService() storage.StorageService
 }
 
 type UKFastClient struct {
@@ -57,4 +59,8 @@ func (c *UKFastClient) RegistrarService() registrar.RegistrarService {
 
 func (c *UKFastClient) PSSService() pss.PSSService {
 	return pss.NewService(c.connection)
+}
+
+func (c *UKFastClient) StorageService() storage.StorageService {
+	return storage.NewService(c.connection)
 }
