@@ -8,7 +8,16 @@ import (
 type LTaaSService interface {
 	GetDomains(parameters connection.APIRequestParameters) ([]Domain, error)
 	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
-	GetDomain(domainID int) (Domain, error)
+	GetDomain(domainID string) (Domain, error)
+
+	GetTests(parameters connection.APIRequestParameters) ([]Test, error)
+	GetTestsPaginated(parameters connection.APIRequestParameters) (*PaginatedTest, error)
+	GetTest(testID string) (Test, error)
+
+	GetJobs(parameters connection.APIRequestParameters) ([]Job, error)
+	GetJobsPaginated(parameters connection.APIRequestParameters) (*PaginatedJob, error)
+	GetJob(testID string) (Job, error)
+	GetJobResults(jobID string) (JobResults, error)
 }
 
 // Service implements LTaaSService for managing

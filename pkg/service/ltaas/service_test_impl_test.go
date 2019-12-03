@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetDomains(t *testing.T) {
+func TestGetTests(t *testing.T) {
 	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetDomains(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ltaas/v1/domains", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ltaas/v1/tests", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		domains, err := s.GetDomains(connection.APIRequestParameters{})
+		tests, err := s.GetTests(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, domains, 1)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", domains[0].ID)
+		assert.Len(t, tests, 1)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", tests[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetDomains(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ltaas/v1/domains", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/ltaas/v1/tests", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetDomains(connection.APIRequestParameters{})
+		_, err := s.GetTests(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetDomain(t *testing.T) {
+func TestGetTest(t *testing.T) {
 	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ltaas/v1/tests/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		domain, err := s.GetDomain("00000000-0000-0000-0000-000000000000")
+		test, err := s.GetTest("00000000-0000-0000-0000-000000000000")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", domain.ID)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", test.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/ltaas/v1/tests/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetDomain("00000000-0000-0000-0000-000000000000")
+		_, err := s.GetTest("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidDomainID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidTestID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetDomain(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetDomain("")
+		_, err := s.GetTest("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid domain id", err.Error())
+		assert.Equal(t, "invalid test id", err.Error())
 	})
 
-	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTestNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,16 +125,16 @@ func TestGetDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ltaas/v1/tests/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetDomain("00000000-0000-0000-0000-000000000000")
+		_, err := s.GetTest("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &DomainNotFoundError{}, err)
+		assert.IsType(t, &TestNotFoundError{}, err)
 	})
 }

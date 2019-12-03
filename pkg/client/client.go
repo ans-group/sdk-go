@@ -5,6 +5,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/account"
 	"github.com/ukfast/sdk-go/pkg/service/ddosx"
 	"github.com/ukfast/sdk-go/pkg/service/ecloud"
+	"github.com/ukfast/sdk-go/pkg/service/ltaas"
 	"github.com/ukfast/sdk-go/pkg/service/pss"
 	"github.com/ukfast/sdk-go/pkg/service/registrar"
 	"github.com/ukfast/sdk-go/pkg/service/safedns"
@@ -21,6 +22,7 @@ type Client interface {
 	RegistrarService() registrar.RegistrarService
 	PSSService() pss.PSSService
 	StorageService() storage.StorageService
+	LTaaSService() ltaas.LTaaSService
 }
 
 type UKFastClient struct {
@@ -63,4 +65,8 @@ func (c *UKFastClient) PSSService() pss.PSSService {
 
 func (c *UKFastClient) StorageService() storage.StorageService {
 	return storage.NewService(c.connection)
+}
+
+func (c *UKFastClient) LTaaSService() ltaas.LTaaSService {
+	return ltaas.NewService(c.connection)
 }

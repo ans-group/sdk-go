@@ -44,20 +44,20 @@ func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIReque
 }
 
 // GetDomain retrieves a single domain by id
-func (s *Service) GetDomain(domainID int) (Domain, error) {
+func (s *Service) GetDomain(domainID string) (Domain, error) {
 	body, err := s.getDomainResponseBody(domainID)
 
 	return body.Data, err
 }
 
-func (s *Service) getDomainResponseBody(domainID int) (*GetDomainResponseBody, error) {
+func (s *Service) getDomainResponseBody(domainID string) (*GetDomainResponseBody, error) {
 	body := &GetDomainResponseBody{}
 
-	if domainID < 1 {
+	if domainID == "" {
 		return body, fmt.Errorf("invalid domain id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ltaas/v1/domains/%d", domainID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ltaas/v1/domains/%s", domainID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

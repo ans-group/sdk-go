@@ -7,9 +7,9 @@ import (
 )
 
 func TestDomainStatus_String_Expected(t *testing.T) {
-	v := DomainStatusCompleted
+	v := DomainStatusVerified
 
 	s := v.String()
 
-	assert.Equal(t, "Completed", s)
+	assert.Equal(t, "Verified", s)
 }

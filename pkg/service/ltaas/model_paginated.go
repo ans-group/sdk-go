@@ -17,3 +17,33 @@ func NewPaginatedDomain(getFunc connection.PaginatedGetFunc, parameters connecti
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedTest represents a paginated collection of Test
+type PaginatedTest struct {
+	*connection.PaginatedBase
+
+	Items []Test
+}
+
+// NewPaginatedTest returns a pointer to an initialized PaginatedTest struct
+func NewPaginatedTest(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Test) *PaginatedTest {
+	return &PaginatedTest{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedJob represents a paginated collection of Job
+type PaginatedJob struct {
+	*connection.PaginatedBase
+
+	Items []Job
+}
+
+// NewPaginatedJob returns a pointer to an initialized PaginatedJob struct
+func NewPaginatedJob(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Job) *PaginatedJob {
+	return &PaginatedJob{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
