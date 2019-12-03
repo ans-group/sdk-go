@@ -23,13 +23,14 @@ zone, err := service.GetZone("ukfast.co.uk")
 ### Services
 
 Resources/models are separated into separate service packages, found within `pkg/service`.
-There are currently 8 services available:
+There are currently 9 services available:
 
 - Account
 - DDoSX
 - eCloud
+- Load Testing
+- PSS
+- Registrar
 - SafeDNS
 - SSL
-- Registrar
-- PSS
 - Storage
