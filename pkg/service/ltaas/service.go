@@ -11,6 +11,8 @@ type LTaaSService interface {
 	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
 	GetDomain(domainID string) (Domain, error)
 	DeleteDomain(domainID string) error
+	VerifyDomainByFile(domainID string) error
+	VerifyDomainByDNS(domainID string) error
 
 	GetTests(parameters connection.APIRequestParameters) ([]Test, error)
 	GetTestsPaginated(parameters connection.APIRequestParameters) (*PaginatedTest, error)

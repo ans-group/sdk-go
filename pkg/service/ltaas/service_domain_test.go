@@ -266,3 +266,165 @@ func TestDeleteDomain(t *testing.T) {
 		assert.IsType(t, &DomainNotFoundError{}, err)
 	})
 }
+
+func TestVerifyDomainByFile(t *testing.T) {
+	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-file", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-file", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.VerifyDomainByFile("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain id", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-file", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainNotFoundError{}, err)
+	})
+}
+
+func TestVerifyDomainByDNS(t *testing.T) {
+	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-dns", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-dns", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidDomainID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.VerifyDomainByDNS("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid domain id", err.Error())
+	})
+
+	t.Run("404_ReturnsDomainNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-dns", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &DomainNotFoundError{}, err)
+	})
+}

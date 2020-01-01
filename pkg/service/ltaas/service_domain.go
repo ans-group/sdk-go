@@ -116,3 +116,59 @@ func (s *Service) deleteDomainResponseBody(domainID string) (*connection.APIResp
 		return nil
 	})
 }
+
+// VerifyDomainByFile verifies a domain by File method
+func (s *Service) VerifyDomainByFile(domainID string) error {
+	_, err := s.verifyDomainByFileResponseBody(domainID)
+
+	return err
+}
+
+func (s *Service) verifyDomainByFileResponseBody(domainID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainID == "" {
+		return body, fmt.Errorf("invalid domain id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ltaas/v1/domains/%s/verify-by-file", domainID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{ID: domainID}
+		}
+
+		return nil
+	})
+}
+
+// VerifyDomainByDNS verifies a domain by DNS method
+func (s *Service) VerifyDomainByDNS(domainID string) error {
+	_, err := s.verifyDomainByDNSResponseBody(domainID)
+
+	return err
+}
+
+func (s *Service) verifyDomainByDNSResponseBody(domainID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainID == "" {
+		return body, fmt.Errorf("invalid domain id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ltaas/v1/domains/%s/verify-by-dns", domainID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{ID: domainID}
+		}
+
+		return nil
+	})
+}
