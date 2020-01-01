@@ -161,7 +161,7 @@ func TestGetJobResults(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, results.VirtualUsers, 1)
-		assert.Equal(t, 123, results.VirtualUsers[0].Y)
+		assert.Equal(t, float64(123), results.VirtualUsers[0].Y)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
