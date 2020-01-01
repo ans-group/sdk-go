@@ -18,6 +18,8 @@ type LTaaSService interface {
 	GetJobsPaginated(parameters connection.APIRequestParameters) (*PaginatedJob, error)
 	GetJob(testID string) (Job, error)
 	GetJobResults(jobID string) (JobResults, error)
+	CreateJob(req CreateJobRequest) (string, error)
+	DeleteJob(jobID string) error
 }
 
 // Service implements LTaaSService for managing
