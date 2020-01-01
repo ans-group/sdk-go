@@ -3,6 +3,10 @@
 package ltaas
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/ukfast/go-durationstring"
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
@@ -91,6 +95,35 @@ const (
 	JobFailTypeInfrastructure JobFailType = "Infrastructure"
 )
 
+// TestDuration represents a load test duration
+type TestDuration string
+
+// Duration returns the test duration as time.Duration
+func (d *TestDuration) Duration() time.Duration {
+	if len(*d) < 8 {
+		return time.Duration(0)
+	}
+
+	duration, err := time.ParseDuration(string(*d)[0:2] + "h" + string(*d)[3:5] + "m" + string(*d)[6:8] + "s")
+	if err != nil {
+		return time.Duration(0)
+	}
+
+	return duration
+}
+
+// ParseTestDuration parses string s and returns a pointer to an
+// initialised TestDuration
+func ParseTestDuration(s string) (*TestDuration, error) {
+	_, _, _, hours, minutes, seconds, _, _, _, err := durationstring.Parse(s)
+	if err != nil {
+		return nil, err
+	}
+
+	t := TestDuration(fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds))
+	return &t, nil
+}
+
 // Domain represents an LTaaS domain
 type Domain struct {
 	ID                 string                   `json:"id"`
@@ -112,7 +145,7 @@ type Test struct {
 	Protocol       TestProtocol        `json:"protocol"`
 	Path           string              `json:"path"`
 	NumberOfUsers  int                 `json:"number_of_users"`
-	Duration       string              `json:"duration"`
+	Duration       TestDuration        `json:"duration"`
 	RecurringType  TestRecurringType   `json:"recurring_type"`
 	RecurringValue int                 `json:"recurring_value"`
 	NextRun        connection.DateTime `json:"next_run"`
