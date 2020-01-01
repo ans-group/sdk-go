@@ -17,6 +17,21 @@ const (
 	DomainVerificationMethodFileUpload DomainVerificationMethod = "File upload"
 )
 
+var DomainVerificationMethodEnum = []connection.Enum{
+	DomainVerificationMethodDNS,
+	DomainVerificationMethodFileUpload,
+}
+
+// ParseDomainVerificationMethod attempts to parse a DomainVerificationMethod from string
+func ParseDomainVerificationMethod(s string) (DomainVerificationMethod, error) {
+	e, err := connection.ParseEnum(s, DomainVerificationMethodEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(DomainVerificationMethod), err
+}
+
 type DomainStatus string
 
 func (s DomainStatus) String() string {

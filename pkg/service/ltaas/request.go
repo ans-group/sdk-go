@@ -15,3 +15,16 @@ type CreateJobRequest struct {
 func (c *CreateJobRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
+
+// CreateDomainRequest represents a request to create a domain
+type CreateDomainRequest struct {
+	connection.APIRequestBodyDefaultValidator
+
+	Name               string                   `json:"name" validate:"required"`
+	VerificationMethod DomainVerificationMethod `json:"verification_method" validate:"required"`
+}
+
+// Validate returns an error if struct properties are missing/invalid
+func (c *CreateDomainRequest) Validate() *connection.ValidationError {
+	return c.APIRequestBodyDefaultValidator.Validate(c)
+}

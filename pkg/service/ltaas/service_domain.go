@@ -6,6 +6,24 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
+// CreateDomain creates a new domain
+func (s *Service) CreateDomain(req CreateDomainRequest) (string, error) {
+	body, err := s.createDomainResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createDomainResponseBody(req CreateDomainRequest) (*GetDomainResponseBody, error) {
+	body := &GetDomainResponseBody{}
+
+	response, err := s.connection.Post("/ltaas/v1/domains", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // GetDomains retrieves a list of domains
 func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Domain, error) {
 	var sites []Domain
@@ -58,6 +76,34 @@ func (s *Service) getDomainResponseBody(domainID string) (*GetDomainResponseBody
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ltaas/v1/domains/%s", domainID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{ID: domainID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteDomain removes a domain
+func (s *Service) DeleteDomain(domainID string) error {
+	_, err := s.deleteDomainResponseBody(domainID)
+
+	return err
+}
+
+func (s *Service) deleteDomainResponseBody(domainID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainID == "" {
+		return body, fmt.Errorf("invalid domain id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ltaas/v1/domains/%s", domainID), nil)
 	if err != nil {
 		return body, err
 	}
