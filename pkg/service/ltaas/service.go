@@ -6,9 +6,13 @@ import (
 
 // LTaaSService is an interface for managing LTaaS
 type LTaaSService interface {
+	CreateDomain(req CreateDomainRequest) (string, error)
 	GetDomains(parameters connection.APIRequestParameters) ([]Domain, error)
 	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
 	GetDomain(domainID string) (Domain, error)
+	DeleteDomain(domainID string) error
+	VerifyDomainByFile(domainID string) error
+	VerifyDomainByDNS(domainID string) error
 
 	GetTests(parameters connection.APIRequestParameters) ([]Test, error)
 	GetTestsPaginated(parameters connection.APIRequestParameters) (*PaginatedTest, error)
