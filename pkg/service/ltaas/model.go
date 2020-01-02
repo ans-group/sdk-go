@@ -58,6 +58,21 @@ const (
 	TestProtocolHTTPS TestProtocol = "https"
 )
 
+var TestProtocolEnum = []connection.Enum{
+	TestProtocolHTTP,
+	TestProtocolHTTPS,
+}
+
+// ParseTestProtocol attempts to parse a TestProtocol from string
+func ParseTestProtocol(s string) (TestProtocol, error) {
+	e, err := connection.ParseEnum(s, TestProtocolEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(TestProtocol), err
+}
+
 type TestRecurringType string
 
 func (s TestRecurringType) String() string {
@@ -114,14 +129,13 @@ func (d *TestDuration) Duration() time.Duration {
 
 // ParseTestDuration parses string s and returns a pointer to an
 // initialised TestDuration
-func ParseTestDuration(s string) (*TestDuration, error) {
+func ParseTestDuration(s string) (TestDuration, error) {
 	_, _, _, hours, minutes, seconds, _, _, _, err := durationstring.Parse(s)
 	if err != nil {
-		return nil, err
+		return TestDuration(""), err
 	}
 
-	t := TestDuration(fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds))
-	return &t, nil
+	return TestDuration(fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)), nil
 }
 
 type AgreementType string
