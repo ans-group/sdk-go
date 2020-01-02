@@ -88,3 +88,31 @@ func (s *Service) getTestResponseBody(testID string) (*GetTestResponseBody, erro
 		return nil
 	})
 }
+
+// DeleteTest removes a test
+func (s *Service) DeleteTest(testID string) error {
+	_, err := s.deleteTestResponseBody(testID)
+
+	return err
+}
+
+func (s *Service) deleteTestResponseBody(testID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if testID == "" {
+		return body, fmt.Errorf("invalid test id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ltaas/v1/tests/%s", testID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &TestNotFoundError{ID: testID}
+		}
+
+		return nil
+	})
+}

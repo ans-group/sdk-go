@@ -14,9 +14,11 @@ type LTaaSService interface {
 	VerifyDomainByFile(domainID string) error
 	VerifyDomainByDNS(domainID string) error
 
+	CreateTest(req CreateTestRequest) (string, error)
 	GetTests(parameters connection.APIRequestParameters) ([]Test, error)
 	GetTestsPaginated(parameters connection.APIRequestParameters) (*PaginatedTest, error)
 	GetTest(testID string) (Test, error)
+	DeleteTest(testID string) error
 
 	GetJobs(parameters connection.APIRequestParameters) ([]Job, error)
 	GetJobsPaginated(parameters connection.APIRequestParameters) (*PaginatedJob, error)
