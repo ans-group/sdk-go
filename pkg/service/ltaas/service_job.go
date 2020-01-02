@@ -172,3 +172,31 @@ func (s *Service) deleteJobResponseBody(jobID string) (*connection.APIResponseBo
 		return nil
 	})
 }
+
+// StopJob stops a running job
+func (s *Service) StopJob(jobID string) error {
+	_, err := s.stopJobResponseBody(jobID)
+
+	return err
+}
+
+func (s *Service) stopJobResponseBody(jobID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if jobID == "" {
+		return body, fmt.Errorf("invalid job id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ltaas/v1/jobs/%s/stop", jobID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &JobNotFoundError{ID: jobID}
+		}
+
+		return nil
+	})
+}

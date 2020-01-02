@@ -28,6 +28,7 @@ type LTaaSService interface {
 	GetJobSettings(jobID string) (JobSettings, error)
 	CreateJob(req CreateJobRequest) (string, error)
 	DeleteJob(jobID string) error
+	StopJob(jobID string) error
 
 	GetThresholds(parameters connection.APIRequestParameters) ([]Threshold, error)
 	GetThresholdsPaginated(parameters connection.APIRequestParameters) (*PaginatedThreshold, error)
