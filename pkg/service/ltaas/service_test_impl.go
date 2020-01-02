@@ -6,6 +6,24 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
+// CreateTest creates a new test
+func (s *Service) CreateTest(req CreateTestRequest) (string, error) {
+	body, err := s.createTestResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createTestResponseBody(req CreateTestRequest) (*GetTestResponseBody, error) {
+	body := &GetTestResponseBody{}
+
+	response, err := s.connection.Post("/ltaas/v1/tests", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // GetTests retrieves a list of tests
 func (s *Service) GetTests(parameters connection.APIRequestParameters) ([]Test, error) {
 	var sites []Test
