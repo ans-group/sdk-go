@@ -50,3 +50,10 @@ type GetJobResultsResponseBody struct {
 
 	Data JobResults `json:"data"`
 }
+
+// GetJobSettingsResponseBody represents the API response body from the GetJobSettings resource
+type GetJobSettingsResponseBody struct {
+	connection.APIResponseBody
+
+	Data JobSettings `json:"data"`
+}

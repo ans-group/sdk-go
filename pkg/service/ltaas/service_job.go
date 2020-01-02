@@ -99,6 +99,34 @@ func (s *Service) getJobResultsResponseBody(jobID string) (*GetJobResultsRespons
 	})
 }
 
+// GetJobSettings retrieves the settings of a single job by id
+func (s *Service) GetJobSettings(jobID string) (JobSettings, error) {
+	body, err := s.getJobSettingsResponseBody(jobID)
+
+	return body.Data, err
+}
+
+func (s *Service) getJobSettingsResponseBody(jobID string) (*GetJobSettingsResponseBody, error) {
+	body := &GetJobSettingsResponseBody{}
+
+	if jobID == "" {
+		return body, fmt.Errorf("invalid job id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ltaas/v1/jobs/%s/settings", jobID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &JobNotFoundError{ID: jobID}
+		}
+
+		return nil
+	})
+}
+
 // CreateJob creates a new job
 func (s *Service) CreateJob(req CreateJobRequest) (string, error) {
 	body, err := s.createJobResponseBody(req)

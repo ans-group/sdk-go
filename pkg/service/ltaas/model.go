@@ -179,3 +179,15 @@ type JobResults struct {
 	FailedRequests     []JobResultsAxis `json:"failed_requests"`
 	Latency            []JobResultsAxis `json:"latency"`
 }
+
+// JobSettings represents the settings of an LTaaS job
+type JobSettings struct {
+	Date     connection.DateTime `json:"date"`
+	Type     string              `json:"type"`
+	Name     string              `json:"name"`
+	Duration TestDuration        `json:"duration"`
+	MaxUsers int                 `json:"max_users"`
+	Protocol TestProtocol        `json:"protocol"`
+	Domain   string              `json:"domain"`
+	Path     string              `json:"path"`
+}
