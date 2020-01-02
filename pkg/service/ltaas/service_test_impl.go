@@ -118,14 +118,14 @@ func (s *Service) deleteTestResponseBody(testID string) (*connection.APIResponse
 }
 
 // CreateTestJob creates a new job for test
-func (s *Service) CreateTestJob(testID string, req CreateTestJobRequest) error {
-	_, err := s.createTestJobResponseBody(testID, req)
+func (s *Service) CreateTestJob(testID string, req CreateTestJobRequest) (string, error) {
+	body, err := s.createTestJobResponseBody(testID, req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createTestJobResponseBody(testID string, req CreateTestJobRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createTestJobResponseBody(testID string, req CreateTestJobRequest) (*GetJobResponseBody, error) {
+	body := &GetJobResponseBody{}
 
 	if testID == "" {
 		return body, fmt.Errorf("invalid test id")
