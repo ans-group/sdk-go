@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package ltaas -typename Domain,Test,Job -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated_gen.go -package ltaas -typename Domain,Test,Job,Threshold,Scenario -destination model_paginated.go
 
 package ltaas
 
@@ -124,6 +124,17 @@ func ParseTestDuration(s string) (*TestDuration, error) {
 	return &t, nil
 }
 
+type AgreementType string
+
+func (s AgreementType) String() string {
+	return string(s)
+}
+
+const (
+	AgreementTypeSingle    AgreementType = "single"
+	AgreementTypeRecurring AgreementType = "recurring"
+)
+
 // Domain represents an LTaaS domain
 type Domain struct {
 	ID                 string                   `json:"id"`
@@ -190,4 +201,31 @@ type JobSettings struct {
 	Protocol TestProtocol        `json:"protocol"`
 	Domain   string              `json:"domain"`
 	Path     string              `json:"path"`
+}
+
+// Threshold represents a test threshold
+type Threshold struct {
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	Query       string              `json:"query"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	UpdatedAt   connection.DateTime `json:"updated_at"`
+}
+
+// Scenario represents a test scenario
+type Scenario struct {
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	AvailableTrial bool                `json:"available_trial"`
+	Formula        string              `json:"formula"`
+	Description    string              `json:"description"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
+}
+
+// Agreement represents an authorisation agreement
+type Agreement struct {
+	Version   string `json:"version"`
+	Agreement string `json:"agreement"`
 }

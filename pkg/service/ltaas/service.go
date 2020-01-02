@@ -25,8 +25,16 @@ type LTaaSService interface {
 	GetJobsPaginated(parameters connection.APIRequestParameters) (*PaginatedJob, error)
 	GetJob(testID string) (Job, error)
 	GetJobResults(jobID string) (JobResults, error)
+	GetJobSettings(jobID string) (JobSettings, error)
 	CreateJob(req CreateJobRequest) (string, error)
 	DeleteJob(jobID string) error
+
+	GetThresholds(parameters connection.APIRequestParameters) ([]Threshold, error)
+	GetThresholdsPaginated(parameters connection.APIRequestParameters) (*PaginatedThreshold, error)
+	GetThreshold(thresholdID string) (Threshold, error)
+
+	GetScenarios(parameters connection.APIRequestParameters) ([]Scenario, error)
+	GetScenariosPaginated(parameters connection.APIRequestParameters) (*PaginatedScenario, error)
 }
 
 // Service implements LTaaSService for managing

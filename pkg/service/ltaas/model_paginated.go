@@ -47,3 +47,33 @@ func NewPaginatedJob(getFunc connection.PaginatedGetFunc, parameters connection.
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedThreshold represents a paginated collection of Threshold
+type PaginatedThreshold struct {
+	*connection.PaginatedBase
+
+	Items []Threshold
+}
+
+// NewPaginatedThreshold returns a pointer to an initialized PaginatedThreshold struct
+func NewPaginatedThreshold(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Threshold) *PaginatedThreshold {
+	return &PaginatedThreshold{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedScenario represents a paginated collection of Scenario
+type PaginatedScenario struct {
+	*connection.PaginatedBase
+
+	Items []Scenario
+}
+
+// NewPaginatedScenario returns a pointer to an initialized PaginatedScenario struct
+func NewPaginatedScenario(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Scenario) *PaginatedScenario {
+	return &PaginatedScenario{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
