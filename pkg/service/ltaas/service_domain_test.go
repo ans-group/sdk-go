@@ -267,7 +267,7 @@ func TestDeleteDomain(t *testing.T) {
 	})
 }
 
-func TestVerifyDomainByFile(t *testing.T) {
+func TestVerifyDomainFile(t *testing.T) {
 	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -285,7 +285,7 @@ func TestVerifyDomainByFile(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainFile("00000000-0000-0000-0000-000000000000")
 
 		assert.Nil(t, err)
 	})
@@ -302,7 +302,7 @@ func TestVerifyDomainByFile(t *testing.T) {
 
 		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-file", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainFile("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -318,7 +318,7 @@ func TestVerifyDomainByFile(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.VerifyDomainByFile("")
+		err := s.VerifyDomainFile("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid domain id", err.Error())
@@ -341,14 +341,14 @@ func TestVerifyDomainByFile(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.VerifyDomainByFile("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainFile("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &DomainNotFoundError{}, err)
 	})
 }
 
-func TestVerifyDomainByDNS(t *testing.T) {
+func TestVerifyDomainDNS(t *testing.T) {
 	t.Run("SuccessfulRequest_ReturnsExpected", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -366,7 +366,7 @@ func TestVerifyDomainByDNS(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainDNS("00000000-0000-0000-0000-000000000000")
 
 		assert.Nil(t, err)
 	})
@@ -383,7 +383,7 @@ func TestVerifyDomainByDNS(t *testing.T) {
 
 		c.EXPECT().Post("/ltaas/v1/domains/00000000-0000-0000-0000-000000000000/verify-by-dns", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainDNS("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -399,7 +399,7 @@ func TestVerifyDomainByDNS(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.VerifyDomainByDNS("")
+		err := s.VerifyDomainDNS("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid domain id", err.Error())
@@ -422,7 +422,7 @@ func TestVerifyDomainByDNS(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.VerifyDomainByDNS("00000000-0000-0000-0000-000000000000")
+		err := s.VerifyDomainDNS("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &DomainNotFoundError{}, err)
