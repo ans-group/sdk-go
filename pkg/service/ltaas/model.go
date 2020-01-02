@@ -135,6 +135,21 @@ const (
 	AgreementTypeRecurring AgreementType = "recurring"
 )
 
+var AgreementTypeEnum = []connection.Enum{
+	AgreementTypeSingle,
+	AgreementTypeRecurring,
+}
+
+// ParseAgreementType attempts to parse a AgreementType from string
+func ParseAgreementType(s string) (AgreementType, error) {
+	e, err := connection.ParseEnum(s, AgreementTypeEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(AgreementType), err
+}
+
 // Domain represents an LTaaS domain
 type Domain struct {
 	ID                 string                   `json:"id"`

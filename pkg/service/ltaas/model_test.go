@@ -9,26 +9,26 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/ltaas"
 )
 
-func TestDomainVerificationMethod_String_Expected(t *testing.T) {
-	v := ltaas.DomainVerificationMethodDNS
+func TestAgreementType_String_Expected(t *testing.T) {
+	v := ltaas.AgreementTypeDNS
 
 	s := v.String()
 
 	assert.Equal(t, "DNS", s)
 }
 
-func TestParseDomainVerificationMethod(t *testing.T) {
+func TestParseAgreementType(t *testing.T) {
 	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
 		v := "DNS"
-		s, err := ltaas.ParseDomainVerificationMethod(v)
+		s, err := ltaas.ParseAgreementType(v)
 
 		assert.Nil(t, err)
-		assert.Equal(t, ltaas.DomainVerificationMethodDNS, s)
+		assert.Equal(t, ltaas.AgreementTypeDNS, s)
 	})
 
 	t.Run("Invalid_ReturnsError", func(t *testing.T) {
 		v := "invalid"
-		_, err := ltaas.ParseDomainVerificationMethod(v)
+		_, err := ltaas.ParseAgreementType(v)
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
@@ -113,5 +113,23 @@ func TestTestDuration_Duration(t *testing.T) {
 		d := testDuration.Duration()
 
 		assert.Equal(t, time.Duration(0), d)
+	})
+}
+
+func TestParseAgreementType(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "single"
+		s, err := ltaas.ParseAgreementType(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, ltaas.AgreementTypeSingle, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ltaas.ParseAgreementType(v)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
