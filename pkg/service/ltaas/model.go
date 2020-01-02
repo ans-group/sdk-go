@@ -259,3 +259,8 @@ type Agreement struct {
 	Version   string `json:"version"`
 	Agreement string `json:"agreement"`
 }
+
+// Account represents an LTaaS account
+type Account struct {
+	ID string `json:"id"`
+}

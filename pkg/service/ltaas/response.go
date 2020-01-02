@@ -85,3 +85,10 @@ type GetAgreementResponseBody struct {
 
 	Data Agreement `json:"data"`
 }
+
+// GetAccountResponseBody represents the API response body from the GetAccount resource
+type GetAccountResponseBody struct {
+	connection.APIResponseBody
+
+	Data Account `json:"data"`
+}
