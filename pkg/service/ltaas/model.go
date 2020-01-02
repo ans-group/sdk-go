@@ -177,17 +177,18 @@ type Domain struct {
 
 // Test represents an LTaaS test
 type Test struct {
-	ID             string              `json:"id"`
-	Name           string              `json:"name"`
-	ScriptID       string              `json:"script_id"`
-	ScenarioID     string              `json:"scenario_id"`
-	DomainID       string              `json:"domain_id"`
-	Protocol       TestProtocol        `json:"protocol"`
-	Path           string              `json:"path"`
-	NumberOfUsers  int                 `json:"number_of_users"`
-	Duration       TestDuration        `json:"duration"`
-	RecurringType  TestRecurringType   `json:"recurring_type"`
-	RecurringValue int                 `json:"recurring_value"`
+	ID            string            `json:"id"`
+	Name          string            `json:"name"`
+	ScriptID      string            `json:"script_id"`
+	ScenarioID    string            `json:"scenario_id"`
+	DomainID      string            `json:"domain_id"`
+	Protocol      TestProtocol      `json:"protocol"`
+	Path          string            `json:"path"`
+	NumberOfUsers int               `json:"number_of_users"`
+	Duration      TestDuration      `json:"duration"`
+	RecurringType TestRecurringType `json:"recurring_type"`
+	// TODO: Change back to `int`. Server-side issue causing null/empty value of RecurringValue to be string, not int. #121
+	RecurringValue interface{}         `json:"recurring_value"`
 	NextRun        connection.DateTime `json:"next_run"`
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
