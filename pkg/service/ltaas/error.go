@@ -37,3 +37,12 @@ type ThresholdNotFoundError struct {
 func (e *ThresholdNotFoundError) Error() string {
 	return fmt.Sprintf("threshold not found with ID [%s]", e.ID)
 }
+
+// AgreementNotFoundError indicates a agreement was not found
+type AgreementNotFoundError struct {
+	Type AgreementType
+}
+
+func (e *AgreementNotFoundError) Error() string {
+	return fmt.Sprintf("agreement not found with type [%s]", e.Type)
+}

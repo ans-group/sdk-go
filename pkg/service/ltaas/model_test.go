@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/ukfast/sdk-go/pkg/connection"
 	"github.com/ukfast/sdk-go/pkg/service/ltaas"
 )
 
@@ -14,6 +15,24 @@ func TestDomainVerificationMethod_String_Expected(t *testing.T) {
 	s := v.String()
 
 	assert.Equal(t, "DNS", s)
+}
+
+func TestParseDomainVerificationMethod(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "DNS"
+		s, err := ltaas.ParseDomainVerificationMethod(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, ltaas.DomainVerificationMethodDNS, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ltaas.ParseDomainVerificationMethod(v)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
+	})
 }
 
 func TestDomainStatus_String_Expected(t *testing.T) {

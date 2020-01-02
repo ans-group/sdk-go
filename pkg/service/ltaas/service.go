@@ -35,6 +35,8 @@ type LTaaSService interface {
 
 	GetScenarios(parameters connection.APIRequestParameters) ([]Scenario, error)
 	GetScenariosPaginated(parameters connection.APIRequestParameters) (*PaginatedScenario, error)
+
+	GetLatestAgreement(agreementType AgreementType) (Agreement, error)
 }
 
 // Service implements LTaaSService for managing

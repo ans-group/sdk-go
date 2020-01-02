@@ -78,3 +78,10 @@ type GetScenariosResponseBody struct {
 
 	Data []Scenario `json:"data"`
 }
+
+// GetAgreementResponseBody represents the API response body from the GetAgreement resource
+type GetAgreementResponseBody struct {
+	connection.APIResponseBody
+
+	Data Agreement `json:"data"`
+}
