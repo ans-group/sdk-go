@@ -41,10 +41,10 @@ type CreateTestAuthorisation struct {
 
 // CreateTestThreshold represents the test threshold payload
 type CreateTestThreshold struct {
-	ThresholdID string `json:"threshold_id"`
-	Values      string `json:"values"`
-	Warn        int    `json:"warn"`
-	Fail        int    `json:"fail"`
+	ThresholdID string  `json:"threshold_id"`
+	Values      *string `json:"values"`
+	Warn        *int    `json:"warn"`
+	Fail        *int    `json:"fail"`
 }
 
 // CreateTestRequest represents a request to create a test
@@ -54,12 +54,12 @@ type CreateTestRequest struct {
 	DomainID      string                  `json:"domain_id" validate:"required"`
 	Name          string                  `json:"name" validate:"required"`
 	ScenarioID    string                  `json:"scenario_id"`
-	ScriptID      string                  `json:"script_id"`
+	ScriptID      string                  `json:"script_id,omitempty"`
 	Protocol      TestProtocol            `json:"protocol"`
-	Path          string                  `json:"path"`
+	Path          string                  `json:"path,omitempty"`
 	NumberOfUsers int                     `json:"number_of_users"`
 	Duration      TestDuration            `json:"duration"`
-	Authorisation CreateTestAuthorisation `json:"authorisation"`
+	Authorisation CreateTestAuthorisation `json:"authorisation" validate:"required"`
 	Thresholds    []CreateTestThreshold   `json:"thresholds"`
 }
 
