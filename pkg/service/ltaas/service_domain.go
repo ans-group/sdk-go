@@ -117,14 +117,14 @@ func (s *Service) deleteDomainResponseBody(domainID string) (*connection.APIResp
 	})
 }
 
-// VerifyDomainByFile verifies a domain by File method
-func (s *Service) VerifyDomainByFile(domainID string) error {
-	_, err := s.verifyDomainByFileResponseBody(domainID)
+// VerifyDomainFile verifies a domain by File method
+func (s *Service) VerifyDomainFile(domainID string) error {
+	_, err := s.verifyDomainFileResponseBody(domainID)
 
 	return err
 }
 
-func (s *Service) verifyDomainByFileResponseBody(domainID string) (*connection.APIResponseBody, error) {
+func (s *Service) verifyDomainFileResponseBody(domainID string) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if domainID == "" {
@@ -145,14 +145,14 @@ func (s *Service) verifyDomainByFileResponseBody(domainID string) (*connection.A
 	})
 }
 
-// VerifyDomainByDNS verifies a domain by DNS method
-func (s *Service) VerifyDomainByDNS(domainID string) error {
-	_, err := s.verifyDomainByDNSResponseBody(domainID)
+// VerifyDomainDNS verifies a domain by DNS method
+func (s *Service) VerifyDomainDNS(domainID string) error {
+	_, err := s.verifyDomainDNSResponseBody(domainID)
 
 	return err
 }
 
-func (s *Service) verifyDomainByDNSResponseBody(domainID string) (*connection.APIResponseBody, error) {
+func (s *Service) verifyDomainDNSResponseBody(domainID string) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if domainID == "" {
