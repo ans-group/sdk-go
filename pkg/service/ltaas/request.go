@@ -9,7 +9,7 @@ type CreateJobRequest struct {
 	connection.APIRequestBodyDefaultValidator
 
 	TestID             string              `json:"test_id" validate:"required"`
-	ScheduledTimestamp connection.DateTime `json:"scheduled_timestamp"`
+	ScheduledTimestamp connection.DateTime `json:"scheduled_timestamp,omitempty"`
 	RunNow             bool                `json:"run_now"`
 }
 
@@ -65,5 +65,18 @@ type CreateTestRequest struct {
 
 // Validate returns an error if struct properties are missing/invalid
 func (c *CreateTestRequest) Validate() *connection.ValidationError {
+	return c.APIRequestBodyDefaultValidator.Validate(c)
+}
+
+// CreateTestJobRequest represents a request to create a job for a test
+type CreateTestJobRequest struct {
+	connection.APIRequestBodyDefaultValidator
+
+	ScheduledTimestamp connection.DateTime `json:"scheduled_timestamp,omitempty"`
+	RunNow             bool                `json:"run_now"`
+}
+
+// Validate returns an error if struct properties are missing/invalid
+func (c *CreateTestJobRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }

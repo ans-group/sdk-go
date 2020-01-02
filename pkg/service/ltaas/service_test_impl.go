@@ -116,3 +116,31 @@ func (s *Service) deleteTestResponseBody(testID string) (*connection.APIResponse
 		return nil
 	})
 }
+
+// CreateTestJob creates a new job for test
+func (s *Service) CreateTestJob(testID string, req CreateTestJobRequest) error {
+	_, err := s.createTestJobResponseBody(testID, req)
+
+	return err
+}
+
+func (s *Service) createTestJobResponseBody(testID string, req CreateTestJobRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if testID == "" {
+		return body, fmt.Errorf("invalid test id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ltaas/v1/tests/%s/run-again", testID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &TestNotFoundError{ID: testID}
+		}
+
+		return nil
+	})
+}
