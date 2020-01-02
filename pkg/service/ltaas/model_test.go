@@ -80,7 +80,7 @@ func TestParseTestDuration(t *testing.T) {
 		testDuration, err := ltaas.ParseTestDuration("1h2m3s")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "01:02:03", string(*testDuration))
+		assert.Equal(t, "01:02:03", string(testDuration))
 	})
 
 	t.Run("Invalid_ReturnsError", func(t *testing.T) {
