@@ -47,6 +47,18 @@ func (i IPAddress) String() string {
 	return string(i)
 }
 
+type ErrInvalidEnumValue struct {
+	Message string
+}
+
+func NewErrInvalidEnumValue(msg string) *ErrInvalidEnumValue {
+	return &ErrInvalidEnumValue{Message: msg}
+}
+
+func (e *ErrInvalidEnumValue) Error() string {
+	return e.Message
+}
+
 type Enum interface {
 	String() string
 }
@@ -66,5 +78,5 @@ func ParseEnum(s string, enums []Enum) (Enum, error) {
 		validValues = append(validValues, e.String())
 	}
 
-	return nil, fmt.Errorf("Invalid %T. Valid values: %s", enums[0], strings.Join(validValues, ", "))
+	return nil, NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], strings.Join(validValues, ", ")))
 }

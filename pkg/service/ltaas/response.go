@@ -50,3 +50,38 @@ type GetJobResultsResponseBody struct {
 
 	Data JobResults `json:"data"`
 }
+
+// GetJobSettingsResponseBody represents the API response body from the GetJobSettings resource
+type GetJobSettingsResponseBody struct {
+	connection.APIResponseBody
+
+	Data JobSettings `json:"data"`
+}
+
+// GetThresholdsResponseBody represents the API response body from the GetThresholds resource
+type GetThresholdsResponseBody struct {
+	connection.APIResponseBody
+
+	Data []Threshold `json:"data"`
+}
+
+// GetThresholdResponseBody represents the API response body from the GetThreshold resource
+type GetThresholdResponseBody struct {
+	connection.APIResponseBody
+
+	Data Threshold `json:"data"`
+}
+
+// GetScenariosResponseBody represents the API response body from the GetScenarios resource
+type GetScenariosResponseBody struct {
+	connection.APIResponseBody
+
+	Data []Scenario `json:"data"`
+}
+
+// GetAgreementResponseBody represents the API response body from the GetAgreement resource
+type GetAgreementResponseBody struct {
+	connection.APIResponseBody
+
+	Data Agreement `json:"data"`
+}

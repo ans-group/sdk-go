@@ -6,24 +6,6 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// CreateDomain creates a new domain
-func (s *Service) CreateDomain(req CreateDomainRequest) (string, error) {
-	body, err := s.createDomainResponseBody(req)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) createDomainResponseBody(req CreateDomainRequest) (*GetDomainResponseBody, error) {
-	body := &GetDomainResponseBody{}
-
-	response, err := s.connection.Post("/ltaas/v1/domains", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
-}
-
 // GetDomains retrieves a list of domains
 func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Domain, error) {
 	var sites []Domain
@@ -87,6 +69,24 @@ func (s *Service) getDomainResponseBody(domainID string) (*GetDomainResponseBody
 
 		return nil
 	})
+}
+
+// CreateDomain creates a new domain
+func (s *Service) CreateDomain(req CreateDomainRequest) (string, error) {
+	body, err := s.createDomainResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createDomainResponseBody(req CreateDomainRequest) (*GetDomainResponseBody, error) {
+	body := &GetDomainResponseBody{}
+
+	response, err := s.connection.Post("/ltaas/v1/domains", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
 }
 
 // DeleteDomain removes a domain

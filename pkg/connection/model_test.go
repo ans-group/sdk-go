@@ -128,6 +128,6 @@ func TestEnum_ParseEnum(t *testing.T) {
 		_, err := ParseEnum(v, testEnums)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid connection.testEnum. Valid values: One, Two", err.Error())
+		assert.IsType(t, &ErrInvalidEnumValue{}, err)
 	})
 }

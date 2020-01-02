@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
 func TestDomainStatus_String_Expected(t *testing.T) {
@@ -37,7 +38,7 @@ func TestParseDomainPropertyName(t *testing.T) {
 		_, err := ParseDomainPropertyName(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.DomainPropertyName. Valid values: client_max_body_size, proxy_timeout, ipv6_enabled, secure_origin", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -71,7 +72,7 @@ func TestParseWAFMode(t *testing.T) {
 		_, err := ParseWAFMode(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.WAFMode. Valid values: On, Off, DetectionOnly", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -97,7 +98,7 @@ func TestParseWAFParanoiaLevel(t *testing.T) {
 		_, err := ParseWAFParanoiaLevel(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.WAFParanoiaLevel. Valid values: Low, Medium, High, Highest", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -131,7 +132,7 @@ func TestParseWAFAdvancedRuleSection(t *testing.T) {
 		_, err := ParseWAFAdvancedRuleSection(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.WAFAdvancedRuleSection. Valid values: ARGS, MATCHED_VARS, REMOTE_HOST, REQUEST_BODY, REQUEST_COOKIES, REQUEST_HEADERS, REQUEST_URI", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -157,7 +158,7 @@ func TestParseWAFAdvancedRuleModifier(t *testing.T) {
 		_, err := ParseWAFAdvancedRuleModifier(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.WAFAdvancedRuleModifier. Valid values: beginsWith, endsWith, contains, containsWord", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -183,7 +184,7 @@ func TestParseACLIPMode(t *testing.T) {
 		_, err := ParseACLIPMode(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.ACLIPMode. Valid values: Allow, Deny", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -209,7 +210,7 @@ func TestParseACLGeoIPRulesMode(t *testing.T) {
 		_, err := ParseACLGeoIPRulesMode(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.ACLGeoIPRulesMode. Valid values: Whitelist, Blacklist", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -235,7 +236,7 @@ func TestParseCDNRuleCacheControl(t *testing.T) {
 		_, err := ParseCDNRuleCacheControl(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.CDNRuleCacheControl. Valid values: Custom, Origin", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -261,7 +262,7 @@ func TestParseCDNRuleType(t *testing.T) {
 		_, err := ParseCDNRuleType(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.CDNRuleType. Valid values: global, per-uri", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -287,7 +288,7 @@ func TestParseHSTSRuleType(t *testing.T) {
 		_, err := ParseHSTSRuleType(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid ddosx.HSTSRuleType. Valid values: domain, record", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
