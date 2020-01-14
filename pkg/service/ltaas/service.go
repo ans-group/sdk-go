@@ -21,7 +21,6 @@ type LTaaSService interface {
 	GetTest(testID string) (Test, error)
 	CreateTest(req CreateTestRequest) (string, error)
 	DeleteTest(testID string) error
-	CreateTestJob(testID string, req CreateTestJobRequest) (string, error)
 
 	GetJobs(parameters connection.APIRequestParameters) ([]Job, error)
 	GetJobsPaginated(parameters connection.APIRequestParameters) (*PaginatedJob, error)
