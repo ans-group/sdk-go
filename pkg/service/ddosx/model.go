@@ -37,7 +37,7 @@ const (
 	DomainPropertyNameSecureOrigin      DomainPropertyName = "secure_origin"
 )
 
-var DomainPropertyNameEnum = []connection.Enum{
+var DomainPropertyNameEnum connection.EnumSlice = []connection.Enum{
 	DomainPropertyNameClientMaxBodySize,
 	DomainPropertyNameProxyTimeout,
 	DomainPropertyNameIPv6Enabled,
@@ -77,7 +77,7 @@ const (
 	WAFModeDetectionOnly WAFMode = "DetectionOnly"
 )
 
-var WAFModeEnum = []connection.Enum{
+var WAFModeEnum connection.EnumSlice = []connection.Enum{
 	WAFModeOn,
 	WAFModeOff,
 	WAFModeDetectionOnly,
@@ -106,7 +106,7 @@ const (
 	WAFParanoiaLevelHighest WAFParanoiaLevel = "Highest"
 )
 
-var WAFParanoiaLevelEnum = []connection.Enum{
+var WAFParanoiaLevelEnum connection.EnumSlice = []connection.Enum{
 	WAFParanoiaLevelLow,
 	WAFParanoiaLevelMedium,
 	WAFParanoiaLevelHigh,
@@ -165,7 +165,7 @@ const (
 	WAFAdvancedRuleSectionRequestURI     WAFAdvancedRuleSection = "REQUEST_URI"
 )
 
-var WAFAdvancedRuleSectionEnum = []connection.Enum{
+var WAFAdvancedRuleSectionEnum connection.EnumSlice = []connection.Enum{
 	WAFAdvancedRuleSectionArgs,
 	WAFAdvancedRuleSectionMatchedVars,
 	WAFAdvancedRuleSectionRemoteHost,
@@ -198,7 +198,7 @@ const (
 	WAFAdvancedRuleModifierContainsWord WAFAdvancedRuleModifier = "containsWord"
 )
 
-var WAFAdvancedRuleModifierEnum = []connection.Enum{
+var WAFAdvancedRuleModifierEnum connection.EnumSlice = []connection.Enum{
 	WAFAdvancedRuleModifierBeginsWith,
 	WAFAdvancedRuleModifierEndsWith,
 	WAFAdvancedRuleModifierContains,
@@ -226,7 +226,7 @@ const (
 	ACLIPModeDeny  ACLIPMode = "Deny"
 )
 
-var ACLIPModeEnum = []connection.Enum{
+var ACLIPModeEnum connection.EnumSlice = []connection.Enum{
 	ACLIPModeAllow,
 	ACLIPModeDeny,
 }
@@ -252,7 +252,7 @@ const (
 	ACLGeoIPRulesModeBlacklist ACLGeoIPRulesMode = "Blacklist"
 )
 
-var ACLGeoIPRulesModeEnum = []connection.Enum{
+var ACLGeoIPRulesModeEnum connection.EnumSlice = []connection.Enum{
 	ACLGeoIPRulesModeWhitelist,
 	ACLGeoIPRulesModeBlacklist,
 }
@@ -278,7 +278,7 @@ const (
 	CDNRuleCacheControlOrigin CDNRuleCacheControl = "Origin"
 )
 
-var CDNRuleCacheControlEnum = []connection.Enum{
+var CDNRuleCacheControlEnum connection.EnumSlice = []connection.Enum{
 	CDNRuleCacheControlCustom,
 	CDNRuleCacheControlOrigin,
 }
@@ -304,7 +304,7 @@ const (
 	CDNRuleTypePerURI CDNRuleType = "per-uri"
 )
 
-var CDNRuleTypeEnum = []connection.Enum{CDNRuleTypeGlobal, CDNRuleTypePerURI}
+var CDNRuleTypeEnum connection.EnumSlice = []connection.Enum{CDNRuleTypeGlobal, CDNRuleTypePerURI}
 
 // ParseCDNRuleType attempts to parse a CDNRuleType from string
 func ParseCDNRuleType(s string) (CDNRuleType, error) {
@@ -327,7 +327,7 @@ const (
 	HSTSRuleTypeRecord HSTSRuleType = "record"
 )
 
-var HSTSRuleTypeEnum = []connection.Enum{HSTSRuleTypeDomain, HSTSRuleTypeRecord}
+var HSTSRuleTypeEnum connection.EnumSlice = []connection.Enum{HSTSRuleTypeDomain, HSTSRuleTypeRecord}
 
 // ParseHSTSRuleType attempts to parse a HSTSRuleType from string
 func ParseHSTSRuleType(s string) (HSTSRuleType, error) {

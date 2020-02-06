@@ -63,20 +63,33 @@ type Enum interface {
 	String() string
 }
 
+type EnumSlice []Enum
+
 // ParseEnum parses string s against array of enums, returning parsed enum and nil error, or nil with error
-func ParseEnum(s string, enums []Enum) (Enum, error) {
+func ParseEnum(s string, enums EnumSlice) (Enum, error) {
 	if len(enums) < 1 {
 		return nil, errors.New("Must provide at least one enum")
 	}
 
-	var validValues []string
 	for _, e := range enums {
 		if strings.ToUpper(s) == strings.ToUpper(e.String()) {
 			return e, nil
 		}
-
-		validValues = append(validValues, e.String())
 	}
 
-	return nil, NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], strings.Join(validValues, ", ")))
+	return nil, NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], enums.String()))
+}
+
+// StringSlice returns a slice of strings containing the string values of enums for EnumSlice
+func (enums EnumSlice) StringSlice() []string {
+	var values []string
+	for _, enum := range enums {
+		values = append(values, enum.String())
+	}
+	return values
+}
+
+// String returns string containing a comma separated list of enum string values
+func (enums EnumSlice) String() string {
+	return strings.Join(enums.StringSlice(), ", ")
 }

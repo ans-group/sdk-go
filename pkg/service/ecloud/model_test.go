@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
 func TestVirtualMachineStatus_String_Expected(t *testing.T) {
@@ -31,31 +32,20 @@ func TestVirtualMachinePowerStatus_String_Expected(t *testing.T) {
 }
 
 func TestParseVirtualMachinePowerStatus(t *testing.T) {
-	t.Run("ExactOffline_Parses", func(t *testing.T) {
-		status, err := ParseVirtualMachinePowerStatus("Offline")
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "Online"
+		s, err := ParseVirtualMachinePowerStatus(v)
 
 		assert.Nil(t, err)
-		assert.Equal(t, VirtualMachinePowerStatus("Offline"), status)
+		assert.Equal(t, VirtualMachinePowerStatusOnline, s)
 	})
 
-	t.Run("ExactOnline_Parses", func(t *testing.T) {
-		status, err := ParseVirtualMachinePowerStatus("Online")
-
-		assert.Nil(t, err)
-		assert.Equal(t, VirtualMachinePowerStatus("Online"), status)
-	})
-
-	t.Run("MixedCase_Parses", func(t *testing.T) {
-		status, err := ParseVirtualMachinePowerStatus("OfFlInE")
-
-		assert.Nil(t, err)
-		assert.Equal(t, VirtualMachinePowerStatus("Offline"), status)
-	})
-
-	t.Run("Invalid_Error", func(t *testing.T) {
-		_, err := ParseVirtualMachinePowerStatus("InvalidStatus")
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseVirtualMachinePowerStatus(v)
 
 		assert.NotNil(t, err)
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
@@ -81,4 +71,22 @@ func TestFirewallRole_String_Expected(t *testing.T) {
 	s := v.String()
 
 	assert.Equal(t, "Master", s)
+}
+
+func TestParseTemplateType(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "pod"
+		s, err := ParseTemplateType(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, TemplateTypePod, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseTemplateType(v)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
+	})
 }

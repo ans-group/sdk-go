@@ -1,9 +1,6 @@
 package ecloud
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
@@ -161,29 +158,6 @@ type PatchVirtualMachineRequestDisk struct {
 	// Size in GB
 	Capacity int                                 `json:"capacity,omitempty"`
 	State    PatchVirtualMachineRequestDiskState `json:"state,omitempty"`
-}
-
-type TemplateType string
-
-const (
-	TemplateTypeSolution TemplateType = "solution"
-	TemplateTypePod      TemplateType = "pod"
-)
-
-// ParseTemplateType attempts to parse a TemplateType from string
-func ParseTemplateType(s string) (TemplateType, error) {
-	switch strings.ToUpper(s) {
-	case "SOLUTION":
-		return TemplateTypeSolution, nil
-	case "POD":
-		return TemplateTypePod, nil
-	}
-
-	return "", errors.New("Invalid template type")
-}
-
-func (s TemplateType) String() string {
-	return string(s)
 }
 
 // CreateVirtualMachineTemplateRequest represents a request to clone an eCloud virtual machine template

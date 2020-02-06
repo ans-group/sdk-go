@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
 func TestAuthorType_String_Expected(t *testing.T) {
@@ -36,7 +37,7 @@ func TestParseRequestPriority(t *testing.T) {
 		_, err := ParseRequestPriority(v)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "Invalid pss.RequestPriority. Valid values: Normal, High, Critical", err.Error())
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
 
