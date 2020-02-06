@@ -3,9 +3,6 @@
 package ecloud
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
@@ -43,16 +40,19 @@ const (
 	VirtualMachinePowerStatusOffline VirtualMachinePowerStatus = "Offline"
 )
 
+var VirtualMachinePowerStatusEnum connection.EnumSlice = []connection.Enum{
+	VirtualMachinePowerStatusOnline,
+	VirtualMachinePowerStatusOffline,
+}
+
 // ParseVirtualMachinePowerStatus attempts to parse a VirtualMachinePowerStatus from string
 func ParseVirtualMachinePowerStatus(s string) (VirtualMachinePowerStatus, error) {
-	switch strings.ToUpper(s) {
-	case "ONLINE":
-		return VirtualMachinePowerStatusOnline, nil
-	case "OFFLINE":
-		return VirtualMachinePowerStatusOffline, nil
+	e, err := connection.ParseEnum(s, VirtualMachinePowerStatusEnum)
+	if err != nil {
+		return "", err
 	}
 
-	return "", errors.New("Invalid power status")
+	return e.(VirtualMachinePowerStatus), err
 }
 
 type DatastoreStatus string
@@ -264,4 +264,30 @@ type ApplianceParameter struct {
 type ActiveDirectoryDomain struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type TemplateType string
+
+const (
+	TemplateTypeSolution TemplateType = "solution"
+	TemplateTypePod      TemplateType = "pod"
+)
+
+var TemplateTypeEnum connection.EnumSlice = []connection.Enum{
+	TemplateTypeSolution,
+	TemplateTypePod,
+}
+
+// ParseTemplateType attempts to parse a TemplateType from string
+func ParseTemplateType(s string) (TemplateType, error) {
+	e, err := connection.ParseEnum(s, TemplateTypeEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(TemplateType), err
+}
+
+func (s TemplateType) String() string {
+	return string(s)
 }
