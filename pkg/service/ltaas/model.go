@@ -21,7 +21,7 @@ const (
 	DomainVerificationMethodFileUpload DomainVerificationMethod = "File upload"
 )
 
-var DomainVerificationMethodEnum = []connection.Enum{
+var DomainVerificationMethodEnum connection.EnumSlice = []connection.Enum{
 	DomainVerificationMethodDNS,
 	DomainVerificationMethodFileUpload,
 }
@@ -58,7 +58,7 @@ const (
 	TestProtocolHTTPS TestProtocol = "https"
 )
 
-var TestProtocolEnum = []connection.Enum{
+var TestProtocolEnum connection.EnumSlice = []connection.Enum{
 	TestProtocolHTTP,
 	TestProtocolHTTPS,
 }
@@ -149,7 +149,7 @@ const (
 	AgreementTypeRecurring AgreementType = "recurring"
 )
 
-var AgreementTypeEnum = []connection.Enum{
+var AgreementTypeEnum connection.EnumSlice = []connection.Enum{
 	AgreementTypeSingle,
 	AgreementTypeRecurring,
 }

@@ -92,7 +92,7 @@ type testEnum string
 
 var testEnumOne testEnum = "One"
 var testEnumTwo testEnum = "Two"
-var testEnums = []Enum{testEnumOne, testEnumTwo}
+var testEnums EnumSlice = []Enum{testEnumOne, testEnumTwo}
 
 func (t testEnum) String() string {
 	return string(t)
@@ -130,4 +130,16 @@ func TestEnum_ParseEnum(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.IsType(t, &ErrInvalidEnumValue{}, err)
 	})
+}
+
+func TestEnumSlice_StringSlice_ReturnsExpected(t *testing.T) {
+	s := testEnums.StringSlice()
+
+	assert.Equal(t, s, []string{"One", "Two"})
+}
+
+func TestEnumSlice_String_ReturnsExpected(t *testing.T) {
+	s := testEnums.String()
+
+	assert.Equal(t, s, "One, Two")
 }

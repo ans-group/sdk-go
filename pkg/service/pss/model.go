@@ -16,7 +16,7 @@ const (
 	AuthorTypeSupport AuthorType = "Support"
 )
 
-var AuthorTypeEnum = []connection.Enum{AuthorTypeClient, AuthorTypeAuto, AuthorTypeSupport}
+var AuthorTypeEnum connection.EnumSlice = []connection.Enum{AuthorTypeClient, AuthorTypeAuto, AuthorTypeSupport}
 
 // ParseAuthorType attempts to parse a AuthorType from string
 func ParseAuthorType(s string) (AuthorType, error) {
@@ -40,7 +40,7 @@ const (
 	RequestPriorityCritical RequestPriority = "Critical"
 )
 
-var RequestPriorityEnum = []connection.Enum{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
+var RequestPriorityEnum connection.EnumSlice = []connection.Enum{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
 
 // ParseRequestPriority attempts to parse a RequestPriority from string
 func ParseRequestPriority(s string) (RequestPriority, error) {
