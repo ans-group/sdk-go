@@ -60,6 +60,7 @@ type CreateVirtualMachineRequest struct {
 	Role                    string                                 `json:"role,omitempty"`
 	BootstrapScript         string                                 `json:"bootstrap_script,omitempty"`
 	ActiveDirectoryDomainID int                                    `json:"ad_domain_id,omitempty"`
+	PodID                   int                                    `json:"pod_id,omitempty"`
 }
 
 // CreateVirtualMachineRequestDisk represents a request to create an eCloud virtual machine disk
