@@ -9,7 +9,7 @@ You should refer to the [Getting Started](https://developers.ukfast.io/getting-s
 First we'll instantiate a Client struct with an API key:
 
 ```
-ukfclient := client.NewClient(connection.NewAPIKeyCredentialsConnection("myapikey"))
+ukfclient := client.NewClient(connection.NewAPIKeyCredentialsAPIConnection("myapikey"))
 ```
 
 And away we go:
