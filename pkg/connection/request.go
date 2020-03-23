@@ -52,6 +52,10 @@ type APIRequestParameters struct {
 	Filtering  []APIRequestFiltering
 }
 
+func NewAPIRequestParameters() *APIRequestParameters {
+	return &APIRequestParameters{}
+}
+
 // WithPagination is a fluent method for adding pagination to request parameters
 func (p *APIRequestParameters) WithPagination(pagination APIRequestPagination) *APIRequestParameters {
 	p.Pagination = pagination
