@@ -291,3 +291,8 @@ func ParseTemplateType(s string) (TemplateType, error) {
 func (s TemplateType) String() string {
 	return string(s)
 }
+
+// ConsoleSession represents an eCloud Virtual Machine console session
+type ConsoleSession struct {
+	URL int `json:"url"`
+}

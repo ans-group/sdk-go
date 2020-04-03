@@ -245,3 +245,25 @@ func (s *Service) getPodAppliancesPaginatedResponseBody(podID int, parameters co
 
 	return body, response.HandleResponse(body, nil)
 }
+
+// PodConsoleAvailable removes a pod template
+func (s *Service) PodConsoleAvailable(podID int) (bool, error) {
+	resp, err := s.podConsoleAvailableResponse(podID)
+	if err != nil {
+		return false, err
+	}
+
+	if resp.StatusCode == 200 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (s *Service) podConsoleAvailableResponse(podID int) (*connection.APIResponse, error) {
+	if podID < 1 {
+		return &connection.APIResponse{}, fmt.Errorf("invalid pod id")
+	}
+
+	return s.connection.Get(fmt.Sprintf("/ecloud/v1/pods/%d/console-available", podID), connection.APIRequestParameters{})
+}

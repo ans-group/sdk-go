@@ -183,3 +183,10 @@ type GetActiveDirectoryDomainResponseBody struct {
 
 	Data ActiveDirectoryDomain `json:"data"`
 }
+
+// GetConsoleSessionResponseBody represents the API response body from the GetConsole resource
+type GetConsoleSessionResponseBody struct {
+	connection.APIResponseBody
+
+	Data ConsoleSession `json:"data"`
+}
