@@ -1417,3 +1417,85 @@ func TestDeleteVirtualMachineTag(t *testing.T) {
 		assert.IsType(t, &TagNotFoundError{}, err)
 	})
 }
+
+func TestCreateVirtualMachineConsoleSession(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/ecloud/v1/vms/123/console-session", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"url\":\"ukfast.co.uk\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		session, err := s.CreateVirtualMachineConsoleSession(123)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "ukfast.co.uk", session.URL)
+	})
+
+	t.Run("InvalidVirtualMachineID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateVirtualMachineConsoleSession(0)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid virtual machine id", err.Error())
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/ecloud/v1/vms/123/console-session", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateVirtualMachineConsoleSession(123)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("404_ReturnsVirtualMachineNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/ecloud/v1/vms/123/console-session", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.CreateVirtualMachineConsoleSession(123)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VirtualMachineNotFoundError{}, err)
+	})
+}

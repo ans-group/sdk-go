@@ -294,5 +294,5 @@ func (s TemplateType) String() string {
 
 // ConsoleSession represents an eCloud Virtual Machine console session
 type ConsoleSession struct {
-	URL int `json:"url"`
+	URL string `json:"url"`
 }
