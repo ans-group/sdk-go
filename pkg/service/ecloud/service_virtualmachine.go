@@ -508,3 +508,31 @@ func (s *Service) deleteVirtualMachineTagResponseBody(vmID int, tagKey string) (
 		return nil
 	})
 }
+
+// CreateVirtualMachineConsoleSession creates a virtual machine console session
+func (s *Service) CreateVirtualMachineConsoleSession(vmID int) (ConsoleSession, error) {
+	body, err := s.createVirtualMachineConsoleSessionResponseBody(vmID)
+
+	return body.Data, err
+}
+
+func (s *Service) createVirtualMachineConsoleSessionResponseBody(vmID int) (*GetConsoleSessionResponseBody, error) {
+	body := &GetConsoleSessionResponseBody{}
+
+	if vmID < 1 {
+		return body, fmt.Errorf("invalid virtual machine id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/console-session", vmID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VirtualMachineNotFoundError{ID: vmID}
+		}
+
+		return nil
+	})
+}

@@ -622,3 +622,83 @@ func TestGetPodAppliances(t *testing.T) {
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
+
+func TestPodConsoleAvailable(t *testing.T) {
+	t.Run("Available_ReturnsTrue", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/console-available", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		available, err := s.PodConsoleAvailable(123)
+
+		assert.Nil(t, err)
+		assert.True(t, available)
+	})
+
+	t.Run("404_ReturnsFalse", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/console-available", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		available, err := s.PodConsoleAvailable(123)
+
+		assert.Nil(t, err)
+		assert.False(t, available)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v1/pods/123/console-available", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.PodConsoleAvailable(123)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidPodID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.PodConsoleAvailable(0)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid pod id", err.Error())
+	})
+}

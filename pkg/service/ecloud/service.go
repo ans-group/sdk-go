@@ -27,6 +27,7 @@ type ECloudService interface {
 	CreateVirtualMachineTag(vmID int, req CreateTagRequest) error
 	PatchVirtualMachineTag(vmID int, tagKey string, patch PatchTagRequest) error
 	DeleteVirtualMachineTag(vmID int, tagKey string) error
+	CreateVirtualMachineConsoleSession(vmID int) (ConsoleSession, error)
 
 	// Solution
 	GetSolutions(parameters connection.APIRequestParameters) ([]Solution, error)
@@ -89,6 +90,7 @@ type ECloudService interface {
 	DeletePodTemplate(podID int, templateName string) error
 	GetPodAppliances(podID int, parameters connection.APIRequestParameters) ([]Appliance, error)
 	GetPodAppliancesPaginated(podID int, parameters connection.APIRequestParameters) (*PaginatedAppliance, error)
+	PodConsoleAvailable(podID int) (bool, error)
 
 	// Appliance
 	GetAppliances(parameters connection.APIRequestParameters) ([]Appliance, error)
