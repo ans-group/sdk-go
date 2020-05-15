@@ -39,7 +39,7 @@ type FailoverPlan struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      string `json:"status"`
-	VMs         struct {
+	VMs         []struct {
 		Name string `json:"name"`
 	} `json:"vms"`
 }
