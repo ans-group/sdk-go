@@ -11,26 +11,26 @@ type DRaaSService interface {
 	GetSolution(solutionID string) (Solution, error)
 	PatchSolution(solutionID string, req PatchSolutionRequest) error
 
-	GetSolutionBackupResources(parameters connection.APIRequestParameters, solutionID string) ([]BackupResource, error)
-	GetSolutionBackupResourcesPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedBackupResource, error)
+	GetSolutionBackupResources(solutionID string, parameters connection.APIRequestParameters) ([]BackupResource, error)
+	GetSolutionBackupResourcesPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedBackupResource, error)
 
 	GetSolutionBackupService(solutionID string) (BackupService, error)
 	ResetSolutionBackupServiceCredentials(solutionID string, req ResetBackupServiceCredentialsRequest) error
 
-	GetSolutionFailoverPlans(parameters connection.APIRequestParameters, solutionID string) ([]FailoverPlan, error)
-	GetSolutionFailoverPlansPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedFailoverPlan, error)
+	GetSolutionFailoverPlans(solutionID string, parameters connection.APIRequestParameters) ([]FailoverPlan, error)
+	GetSolutionFailoverPlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedFailoverPlan, error)
 	GetSolutionFailoverPlan(solutionID string, failoverPlanID string) (FailoverPlan, error)
 	StartSolutionFailoverPlan(solutionID string, failoverPlanID string) error
 	StopSolutionFailoverPlan(solutionID string, failoverPlanID string) error
 
-	GetSolutionComputeResources(parameters connection.APIRequestParameters, solutionID string) ([]ComputeResource, error)
-	GetSolutionComputeResourcesPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedComputeResource, error)
+	GetSolutionComputeResources(solutionID string, parameters connection.APIRequestParameters) ([]ComputeResource, error)
+	GetSolutionComputeResourcesPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedComputeResource, error)
 	GetSolutionComputeResource(solutionID string, computeResourcesID string) (ComputeResource, error)
 
-	GetSolutionHardwarePlans(parameters connection.APIRequestParameters, solutionID string) ([]HardwarePlan, error)
-	GetSolutionHardwarePlansPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedHardwarePlan, error)
+	GetSolutionHardwarePlans(solutionID string, parameters connection.APIRequestParameters) ([]HardwarePlan, error)
+	GetSolutionHardwarePlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedHardwarePlan, error)
 	GetSolutionHardwarePlan(solutionID string, hardwarePlanID string) (HardwarePlan, error)
-	GetSolutionHardwarePlanReplicas(parameters connection.APIRequestParameters, solutionID string, hardwarePlanID string) ([]Replica, error)
+	GetSolutionHardwarePlanReplicas(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) ([]Replica, error)
 
 	GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error)
 	GetIOPSTier(iopsTierID string) (IOPSTier, error)

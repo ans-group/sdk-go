@@ -240,7 +240,7 @@ func TestGetSolutionBackupResources(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		resources, err := s.GetSolutionBackupResources(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		resources, err := s.GetSolutionBackupResources("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, resources, 1)
@@ -257,7 +257,7 @@ func TestGetSolutionBackupResources(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionBackupResources(connection.APIRequestParameters{}, "")
+		_, err := s.GetSolutionBackupResources("", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -275,7 +275,7 @@ func TestGetSolutionBackupResources(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-resources", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionBackupResources(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		_, err := s.GetSolutionBackupResources("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -465,7 +465,7 @@ func TestGetSolutionFailoverPlans(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		resources, err := s.GetSolutionFailoverPlans(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		resources, err := s.GetSolutionFailoverPlans("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, resources, 1)
@@ -482,7 +482,7 @@ func TestGetSolutionFailoverPlans(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionFailoverPlans(connection.APIRequestParameters{}, "")
+		_, err := s.GetSolutionFailoverPlans("", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -500,7 +500,7 @@ func TestGetSolutionFailoverPlans(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionFailoverPlans(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		_, err := s.GetSolutionFailoverPlans("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -817,7 +817,7 @@ func TestGetSolutionComputeResources(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		resources, err := s.GetSolutionComputeResources(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		resources, err := s.GetSolutionComputeResources("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, resources, 1)
@@ -834,7 +834,7 @@ func TestGetSolutionComputeResources(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionComputeResources(connection.APIRequestParameters{}, "")
+		_, err := s.GetSolutionComputeResources("", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -852,7 +852,7 @@ func TestGetSolutionComputeResources(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/compute-resources", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionComputeResources(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		_, err := s.GetSolutionComputeResources("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -975,7 +975,7 @@ func TestGetSolutionHardwarePlans(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		resources, err := s.GetSolutionHardwarePlans(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		resources, err := s.GetSolutionHardwarePlans("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, resources, 1)
@@ -992,7 +992,7 @@ func TestGetSolutionHardwarePlans(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionHardwarePlans(connection.APIRequestParameters{}, "")
+		_, err := s.GetSolutionHardwarePlans("", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1010,7 +1010,7 @@ func TestGetSolutionHardwarePlans(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionHardwarePlans(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000")
+		_, err := s.GetSolutionHardwarePlans("00000000-0000-0000-0000-000000000000", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1133,7 +1133,7 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		replicas, err := s.GetSolutionHardwarePlanReplicas(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001")
+		replicas, err := s.GetSolutionHardwarePlanReplicas("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, replicas, 1)
@@ -1150,7 +1150,7 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionHardwarePlanReplicas(connection.APIRequestParameters{}, "", "00000000-0000-0000-0000-000000000001")
+		_, err := s.GetSolutionHardwarePlanReplicas("", "00000000-0000-0000-0000-000000000001", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1166,7 +1166,7 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionHardwarePlanReplicas(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000", "")
+		_, err := s.GetSolutionHardwarePlanReplicas("00000000-0000-0000-0000-000000000000", "", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid hardware plan id", err.Error())
@@ -1184,7 +1184,7 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans/00000000-0000-0000-0000-000000000001/replicas", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionHardwarePlanReplicas(connection.APIRequestParameters{}, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001")
+		_, err := s.GetSolutionHardwarePlanReplicas("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())

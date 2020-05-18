@@ -100,11 +100,11 @@ func (s *Service) patchSolutionResponseBody(solutionID string, req PatchSolution
 }
 
 // GetSolutionBackupResources retrieves a collection of backup resources for specified solution
-func (s *Service) GetSolutionBackupResources(parameters connection.APIRequestParameters, solutionID string) ([]BackupResource, error) {
+func (s *Service) GetSolutionBackupResources(solutionID string, parameters connection.APIRequestParameters) ([]BackupResource, error) {
 	var resources []BackupResource
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionBackupResourcesPaginated(p, solutionID)
+		return s.GetSolutionBackupResourcesPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -117,15 +117,15 @@ func (s *Service) GetSolutionBackupResources(parameters connection.APIRequestPar
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solutions
-func (s *Service) GetSolutionBackupResourcesPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedBackupResource, error) {
-	body, err := s.getSolutionBackupResourcesPaginatedResponseBody(parameters, solutionID)
+func (s *Service) GetSolutionBackupResourcesPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedBackupResource, error) {
+	body, err := s.getSolutionBackupResourcesPaginatedResponseBody(solutionID, parameters)
 
 	return NewPaginatedBackupResource(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionBackupResourcesPaginated(p, solutionID)
+		return s.GetSolutionBackupResourcesPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionBackupResourcesPaginatedResponseBody(parameters connection.APIRequestParameters, solutionID string) (*GetBackupResourcesResponseBody, error) {
+func (s *Service) getSolutionBackupResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetBackupResourcesResponseBody, error) {
 	body := &GetBackupResourcesResponseBody{}
 
 	if solutionID == "" {
@@ -203,11 +203,11 @@ func (s *Service) resetSolutionBackupServiceCredentialsResponseBody(solutionID s
 }
 
 // GetSolutionFailoverPlans retrieves a collection of failover plans for specified solution
-func (s *Service) GetSolutionFailoverPlans(parameters connection.APIRequestParameters, solutionID string) ([]FailoverPlan, error) {
+func (s *Service) GetSolutionFailoverPlans(solutionID string, parameters connection.APIRequestParameters) ([]FailoverPlan, error) {
 	var resources []FailoverPlan
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionFailoverPlansPaginated(p, solutionID)
+		return s.GetSolutionFailoverPlansPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -220,15 +220,15 @@ func (s *Service) GetSolutionFailoverPlans(parameters connection.APIRequestParam
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solution failover plans
-func (s *Service) GetSolutionFailoverPlansPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedFailoverPlan, error) {
-	body, err := s.getSolutionFailoverPlansPaginatedResponseBody(parameters, solutionID)
+func (s *Service) GetSolutionFailoverPlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedFailoverPlan, error) {
+	body, err := s.getSolutionFailoverPlansPaginatedResponseBody(solutionID, parameters)
 
 	return NewPaginatedFailoverPlan(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionFailoverPlansPaginated(p, solutionID)
+		return s.GetSolutionFailoverPlansPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionFailoverPlansPaginatedResponseBody(parameters connection.APIRequestParameters, solutionID string) (*GetFailoverPlansResponseBody, error) {
+func (s *Service) getSolutionFailoverPlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetFailoverPlansResponseBody, error) {
 	body := &GetFailoverPlansResponseBody{}
 
 	if solutionID == "" {
@@ -343,11 +343,11 @@ func (s *Service) stopSolutionFailoverPlanResponseBody(solutionID string, failov
 }
 
 // GetSolutionComputeResources retrieves a collection of compute resources for specified solution
-func (s *Service) GetSolutionComputeResources(parameters connection.APIRequestParameters, solutionID string) ([]ComputeResource, error) {
+func (s *Service) GetSolutionComputeResources(solutionID string, parameters connection.APIRequestParameters) ([]ComputeResource, error) {
 	var resources []ComputeResource
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionComputeResourcesPaginated(p, solutionID)
+		return s.GetSolutionComputeResourcesPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -360,15 +360,15 @@ func (s *Service) GetSolutionComputeResources(parameters connection.APIRequestPa
 }
 
 // GetSolutionComputeResourcesPaginated retrieves a paginated list of solution compute resources
-func (s *Service) GetSolutionComputeResourcesPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedComputeResource, error) {
-	body, err := s.getSolutionComputeResourcesPaginatedResponseBody(parameters, solutionID)
+func (s *Service) GetSolutionComputeResourcesPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedComputeResource, error) {
+	body, err := s.getSolutionComputeResourcesPaginatedResponseBody(solutionID, parameters)
 
 	return NewPaginatedComputeResource(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionComputeResourcesPaginated(p, solutionID)
+		return s.GetSolutionComputeResourcesPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionComputeResourcesPaginatedResponseBody(parameters connection.APIRequestParameters, solutionID string) (*GetComputeResourcesResponseBody, error) {
+func (s *Service) getSolutionComputeResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetComputeResourcesResponseBody, error) {
 	body := &GetComputeResourcesResponseBody{}
 
 	if solutionID == "" {
@@ -421,11 +421,11 @@ func (s *Service) getSolutionComputeResourceResponseBody(solutionID string, comp
 }
 
 // GetSolutionHardwarePlans retrieves a collection of hardware plans for specified solution
-func (s *Service) GetSolutionHardwarePlans(parameters connection.APIRequestParameters, solutionID string) ([]HardwarePlan, error) {
+func (s *Service) GetSolutionHardwarePlans(solutionID string, parameters connection.APIRequestParameters) ([]HardwarePlan, error) {
 	var resources []HardwarePlan
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionHardwarePlansPaginated(p, solutionID)
+		return s.GetSolutionHardwarePlansPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -438,15 +438,15 @@ func (s *Service) GetSolutionHardwarePlans(parameters connection.APIRequestParam
 }
 
 // GetSolutionHardwarePlansPaginated retrieves a paginated list of solution hardware plans
-func (s *Service) GetSolutionHardwarePlansPaginated(parameters connection.APIRequestParameters, solutionID string) (*PaginatedHardwarePlan, error) {
-	body, err := s.getSolutionHardwarePlansPaginatedResponseBody(parameters, solutionID)
+func (s *Service) GetSolutionHardwarePlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedHardwarePlan, error) {
+	body, err := s.getSolutionHardwarePlansPaginatedResponseBody(solutionID, parameters)
 
 	return NewPaginatedHardwarePlan(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionHardwarePlansPaginated(p, solutionID)
+		return s.GetSolutionHardwarePlansPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHardwarePlansPaginatedResponseBody(parameters connection.APIRequestParameters, solutionID string) (*GetHardwarePlansResponseBody, error) {
+func (s *Service) getSolutionHardwarePlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetHardwarePlansResponseBody, error) {
 	body := &GetHardwarePlansResponseBody{}
 
 	if solutionID == "" {
@@ -499,11 +499,11 @@ func (s *Service) getSolutionHardwarePlanResponseBody(solutionID string, hardwar
 }
 
 // GetSolutionHardwarePlanReplicas retrieves a collection of hardware plans for specified solution
-func (s *Service) GetSolutionHardwarePlanReplicas(parameters connection.APIRequestParameters, solutionID string, hardwarePlanID string) ([]Replica, error) {
+func (s *Service) GetSolutionHardwarePlanReplicas(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) ([]Replica, error) {
 	var resources []Replica
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionHardwarePlanReplicasPaginated(p, solutionID, hardwarePlanID)
+		return s.GetSolutionHardwarePlanReplicasPaginated(solutionID, hardwarePlanID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -516,15 +516,15 @@ func (s *Service) GetSolutionHardwarePlanReplicas(parameters connection.APIReque
 }
 
 // GetSolutionHardwarePlanReplicasPaginated retrieves a paginated list of solution hardware plans
-func (s *Service) GetSolutionHardwarePlanReplicasPaginated(parameters connection.APIRequestParameters, solutionID string, hardwarePlanID string) (*PaginatedReplica, error) {
-	body, err := s.getSolutionHardwarePlanReplicasPaginatedResponseBody(parameters, solutionID, hardwarePlanID)
+func (s *Service) GetSolutionHardwarePlanReplicasPaginated(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) (*PaginatedReplica, error) {
+	body, err := s.getSolutionHardwarePlanReplicasPaginatedResponseBody(solutionID, hardwarePlanID, parameters)
 
 	return NewPaginatedReplica(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionHardwarePlanReplicasPaginated(p, solutionID, hardwarePlanID)
+		return s.GetSolutionHardwarePlanReplicasPaginated(solutionID, hardwarePlanID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHardwarePlanReplicasPaginatedResponseBody(parameters connection.APIRequestParameters, solutionID string, hardwarePlanID string) (*GetReplicasResponseBody, error) {
+func (s *Service) getSolutionHardwarePlanReplicasPaginatedResponseBody(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) (*GetReplicasResponseBody, error) {
 	body := &GetReplicasResponseBody{}
 
 	if solutionID == "" {
