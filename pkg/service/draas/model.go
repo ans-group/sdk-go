@@ -16,13 +16,13 @@ type BackupResource struct {
 	// Quota in DB
 	Quota int `json:"quota"`
 	// Used quota in DB
-	UsedQuota int `json:"used_quota"`
+	UsedQuota float32 `json:"used_quota"`
 }
 
 // IOPSTier represents an IOPS tier
 type IOPSTier struct {
 	ID        string `json:"id"`
-	IOPSLimit string `json:"iops_limit"`
+	IOPSLimit int    `json:"iops_limit"`
 }
 
 // BackupService represents the backup service for a solution
