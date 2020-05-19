@@ -55,3 +55,12 @@ type BillingTypeNotFoundError struct {
 func (e *BillingTypeNotFoundError) Error() string {
 	return fmt.Sprintf("Billing type not found with ID [%s]", e.ID)
 }
+
+// ReplicaNotFoundError indicates a replica was not found
+type ReplicaNotFoundError struct {
+	ID string
+}
+
+func (e *ReplicaNotFoundError) Error() string {
+	return fmt.Sprintf("Replica not found with ID [%s]", e.ID)
+}

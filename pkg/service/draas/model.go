@@ -79,7 +79,7 @@ type HardwarePlan struct {
 		Public  int `json:"public"`
 		Private int `json:"private"`
 	} `json:"networks"`
-	Storage struct {
+	Storage []struct {
 		ID    string `json:"id"`
 		Name  string `json:"name"`
 		Type  string `json:"Type"`
@@ -94,7 +94,7 @@ type Replica struct {
 	Platform string `json:"platform"`
 	CPU      int    `json:"cpu"`
 	RAM      int    `json:"ram"`
-	HDD      int    `json:"hdd"`
+	Disk     int    `json:"disk"`
 	IOPS     int    `json:"iops"`
 	Power    bool   `json:"power"`
 }

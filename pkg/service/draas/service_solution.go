@@ -281,13 +281,13 @@ func (s *Service) getSolutionFailoverPlanResponseBody(solutionID string, failove
 }
 
 // StartSolutionFailoverPlan starts the specified failover plan
-func (s *Service) StartSolutionFailoverPlan(solutionID string, failoverPlanID string) error {
-	_, err := s.startSolutionFailoverPlanResponseBody(solutionID, failoverPlanID)
+func (s *Service) StartSolutionFailoverPlan(solutionID string, failoverPlanID string, req StartFailoverPlanRequest) error {
+	_, err := s.startSolutionFailoverPlanResponseBody(solutionID, failoverPlanID, req)
 
 	return err
 }
 
-func (s *Service) startSolutionFailoverPlanResponseBody(solutionID string, failoverPlanID string) (*connection.APIResponseBody, error) {
+func (s *Service) startSolutionFailoverPlanResponseBody(solutionID string, failoverPlanID string, req StartFailoverPlanRequest) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if solutionID == "" {
@@ -297,7 +297,7 @@ func (s *Service) startSolutionFailoverPlanResponseBody(solutionID string, failo
 		return body, fmt.Errorf("invalid failover plan id")
 	}
 
-	response, err := s.connection.Post(fmt.Sprintf("/draas/v1/solutions/%s/failover-plans/%s/start", solutionID, failoverPlanID), connection.APIRequestParameters{})
+	response, err := s.connection.Post(fmt.Sprintf("/draas/v1/solutions/%s/failover-plans/%s/start", solutionID, failoverPlanID), &req)
 	if err != nil {
 		return body, err
 	}
@@ -328,7 +328,7 @@ func (s *Service) stopSolutionFailoverPlanResponseBody(solutionID string, failov
 		return body, fmt.Errorf("invalid failover plan id")
 	}
 
-	response, err := s.connection.Post(fmt.Sprintf("/draas/v1/solutions/%s/failover-plans/%s/stop", solutionID, failoverPlanID), connection.APIRequestParameters{})
+	response, err := s.connection.Post(fmt.Sprintf("/draas/v1/solutions/%s/failover-plans/%s/stop", solutionID, failoverPlanID), nil)
 	if err != nil {
 		return body, err
 	}
@@ -542,6 +542,37 @@ func (s *Service) getSolutionHardwarePlanReplicasPaginatedResponseBody(solutionI
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
 			return &SolutionNotFoundError{ID: solutionID}
+		}
+
+		return nil
+	})
+}
+
+// UpdateSolutionReplicaIOPS updates a solution replica by ID
+func (s *Service) UpdateSolutionReplicaIOPS(solutionID string, replicaID string, req UpdateReplicaIOPSRequest) error {
+	_, err := s.updateSolutionReplicaResponseBody(solutionID, replicaID, req)
+
+	return err
+}
+
+func (s *Service) updateSolutionReplicaResponseBody(solutionID string, replicaID string, req UpdateReplicaIOPSRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if solutionID == "" {
+		return body, fmt.Errorf("invalid solution id")
+	}
+	if replicaID == "" {
+		return body, fmt.Errorf("invalid replica id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/draas/v1/solutions/%s/replicas/%s/iops", solutionID, replicaID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &ReplicaNotFoundError{ID: replicaID}
 		}
 
 		return nil

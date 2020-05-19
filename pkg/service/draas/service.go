@@ -20,7 +20,7 @@ type DRaaSService interface {
 	GetSolutionFailoverPlans(solutionID string, parameters connection.APIRequestParameters) ([]FailoverPlan, error)
 	GetSolutionFailoverPlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedFailoverPlan, error)
 	GetSolutionFailoverPlan(solutionID string, failoverPlanID string) (FailoverPlan, error)
-	StartSolutionFailoverPlan(solutionID string, failoverPlanID string) error
+	StartSolutionFailoverPlan(solutionID string, failoverPlanID string, req StartFailoverPlanRequest) error
 	StopSolutionFailoverPlan(solutionID string, failoverPlanID string) error
 
 	GetSolutionComputeResources(solutionID string, parameters connection.APIRequestParameters) ([]ComputeResource, error)
@@ -31,6 +31,8 @@ type DRaaSService interface {
 	GetSolutionHardwarePlansPaginated(solutionID string, parameters connection.APIRequestParameters) (*PaginatedHardwarePlan, error)
 	GetSolutionHardwarePlan(solutionID string, hardwarePlanID string) (HardwarePlan, error)
 	GetSolutionHardwarePlanReplicas(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) ([]Replica, error)
+
+	UpdateSolutionReplicaIOPS(solutionID string, replicaID string, req UpdateReplicaIOPSRequest) error
 
 	GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error)
 	GetIOPSTier(iopsTierID string) (IOPSTier, error)

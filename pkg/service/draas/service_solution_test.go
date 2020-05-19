@@ -616,14 +616,18 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/start", gomock.Any()).Return(&connection.APIResponse{
+		req := StartFailoverPlanRequest{
+			StartDate: "2020-05-19T08:34:45.031Z",
+		}
+
+		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/start", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001")
+		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", req)
 
 		assert.Nil(t, err)
 	})
@@ -640,7 +644,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/start", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001")
+		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", StartFailoverPlanRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -656,7 +660,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.StartSolutionFailoverPlan("", "00000000-0000-0000-0000-000000000001")
+		err := s.StartSolutionFailoverPlan("", "00000000-0000-0000-0000-000000000001", StartFailoverPlanRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -672,7 +676,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "")
+		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "", StartFailoverPlanRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid failover plan id", err.Error())
@@ -695,7 +699,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001")
+		err := s.StartSolutionFailoverPlan("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", StartFailoverPlanRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FailoverPlanNotFoundError{}, err)
@@ -1188,5 +1192,106 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestUpdateSolutionReplicaIOPS(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := UpdateReplicaIOPSRequest{
+			IOPSTierID: "someid",
+		}
+
+		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/replicas/00000000-0000-0000-0000-000000000001/iops", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.UpdateSolutionReplicaIOPS("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", req)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/replicas/00000000-0000-0000-0000-000000000001/iops", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.UpdateSolutionReplicaIOPS("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", UpdateReplicaIOPSRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidSolutionID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UpdateSolutionReplicaIOPS("", "00000000-0000-0000-0000-000000000001", UpdateReplicaIOPSRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid solution id", err.Error())
+	})
+
+	t.Run("InvalidReplicaID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UpdateSolutionReplicaIOPS("00000000-0000-0000-0000-000000000000", "", UpdateReplicaIOPSRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid replica id", err.Error())
+	})
+
+	t.Run("404_ReturnsReplicaNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/replicas/00000000-0000-0000-0000-000000000001/iops", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.UpdateSolutionReplicaIOPS("00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000001", UpdateReplicaIOPSRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ReplicaNotFoundError{}, err)
 	})
 }
