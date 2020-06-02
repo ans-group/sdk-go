@@ -15,7 +15,7 @@ type ResetBackupServiceCredentialsRequest struct {
 
 // StartFailoverPlanRequest represents a request to start a failover plan
 type StartFailoverPlanRequest struct {
-	StartDate connection.DateTime `json:"start_date"`
+	StartDate connection.DateTime `json:"start_date,omitempty"`
 }
 
 // UpdateReplicaIOPSRequest represents a request to update the IOPS for a replica
