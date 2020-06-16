@@ -117,6 +117,7 @@ type VirtualMachine struct {
 	Disks       []VirtualMachineDisk `json:"hdd_disks"`
 	Encrypted   bool                 `json:"encrypted"`
 	Role        string               `json:"role"`
+	GPUProfile  string               `json:"gpu_profile"`
 }
 
 // VirtualMachineDisk represents an eCloud Virtual Machine disk
@@ -139,10 +140,12 @@ type Tag struct {
 
 // Solution represents an eCloud solution
 type Solution struct {
-	ID          int                 `json:"id"`
-	Name        string              `json:"name"`
-	Environment SolutionEnvironment `json:"environment"`
-	PodID       int                 `json:"pod_id"`
+	ID                int                 `json:"id"`
+	Name              string              `json:"name"`
+	Environment       SolutionEnvironment `json:"environment"`
+	PodID             int                 `json:"pod_id"`
+	EncryptionEnabled bool                `json:"encryption_enabled"`
+	EncryptionDefault bool                `json:"encryption_default"`
 }
 
 // Site represents an eCloud site
@@ -234,8 +237,13 @@ type Template struct {
 
 // Pod represents an eCloud pod
 type Pod struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Services struct {
+		Public     bool `json:"public"`
+		Burst      bool `json:"burst"`
+		Appliances bool `json:"appliances"`
+	} `json:"services"`
 }
 
 // Appliance represents an eCloud appliance
