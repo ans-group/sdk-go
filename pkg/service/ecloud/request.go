@@ -93,7 +93,8 @@ func (c *CreateVirtualMachineRequest) Validate() *connection.ValidationError {
 
 // PatchSolutionRequest represents an eCloud solution patch request
 type PatchSolutionRequest struct {
-	Name *string `json:"name,omitempty"`
+	Name              *string `json:"name,omitempty"`
+	EncryptionDefault *bool   `json:"encryption_default,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
