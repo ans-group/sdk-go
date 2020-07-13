@@ -11,6 +11,7 @@ type SSLService interface {
 	GetCertificate(certificateID int) (Certificate, error)
 	GetCertificateContent(certificateID int) (CertificateContent, error)
 	GetCertificatePrivateKey(certificateID int) (CertificatePrivateKey, error)
+	ValidateCertificate(req ValidateRequest) (CertificateValidation, error)
 }
 
 // Service implements SSLService for managing

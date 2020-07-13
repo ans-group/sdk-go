@@ -29,3 +29,10 @@ type GetCertificateKeyResponseBody struct {
 
 	Data CertificatePrivateKey `json:"data"`
 }
+
+// ValidateCertificateResponse represents the API response body from the ValidateCertificate resource
+type ValidateCertificateResponse struct {
+	connection.APIResponseBody
+
+	Data CertificateValidation `json:"data"`
+}

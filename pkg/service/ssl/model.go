@@ -42,3 +42,9 @@ type CertificateContent struct {
 type CertificatePrivateKey struct {
 	Key string `json:"key"`
 }
+
+// CertificateValidation represents the results of certificate validation
+type CertificateValidation struct {
+	Domains   []string            `json:"domains"`
+	ExpiresAt connection.DateTime `json:"expires_at"`
+}
