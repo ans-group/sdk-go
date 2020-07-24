@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package ltaas -typename Domain,Test,Job,Threshold,Scenario -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ltaas -typename Domain,Test,Job,Threshold,Scenario -destination model_paginated.go
 
 package ltaas
 

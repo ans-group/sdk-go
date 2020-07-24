@@ -1,4 +1,4 @@
-//go:generate go run ../../gen/model_paginated_gen.go -package account -typename Contact,Invoice,InvoiceQuery -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated/main.go -package account -typename Contact,Invoice,InvoiceQuery -destination model_paginated.go
 
 package account
 

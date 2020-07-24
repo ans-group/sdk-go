@@ -146,3 +146,12 @@ type HSTSRuleNotFoundError struct {
 func (e *HSTSRuleNotFoundError) Error() string {
 	return fmt.Sprintf("HSTS rule not found with id [%s]", e.ID)
 }
+
+// WAFLogNotFoundError indicates a WAF rule was not found
+type WAFLogNotFoundError struct {
+	ID string
+}
+
+func (e *WAFLogNotFoundError) Error() string {
+	return fmt.Sprintf("WAF log not found with id [%s]", e.ID)
+}
