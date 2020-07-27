@@ -8,19 +8,19 @@ import (
 
 // GetWAFLogs retrieves a list of logs
 func (s *Service) GetWAFLogs(parameters connection.APIRequestParameters) ([]WAFLog, error) {
-	var ssls []WAFLog
+	var matches []WAFLog
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetWAFLogsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, ssl := range response.(*PaginatedWAFLog).Items {
-			ssls = append(ssls, ssl)
+		for _, match := range response.(*PaginatedWAFLog).Items {
+			matches = append(matches, match)
 		}
 	}
 
-	return ssls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return matches, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetWAFLogsPaginated retrieves a paginated list of logs
@@ -73,19 +73,19 @@ func (s *Service) getWAFLogResponseBody(requestID string) (*GetWAFLogResponseBod
 
 // GetWAFLogMatches retrieves a list of log matches
 func (s *Service) GetWAFLogMatches(parameters connection.APIRequestParameters) ([]WAFLogMatch, error) {
-	var ssls []WAFLogMatch
+	var matches []WAFLogMatch
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetWAFLogMatchesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, ssl := range response.(*PaginatedWAFLogMatch).Items {
-			ssls = append(ssls, ssl)
+		for _, match := range response.(*PaginatedWAFLogMatch).Items {
+			matches = append(matches, match)
 		}
 	}
 
-	return ssls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return matches, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetWAFLogMatchesPaginated retrieves a paginated list of log matches
@@ -110,19 +110,19 @@ func (s *Service) getWAFLogMatchesPaginatedResponseBody(parameters connection.AP
 
 // GetWAFLogRequestMatches retrieves a list of log matches for request
 func (s *Service) GetWAFLogRequestMatches(requestID string, parameters connection.APIRequestParameters) ([]WAFLogMatch, error) {
-	var ssls []WAFLogMatch
+	var matches []WAFLogMatch
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetWAFLogRequestMatchesPaginated(requestID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, ssl := range response.(*PaginatedWAFLogMatch).Items {
-			ssls = append(ssls, ssl)
+		for _, match := range response.(*PaginatedWAFLogMatch).Items {
+			matches = append(matches, match)
 		}
 	}
 
-	return ssls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return matches, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetWAFLogRequestMatchesPaginated retrieves a paginated list of matches for request
@@ -156,14 +156,14 @@ func (s *Service) getWAFLogRequestMatchesPaginatedResponseBody(requestID string,
 }
 
 // GetWAFLogRequestMatch retrieves a single waf log request match
-func (s *Service) GetWAFLogRequestMatch(requestID string, matchID string) (WAFLog, error) {
+func (s *Service) GetWAFLogRequestMatch(requestID string, matchID string) (WAFLogMatch, error) {
 	body, err := s.getWAFLogRequestMatchResponseBody(requestID, matchID)
 
 	return body.Data, err
 }
 
-func (s *Service) getWAFLogRequestMatchResponseBody(requestID string, matchID string) (*GetWAFLogResponseBody, error) {
-	body := &GetWAFLogResponseBody{}
+func (s *Service) getWAFLogRequestMatchResponseBody(requestID string, matchID string) (*GetWAFLogMatchResponseBody, error) {
+	body := &GetWAFLogMatchResponseBody{}
 
 	if requestID == "" {
 		return body, fmt.Errorf("invalid request id")
@@ -180,7 +180,7 @@ func (s *Service) getWAFLogRequestMatchResponseBody(requestID string, matchID st
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &WAFLogNotFoundError{ID: requestID}
+			return &WAFLogMatchNotFoundError{ID: requestID}
 		}
 
 		return nil

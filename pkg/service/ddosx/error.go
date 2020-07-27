@@ -155,3 +155,12 @@ type WAFLogNotFoundError struct {
 func (e *WAFLogNotFoundError) Error() string {
 	return fmt.Sprintf("WAF log not found with id [%s]", e.ID)
 }
+
+// WAFLogMatchNotFoundError indicates a WAF rule was not found
+type WAFLogMatchNotFoundError struct {
+	ID string
+}
+
+func (e *WAFLogMatchNotFoundError) Error() string {
+	return fmt.Sprintf("WAF log match not found with id [%s]", e.ID)
+}
