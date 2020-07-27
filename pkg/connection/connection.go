@@ -221,7 +221,7 @@ func (c *APIConnection) InvokeRequest(req *http.Request) (*APIResponse, error) {
 
 	r, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return resp, fmt.Errorf("api request failed: %s", err)
+		return resp, fmt.Errorf("api request failed: %w", err)
 	}
 
 	logging.Debugf("Got response: StatusCode=[%d]", r.StatusCode)

@@ -328,15 +328,17 @@ func TestAPIConnection_NewRequest(t *testing.T) {
 func TestAPIConnection_InvokeRequest(t *testing.T) {
 	c := NewAPIKeyCredentialsAPIConnection("testkey")
 
+	httpErr := errors.New("test error")
+
 	t.Run("HTTPClientDoError_ReturnsError", func(t *testing.T) {
 		c.HTTPClient = test.NewTestClient(func(req *http.Request) (*http.Response, error) {
-			return &http.Response{}, errors.New("test error")
+			return &http.Response{}, httpErr
 		})
 
 		url, _ := url.Parse("https://localhost")
 		_, err := c.InvokeRequest(&http.Request{URL: url})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "api request failed: Get https://localhost: test error", err.Error())
+		assert.True(t, errors.Is(err, httpErr))
 	})
 }

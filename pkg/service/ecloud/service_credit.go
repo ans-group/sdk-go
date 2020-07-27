@@ -12,8 +12,8 @@ func (s *Service) GetCredits(parameters connection.APIRequestParameters) ([]acco
 	return body.Data, err
 }
 
-func (s *Service) getCreditsResponseBody(parameters connection.APIRequestParameters) (*account.GetCreditsResponseBody, error) {
-	body := &account.GetCreditsResponseBody{}
+func (s *Service) getCreditsResponseBody(parameters connection.APIRequestParameters) (*account.GetCreditArrayResponseBody, error) {
+	body := &account.GetCreditArrayResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/credits", parameters)
 	if err != nil {

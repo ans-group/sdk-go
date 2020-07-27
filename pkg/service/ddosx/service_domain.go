@@ -35,8 +35,8 @@ func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainsResponseBody, error) {
-	body := &GetDomainsResponseBody{}
+func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainArrayResponseBody, error) {
+	body := &GetDomainArrayResponseBody{}
 
 	response, err := s.connection.Get("/ddosx/v1/domains", parameters)
 	if err != nil {
@@ -174,8 +174,8 @@ func (s *Service) GetDomainRecordsPaginated(domainName string, parameters connec
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainRecordsPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetRecordsResponseBody, error) {
-	body := &GetRecordsResponseBody{}
+func (s *Service) getDomainRecordsPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetRecordArrayResponseBody, error) {
+	body := &GetRecordArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -342,8 +342,8 @@ func (s *Service) GetDomainPropertiesPaginated(domainName string, parameters con
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainPropertiesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetDomainPropertiesResponseBody, error) {
-	body := &GetDomainPropertiesResponseBody{}
+func (s *Service) getDomainPropertiesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetDomainPropertyArrayResponseBody, error) {
+	body := &GetDomainPropertyArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -563,8 +563,8 @@ func (s *Service) GetDomainWAFRuleSetsPaginated(domainName string, parameters co
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainWAFRuleSetsPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFRuleSetsResponseBody, error) {
-	body := &GetWAFRuleSetsResponseBody{}
+func (s *Service) getDomainWAFRuleSetsPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFRuleSetArrayResponseBody, error) {
+	body := &GetWAFRuleSetArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -672,8 +672,8 @@ func (s *Service) GetDomainWAFRulesPaginated(domainName string, parameters conne
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainWAFRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFRulesResponseBody, error) {
-	body := &GetWAFRulesResponseBody{}
+func (s *Service) getDomainWAFRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFRuleArrayResponseBody, error) {
+	body := &GetWAFRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -840,8 +840,8 @@ func (s *Service) GetDomainWAFAdvancedRulesPaginated(domainName string, paramete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFAdvancedRulesResponseBody, error) {
-	body := &GetWAFAdvancedRulesResponseBody{}
+func (s *Service) getDomainWAFAdvancedRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetWAFAdvancedRuleArrayResponseBody, error) {
+	body := &GetWAFAdvancedRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -1008,8 +1008,8 @@ func (s *Service) GetDomainACLGeoIPRulesPaginated(domainName string, parameters 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainACLGeoIPRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetACLGeoIPRulesResponseBody, error) {
-	body := &GetACLGeoIPRulesResponseBody{}
+func (s *Service) getDomainACLGeoIPRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetACLGeoIPRuleArrayResponseBody, error) {
+	body := &GetACLGeoIPRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -1232,8 +1232,8 @@ func (s *Service) GetDomainACLIPRulesPaginated(domainName string, parameters con
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetACLIPRulesResponseBody, error) {
-	body := &GetACLIPRulesResponseBody{}
+func (s *Service) getDomainACLIPRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetACLIPRuleArrayResponseBody, error) {
+	body := &GetACLIPRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -1600,8 +1600,8 @@ func (s *Service) GetDomainCDNRulesPaginated(domainName string, parameters conne
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainCDNRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetCDNRulesResponseBody, error) {
-	body := &GetCDNRulesResponseBody{}
+func (s *Service) getDomainCDNRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetCDNRuleArrayResponseBody, error) {
+	body := &GetCDNRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
@@ -1880,8 +1880,8 @@ func (s *Service) GetDomainHSTSRulesPaginated(domainName string, parameters conn
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainHSTSRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetHSTSRulesResponseBody, error) {
-	body := &GetHSTSRulesResponseBody{}
+func (s *Service) getDomainHSTSRulesPaginatedResponseBody(domainName string, parameters connection.APIRequestParameters) (*GetHSTSRuleArrayResponseBody, error) {
+	body := &GetHSTSRuleArrayResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

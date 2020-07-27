@@ -103,6 +103,15 @@ type DDoSXService interface {
 	GetDomainHSTSRule(domainName string, ruleID string) (HSTSRule, error)
 	PatchDomainHSTSRule(domainName string, ruleID string, req PatchHSTSRuleRequest) error
 	DeleteDomainHSTSRule(domainName string, ruleID string) error
+
+	GetWAFLogs(parameters connection.APIRequestParameters) ([]WAFLog, error)
+	GetWAFLogsPaginated(parameters connection.APIRequestParameters) (*PaginatedWAFLog, error)
+	GetWAFLog(requestID string) (WAFLog, error)
+	GetWAFLogMatches(parameters connection.APIRequestParameters) ([]WAFLogMatch, error)
+	GetWAFLogMatchesPaginated(parameters connection.APIRequestParameters) (*PaginatedWAFLogMatch, error)
+	GetWAFLogRequestMatches(requestID string, parameters connection.APIRequestParameters) ([]WAFLogMatch, error)
+	GetWAFLogRequestMatchesPaginated(requestID string, parameters connection.APIRequestParameters) (*PaginatedWAFLogMatch, error)
+	GetWAFLogRequestMatch(requestID string, matchID string) (WAFLogMatch, error)
 }
 
 // Service implements DDoSXService for managing
