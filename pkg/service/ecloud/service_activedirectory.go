@@ -32,8 +32,8 @@ func (s *Service) GetActiveDirectoryDomainsPaginated(parameters connection.APIRe
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getActiveDirectoryDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetActiveDirectoryDomainsResponseBody, error) {
-	body := &GetActiveDirectoryDomainsResponseBody{}
+func (s *Service) getActiveDirectoryDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetActiveDirectoryDomainSliceResponseBody, error) {
+	body := &GetActiveDirectoryDomainSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/active-directory/domains", parameters)
 	if err != nil {

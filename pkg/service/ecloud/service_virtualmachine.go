@@ -32,8 +32,8 @@ func (s *Service) GetVirtualMachinesPaginated(parameters connection.APIRequestPa
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getVirtualMachinesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVirtualMachinesResponseBody, error) {
-	body := &GetVirtualMachinesResponseBody{}
+func (s *Service) getVirtualMachinesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVirtualMachineSliceResponseBody, error) {
+	body := &GetVirtualMachineSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/vms", parameters)
 	if err != nil {
@@ -367,8 +367,8 @@ func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getVirtualMachineTagsPaginatedResponseBody(vmID int, parameters connection.APIRequestParameters) (*GetTagsResponseBody, error) {
-	body := &GetTagsResponseBody{}
+func (s *Service) getVirtualMachineTagsPaginatedResponseBody(vmID int, parameters connection.APIRequestParameters) (*GetTagSliceResponseBody, error) {
+	body := &GetTagSliceResponseBody{}
 
 	if vmID < 1 {
 		return body, fmt.Errorf("invalid virtual machine id")

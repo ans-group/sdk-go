@@ -32,8 +32,8 @@ func (s *Service) GetJobsPaginated(parameters connection.APIRequestParameters) (
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getJobsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetJobsResponseBody, error) {
-	body := &GetJobsResponseBody{}
+func (s *Service) getJobsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetJobSliceResponseBody, error) {
+	body := &GetJobSliceResponseBody{}
 
 	response, err := s.connection.Get("/ltaas/v1/jobs", parameters)
 	if err != nil {

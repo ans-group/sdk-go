@@ -32,8 +32,8 @@ func (s *Service) GetThresholdsPaginated(parameters connection.APIRequestParamet
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getThresholdsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetThresholdsResponseBody, error) {
-	body := &GetThresholdsResponseBody{}
+func (s *Service) getThresholdsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetThresholdSliceResponseBody, error) {
+	body := &GetThresholdSliceResponseBody{}
 
 	response, err := s.connection.Get("/ltaas/v1/thresholds", parameters)
 	if err != nil {

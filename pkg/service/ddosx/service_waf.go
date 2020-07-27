@@ -32,8 +32,8 @@ func (s *Service) GetWAFLogsPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getWAFLogsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetWAFLogArrayResponseBody, error) {
-	body := &GetWAFLogArrayResponseBody{}
+func (s *Service) getWAFLogsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetWAFLogSliceResponseBody, error) {
+	body := &GetWAFLogSliceResponseBody{}
 
 	response, err := s.connection.Get("/ddosx/v1/waf/logs", parameters)
 	if err != nil {
@@ -97,8 +97,8 @@ func (s *Service) GetWAFLogMatchesPaginated(parameters connection.APIRequestPara
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getWAFLogMatchesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetWAFLogMatchArrayResponseBody, error) {
-	body := &GetWAFLogMatchArrayResponseBody{}
+func (s *Service) getWAFLogMatchesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetWAFLogMatchSliceResponseBody, error) {
+	body := &GetWAFLogMatchSliceResponseBody{}
 
 	response, err := s.connection.Get("/ddosx/v1/waf/logs/matches", parameters)
 	if err != nil {
@@ -134,8 +134,8 @@ func (s *Service) GetWAFLogRequestMatchesPaginated(requestID string, parameters 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getWAFLogRequestMatchesPaginatedResponseBody(requestID string, parameters connection.APIRequestParameters) (*GetWAFLogMatchArrayResponseBody, error) {
-	body := &GetWAFLogMatchArrayResponseBody{}
+func (s *Service) getWAFLogRequestMatchesPaginatedResponseBody(requestID string, parameters connection.APIRequestParameters) (*GetWAFLogMatchSliceResponseBody, error) {
+	body := &GetWAFLogMatchSliceResponseBody{}
 
 	if requestID == "" {
 		return body, fmt.Errorf("invalid request id")

@@ -32,8 +32,8 @@ func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionsResponseBody, error) {
-	body := &GetSolutionsResponseBody{}
+func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionSliceResponseBody, error) {
+	body := &GetSolutionSliceResponseBody{}
 
 	response, err := s.connection.Get("/ukfast-storage/v1/solutions", parameters)
 	if err != nil {

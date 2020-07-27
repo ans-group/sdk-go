@@ -32,8 +32,8 @@ func (s *Service) GetSitesPaginated(parameters connection.APIRequestParameters) 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSitesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSitesResponseBody, error) {
-	body := &GetSitesResponseBody{}
+func (s *Service) getSitesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSiteSliceResponseBody, error) {
+	body := &GetSiteSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/sites", parameters)
 	if err != nil {

@@ -32,8 +32,8 @@ func (s *Service) GetDatastoresPaginated(parameters connection.APIRequestParamet
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDatastoresPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDatastoresResponseBody, error) {
-	body := &GetDatastoresResponseBody{}
+func (s *Service) getDatastoresPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDatastoreSliceResponseBody, error) {
+	body := &GetDatastoreSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/datastores", parameters)
 	if err != nil {

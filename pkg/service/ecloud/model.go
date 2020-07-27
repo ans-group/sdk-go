@@ -1,4 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,FirewallConfig,ConsoleSession -destination model_response_generated.go
 
 package ecloud
 

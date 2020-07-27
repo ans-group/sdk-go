@@ -32,8 +32,8 @@ func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameter
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getInvoicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceArrayResponseBody, error) {
-	body := &GetInvoiceArrayResponseBody{}
+func (s *Service) getInvoicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceSliceResponseBody, error) {
+	body := &GetInvoiceSliceResponseBody{}
 
 	response, err := s.connection.Get("/account/v1/invoices", parameters)
 	if err != nil {
@@ -97,8 +97,8 @@ func (s *Service) GetInvoiceQueriesPaginated(parameters connection.APIRequestPar
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getInvoiceQueriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceQueryArrayResponseBody, error) {
-	body := &GetInvoiceQueryArrayResponseBody{}
+func (s *Service) getInvoiceQueriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceQuerySliceResponseBody, error) {
+	body := &GetInvoiceQuerySliceResponseBody{}
 
 	response, err := s.connection.Get("/account/v1/invoice-queries", parameters)
 	if err != nil {

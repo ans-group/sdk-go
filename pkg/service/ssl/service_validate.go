@@ -7,8 +7,8 @@ func (s *Service) ValidateCertificate(req ValidateRequest) (CertificateValidatio
 	return body.Data, err
 }
 
-func (s *Service) validateCertificateResponseBody(req ValidateRequest) (*ValidateCertificateResponse, error) {
-	body := &ValidateCertificateResponse{}
+func (s *Service) validateCertificateResponseBody(req ValidateRequest) (*GetCertificateValidationResponseBody, error) {
+	body := &GetCertificateValidationResponseBody{}
 
 	response, err := s.connection.Post("/ssl/v1/validate", &req)
 	if err != nil {

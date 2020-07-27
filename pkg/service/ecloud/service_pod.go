@@ -32,8 +32,8 @@ func (s *Service) GetPodsPaginated(parameters connection.APIRequestParameters) (
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getPodsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetPodsResponseBody, error) {
-	body := &GetPodsResponseBody{}
+func (s *Service) getPodsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetPodSliceResponseBody, error) {
+	body := &GetPodSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/pods", parameters)
 	if err != nil {
@@ -97,8 +97,8 @@ func (s *Service) GetPodTemplatesPaginated(podID int, parameters connection.APIR
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getPodTemplatesPaginatedResponseBody(podID int, parameters connection.APIRequestParameters) (*GetTemplatesResponseBody, error) {
-	body := &GetTemplatesResponseBody{}
+func (s *Service) getPodTemplatesPaginatedResponseBody(podID int, parameters connection.APIRequestParameters) (*GetTemplateSliceResponseBody, error) {
+	body := &GetTemplateSliceResponseBody{}
 
 	if podID < 1 {
 		return body, fmt.Errorf("invalid pod id")
@@ -231,8 +231,8 @@ func (s *Service) GetPodAppliancesPaginated(podID int, parameters connection.API
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getPodAppliancesPaginatedResponseBody(podID int, parameters connection.APIRequestParameters) (*GetAppliancesResponseBody, error) {
-	body := &GetAppliancesResponseBody{}
+func (s *Service) getPodAppliancesPaginatedResponseBody(podID int, parameters connection.APIRequestParameters) (*GetApplianceSliceResponseBody, error) {
+	body := &GetApplianceSliceResponseBody{}
 
 	if podID < 1 {
 		return body, fmt.Errorf("invalid pod id")

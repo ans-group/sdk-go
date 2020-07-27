@@ -1,4 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package registrar -typename Domain -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated/main.go -package registrar -typename Domain -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package registrar -typename Domain,Nameserver,Whois -destination model_response_generated.go
 
 package registrar
 

@@ -32,8 +32,8 @@ func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainsResponseBody, error) {
-	body := &GetDomainsResponseBody{}
+func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainSliceResponseBody, error) {
+	body := &GetDomainSliceResponseBody{}
 
 	response, err := s.connection.Get("/ltaas/v1/domains", parameters)
 	if err != nil {

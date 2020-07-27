@@ -3,8 +3,8 @@ package draas
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// GetSolutionArrayResponseBody represents an API response body containing []Solution data
-type GetSolutionArrayResponseBody struct {
+// GetSolutionSliceResponseBody represents an API response body containing []Solution data
+type GetSolutionSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Solution `json:"data"`
@@ -17,8 +17,8 @@ type GetSolutionResponseBody struct {
 	Data Solution `json:"data"`
 }
 
-// GetBackupResourceArrayResponseBody represents an API response body containing []BackupResource data
-type GetBackupResourceArrayResponseBody struct {
+// GetBackupResourceSliceResponseBody represents an API response body containing []BackupResource data
+type GetBackupResourceSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []BackupResource `json:"data"`
@@ -31,8 +31,8 @@ type GetBackupResourceResponseBody struct {
 	Data BackupResource `json:"data"`
 }
 
-// GetBackupServiceArrayResponseBody represents an API response body containing []BackupService data
-type GetBackupServiceArrayResponseBody struct {
+// GetBackupServiceSliceResponseBody represents an API response body containing []BackupService data
+type GetBackupServiceSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []BackupService `json:"data"`
@@ -45,8 +45,8 @@ type GetBackupServiceResponseBody struct {
 	Data BackupService `json:"data"`
 }
 
-// GetIOPSTierArrayResponseBody represents an API response body containing []IOPSTier data
-type GetIOPSTierArrayResponseBody struct {
+// GetIOPSTierSliceResponseBody represents an API response body containing []IOPSTier data
+type GetIOPSTierSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []IOPSTier `json:"data"`
@@ -59,8 +59,8 @@ type GetIOPSTierResponseBody struct {
 	Data IOPSTier `json:"data"`
 }
 
-// GetFailoverPlanArrayResponseBody represents an API response body containing []FailoverPlan data
-type GetFailoverPlanArrayResponseBody struct {
+// GetFailoverPlanSliceResponseBody represents an API response body containing []FailoverPlan data
+type GetFailoverPlanSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []FailoverPlan `json:"data"`
@@ -73,8 +73,8 @@ type GetFailoverPlanResponseBody struct {
 	Data FailoverPlan `json:"data"`
 }
 
-// GetComputeResourceArrayResponseBody represents an API response body containing []ComputeResource data
-type GetComputeResourceArrayResponseBody struct {
+// GetComputeResourceSliceResponseBody represents an API response body containing []ComputeResource data
+type GetComputeResourceSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []ComputeResource `json:"data"`
@@ -87,8 +87,8 @@ type GetComputeResourceResponseBody struct {
 	Data ComputeResource `json:"data"`
 }
 
-// GetHardwarePlanArrayResponseBody represents an API response body containing []HardwarePlan data
-type GetHardwarePlanArrayResponseBody struct {
+// GetHardwarePlanSliceResponseBody represents an API response body containing []HardwarePlan data
+type GetHardwarePlanSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []HardwarePlan `json:"data"`
@@ -101,8 +101,8 @@ type GetHardwarePlanResponseBody struct {
 	Data HardwarePlan `json:"data"`
 }
 
-// GetReplicaArrayResponseBody represents an API response body containing []Replica data
-type GetReplicaArrayResponseBody struct {
+// GetReplicaSliceResponseBody represents an API response body containing []Replica data
+type GetReplicaSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Replica `json:"data"`
@@ -115,8 +115,8 @@ type GetReplicaResponseBody struct {
 	Data Replica `json:"data"`
 }
 
-// GetBillingTypeArrayResponseBody represents an API response body containing []BillingType data
-type GetBillingTypeArrayResponseBody struct {
+// GetBillingTypeSliceResponseBody represents an API response body containing []BillingType data
+type GetBillingTypeSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []BillingType `json:"data"`

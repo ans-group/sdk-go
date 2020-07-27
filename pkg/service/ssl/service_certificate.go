@@ -32,8 +32,8 @@ func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParam
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getCertificatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetCertificatesResponseBody, error) {
-	body := &GetCertificatesResponseBody{}
+func (s *Service) getCertificatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetCertificateSliceResponseBody, error) {
+	body := &GetCertificateSliceResponseBody{}
 
 	response, err := s.connection.Get("/ssl/v1/certificates", parameters)
 	if err != nil {
@@ -106,8 +106,8 @@ func (s *Service) GetCertificatePrivateKey(certificateID int) (CertificatePrivat
 	return body.Data, err
 }
 
-func (s *Service) getCertificatePrivateKeyResponseBody(certificateID int) (*GetCertificateKeyResponseBody, error) {
-	body := &GetCertificateKeyResponseBody{}
+func (s *Service) getCertificatePrivateKeyResponseBody(certificateID int) (*GetCertificatePrivateKeyResponseBody, error) {
+	body := &GetCertificatePrivateKeyResponseBody{}
 
 	if certificateID < 1 {
 		return body, fmt.Errorf("invalid certificate id")

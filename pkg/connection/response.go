@@ -142,3 +142,10 @@ func (a *APIResponseBody) ErrorString() string {
 func (a *APIResponseBody) Pagination() APIResponseMetadataPagination {
 	return a.Metadata.Pagination
 }
+
+// APIResponseBodyStringData represents the API response body containing string data
+type APIResponseBodyStringData struct {
+	APIResponseBody
+
+	Data string `json:"data"`
+}

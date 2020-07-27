@@ -32,8 +32,8 @@ func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostsResponseBody, error) {
-	body := &GetHostsResponseBody{}
+func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
+	body := &GetHostSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/hosts", parameters)
 	if err != nil {

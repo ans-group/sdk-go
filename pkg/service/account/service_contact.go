@@ -32,8 +32,8 @@ func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameter
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getContactsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetContactArrayResponseBody, error) {
-	body := &GetContactArrayResponseBody{}
+func (s *Service) getContactsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetContactSliceResponseBody, error) {
+	body := &GetContactSliceResponseBody{}
 
 	response, err := s.connection.Get("/account/v1/contacts", parameters)
 	if err != nil {

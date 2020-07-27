@@ -1,4 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package safedns -typename Record,Zone,Note,Template -destination model_paginated.go
+//go:generate go run ../../gen/model_paginated/main.go -package safedns -typename Record,Zone,Note,Template -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package safedns -typename Record,Zone,Note,Template,Settings -destination model_response_generated.go
 
 package safedns
 
