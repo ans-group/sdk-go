@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ddosx -typename Domain,DomainProperty,Record,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSRule,WAFLog -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package ddosx -typename Domain,DomainProperty,Record,WAF,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,SSLPrivateKey,SSLContent,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSConfiguration,HSTSRule,WAFLog -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ddosx -typename Domain,DomainProperty,Record,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSRule,WAFLog,WAFLogMatch -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ddosx -typename Domain,DomainProperty,Record,WAF,WAFRuleSet,WAFRule,WAFAdvancedRule,SSL,SSLPrivateKey,SSLContent,ACLGeoIPRule,ACLIPRule,CDNRule,HSTSConfiguration,HSTSRule,WAFLog,WAFLogMatch -destination model_response_generated.go
 
 package ddosx
 
@@ -513,8 +513,8 @@ type WAFLog struct {
 	CreatedAt connection.DateTime  `json:"created_at"`
 }
 
-// WafLogMatch represents a WAF log match
-type WafLogMatch struct {
+// WAFLogMatch represents a WAF log match
+type WAFLogMatch struct {
 	MatchID     string               `json:"match_id"`
 	RequestID   string               `json:"request_id"`
 	Host        string               `json:"host"`

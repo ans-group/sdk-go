@@ -1,4 +1,6 @@
 //go:generate go run ../../gen/model_paginated/main.go -package draas -typename Solution,BackupResource,IOPSTier,FailoverPlan,ComputeResource,HardwarePlan,Replica,BillingType -destination model_paginated.go
+//go:generate go run ../../gen/model_response/main.go -package draas -typename Solution,BackupResource,BackupService,IOPSTier,FailoverPlan,ComputeResource,HardwarePlan,Replica,BillingType -destination model_response_generated.go
+
 package draas
 
 // Solution represents a solution

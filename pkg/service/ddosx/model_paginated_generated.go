@@ -182,3 +182,18 @@ func NewPaginatedWAFLog(getFunc connection.PaginatedGetFunc, parameters connecti
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedWAFLogMatch represents a paginated collection of WAFLogMatch
+type PaginatedWAFLogMatch struct {
+	*connection.PaginatedBase
+
+	Items []WAFLogMatch
+}
+
+// NewPaginatedWAFLogMatch returns a pointer to an initialized PaginatedWAFLogMatch struct
+func NewPaginatedWAFLogMatch(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []WAFLogMatch) *PaginatedWAFLogMatch {
+	return &PaginatedWAFLogMatch{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

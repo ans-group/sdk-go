@@ -226,3 +226,17 @@ type GetWAFLogResponseBody struct {
 
 	Data WAFLog `json:"data"`
 }
+
+// GetWAFLogMatchArrayResponseBody represents an API response body containing []WAFLogMatch data
+type GetWAFLogMatchArrayResponseBody struct {
+	connection.APIResponseBody
+
+	Data []WAFLogMatch `json:"data"`
+}
+
+// GetWAFLogMatchResponseBody represents an API response body containing WAFLogMatch data
+type GetWAFLogMatchResponseBody struct {
+	connection.APIResponseBody
+
+	Data WAFLogMatch `json:"data"`
+}

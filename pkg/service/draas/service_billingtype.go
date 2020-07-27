@@ -32,8 +32,8 @@ func (s *Service) GetBillingTypesPaginated(parameters connection.APIRequestParam
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getBillingTypesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetBillingTypesResponseBody, error) {
-	body := &GetBillingTypesResponseBody{}
+func (s *Service) getBillingTypesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetBillingTypeArrayResponseBody, error) {
+	body := &GetBillingTypeArrayResponseBody{}
 
 	response, err := s.connection.Get("/draas/v1/billing-types", parameters)
 	if err != nil {
