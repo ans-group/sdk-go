@@ -26,7 +26,7 @@ func TestGetWAFLogs(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/waf/logs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"request_id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -35,7 +35,7 @@ func TestGetWAFLogs(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, logs, 1)
-		assert.Equal(t, "abcd", logs[0].RequestID)
+		assert.Equal(t, "abcd", logs[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -70,7 +70,7 @@ func TestGetWAFLog(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/waf/logs/abcd", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"request_id\":\"abcd\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abcd\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -78,7 +78,7 @@ func TestGetWAFLog(t *testing.T) {
 		log, err := s.GetWAFLog("abcd")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "abcd", log.RequestID)
+		assert.Equal(t, "abcd", log.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -152,7 +152,7 @@ func TestGetWAFLogMatches(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/waf/logs/matches", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"request_id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -161,7 +161,7 @@ func TestGetWAFLogMatches(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, logs, 1)
-		assert.Equal(t, "abcd", logs[0].RequestID)
+		assert.Equal(t, "abcd", logs[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -196,7 +196,7 @@ func TestGetWAFLogRequestMatches(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/waf/logs/abcd/matches", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"request_id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"abcd\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -205,7 +205,7 @@ func TestGetWAFLogRequestMatches(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, logs, 1)
-		assert.Equal(t, "abcd", logs[0].RequestID)
+		assert.Equal(t, "abcd", logs[0].ID)
 	})
 
 	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {
@@ -279,7 +279,7 @@ func TestGetWAFLogRequestMatch(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/waf/logs/abcd/matches/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"request_id\":\"abcd\"},\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abcd\"},\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -287,7 +287,7 @@ func TestGetWAFLogRequestMatch(t *testing.T) {
 		log, err := s.GetWAFLogRequestMatch("abcd", "123")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "abcd", log.RequestID)
+		assert.Equal(t, "abcd", log.ID)
 	})
 
 	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {

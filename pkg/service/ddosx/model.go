@@ -507,7 +507,7 @@ type HSTSRule struct {
 
 // WAFLog represents a WAF log entry
 type WAFLog struct {
-	RequestID string               `json:"request_id"`
+	ID        string               `json:"id"`
 	ClientIP  connection.IPAddress `json:"client_ip"`
 	Request   string               `json:"request"`
 	CreatedAt connection.DateTime  `json:"created_at"`
@@ -515,8 +515,8 @@ type WAFLog struct {
 
 // WAFLogMatch represents a WAF log match
 type WAFLogMatch struct {
-	MatchID     string               `json:"match_id"`
-	RequestID   string               `json:"request_id"`
+	ID          string               `json:"id"`
+	LogID       string               `json:"log_id"`
 	Host        string               `json:"host"`
 	ClientIP    connection.IPAddress `json:"client_ip"`
 	RequestURI  string               `json:"request_uri"`
