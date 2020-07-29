@@ -32,8 +32,8 @@ func (s *Service) GetAppliancesPaginated(parameters connection.APIRequestParamet
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getAppliancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetAppliancesResponseBody, error) {
-	body := &GetAppliancesResponseBody{}
+func (s *Service) getAppliancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetApplianceSliceResponseBody, error) {
+	body := &GetApplianceSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/appliances", parameters)
 	if err != nil {
@@ -97,8 +97,8 @@ func (s *Service) GetApplianceParametersPaginated(applianceID string, parameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getApplianceParametersPaginatedResponseBody(applianceID string, parameters connection.APIRequestParameters) (*GetApplianceParametersResponseBody, error) {
-	body := &GetApplianceParametersResponseBody{}
+func (s *Service) getApplianceParametersPaginatedResponseBody(applianceID string, parameters connection.APIRequestParameters) (*GetApplianceParameterSliceResponseBody, error) {
+	body := &GetApplianceParameterSliceResponseBody{}
 
 	if applianceID == "" {
 		return body, fmt.Errorf("invalid appliance id")

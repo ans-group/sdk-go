@@ -32,8 +32,8 @@ func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainsResponseBody, error) {
-	body := &GetDomainsResponseBody{}
+func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDomainSliceResponseBody, error) {
+	body := &GetDomainSliceResponseBody{}
 
 	response, err := s.connection.Get("/registrar/v1/domains", parameters)
 	if err != nil {
@@ -78,8 +78,8 @@ func (s *Service) GetDomainNameservers(domainName string) ([]Nameserver, error) 
 	return body.Data, err
 }
 
-func (s *Service) getDomainNameserversResponseBody(domainName string) (*GetNameserversResponseBody, error) {
-	body := &GetNameserversResponseBody{}
+func (s *Service) getDomainNameserversResponseBody(domainName string) (*GetNameserverSliceResponseBody, error) {
+	body := &GetNameserverSliceResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

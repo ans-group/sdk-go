@@ -32,8 +32,8 @@ func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getFirewallsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFirewallsResponseBody, error) {
-	body := &GetFirewallsResponseBody{}
+func (s *Service) getFirewallsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFirewallSliceResponseBody, error) {
+	body := &GetFirewallSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/firewalls", parameters)
 	if err != nil {

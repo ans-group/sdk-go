@@ -32,8 +32,8 @@ func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetZonesResponseBody, error) {
-	body := &GetZonesResponseBody{}
+func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetZoneSliceResponseBody, error) {
+	body := &GetZoneSliceResponseBody{}
 
 	response, err := s.connection.Get("/safedns/v1/zones", parameters)
 	if err != nil {
@@ -165,8 +165,8 @@ func (s *Service) GetZoneRecordsPaginated(zoneName string, parameters connection
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getZoneRecordsPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetRecordsResponseBody, error) {
-	body := &GetRecordsResponseBody{}
+func (s *Service) getZoneRecordsPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetRecordSliceResponseBody, error) {
+	body := &GetRecordSliceResponseBody{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -364,8 +364,8 @@ func (s *Service) GetZoneNotesPaginated(zoneName string, parameters connection.A
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getZoneNotesPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetZoneNotesResponseBody, error) {
-	body := &GetZoneNotesResponseBody{}
+func (s *Service) getZoneNotesPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetNoteSliceResponseBody, error) {
+	body := &GetNoteSliceResponseBody{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -392,8 +392,8 @@ func (s *Service) GetZoneNote(zoneName string, noteID int) (Note, error) {
 	return body.Data, err
 }
 
-func (s *Service) getZoneNoteResponseBody(zoneName string, noteID int) (*GetZoneNoteResponseBody, error) {
-	body := &GetZoneNoteResponseBody{}
+func (s *Service) getZoneNoteResponseBody(zoneName string, noteID int) (*GetNoteResponseBody, error) {
+	body := &GetNoteResponseBody{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -423,8 +423,8 @@ func (s *Service) CreateZoneNote(zoneName string, req CreateNoteRequest) (int, e
 	return body.Data.ID, err
 }
 
-func (s *Service) createZoneNote(zoneName string, req CreateNoteRequest) (*GetZoneNoteResponseBody, error) {
-	body := &GetZoneNoteResponseBody{}
+func (s *Service) createZoneNote(zoneName string, req CreateNoteRequest) (*GetNoteResponseBody, error) {
+	body := &GetNoteResponseBody{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")

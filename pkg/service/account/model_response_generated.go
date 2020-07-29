@@ -3,8 +3,8 @@ package account
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// GetContactArrayResponseBody represents an API response body containing []Contact data
-type GetContactArrayResponseBody struct {
+// GetContactSliceResponseBody represents an API response body containing []Contact data
+type GetContactSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Contact `json:"data"`
@@ -17,8 +17,8 @@ type GetContactResponseBody struct {
 	Data Contact `json:"data"`
 }
 
-// GetCreditArrayResponseBody represents an API response body containing []Credit data
-type GetCreditArrayResponseBody struct {
+// GetCreditSliceResponseBody represents an API response body containing []Credit data
+type GetCreditSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Credit `json:"data"`
@@ -31,8 +31,8 @@ type GetCreditResponseBody struct {
 	Data Credit `json:"data"`
 }
 
-// GetDetailsArrayResponseBody represents an API response body containing []Details data
-type GetDetailsArrayResponseBody struct {
+// GetDetailsSliceResponseBody represents an API response body containing []Details data
+type GetDetailsSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Details `json:"data"`
@@ -45,8 +45,8 @@ type GetDetailsResponseBody struct {
 	Data Details `json:"data"`
 }
 
-// GetInvoiceArrayResponseBody represents an API response body containing []Invoice data
-type GetInvoiceArrayResponseBody struct {
+// GetInvoiceSliceResponseBody represents an API response body containing []Invoice data
+type GetInvoiceSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Invoice `json:"data"`
@@ -59,8 +59,8 @@ type GetInvoiceResponseBody struct {
 	Data Invoice `json:"data"`
 }
 
-// GetInvoiceQueryArrayResponseBody represents an API response body containing []InvoiceQuery data
-type GetInvoiceQueryArrayResponseBody struct {
+// GetInvoiceQuerySliceResponseBody represents an API response body containing []InvoiceQuery data
+type GetInvoiceQuerySliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []InvoiceQuery `json:"data"`

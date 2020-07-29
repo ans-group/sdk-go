@@ -50,8 +50,8 @@ func (s *Service) GetRequestsPaginated(parameters connection.APIRequestParameter
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getRequestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRequestsResponseBody, error) {
-	body := &GetRequestsResponseBody{}
+func (s *Service) getRequestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRequestSliceResponseBody, error) {
+	body := &GetRequestSliceResponseBody{}
 
 	response, err := s.connection.Get("/pss/v1/requests", parameters)
 	if err != nil {
@@ -181,8 +181,8 @@ func (s *Service) GetRequestConversationPaginated(solutionID int, parameters con
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, parameters connection.APIRequestParameters) (*GetRepliesResponseBody, error) {
-	body := &GetRepliesResponseBody{}
+func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, parameters connection.APIRequestParameters) (*GetReplySliceResponseBody, error) {
+	body := &GetReplySliceResponseBody{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")

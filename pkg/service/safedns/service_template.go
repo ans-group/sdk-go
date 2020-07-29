@@ -32,8 +32,8 @@ func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getTemplatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTemplatesResponseBody, error) {
-	body := &GetTemplatesResponseBody{}
+func (s *Service) getTemplatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTemplateSliceResponseBody, error) {
+	body := &GetTemplateSliceResponseBody{}
 
 	response, err := s.connection.Get("/safedns/v1/templates", parameters)
 	if err != nil {
@@ -171,8 +171,8 @@ func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connect
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getTemplateRecordsPaginatedResponseBody(templateID int, parameters connection.APIRequestParameters) (*GetRecordsResponseBody, error) {
-	body := &GetRecordsResponseBody{}
+func (s *Service) getTemplateRecordsPaginatedResponseBody(templateID int, parameters connection.APIRequestParameters) (*GetRecordSliceResponseBody, error) {
+	body := &GetRecordSliceResponseBody{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")

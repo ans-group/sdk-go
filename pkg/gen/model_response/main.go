@@ -5,8 +5,8 @@ import (
 )
 
 var modelTemplate = `
-// Get{{.TypeName}}ArrayResponseBody represents an API response body containing []{{.TypeName}} data
-type Get{{.TypeName}}ArrayResponseBody struct {
+// Get{{.TypeName}}SliceResponseBody represents an API response body containing []{{.TypeName}} data
+type Get{{.TypeName}}SliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []{{.TypeName}} ` + "`json:\"data\"`" + `

@@ -32,8 +32,8 @@ func (s *Service) GetSSLsPaginated(parameters connection.APIRequestParameters) (
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSSLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSSLArrayResponseBody, error) {
-	body := &GetSSLArrayResponseBody{}
+func (s *Service) getSSLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSSLSliceResponseBody, error) {
+	body := &GetSSLSliceResponseBody{}
 
 	response, err := s.connection.Get("/ddosx/v1/ssls", parameters)
 	if err != nil {

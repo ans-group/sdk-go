@@ -32,8 +32,8 @@ func (s *Service) GetTestsPaginated(parameters connection.APIRequestParameters) 
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getTestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTestsResponseBody, error) {
-	body := &GetTestsResponseBody{}
+func (s *Service) getTestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTestSliceResponseBody, error) {
+	body := &GetTestSliceResponseBody{}
 
 	response, err := s.connection.Get("/ltaas/v1/tests", parameters)
 	if err != nil {

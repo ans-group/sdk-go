@@ -32,8 +32,8 @@ func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionArrayResponseBody, error) {
-	body := &GetSolutionArrayResponseBody{}
+func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionSliceResponseBody, error) {
+	body := &GetSolutionSliceResponseBody{}
 
 	response, err := s.connection.Get("/draas/v1/solutions", parameters)
 	if err != nil {
@@ -125,8 +125,8 @@ func (s *Service) GetSolutionBackupResourcesPaginated(solutionID string, paramet
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionBackupResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetBackupResourceArrayResponseBody, error) {
-	body := &GetBackupResourceArrayResponseBody{}
+func (s *Service) getSolutionBackupResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetBackupResourceSliceResponseBody, error) {
+	body := &GetBackupResourceSliceResponseBody{}
 
 	if solutionID == "" {
 		return body, fmt.Errorf("invalid solution id")
@@ -228,8 +228,8 @@ func (s *Service) GetSolutionFailoverPlansPaginated(solutionID string, parameter
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionFailoverPlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetFailoverPlanArrayResponseBody, error) {
-	body := &GetFailoverPlanArrayResponseBody{}
+func (s *Service) getSolutionFailoverPlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetFailoverPlanSliceResponseBody, error) {
+	body := &GetFailoverPlanSliceResponseBody{}
 
 	if solutionID == "" {
 		return body, fmt.Errorf("invalid solution id")
@@ -368,8 +368,8 @@ func (s *Service) GetSolutionComputeResourcesPaginated(solutionID string, parame
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionComputeResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetComputeResourceArrayResponseBody, error) {
-	body := &GetComputeResourceArrayResponseBody{}
+func (s *Service) getSolutionComputeResourcesPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetComputeResourceSliceResponseBody, error) {
+	body := &GetComputeResourceSliceResponseBody{}
 
 	if solutionID == "" {
 		return body, fmt.Errorf("invalid solution id")
@@ -446,8 +446,8 @@ func (s *Service) GetSolutionHardwarePlansPaginated(solutionID string, parameter
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHardwarePlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetHardwarePlanArrayResponseBody, error) {
-	body := &GetHardwarePlanArrayResponseBody{}
+func (s *Service) getSolutionHardwarePlansPaginatedResponseBody(solutionID string, parameters connection.APIRequestParameters) (*GetHardwarePlanSliceResponseBody, error) {
+	body := &GetHardwarePlanSliceResponseBody{}
 
 	if solutionID == "" {
 		return body, fmt.Errorf("invalid solution id")
@@ -524,8 +524,8 @@ func (s *Service) GetSolutionHardwarePlanReplicasPaginated(solutionID string, ha
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHardwarePlanReplicasPaginatedResponseBody(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) (*GetReplicaArrayResponseBody, error) {
-	body := &GetReplicaArrayResponseBody{}
+func (s *Service) getSolutionHardwarePlanReplicasPaginatedResponseBody(solutionID string, hardwarePlanID string, parameters connection.APIRequestParameters) (*GetReplicaSliceResponseBody, error) {
+	body := &GetReplicaSliceResponseBody{}
 
 	if solutionID == "" {
 		return body, fmt.Errorf("invalid solution id")

@@ -32,8 +32,8 @@ func (s *Service) GetVolumesPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getVolumesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVolumesResponseBody, error) {
-	body := &GetVolumesResponseBody{}
+func (s *Service) getVolumesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
+	body := &GetVolumeSliceResponseBody{}
 
 	response, err := s.connection.Get("/ukfast-storage/v1/volumes", parameters)
 	if err != nil {

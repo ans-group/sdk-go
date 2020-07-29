@@ -41,8 +41,8 @@ func (s *Service) GetWhoisRaw(domainName string) (string, error) {
 	return body.Data, err
 }
 
-func (s *Service) getWhoisRawResponseBody(domainName string) (*GetWhoisRawResponseBody, error) {
-	body := &GetWhoisRawResponseBody{}
+func (s *Service) getWhoisRawResponseBody(domainName string) (*connection.APIResponseBodyStringData, error) {
+	body := &connection.APIResponseBodyStringData{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

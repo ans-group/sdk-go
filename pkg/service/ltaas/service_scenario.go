@@ -30,8 +30,8 @@ func (s *Service) GetScenariosPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getScenariosPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetScenariosResponseBody, error) {
-	body := &GetScenariosResponseBody{}
+func (s *Service) getScenariosPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetScenarioSliceResponseBody, error) {
+	body := &GetScenarioSliceResponseBody{}
 
 	response, err := s.connection.Get("/ltaas/v1/scenarios", parameters)
 	if err != nil {

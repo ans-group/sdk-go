@@ -32,8 +32,8 @@ func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionsResponseBody, error) {
-	body := &GetSolutionsResponseBody{}
+func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionSliceResponseBody, error) {
+	body := &GetSolutionSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/solutions", parameters)
 	if err != nil {
@@ -125,8 +125,8 @@ func (s *Service) GetSolutionVirtualMachinesPaginated(solutionID int, parameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionVirtualMachinesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetVirtualMachinesResponseBody, error) {
-	body := &GetVirtualMachinesResponseBody{}
+func (s *Service) getSolutionVirtualMachinesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetVirtualMachineSliceResponseBody, error) {
+	body := &GetVirtualMachineSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -172,8 +172,8 @@ func (s *Service) GetSolutionSitesPaginated(solutionID int, parameters connectio
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionSitesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetSitesResponseBody, error) {
-	body := &GetSitesResponseBody{}
+func (s *Service) getSolutionSitesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetSiteSliceResponseBody, error) {
+	body := &GetSiteSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -219,8 +219,8 @@ func (s *Service) GetSolutionDatastoresPaginated(solutionID int, parameters conn
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionDatastoresPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetDatastoresResponseBody, error) {
-	body := &GetDatastoresResponseBody{}
+func (s *Service) getSolutionDatastoresPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetDatastoreSliceResponseBody, error) {
+	body := &GetDatastoreSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -266,8 +266,8 @@ func (s *Service) GetSolutionHostsPaginated(solutionID int, parameters connectio
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetHostsResponseBody, error) {
-	body := &GetHostsResponseBody{}
+func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
+	body := &GetHostSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -313,8 +313,8 @@ func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connec
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetNetworksResponseBody, error) {
-	body := &GetNetworksResponseBody{}
+func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
+	body := &GetNetworkSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -360,8 +360,8 @@ func (s *Service) GetSolutionFirewallsPaginated(solutionID int, parameters conne
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionFirewallsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetFirewallsResponseBody, error) {
-	body := &GetFirewallsResponseBody{}
+func (s *Service) getSolutionFirewallsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetFirewallSliceResponseBody, error) {
+	body := &GetFirewallSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -407,8 +407,8 @@ func (s *Service) GetSolutionTemplatesPaginated(solutionID int, parameters conne
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionTemplatesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetTemplatesResponseBody, error) {
-	body := &GetTemplatesResponseBody{}
+func (s *Service) getSolutionTemplatesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetTemplateSliceResponseBody, error) {
+	body := &GetTemplateSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -547,8 +547,8 @@ func (s *Service) GetSolutionTagsPaginated(solutionID int, parameters connection
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionTagsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetTagsResponseBody, error) {
-	body := &GetTagsResponseBody{}
+func (s *Service) getSolutionTagsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetTagSliceResponseBody, error) {
+	body := &GetTagSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")

@@ -30,8 +30,8 @@ func (s *Service) GetRecordsPaginated(parameters connection.APIRequestParameters
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getRecordsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRecordArrayResponseBody, error) {
-	body := &GetRecordArrayResponseBody{}
+func (s *Service) getRecordsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRecordSliceResponseBody, error) {
+	body := &GetRecordSliceResponseBody{}
 
 	response, err := s.connection.Get("/ddosx/v1/records", parameters)
 	if err != nil {

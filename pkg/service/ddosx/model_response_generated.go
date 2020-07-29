@@ -3,8 +3,8 @@ package ddosx
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// GetDomainArrayResponseBody represents an API response body containing []Domain data
-type GetDomainArrayResponseBody struct {
+// GetDomainSliceResponseBody represents an API response body containing []Domain data
+type GetDomainSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Domain `json:"data"`
@@ -17,8 +17,8 @@ type GetDomainResponseBody struct {
 	Data Domain `json:"data"`
 }
 
-// GetDomainPropertyArrayResponseBody represents an API response body containing []DomainProperty data
-type GetDomainPropertyArrayResponseBody struct {
+// GetDomainPropertySliceResponseBody represents an API response body containing []DomainProperty data
+type GetDomainPropertySliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []DomainProperty `json:"data"`
@@ -31,8 +31,8 @@ type GetDomainPropertyResponseBody struct {
 	Data DomainProperty `json:"data"`
 }
 
-// GetRecordArrayResponseBody represents an API response body containing []Record data
-type GetRecordArrayResponseBody struct {
+// GetRecordSliceResponseBody represents an API response body containing []Record data
+type GetRecordSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []Record `json:"data"`
@@ -45,8 +45,8 @@ type GetRecordResponseBody struct {
 	Data Record `json:"data"`
 }
 
-// GetWAFArrayResponseBody represents an API response body containing []WAF data
-type GetWAFArrayResponseBody struct {
+// GetWAFSliceResponseBody represents an API response body containing []WAF data
+type GetWAFSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAF `json:"data"`
@@ -59,8 +59,8 @@ type GetWAFResponseBody struct {
 	Data WAF `json:"data"`
 }
 
-// GetWAFRuleSetArrayResponseBody represents an API response body containing []WAFRuleSet data
-type GetWAFRuleSetArrayResponseBody struct {
+// GetWAFRuleSetSliceResponseBody represents an API response body containing []WAFRuleSet data
+type GetWAFRuleSetSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAFRuleSet `json:"data"`
@@ -73,8 +73,8 @@ type GetWAFRuleSetResponseBody struct {
 	Data WAFRuleSet `json:"data"`
 }
 
-// GetWAFRuleArrayResponseBody represents an API response body containing []WAFRule data
-type GetWAFRuleArrayResponseBody struct {
+// GetWAFRuleSliceResponseBody represents an API response body containing []WAFRule data
+type GetWAFRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAFRule `json:"data"`
@@ -87,8 +87,8 @@ type GetWAFRuleResponseBody struct {
 	Data WAFRule `json:"data"`
 }
 
-// GetWAFAdvancedRuleArrayResponseBody represents an API response body containing []WAFAdvancedRule data
-type GetWAFAdvancedRuleArrayResponseBody struct {
+// GetWAFAdvancedRuleSliceResponseBody represents an API response body containing []WAFAdvancedRule data
+type GetWAFAdvancedRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAFAdvancedRule `json:"data"`
@@ -101,8 +101,8 @@ type GetWAFAdvancedRuleResponseBody struct {
 	Data WAFAdvancedRule `json:"data"`
 }
 
-// GetSSLArrayResponseBody represents an API response body containing []SSL data
-type GetSSLArrayResponseBody struct {
+// GetSSLSliceResponseBody represents an API response body containing []SSL data
+type GetSSLSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []SSL `json:"data"`
@@ -115,8 +115,8 @@ type GetSSLResponseBody struct {
 	Data SSL `json:"data"`
 }
 
-// GetSSLPrivateKeyArrayResponseBody represents an API response body containing []SSLPrivateKey data
-type GetSSLPrivateKeyArrayResponseBody struct {
+// GetSSLPrivateKeySliceResponseBody represents an API response body containing []SSLPrivateKey data
+type GetSSLPrivateKeySliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []SSLPrivateKey `json:"data"`
@@ -129,8 +129,8 @@ type GetSSLPrivateKeyResponseBody struct {
 	Data SSLPrivateKey `json:"data"`
 }
 
-// GetSSLContentArrayResponseBody represents an API response body containing []SSLContent data
-type GetSSLContentArrayResponseBody struct {
+// GetSSLContentSliceResponseBody represents an API response body containing []SSLContent data
+type GetSSLContentSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []SSLContent `json:"data"`
@@ -143,8 +143,8 @@ type GetSSLContentResponseBody struct {
 	Data SSLContent `json:"data"`
 }
 
-// GetACLGeoIPRuleArrayResponseBody represents an API response body containing []ACLGeoIPRule data
-type GetACLGeoIPRuleArrayResponseBody struct {
+// GetACLGeoIPRuleSliceResponseBody represents an API response body containing []ACLGeoIPRule data
+type GetACLGeoIPRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []ACLGeoIPRule `json:"data"`
@@ -157,8 +157,8 @@ type GetACLGeoIPRuleResponseBody struct {
 	Data ACLGeoIPRule `json:"data"`
 }
 
-// GetACLIPRuleArrayResponseBody represents an API response body containing []ACLIPRule data
-type GetACLIPRuleArrayResponseBody struct {
+// GetACLIPRuleSliceResponseBody represents an API response body containing []ACLIPRule data
+type GetACLIPRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []ACLIPRule `json:"data"`
@@ -171,8 +171,8 @@ type GetACLIPRuleResponseBody struct {
 	Data ACLIPRule `json:"data"`
 }
 
-// GetCDNRuleArrayResponseBody represents an API response body containing []CDNRule data
-type GetCDNRuleArrayResponseBody struct {
+// GetCDNRuleSliceResponseBody represents an API response body containing []CDNRule data
+type GetCDNRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []CDNRule `json:"data"`
@@ -185,8 +185,8 @@ type GetCDNRuleResponseBody struct {
 	Data CDNRule `json:"data"`
 }
 
-// GetHSTSConfigurationArrayResponseBody represents an API response body containing []HSTSConfiguration data
-type GetHSTSConfigurationArrayResponseBody struct {
+// GetHSTSConfigurationSliceResponseBody represents an API response body containing []HSTSConfiguration data
+type GetHSTSConfigurationSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []HSTSConfiguration `json:"data"`
@@ -199,8 +199,8 @@ type GetHSTSConfigurationResponseBody struct {
 	Data HSTSConfiguration `json:"data"`
 }
 
-// GetHSTSRuleArrayResponseBody represents an API response body containing []HSTSRule data
-type GetHSTSRuleArrayResponseBody struct {
+// GetHSTSRuleSliceResponseBody represents an API response body containing []HSTSRule data
+type GetHSTSRuleSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []HSTSRule `json:"data"`
@@ -213,8 +213,8 @@ type GetHSTSRuleResponseBody struct {
 	Data HSTSRule `json:"data"`
 }
 
-// GetWAFLogArrayResponseBody represents an API response body containing []WAFLog data
-type GetWAFLogArrayResponseBody struct {
+// GetWAFLogSliceResponseBody represents an API response body containing []WAFLog data
+type GetWAFLogSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAFLog `json:"data"`
@@ -227,8 +227,8 @@ type GetWAFLogResponseBody struct {
 	Data WAFLog `json:"data"`
 }
 
-// GetWAFLogMatchArrayResponseBody represents an API response body containing []WAFLogMatch data
-type GetWAFLogMatchArrayResponseBody struct {
+// GetWAFLogMatchSliceResponseBody represents an API response body containing []WAFLogMatch data
+type GetWAFLogMatchSliceResponseBody struct {
 	connection.APIResponseBody
 
 	Data []WAFLogMatch `json:"data"`

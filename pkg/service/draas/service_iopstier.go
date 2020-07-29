@@ -32,8 +32,8 @@ func (s *Service) GetIOPSTiersPaginated(parameters connection.APIRequestParamete
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getIOPSTiersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetIOPSTierArrayResponseBody, error) {
-	body := &GetIOPSTierArrayResponseBody{}
+func (s *Service) getIOPSTiersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetIOPSTierSliceResponseBody, error) {
+	body := &GetIOPSTierSliceResponseBody{}
 
 	response, err := s.connection.Get("/draas/v1/iops-tiers", parameters)
 	if err != nil {
