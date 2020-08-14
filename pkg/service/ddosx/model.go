@@ -525,7 +525,7 @@ type WAFLogMatch struct {
 	Method      string               `json:"method"`
 	Content     string               `json:"content"`
 	Message     string               `json:"message"`
-	Data        string               `json:"data"`
+	MatchData   string               `json:"match_data"`
 	URIPart     string               `json:"uri_part"`
 	Value       string               `json:"value"`
 }
