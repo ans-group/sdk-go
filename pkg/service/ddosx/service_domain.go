@@ -1993,3 +1993,59 @@ func (s *Service) deleteDomainHSTSRuleResponseBody(domainName string, ruleID str
 		return nil
 	})
 }
+
+// ActivateDomainDNSRouting activates DNS routing for a domain
+func (s *Service) ActivateDomainDNSRouting(domainName string) error {
+	_, err := s.activateDomainDNSRoutingResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) activateDomainDNSRoutingResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ddosx/v1/domains/%s/dns/active", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{Name: domainName}
+		}
+
+		return nil
+	})
+}
+
+// DeactivateDomainDNSRouting deactivates DNS routing for a domain
+func (s *Service) DeactivateDomainDNSRouting(domainName string) error {
+	_, err := s.deactivateDomainDNSRoutingResponseBody(domainName)
+
+	return err
+}
+
+func (s *Service) deactivateDomainDNSRoutingResponseBody(domainName string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if domainName == "" {
+		return body, fmt.Errorf("invalid domain name")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s/dns/active", domainName), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &DomainNotFoundError{Name: domainName}
+		}
+
+		return nil
+	})
+}
