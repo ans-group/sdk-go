@@ -112,6 +112,9 @@ type DDoSXService interface {
 	GetWAFLogRequestMatches(requestID string, parameters connection.APIRequestParameters) ([]WAFLogMatch, error)
 	GetWAFLogRequestMatchesPaginated(requestID string, parameters connection.APIRequestParameters) (*PaginatedWAFLogMatch, error)
 	GetWAFLogRequestMatch(requestID string, matchID string) (WAFLogMatch, error)
+
+	ActivateDomainDNSRouting(domainName string) error
+	DeactivateDomainDNSRouting(domainName string) error
 }
 
 // Service implements DDoSXService for managing
