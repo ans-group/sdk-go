@@ -12,6 +12,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/pss"
 	"github.com/ukfast/sdk-go/pkg/service/registrar"
 	"github.com/ukfast/sdk-go/pkg/service/safedns"
+	"github.com/ukfast/sdk-go/pkg/service/sharedexchange"
 	"github.com/ukfast/sdk-go/pkg/service/ssl"
 	"github.com/ukfast/sdk-go/pkg/service/storage"
 )
@@ -27,6 +28,7 @@ type Client interface {
 	PSSService() pss.PSSService
 	RegistrarService() registrar.RegistrarService
 	SafeDNSService() safedns.SafeDNSService
+	SharedExchangeService() sharedexchange.SharedExchangeService
 	SSLService() ssl.SSLService
 	StorageService() storage.StorageService
 }
@@ -79,6 +81,10 @@ func (c *UKFastClient) RegistrarService() registrar.RegistrarService {
 
 func (c *UKFastClient) SafeDNSService() safedns.SafeDNSService {
 	return safedns.NewService(c.connection)
+}
+
+func (c *UKFastClient) SharedExchangeService() sharedexchange.SharedExchangeService {
+	return sharedexchange.NewService(c.connection)
 }
 
 func (c *UKFastClient) SSLService() ssl.SSLService {
