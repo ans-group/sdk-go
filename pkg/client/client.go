@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 	"github.com/ukfast/sdk-go/pkg/service/account"
+	"github.com/ukfast/sdk-go/pkg/service/billing"
 	"github.com/ukfast/sdk-go/pkg/service/ddosx"
 	"github.com/ukfast/sdk-go/pkg/service/draas"
 	"github.com/ukfast/sdk-go/pkg/service/ecloud"
@@ -16,6 +17,7 @@ import (
 
 type Client interface {
 	AccountService() account.AccountService
+	BillingService() billing.BillingService
 	DDoSXService() ddosx.DDoSXService
 	DRaaSService() draas.DRaaSService
 	ECloudService() ecloud.ECloudService
