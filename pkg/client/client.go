@@ -43,6 +43,10 @@ func (c *UKFastClient) AccountService() account.AccountService {
 	return account.NewService(c.connection)
 }
 
+func (c *UKFastClient) BillingService() billing.BillingService {
+	return billing.NewService(c.connection)
+}
+
 func (c *UKFastClient) DDoSXService() ddosx.DDoSXService {
 	return ddosx.NewService(c.connection)
 }
