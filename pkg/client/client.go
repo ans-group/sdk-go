@@ -15,6 +15,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/sharedexchange"
 	"github.com/ukfast/sdk-go/pkg/service/ssl"
 	"github.com/ukfast/sdk-go/pkg/service/storage"
+	"github.com/ukfast/sdk-go/pkg/service/threatmonitoring"
 )
 
 type Client interface {
@@ -31,6 +32,7 @@ type Client interface {
 	SharedExchangeService() sharedexchange.SharedExchangeService
 	SSLService() ssl.SSLService
 	StorageService() storage.StorageService
+	ThreatMonitoringService() threatmonitoring.ThreatMonitoringService
 }
 
 type UKFastClient struct {
@@ -93,4 +95,8 @@ func (c *UKFastClient) SSLService() ssl.SSLService {
 
 func (c *UKFastClient) StorageService() storage.StorageService {
 	return storage.NewService(c.connection)
+}
+
+func (c *UKFastClient) ThreatMonitoringService() threatmonitoring.ThreatMonitoringService {
+	return threatmonitoring.NewService(c.connection)
 }
