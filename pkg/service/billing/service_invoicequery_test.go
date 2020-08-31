@@ -171,3 +171,48 @@ func TestGetInvoiceQuery(t *testing.T) {
 		assert.IsType(t, &InvoiceQueryNotFoundError{}, err)
 	})
 }
+
+func TestCreateInvoiceQuery(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateInvoiceQueryRequest{}
+
+		c.EXPECT().Post("/billing/v1/invoice-queries", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 201,
+			},
+		}, nil)
+
+		id, err := s.CreateInvoiceQuery(expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/billing/v1/invoice-queries", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateInvoiceQuery(CreateInvoiceQueryRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}

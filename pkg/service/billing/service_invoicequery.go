@@ -1,3 +1,10 @@
+package billing
+
+import (
+	"fmt"
+
+	"github.com/ukfast/sdk-go/pkg/connection"
+)
 
 // GetInvoiceQueries retrieves a list of invoice queries
 func (s *Service) GetInvoiceQueries(parameters connection.APIRequestParameters) ([]InvoiceQuery, error) {
@@ -62,4 +69,22 @@ func (s *Service) getInvoiceQueryResponseBody(queryID int) (*GetInvoiceQueryResp
 
 		return nil
 	})
+}
+
+// CreateInvoiceQuery retrieves creates an InvoiceQuery
+func (s *Service) CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error) {
+	body, err := s.createInvoiceQueryResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createInvoiceQueryResponseBody(req CreateInvoiceQueryRequest) (*GetInvoiceQueryResponseBody, error) {
+	body := &GetInvoiceQueryResponseBody{}
+
+	response, err := s.connection.Post("/billing/v1/invoice-queries", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
 }
