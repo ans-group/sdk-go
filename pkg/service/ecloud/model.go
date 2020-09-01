@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,FirewallConfig,ConsoleSession -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,VPC -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,FirewallConfig,ConsoleSession,VPC -destination model_response_generated.go
 
 package ecloud
 
@@ -304,4 +304,13 @@ func (s TemplateType) String() string {
 // ConsoleSession represents an eCloud Virtual Machine console session
 type ConsoleSession struct {
 	URL string `json:"url"`
+}
+
+// VPC represents an eCloud VPC
+type VPC struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	RegionID  string              `json:"region_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
 }
