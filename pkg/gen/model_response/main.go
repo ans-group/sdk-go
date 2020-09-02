@@ -1,25 +1,40 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/0x4c6565/genie"
+	"github.com/dave/jennifer/jen"
 	"github.com/ukfast/sdk-go/pkg/gen/helper"
 )
 
-var modelTemplate = `
-// Get{{.TypeName}}SliceResponseBody represents an API response body containing []{{.TypeName}} data
-type Get{{.TypeName}}SliceResponseBody struct {
-	connection.APIResponseBody
-
-	Data []{{.TypeName}} ` + "`json:\"data\"`" + `
+type ModelResponseGenerator struct {
+	*genie.BaseGenerator
 }
 
-// Get{{.TypeName}}ResponseBody represents an API response body containing {{.TypeName}} data
-type Get{{.TypeName}}ResponseBody struct {
-	connection.APIResponseBody
-
-	Data {{.TypeName}} ` + "`json:\"data\"`" + `
+func NewModelResponseGenerator() *ModelResponseGenerator {
+	return &ModelResponseGenerator{
+		BaseGenerator: genie.NewBaseGenerator("model_response"),
+	}
 }
-`
+
+func (g *ModelResponseGenerator) Generate(marker genie.Marker, typeName string, f *jen.File) error {
+	f.ImportName("github.com/ukfast/sdk-go/pkg/connection", "connection")
+
+	f.Comment(fmt.Sprintf("Get%sSliceResponseBody represents an API response body containing []%[1]s data", typeName))
+	f.Type().Id("Get"+typeName+"SliceResponseBody").Struct(
+		jen.Qual("github.com/ukfast/sdk-go/pkg/connection", "APIResponseBody"),
+		jen.Id("Data").Index().Id(typeName).Tag(map[string]string{"json": "data"}),
+	)
+
+	f.Comment(fmt.Sprintf("Get%sResponseBody represents an API response body containing %[1]s data", typeName))
+	f.Type().Id("Get"+typeName+"ResponseBody").Struct(
+		jen.Qual("github.com/ukfast/sdk-go/pkg/connection", "APIResponseBody"),
+		jen.Id("Data").Id(typeName).Tag(map[string]string{"json": "data"}),
+	)
+	return nil
+}
 
 func main() {
-	helper.TypeTemplate("github.com/ukfast/sdk-go/pkg/gen/response", modelTemplate)
+	helper.Generate(NewModelResponseGenerator())
 }

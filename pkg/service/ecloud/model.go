@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,VPC -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package ecloud -typename VirtualMachine,Tag,Solution,Site,Network,Host,Datastore,Firewall,Template,Pod,Appliance,ApplianceParameter,ActiveDirectoryDomain,FirewallConfig,ConsoleSession,VPC -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ecloud -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ecloud -source model.go -destination model_paginated_generated.go
 
 package ecloud
 
@@ -93,6 +93,8 @@ const (
 )
 
 // VirtualMachine represents an eCloud Virtual Machine
+// +genie:model_response
+// +genie:model_paginated
 type VirtualMachine struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
@@ -133,6 +135,8 @@ type VirtualMachineDisk struct {
 }
 
 // Tag represents an eCloud tag
+// +genie:model_response
+// +genie:model_paginated
 type Tag struct {
 	Key       string              `json:"key"`
 	Value     string              `json:"value"`
@@ -140,6 +144,8 @@ type Tag struct {
 }
 
 // Solution represents an eCloud solution
+// +genie:model_response
+// +genie:model_paginated
 type Solution struct {
 	ID                int                 `json:"id"`
 	Name              string              `json:"name"`
@@ -150,6 +156,8 @@ type Solution struct {
 }
 
 // Site represents an eCloud site
+// +genie:model_response
+// +genie:model_paginated
 type Site struct {
 	ID         int    `json:"id"`
 	State      string `json:"state"`
@@ -158,12 +166,16 @@ type Site struct {
 }
 
 // Network represents an eCloud network
+// +genie:model_response
+// +genie:model_paginated
 type Network struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
 // Host represents an eCloud host
+// +genie:model_response
+// +genie:model_paginated
 type Host struct {
 	ID         int     `json:"id"`
 	SolutionID int     `json:"solution_id"`
@@ -193,6 +205,8 @@ type HostRAM struct {
 }
 
 // Datastore represents an eCloud datastore
+// +genie:model_response
+// +genie:model_paginated
 type Datastore struct {
 	ID         int             `json:"id"`
 	SolutionID int             `json:"solution_id"`
@@ -208,6 +222,8 @@ type Datastore struct {
 }
 
 // Firewall represents an eCloud firewall
+// +genie:model_response
+// +genie:model_paginated
 type Firewall struct {
 	ID       int                  `json:"id"`
 	Name     string               `json:"name"`
@@ -217,11 +233,14 @@ type Firewall struct {
 }
 
 // FirewallConfig represents an eCloud firewall config
+// +genie:model_response
 type FirewallConfig struct {
 	Config string `json:"config"`
 }
 
 // Template represents an eCloud template
+// +genie:model_response
+// +genie:model_paginated
 type Template struct {
 	Name string `json:"name"`
 	// Count in Cores
@@ -237,6 +256,8 @@ type Template struct {
 }
 
 // Pod represents an eCloud pod
+// +genie:model_response
+// +genie:model_paginated
 type Pod struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
@@ -248,6 +269,8 @@ type Pod struct {
 }
 
 // Appliance represents an eCloud appliance
+// +genie:model_response
+// +genie:model_paginated
 type Appliance struct {
 	ID               string              `json:"id"`
 	Name             string              `json:"name"`
@@ -259,6 +282,8 @@ type Appliance struct {
 }
 
 // ApplianceParameter represents an eCloud appliance parameter
+// +genie:model_response
+// +genie:model_paginated
 type ApplianceParameter struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`
@@ -270,6 +295,8 @@ type ApplianceParameter struct {
 }
 
 // ActiveDirectoryDomain represents an eCloud active directory domain
+// +genie:model_response
+// +genie:model_paginated
 type ActiveDirectoryDomain struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -302,11 +329,14 @@ func (s TemplateType) String() string {
 }
 
 // ConsoleSession represents an eCloud Virtual Machine console session
+// +genie:model_response
 type ConsoleSession struct {
 	URL string `json:"url"`
 }
 
 // VPC represents an eCloud VPC
+// +genie:model_response
+// +genie:model_paginated
 type VPC struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
