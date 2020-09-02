@@ -183,3 +183,17 @@ func NewPaginatedActiveDirectoryDomain(getFunc connection.PaginatedGetFunc, para
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedVPC represents a paginated collection of VPC
+type PaginatedVPC struct {
+	*connection.PaginatedBase
+	Items []VPC
+}
+
+// NewPaginatedVPC returns a pointer to an initialized PaginatedVPC struct
+func NewPaginatedVPC(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VPC) *PaginatedVPC {
+	return &PaginatedVPC{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

@@ -105,6 +105,13 @@ type ECloudService interface {
 	GetActiveDirectoryDomains(parameters connection.APIRequestParameters) ([]ActiveDirectoryDomain, error)
 	GetActiveDirectoryDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedActiveDirectoryDomain, error)
 	GetActiveDirectoryDomain(domainID int) (ActiveDirectoryDomain, error)
+
+	// V2
+
+	// VPC
+	GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error)
+	GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error)
+	GetVPC(vpcID string) (VPC, error)
 }
 
 // Service implements ECloudService for managing

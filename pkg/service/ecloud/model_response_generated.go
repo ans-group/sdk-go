@@ -181,3 +181,15 @@ type GetConsoleSessionResponseBody struct {
 	connection.APIResponseBody
 	Data ConsoleSession `json:"data"`
 }
+
+// GetVPCSliceResponseBody represents an API response body containing []VPC data
+type GetVPCSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPC `json:"data"`
+}
+
+// GetVPCResponseBody represents an API response body containing VPC data
+type GetVPCResponseBody struct {
+	connection.APIResponseBody
+	Data VPC `json:"data"`
+}

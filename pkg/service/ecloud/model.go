@@ -333,3 +333,14 @@ func (s TemplateType) String() string {
 type ConsoleSession struct {
 	URL string `json:"url"`
 }
+
+// VPC represents an eCloud VPC
+// +genie:model_response
+// +genie:model_paginated
+type VPC struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	RegionID  string              `json:"region_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
