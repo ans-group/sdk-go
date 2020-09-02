@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package storage -typename Solution,Host,HostSet,Volume,VolumeSet,IOPS -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package storage -typename Solution,Host,HostSet,Volume,VolumeSet,IOPS -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package storage -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package storage -source model.go -destination model_paginated_generated.go
 
 package storage
 
@@ -8,6 +8,8 @@ import (
 )
 
 // Solution represents a solution
+// +genie:model_response
+// +genie:model_paginated
 type Solution struct {
 	ID        int                 `json:"id"`
 	Name      string              `json:"name"`
@@ -17,6 +19,8 @@ type Solution struct {
 }
 
 // Host represents a host
+// +genie:model_response
+// +genie:model_paginated
 type Host struct {
 	ID         int                 `json:"id"`
 	Name       string              `json:"name"`
@@ -39,6 +43,8 @@ type HostSet struct {
 }
 
 // Volume represents a volume
+// +genie:model_response
+// +genie:model_paginated
 type Volume struct {
 	ID         int                 `json:"id"`
 	Name       string              `json:"name"`

@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package account -typename Contact,Invoice,InvoiceQuery -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package account -typename Contact,Credit,Details,Invoice,InvoiceQuery -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package account -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package account -source model.go -destination model_paginated_generated.go
 
 package account
 
@@ -20,6 +20,8 @@ const (
 )
 
 // Contact represents a UKFast account contact
+// +genie:model_response
+// +genie:model_paginated
 type Contact struct {
 	ID        int         `json:"id"`
 	Type      ContactType `json:"type"`
@@ -28,6 +30,7 @@ type Contact struct {
 }
 
 // Details represents a UKFast account details
+// +genie:model_response
 type Details struct {
 	CompanyRegistrationNumber string `json:"company_registration_number"`
 	VATIdentificationNumber   string `json:"vat_identification_number"`
@@ -35,6 +38,8 @@ type Details struct {
 }
 
 // Credit represents a UKFast account credit
+// +genie:model_response
+// +genie:model_paginated
 type Credit struct {
 	Type      string `json:"type"`
 	Total     int    `json:"total"`
@@ -42,6 +47,8 @@ type Credit struct {
 }
 
 // Invoice represents a UKFast account invoice
+// +genie:model_response
+// +genie:model_paginated
 type Invoice struct {
 	ID    int             `json:"id"`
 	Date  connection.Date `json:"date"`
@@ -52,6 +59,8 @@ type Invoice struct {
 }
 
 // InvoiceQuery represents a UKFast account invoice query
+// +genie:model_response
+// +genie:model_paginated
 type InvoiceQuery struct {
 	ID               int     `json:"id"`
 	ContactID        int     `json:"contact_id"`

@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ssl -typename Certificate -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package ssl -typename Certificate,CertificateContent,CertificatePrivateKey,CertificateValidation -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ssl -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ssl -source model.go -destination model_paginated_generated.go
 
 package ssl
 
@@ -22,6 +22,8 @@ const (
 )
 
 // Certificate represents an SSL certificate
+// +genie:model_response
+// +genie:model_paginated
 type Certificate struct {
 	ID               int                 `json:"id"`
 	Name             string              `json:"name"`
@@ -34,17 +36,20 @@ type Certificate struct {
 }
 
 // CertificateContent represents the content of an SSL certificate
+// +genie:model_response
 type CertificateContent struct {
 	Server       string `json:"server"`
 	Intermediate string `json:"intermediate"`
 }
 
 // CertificatePrivateKey represents an SSL certificate private key
+// +genie:model_response
 type CertificatePrivateKey struct {
 	Key string `json:"key"`
 }
 
 // CertificateValidation represents the results of certificate validation
+// +genie:model_response
 type CertificateValidation struct {
 	Domains   []string            `json:"domains"`
 	ExpiresAt connection.DateTime `json:"expires_at"`
