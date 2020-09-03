@@ -536,6 +536,7 @@ type HSTSRule struct {
 // +genie:model_paginated
 type WAFLog struct {
 	ID        string               `json:"id"`
+	Host      string               `json:"host"`
 	ClientIP  connection.IPAddress `json:"client_ip"`
 	Request   string               `json:"request"`
 	CreatedAt connection.DateTime  `json:"created_at"`
