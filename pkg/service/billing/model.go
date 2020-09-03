@@ -80,10 +80,10 @@ type Invoice struct {
 	ID             int                 `json:"id"`
 	Date           connection.DateTime `json:"date"`
 	Paid           bool                `json:"paid"`
-	Gross          string              `json:"gross"`
-	VAT            string              `json:"vat"`
-	Net            string              `json:"net"`
-	Outstanding    string              `json:"outstanding"`
+	Gross          float32             `json:"gross"`
+	VAT            float32             `json:"vat"`
+	Net            float32             `json:"net"`
+	Outstanding    float32             `json:"outstanding"`
 	ViaDirectDebit bool                `json:"via_direct_debit"`
 }
 
