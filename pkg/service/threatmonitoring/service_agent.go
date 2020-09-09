@@ -35,7 +35,7 @@ func (s *Service) GetAgentsPaginated(parameters connection.APIRequestParameters)
 func (s *Service) getAgentsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetAgentSliceResponseBody, error) {
 	body := &GetAgentSliceResponseBody{}
 
-	response, err := s.connection.Get("/shared-exchange/v1/agents", parameters)
+	response, err := s.connection.Get("/threat-monitoring/v1/agents", parameters)
 	if err != nil {
 		return body, err
 	}
@@ -57,7 +57,7 @@ func (s *Service) getAgentResponseBody(agentID int) (*GetAgentResponseBody, erro
 		return body, fmt.Errorf("invalid agent id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/shared-exchange/v1/agents/%d", agentID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/threat-monitoring/v1/agents/%d", agentID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

@@ -24,7 +24,7 @@ func TestGetAgents(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/shared-exchange/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
@@ -49,13 +49,13 @@ func TestGetAgents(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			c.EXPECT().Get("/shared-exchange/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+			c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
 					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
-			c.EXPECT().Get("/shared-exchange/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+			c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
 					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
@@ -81,7 +81,7 @@ func TestGetAgents(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/shared-exchange/v1/agents", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetAgents(connection.APIRequestParameters{})
 
@@ -101,7 +101,7 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/shared-exchange/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
@@ -124,7 +124,7 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/shared-exchange/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/threat-monitoring/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.GetAgent(123)
 
@@ -158,7 +158,7 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/shared-exchange/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/agents/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
