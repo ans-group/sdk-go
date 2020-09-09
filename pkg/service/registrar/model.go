@@ -1,11 +1,13 @@
-//go:generate go run ../../gen/model_paginated/main.go -package registrar -typename Domain -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package registrar -typename Domain,Nameserver,Whois -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package registrar -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package registrar -source model.go -destination model_paginated_generated.go
 
 package registrar
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
 // Domain represents a UKFast domain
+// +genie:model_response
+// +genie:model_paginated
 type Domain struct {
 	Name         string          `json:"name"`
 	Status       string          `json:"status"`
@@ -18,12 +20,14 @@ type Domain struct {
 }
 
 // Nameserver represents a nameserver
+// +genie:model_response
 type Nameserver struct {
 	Host string               `json:"host"`
 	IP   connection.IPAddress `json:"ip"`
 }
 
 // Whois represents WHOIS information
+// +genie:model_response
 type Whois struct {
 	Name        string              `json:"name"`
 	Status      []string            `json:"status"`

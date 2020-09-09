@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package safedns -typename Record,Zone,Note,Template -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package safedns -typename Record,Zone,Note,Template,Settings -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package safedns -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package safedns -source model.go -destination model_paginated_generated.go
 
 package safedns
 
@@ -48,12 +48,16 @@ const (
 )
 
 // Zone represents a SafeDNS zone
+// +genie:model_response
+// +genie:model_paginated
 type Zone struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
 // Record represents a SafeDNS record
+// +genie:model_response
+// +genie:model_paginated
 type Record struct {
 	ID         int                 `json:"id"`
 	TemplateID int                 `json:"template_id"`
@@ -66,6 +70,8 @@ type Record struct {
 }
 
 // Note represents a SafeDNS note
+// +genie:model_response
+// +genie:model_paginated
 type Note struct {
 	ID        int                  `json:"id"`
 	ContactID int                  `json:"contact_id"`
@@ -75,6 +81,8 @@ type Note struct {
 }
 
 // Template represents a SafeDNS template
+// +genie:model_response
+// +genie:model_paginated
 type Template struct {
 	ID        int             `json:"id"`
 	Name      string          `json:"name"`
@@ -83,6 +91,7 @@ type Template struct {
 }
 
 // Settings represents SafeDNS account settings/configuration
+// +genie:model_response
 type Settings struct {
 	ID                  int                `json:"id"`
 	Email               string             `json:"email"`

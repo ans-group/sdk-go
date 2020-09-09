@@ -1,5 +1,5 @@
-//go:generate go run ../../gen/model_paginated/main.go -package ltaas -typename Domain,Test,Job,Threshold,Scenario -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package ltaas -typename Domain,Test,Job,Threshold,Scenario,Account,Agreement,JobResults,JobSettings -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package ltaas -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package ltaas -source model.go -destination model_paginated_generated.go
 
 package ltaas
 
@@ -166,6 +166,8 @@ func ParseAgreementType(s string) (AgreementType, error) {
 }
 
 // Domain represents an LTaaS domain
+// +genie:model_response
+// +genie:model_paginated
 type Domain struct {
 	ID                 string                   `json:"id"`
 	Name               string                   `json:"name"`
@@ -177,6 +179,8 @@ type Domain struct {
 }
 
 // Test represents an LTaaS test
+// +genie:model_response
+// +genie:model_paginated
 type Test struct {
 	ID            string            `json:"id"`
 	Name          string            `json:"name"`
@@ -196,6 +200,8 @@ type Test struct {
 }
 
 // Job represents an LTaaS job
+// +genie:model_response
+// +genie:model_paginated
 type Job struct {
 	ID                 string              `json:"id"`
 	TestID             string              `json:"test_id"`
@@ -215,6 +221,7 @@ type JobResultsAxis struct {
 }
 
 // JobResults represents the results of an LTaaS job
+// +genie:model_response
 type JobResults struct {
 	VirtualUsers       []JobResultsAxis `json:"virtual_users"`
 	SuccessfulRequests []JobResultsAxis `json:"successful_requests"`
@@ -223,6 +230,7 @@ type JobResults struct {
 }
 
 // JobSettings represents the settings of an LTaaS job
+// +genie:model_response
 type JobSettings struct {
 	Date     connection.DateTime `json:"date"`
 	Type     string              `json:"type"`
@@ -235,6 +243,8 @@ type JobSettings struct {
 }
 
 // Threshold represents a test threshold
+// +genie:model_response
+// +genie:model_paginated
 type Threshold struct {
 	ID          string              `json:"id"`
 	Name        string              `json:"name"`
@@ -245,6 +255,8 @@ type Threshold struct {
 }
 
 // Scenario represents a test scenario
+// +genie:model_response
+// +genie:model_paginated
 type Scenario struct {
 	ID             string              `json:"id"`
 	Name           string              `json:"name"`
@@ -256,12 +268,14 @@ type Scenario struct {
 }
 
 // Agreement represents an authorisation agreement
+// +genie:model_response
 type Agreement struct {
 	Version   string `json:"version"`
 	Agreement string `json:"agreement"`
 }
 
 // Account represents an LTaaS account
+// +genie:model_response
 type Account struct {
 	ID string `json:"id"`
 }

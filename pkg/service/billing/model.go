@@ -1,11 +1,13 @@
-//go:generate go run ../../gen/model_paginated/main.go -package billing -typename Card,CloudCost,InvoiceQuery,Invoice,Payment,RecurringCost -destination model_paginated_generated.go
-//go:generate go run ../../gen/model_response/main.go -package billing -typename Card,CloudCost,DirectDebit,InvoiceQuery,Invoice,Payment,RecurringCost -destination model_response_generated.go
+//go:generate go run ../../gen/model_response/main.go -package billing -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package billing -source model.go -destination model_paginated_generated.go
 
 package billing
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
 // Card represents a credit/debit card
+// +genie:model_response
+// +genie:model_paginated
 type Card struct {
 	ID           int    `json:"id"`
 	FriendlyName string `json:"friendly_name"`
@@ -21,6 +23,8 @@ type Card struct {
 }
 
 // CloudCost represents a cloud cost item
+// +genie:model_response
+// +genie:model_paginated
 type CloudCost struct {
 	ID       int `json:"id"`
 	ServerID int `json:"server_id"`
@@ -40,6 +44,7 @@ type CloudCost struct {
 }
 
 // DirectDebit represents a direct debit
+// +genie:model_response
 type DirectDebit struct {
 	Name           string              `json:"name"`
 	Number         string              `json:"number"`
@@ -52,6 +57,8 @@ type DirectDebit struct {
 }
 
 // InvoiceQuery represents an invoice query
+// +genie:model_response
+// +genie:model_paginated
 type InvoiceQuery struct {
 	ID               int                 `json:"id"`
 	ContactID        int                 `json:"contact_id"`
@@ -67,18 +74,22 @@ type InvoiceQuery struct {
 }
 
 // Invoice represents an invoice
+// +genie:model_response
+// +genie:model_paginated
 type Invoice struct {
 	ID             int                 `json:"id"`
 	Date           connection.DateTime `json:"date"`
 	Paid           bool                `json:"paid"`
-	Gross          string              `json:"gross"`
-	VAT            string              `json:"vat"`
-	Net            string              `json:"net"`
-	Outstanding    string              `json:"outstanding"`
+	Gross          float32             `json:"gross"`
+	VAT            float32             `json:"vat"`
+	Net            float32             `json:"net"`
+	Outstanding    float32             `json:"outstanding"`
 	ViaDirectDebit bool                `json:"via_direct_debit"`
 }
 
 // Payment represents a payment
+// +genie:model_response
+// +genie:model_paginated
 type Payment struct {
 	ID          int                 `json:"id"`
 	Category    string              `json:"category"`
@@ -94,6 +105,8 @@ type Payment struct {
 }
 
 // RecurringCost represents a recurring cost
+// +genie:model_response
+// +genie:model_paginated
 type RecurringCost struct {
 	ID   int `json:"id"`
 	Type struct {

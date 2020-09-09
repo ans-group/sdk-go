@@ -100,3 +100,12 @@ type ActiveDirectoryDomainNotFoundError struct {
 func (e *ActiveDirectoryDomainNotFoundError) Error() string {
 	return fmt.Sprintf("domain not found with ID [%d]", e.ID)
 }
+
+// VPCNotFoundError indicates a VPC was not found
+type VPCNotFoundError struct {
+	ID string
+}
+
+func (e *VPCNotFoundError) Error() string {
+	return fmt.Sprintf("VPC not found with ID [%s]", e.ID)
+}
