@@ -49,3 +49,27 @@ type GetCertificateValidationResponseBody struct {
 	connection.APIResponseBody
 	Data CertificateValidation `json:"data"`
 }
+
+// GetRecommendationsSliceResponseBody represents an API response body containing []Recommendations data
+type GetRecommendationsSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Recommendations `json:"data"`
+}
+
+// GetRecommendationsResponseBody represents an API response body containing Recommendations data
+type GetRecommendationsResponseBody struct {
+	connection.APIResponseBody
+	Data Recommendations `json:"data"`
+}
+
+// GetReportSliceResponseBody represents an API response body containing []Report data
+type GetReportSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Report `json:"data"`
+}
+
+// GetReportResponseBody represents an API response body containing Report data
+type GetReportResponseBody struct {
+	connection.APIResponseBody
+	Data Report `json:"data"`
+}
