@@ -8,7 +8,11 @@ import (
 type ThreatMonitoringService interface {
 	GetAgents(parameters connection.APIRequestParameters) ([]Agent, error)
 	GetAgentsPaginated(parameters connection.APIRequestParameters) (*PaginatedAgent, error)
-	GetAgent(domainID int) (Agent, error)
+	GetAgent(agentID string) (Agent, error)
+
+	GetAlerts(parameters connection.APIRequestParameters) ([]Alert, error)
+	GetAlertsPaginated(parameters connection.APIRequestParameters) (*PaginatedAlert, error)
+	GetAlert(alertID string) (Alert, error)
 }
 
 // Service implements ThreatMonitoringService for managing the Threat Monitoring service

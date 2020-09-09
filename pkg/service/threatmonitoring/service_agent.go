@@ -44,20 +44,20 @@ func (s *Service) getAgentsPaginatedResponseBody(parameters connection.APIReques
 }
 
 // GetAgent retrieves a single agent by id
-func (s *Service) GetAgent(agentID int) (Agent, error) {
+func (s *Service) GetAgent(agentID string) (Agent, error) {
 	body, err := s.getAgentResponseBody(agentID)
 
 	return body.Data, err
 }
 
-func (s *Service) getAgentResponseBody(agentID int) (*GetAgentResponseBody, error) {
+func (s *Service) getAgentResponseBody(agentID string) (*GetAgentResponseBody, error) {
 	body := &GetAgentResponseBody{}
 
-	if agentID < 1 {
+	if agentID == "" {
 		return body, fmt.Errorf("invalid agent id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/threat-monitoring/v1/agents/%d", agentID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/threat-monitoring/v1/agents/%s", agentID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

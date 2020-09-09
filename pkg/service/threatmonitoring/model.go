@@ -32,3 +32,43 @@ type Agent struct {
 	CreatedAt             connection.DateTime `json:"created_at"`
 	UpdatedAt             connection.DateTime `json:"updated_at"`
 }
+
+// Alert represents a threat monitoring alert
+// +genie:model_response
+// +genie:model_paginated
+type Alert struct {
+	ID                string               `json:"id"`
+	IP                connection.IPAddress `json:"ip"`
+	AgentID           string               `json:"agent_id"`
+	AgentFriendlyName string               `json:"agent_friendly_name"`
+	Geolocation       struct {
+		IP      connection.IPAddress `json:"ip"`
+		Country string               `json:"country"`
+		Lon     float32              `json:"lon"`
+		Lat     float32              `json:"lat"`
+	} `json:"geolocation"`
+	Level       int                 `json:"level"`
+	Groups      []string            `json:"groups"`
+	Description string              `json:"description"`
+	Link        string              `json:"link"`
+	GDPR        []string            `json:"gdpr"`
+	PCIDSS      []string            `json:"pci_dss"`
+	FullLog     string              `json:"full_log"`
+	Timestamp   connection.DateTime `json:"timestamp"`
+	Syscheck    struct {
+		Path              string   `json:"path"`
+		ChangedAttributes []string `json:"changed_attributes"`
+		Diff              string   `json:"diff"`
+	} `json:"syscheck"`
+	Audit struct {
+		EffectiveUsername string `json:"effective_user_name"`
+		ProcessName       string `json:"process_name"`
+		ProcessID         string `json:"process_id"`
+		User              struct {
+			Name string `json:"name"`
+		} `json:"user"`
+		Group struct {
+			Name string `json:"name"`
+		} `json:"group"`
+	} `json:"audit"`
+}

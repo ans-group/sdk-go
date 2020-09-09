@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetAgents(t *testing.T) {
+func TestGetAlerts(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetAgents(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/alerts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"abc\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		agents, err := s.GetAgents(connection.APIRequestParameters{})
+		alerts, err := s.GetAlerts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, agents, 1)
-		assert.Equal(t, "abc", agents[0].ID)
+		assert.Len(t, alerts, 1)
+		assert.Equal(t, "abc", alerts[0].ID)
 	})
 
 	t.Run("Multiple", func(t *testing.T) {
@@ -49,13 +49,13 @@ func TestGetAgents(t *testing.T) {
 		}
 
 		gomock.InOrder(
-			c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+			c.EXPECT().Get("/threat-monitoring/v1/alerts", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
 					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"abc\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
-			c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{
+			c.EXPECT().Get("/threat-monitoring/v1/alerts", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
 					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"def\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
@@ -63,12 +63,12 @@ func TestGetAgents(t *testing.T) {
 			}, nil),
 		)
 
-		agents, err := s.GetAgents(connection.APIRequestParameters{})
+		alerts, err := s.GetAlerts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, agents, 2)
-		assert.Equal(t, "abc", agents[0].ID)
-		assert.Equal(t, "def", agents[1].ID)
+		assert.Len(t, alerts, 2)
+		assert.Equal(t, "abc", alerts[0].ID)
+		assert.Equal(t, "def", alerts[1].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -81,16 +81,16 @@ func TestGetAgents(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/threat-monitoring/v1/agents", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/threat-monitoring/v1/alerts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetAgents(connection.APIRequestParameters{})
+		_, err := s.GetAlerts(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetAgent(t *testing.T) {
+func TestGetAlert(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -101,17 +101,17 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/threat-monitoring/v1/agents/abc", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/alerts/abc", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		agent, err := s.GetAgent("abc")
+		alert, err := s.GetAlert("abc")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "abc", agent.ID)
+		assert.Equal(t, "abc", alert.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -124,15 +124,15 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/threat-monitoring/v1/agents/abc", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/threat-monitoring/v1/alerts/abc", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetAgent("abc")
+		_, err := s.GetAlert("abc")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidAgentID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidAlertID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -142,13 +142,13 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetAgent("")
+		_, err := s.GetAlert("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid agent id", err.Error())
+		assert.Equal(t, "invalid alert id", err.Error())
 	})
 
-	t.Run("404_ReturnsAgentNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsAlertNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -158,16 +158,16 @@ func TestGetAgent(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/threat-monitoring/v1/agents/abc", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/threat-monitoring/v1/alerts/abc", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetAgent("abc")
+		_, err := s.GetAlert("abc")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &AgentNotFoundError{}, err)
+		assert.IsType(t, &AlertNotFoundError{}, err)
 	})
 }
