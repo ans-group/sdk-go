@@ -112,6 +112,11 @@ type ECloudService interface {
 	GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error)
 	GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error)
 	GetVPC(vpcID string) (VPC, error)
+
+	// Availability zone
+	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
+	GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedAvailabilityZone, error)
+	GetAvailabilityZone(azID string) (AvailabilityZone, error)
 }
 
 // Service implements ECloudService for managing
