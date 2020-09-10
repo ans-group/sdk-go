@@ -42,7 +42,7 @@ type ECloudService interface {
 	GetSolutionDatastoresPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedDatastore, error)
 	GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]Host, error)
 	GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedHost, error)
-	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]Network, error)
+	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error)
 	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
 	GetSolutionFirewalls(solutionID int, parameters connection.APIRequestParameters) ([]Firewall, error)
 	GetSolutionFirewallsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedFirewall, error)

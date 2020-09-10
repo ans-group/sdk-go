@@ -109,3 +109,12 @@ type VPCNotFoundError struct {
 func (e *VPCNotFoundError) Error() string {
 	return fmt.Sprintf("VPC not found with ID [%s]", e.ID)
 }
+
+// AvailabilityZoneNotFoundError indicates a VPC was not found
+type AvailabilityZoneNotFoundError struct {
+	ID string
+}
+
+func (e *AvailabilityZoneNotFoundError) Error() string {
+	return fmt.Sprintf("Availability zone not found with ID [%s]", e.ID)
+}

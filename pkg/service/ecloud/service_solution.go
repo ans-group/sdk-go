@@ -288,15 +288,15 @@ func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, paramete
 }
 
 // GetSolutionNetworks retrieves a list of networks
-func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]Network, error) {
-	var networks []Network
+func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error) {
+	var networks []V1Network
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionNetworksPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, network := range response.(*PaginatedNetwork).Items {
+		for _, network := range response.(*PaginatedV1Network).Items {
 			networks = append(networks, network)
 		}
 	}

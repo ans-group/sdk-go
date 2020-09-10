@@ -50,16 +50,16 @@ type GetSiteResponseBody struct {
 	Data Site `json:"data"`
 }
 
-// GetNetworkSliceResponseBody represents an API response body containing []Network data
-type GetNetworkSliceResponseBody struct {
+// GetV1NetworkSliceResponseBody represents an API response body containing []V1Network data
+type GetV1NetworkSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []Network `json:"data"`
+	Data []V1Network `json:"data"`
 }
 
-// GetNetworkResponseBody represents an API response body containing Network data
-type GetNetworkResponseBody struct {
+// GetV1NetworkResponseBody represents an API response body containing V1Network data
+type GetV1NetworkResponseBody struct {
 	connection.APIResponseBody
-	Data Network `json:"data"`
+	Data V1Network `json:"data"`
 }
 
 // GetHostSliceResponseBody represents an API response body containing []Host data
@@ -192,4 +192,112 @@ type GetVPCSliceResponseBody struct {
 type GetVPCResponseBody struct {
 	connection.APIResponseBody
 	Data VPC `json:"data"`
+}
+
+// GetAvailabilityZoneSliceResponseBody represents an API response body containing []AvailabilityZone data
+type GetAvailabilityZoneSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []AvailabilityZone `json:"data"`
+}
+
+// GetAvailabilityZoneResponseBody represents an API response body containing AvailabilityZone data
+type GetAvailabilityZoneResponseBody struct {
+	connection.APIResponseBody
+	Data AvailabilityZone `json:"data"`
+}
+
+// GetNetworkSliceResponseBody represents an API response body containing []Network data
+type GetNetworkSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Network `json:"data"`
+}
+
+// GetNetworkResponseBody represents an API response body containing Network data
+type GetNetworkResponseBody struct {
+	connection.APIResponseBody
+	Data Network `json:"data"`
+}
+
+// GetDHCPSliceResponseBody represents an API response body containing []DHCP data
+type GetDHCPSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []DHCP `json:"data"`
+}
+
+// GetDHCPResponseBody represents an API response body containing DHCP data
+type GetDHCPResponseBody struct {
+	connection.APIResponseBody
+	Data DHCP `json:"data"`
+}
+
+// GetVPNSliceResponseBody represents an API response body containing []VPN data
+type GetVPNSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPN `json:"data"`
+}
+
+// GetVPNResponseBody represents an API response body containing VPN data
+type GetVPNResponseBody struct {
+	connection.APIResponseBody
+	Data VPN `json:"data"`
+}
+
+// GetInstanceSliceResponseBody represents an API response body containing []Instance data
+type GetInstanceSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Instance `json:"data"`
+}
+
+// GetInstanceResponseBody represents an API response body containing Instance data
+type GetInstanceResponseBody struct {
+	connection.APIResponseBody
+	Data Instance `json:"data"`
+}
+
+// GetFloatingIPSliceResponseBody represents an API response body containing []FloatingIP data
+type GetFloatingIPSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []FloatingIP `json:"data"`
+}
+
+// GetFloatingIPResponseBody represents an API response body containing FloatingIP data
+type GetFloatingIPResponseBody struct {
+	connection.APIResponseBody
+	Data FloatingIP `json:"data"`
+}
+
+// GetRegionSliceResponseBody represents an API response body containing []Region data
+type GetRegionSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Region `json:"data"`
+}
+
+// GetRegionResponseBody represents an API response body containing Region data
+type GetRegionResponseBody struct {
+	connection.APIResponseBody
+	Data Region `json:"data"`
+}
+
+// GetRouterSliceResponseBody represents an API response body containing []Router data
+type GetRouterSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Router `json:"data"`
+}
+
+// GetRouterResponseBody represents an API response body containing Router data
+type GetRouterResponseBody struct {
+	connection.APIResponseBody
+	Data Router `json:"data"`
+}
+
+// GetLoadBalancerClusterSliceResponseBody represents an API response body containing []LoadBalancerCluster data
+type GetLoadBalancerClusterSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []LoadBalancerCluster `json:"data"`
+}
+
+// GetLoadBalancerClusterResponseBody represents an API response body containing LoadBalancerCluster data
+type GetLoadBalancerClusterResponseBody struct {
+	connection.APIResponseBody
+	Data LoadBalancerCluster `json:"data"`
 }
