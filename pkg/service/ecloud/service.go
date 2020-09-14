@@ -122,6 +122,11 @@ type ECloudService interface {
 	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
 	GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
 	GetNetwork(networkID string) (Network, error)
+
+	// DHCP
+	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
+	GetDHCPsPaginated(parameters connection.APIRequestParameters) (*PaginatedDHCP, error)
+	GetDHCP(dhcpID string) (DHCP, error)
 }
 
 // Service implements ECloudService for managing

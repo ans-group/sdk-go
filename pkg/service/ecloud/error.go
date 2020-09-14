@@ -127,3 +127,12 @@ type NetworkNotFoundError struct {
 func (e *NetworkNotFoundError) Error() string {
 	return fmt.Sprintf("Network not found with ID [%s]", e.ID)
 }
+
+// DHCPNotFoundError indicates a DHCP server/config was not found
+type DHCPNotFoundError struct {
+	ID string
+}
+
+func (e *DHCPNotFoundError) Error() string {
+	return fmt.Sprintf("DHCP not found with ID [%s]", e.ID)
+}

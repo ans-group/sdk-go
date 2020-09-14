@@ -370,10 +370,11 @@ type Network struct {
 // +genie:model_response
 // +genie:model_paginated
 type DHCP struct {
-	ID        string              `json:"id"`
-	VPCID     string              `json:"dhcp_id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID                 string              `json:"id"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
 // VPN represents an eCloud VPN
