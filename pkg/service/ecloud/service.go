@@ -152,6 +152,16 @@ type ECloudService interface {
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
 	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
 	GetRouter(routerID string) (Router, error)
+
+	// Region
+	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)
+	GetRegionsPaginated(parameters connection.APIRequestParameters) (*PaginatedRegion, error)
+	GetRegion(regionID string) (Region, error)
+
+	// Load balancers
+	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
+	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
+	GetLoadBalancerCluster(lbcsID string) (LoadBalancerCluster, error)
 }
 
 // Service implements ECloudService for managing
