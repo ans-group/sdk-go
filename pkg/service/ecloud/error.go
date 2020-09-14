@@ -136,3 +136,21 @@ type DHCPNotFoundError struct {
 func (e *DHCPNotFoundError) Error() string {
 	return fmt.Sprintf("DHCP not found with ID [%s]", e.ID)
 }
+
+// VPNNotFoundError indicates a VPN was not found
+type VPNNotFoundError struct {
+	ID string
+}
+
+func (e *VPNNotFoundError) Error() string {
+	return fmt.Sprintf("VPN not found with ID [%s]", e.ID)
+}
+
+// InstanceNotFoundError indicates an instance was not found
+type InstanceNotFoundError struct {
+	ID string
+}
+
+func (e *InstanceNotFoundError) Error() string {
+	return fmt.Sprintf("Instance not found with ID [%s]", e.ID)
+}

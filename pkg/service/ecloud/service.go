@@ -127,6 +127,16 @@ type ECloudService interface {
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
 	GetDHCPsPaginated(parameters connection.APIRequestParameters) (*PaginatedDHCP, error)
 	GetDHCP(dhcpID string) (DHCP, error)
+
+	// VPN
+	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
+	GetVPNsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPN, error)
+	GetVPN(vpnID string) (VPN, error)
+
+	// Instance
+	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
+	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
+	GetInstance(instanceID string) (Instance, error)
 }
 
 // Service implements ECloudService for managing
