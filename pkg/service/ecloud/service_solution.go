@@ -305,16 +305,16 @@ func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIR
 }
 
 // GetSolutionNetworksPaginated retrieves a paginated list of domains
-func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Network, error) {
 	body, err := s.getSolutionNetworksPaginatedResponseBody(solutionID, parameters)
 
-	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedV1Network(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionNetworksPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
-	body := &GetNetworkSliceResponseBody{}
+func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetV1NetworkSliceResponseBody, error) {
+	body := &GetV1NetworkSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")

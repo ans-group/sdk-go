@@ -43,7 +43,7 @@ type ECloudService interface {
 	GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]Host, error)
 	GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedHost, error)
 	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error)
-	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Network, error)
 	GetSolutionFirewalls(solutionID int, parameters connection.APIRequestParameters) ([]Firewall, error)
 	GetSolutionFirewallsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedFirewall, error)
 	GetSolutionTemplates(solutionID int, parameters connection.APIRequestParameters) ([]Template, error)
@@ -137,6 +137,11 @@ type ECloudService interface {
 	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
 	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 	GetInstance(instanceID string) (Instance, error)
+
+	// Floating IPs
+	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
+	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
+	GetFloatingIP(floatingIPID string) (FloatingIP, error)
 }
 
 // Service implements ECloudService for managing

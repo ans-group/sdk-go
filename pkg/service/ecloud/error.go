@@ -154,3 +154,12 @@ type InstanceNotFoundError struct {
 func (e *InstanceNotFoundError) Error() string {
 	return fmt.Sprintf("Instance not found with ID [%s]", e.ID)
 }
+
+// FloatingIPNotFoundError indicates a floating IP was not found
+type FloatingIPNotFoundError struct {
+	ID string
+}
+
+func (e *FloatingIPNotFoundError) Error() string {
+	return fmt.Sprintf("Floating IP not found with ID [%s]", e.ID)
+}
