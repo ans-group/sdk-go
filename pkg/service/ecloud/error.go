@@ -118,3 +118,12 @@ type AvailabilityZoneNotFoundError struct {
 func (e *AvailabilityZoneNotFoundError) Error() string {
 	return fmt.Sprintf("Availability zone not found with ID [%s]", e.ID)
 }
+
+// NetworkNotFoundError indicates a network was not found
+type NetworkNotFoundError struct {
+	ID string
+}
+
+func (e *NetworkNotFoundError) Error() string {
+	return fmt.Sprintf("Network not found with ID [%s]", e.ID)
+}

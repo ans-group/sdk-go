@@ -117,6 +117,11 @@ type ECloudService interface {
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
 	GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedAvailabilityZone, error)
 	GetAvailabilityZone(azID string) (AvailabilityZone, error)
+
+	// Network
+	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
+	GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetNetwork(networkID string) (Network, error)
 }
 
 // Service implements ECloudService for managing
