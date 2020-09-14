@@ -266,6 +266,18 @@ type GetFloatingIPResponseBody struct {
 	Data FloatingIP `json:"data"`
 }
 
+// GetFirewallRuleSliceResponseBody represents an API response body containing []FirewallRule data
+type GetFirewallRuleSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []FirewallRule `json:"data"`
+}
+
+// GetFirewallRuleResponseBody represents an API response body containing FirewallRule data
+type GetFirewallRuleResponseBody struct {
+	connection.APIResponseBody
+	Data FirewallRule `json:"data"`
+}
+
 // GetRegionSliceResponseBody represents an API response body containing []Region data
 type GetRegionSliceResponseBody struct {
 	connection.APIResponseBody

@@ -163,3 +163,21 @@ type FloatingIPNotFoundError struct {
 func (e *FloatingIPNotFoundError) Error() string {
 	return fmt.Sprintf("Floating IP not found with ID [%s]", e.ID)
 }
+
+// FirewallRuleNotFoundError indicates a firewall rule was not found
+type FirewallRuleNotFoundError struct {
+	ID string
+}
+
+func (e *FirewallRuleNotFoundError) Error() string {
+	return fmt.Sprintf("Firewall rule not found with ID [%s]", e.ID)
+}
+
+// RouterNotFoundError indicates a router was not found
+type RouterNotFoundError struct {
+	ID string
+}
+
+func (e *RouterNotFoundError) Error() string {
+	return fmt.Sprintf("Router not found with ID [%s]", e.ID)
+}

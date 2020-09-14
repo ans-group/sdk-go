@@ -406,6 +406,16 @@ type FloatingIP struct {
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
 
+// FirewallRule represents an eCloud firewall rule
+// +genie:model_response
+// +genie:model_paginated
+type FirewallRule struct {
+	ID        string              `json:"id"`
+	RouterID  string              `json:"router_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
 // Region represents an eCloud region
 // +genie:model_response
 // +genie:model_paginated
@@ -420,7 +430,7 @@ type Region struct {
 type Router struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
-	VPCID     string              `json:"dhcp_id"`
+	VPCID     string              `json:"vpc_id"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -431,7 +441,7 @@ type Router struct {
 type LoadBalancerCluster struct {
 	ID                 string              `json:"id"`
 	Name               string              `json:"name"`
-	VPCID              string              `json:"dhcp_id"`
+	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Nodes              int                 `json:"nodes"`
 	CreatedAt          connection.DateTime `json:"created_at"`

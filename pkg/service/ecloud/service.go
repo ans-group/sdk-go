@@ -138,10 +138,20 @@ type ECloudService interface {
 	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 	GetInstance(instanceID string) (Instance, error)
 
-	// Floating IPs
+	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
 	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
 	GetFloatingIP(floatingIPID string) (FloatingIP, error)
+
+	// Firewall rule
+	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
+	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
+	GetFirewallRule(firewallIPID string) (FirewallRule, error)
+
+	// Router
+	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
+	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
+	GetRouter(routerID string) (Router, error)
 }
 
 // Service implements ECloudService for managing
