@@ -181,3 +181,21 @@ type RouterNotFoundError struct {
 func (e *RouterNotFoundError) Error() string {
 	return fmt.Sprintf("Router not found with ID [%s]", e.ID)
 }
+
+// RegionNotFoundError indicates a region was not found
+type RegionNotFoundError struct {
+	ID string
+}
+
+func (e *RegionNotFoundError) Error() string {
+	return fmt.Sprintf("Router not found with ID [%s]", e.ID)
+}
+
+// LoadBalancerClusterNotFoundError indicates a load balancer cluster was not found
+type LoadBalancerClusterNotFoundError struct {
+	ID string
+}
+
+func (e *LoadBalancerClusterNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer cluster not found with ID [%s]", e.ID)
+}
