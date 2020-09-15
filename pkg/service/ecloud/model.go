@@ -165,10 +165,10 @@ type Site struct {
 	PodID      int    `json:"pod_id"`
 }
 
-// Network represents an eCloud network
+// V1Network represents an eCloud v1 network
 // +genie:model_response
 // +genie:model_paginated
-type Network struct {
+type V1Network struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
@@ -343,4 +343,107 @@ type VPC struct {
 	RegionID  string              `json:"region_id"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// AvailabilityZone represents an eCloud availability zone
+// +genie:model_response
+// +genie:model_paginated
+type AvailabilityZone struct {
+	ID               string `json:"id"`
+	Code             string `json:"code"`
+	Name             string `json:"name"`
+	DatacentreSiteID int    `json:"datacentre_site_id"`
+}
+
+// Network represents an eCloud network
+// +genie:model_response
+// +genie:model_paginated
+type Network struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	RouterID  string              `json:"router_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// DHCP represents an eCloud DHCP server/policy
+// +genie:model_response
+// +genie:model_paginated
+type DHCP struct {
+	ID                 string              `json:"id"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// VPN represents an eCloud VPN
+// +genie:model_response
+// +genie:model_paginated
+type VPN struct {
+	ID        string              `json:"id"`
+	RouterID  string              `json:"router_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// Instance represents an eCloud instance
+// +genie:model_response
+// +genie:model_paginated
+type Instance struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"Name"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// FloatingIP represents an eCloud floating IP address
+// +genie:model_response
+// +genie:model_paginated
+type FloatingIP struct {
+	ID        string              `json:"id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// FirewallRule represents an eCloud firewall rule
+// +genie:model_response
+// +genie:model_paginated
+type FirewallRule struct {
+	ID        string              `json:"id"`
+	RouterID  string              `json:"router_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// Region represents an eCloud region
+// +genie:model_response
+// +genie:model_paginated
+type Region struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// Router represents an eCloud router
+// +genie:model_response
+// +genie:model_paginated
+type Router struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	VPCID     string              `json:"vpc_id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// LoadBalancerCluster represents an eCloud load balancer cluster
+// +genie:model_response
+// +genie:model_paginated
+type LoadBalancerCluster struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Nodes              int                 `json:"nodes"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }

@@ -288,15 +288,15 @@ func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, paramete
 }
 
 // GetSolutionNetworks retrieves a list of networks
-func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]Network, error) {
-	var networks []Network
+func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error) {
+	var networks []V1Network
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionNetworksPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, network := range response.(*PaginatedNetwork).Items {
+		for _, network := range response.(*PaginatedV1Network).Items {
 			networks = append(networks, network)
 		}
 	}
@@ -305,16 +305,16 @@ func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIR
 }
 
 // GetSolutionNetworksPaginated retrieves a paginated list of domains
-func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Network, error) {
 	body, err := s.getSolutionNetworksPaginatedResponseBody(solutionID, parameters)
 
-	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedV1Network(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionNetworksPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
-	body := &GetNetworkSliceResponseBody{}
+func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetV1NetworkSliceResponseBody, error) {
+	body := &GetV1NetworkSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")

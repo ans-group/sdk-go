@@ -109,3 +109,93 @@ type VPCNotFoundError struct {
 func (e *VPCNotFoundError) Error() string {
 	return fmt.Sprintf("VPC not found with ID [%s]", e.ID)
 }
+
+// AvailabilityZoneNotFoundError indicates a VPC was not found
+type AvailabilityZoneNotFoundError struct {
+	ID string
+}
+
+func (e *AvailabilityZoneNotFoundError) Error() string {
+	return fmt.Sprintf("Availability zone not found with ID [%s]", e.ID)
+}
+
+// NetworkNotFoundError indicates a network was not found
+type NetworkNotFoundError struct {
+	ID string
+}
+
+func (e *NetworkNotFoundError) Error() string {
+	return fmt.Sprintf("Network not found with ID [%s]", e.ID)
+}
+
+// DHCPNotFoundError indicates a DHCP server/config was not found
+type DHCPNotFoundError struct {
+	ID string
+}
+
+func (e *DHCPNotFoundError) Error() string {
+	return fmt.Sprintf("DHCP not found with ID [%s]", e.ID)
+}
+
+// VPNNotFoundError indicates a VPN was not found
+type VPNNotFoundError struct {
+	ID string
+}
+
+func (e *VPNNotFoundError) Error() string {
+	return fmt.Sprintf("VPN not found with ID [%s]", e.ID)
+}
+
+// InstanceNotFoundError indicates an instance was not found
+type InstanceNotFoundError struct {
+	ID string
+}
+
+func (e *InstanceNotFoundError) Error() string {
+	return fmt.Sprintf("Instance not found with ID [%s]", e.ID)
+}
+
+// FloatingIPNotFoundError indicates a floating IP was not found
+type FloatingIPNotFoundError struct {
+	ID string
+}
+
+func (e *FloatingIPNotFoundError) Error() string {
+	return fmt.Sprintf("Floating IP not found with ID [%s]", e.ID)
+}
+
+// FirewallRuleNotFoundError indicates a firewall rule was not found
+type FirewallRuleNotFoundError struct {
+	ID string
+}
+
+func (e *FirewallRuleNotFoundError) Error() string {
+	return fmt.Sprintf("Firewall rule not found with ID [%s]", e.ID)
+}
+
+// RouterNotFoundError indicates a router was not found
+type RouterNotFoundError struct {
+	ID string
+}
+
+func (e *RouterNotFoundError) Error() string {
+	return fmt.Sprintf("Router not found with ID [%s]", e.ID)
+}
+
+// RegionNotFoundError indicates a region was not found
+type RegionNotFoundError struct {
+	ID string
+}
+
+func (e *RegionNotFoundError) Error() string {
+	return fmt.Sprintf("Router not found with ID [%s]", e.ID)
+}
+
+// LoadBalancerClusterNotFoundError indicates a load balancer cluster was not found
+type LoadBalancerClusterNotFoundError struct {
+	ID string
+}
+
+func (e *LoadBalancerClusterNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer cluster not found with ID [%s]", e.ID)
+}

@@ -42,8 +42,8 @@ type ECloudService interface {
 	GetSolutionDatastoresPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedDatastore, error)
 	GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]Host, error)
 	GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedHost, error)
-	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]Network, error)
-	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error)
+	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Network, error)
 	GetSolutionFirewalls(solutionID int, parameters connection.APIRequestParameters) ([]Firewall, error)
 	GetSolutionFirewallsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedFirewall, error)
 	GetSolutionTemplates(solutionID int, parameters connection.APIRequestParameters) ([]Template, error)
@@ -112,6 +112,56 @@ type ECloudService interface {
 	GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error)
 	GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error)
 	GetVPC(vpcID string) (VPC, error)
+
+	// Availability zone
+	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
+	GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedAvailabilityZone, error)
+	GetAvailabilityZone(azID string) (AvailabilityZone, error)
+
+	// Network
+	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
+	GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetNetwork(networkID string) (Network, error)
+
+	// DHCP
+	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
+	GetDHCPsPaginated(parameters connection.APIRequestParameters) (*PaginatedDHCP, error)
+	GetDHCP(dhcpID string) (DHCP, error)
+
+	// VPN
+	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
+	GetVPNsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPN, error)
+	GetVPN(vpnID string) (VPN, error)
+
+	// Instance
+	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
+	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
+	GetInstance(instanceID string) (Instance, error)
+
+	// Floating IP
+	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
+	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
+	GetFloatingIP(floatingIPID string) (FloatingIP, error)
+
+	// Firewall rule
+	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
+	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
+	GetFirewallRule(firewallIPID string) (FirewallRule, error)
+
+	// Router
+	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
+	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
+	GetRouter(routerID string) (Router, error)
+
+	// Region
+	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)
+	GetRegionsPaginated(parameters connection.APIRequestParameters) (*PaginatedRegion, error)
+	GetRegion(regionID string) (Region, error)
+
+	// Load balancers
+	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
+	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
+	GetLoadBalancerCluster(lbcsID string) (LoadBalancerCluster, error)
 }
 
 // Service implements ECloudService for managing
