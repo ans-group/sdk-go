@@ -92,7 +92,7 @@ func TestAPIRequestParameters_WithUnpackedFilters_AddsFilters(t *testing.T) {
 	f := []APIRequestFiltering{f1, f2}
 	params := APIRequestParameters{}
 
-	params.WithFilters(f...)
+	params.WithFilter(f...)
 
 	assert.Len(t, params.Filtering, 2)
 	assert.Equal(t, f1, params.Filtering[0])
@@ -113,7 +113,7 @@ func TestAPIRequestParameters_WithPackedFilters_AddsFilters(t *testing.T) {
 
 	params := APIRequestParameters{}
 
-	params.WithFilters(f1, f2)
+	params.WithFilter(f1, f2)
 
 	assert.Len(t, params.Filtering, 2)
 	assert.Equal(t, f1, params.Filtering[0])

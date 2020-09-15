@@ -68,14 +68,8 @@ func (p *APIRequestParameters) WithSorting(sorting APIRequestSorting) *APIReques
 	return p
 }
 
-// WithFilter is a fluent method for adding a filter to request parameters
-func (p *APIRequestParameters) WithFilter(filter APIRequestFiltering) *APIRequestParameters {
-	p.Filtering = append(p.Filtering, filter)
-	return p
-}
-
-// WithFilters is a fluent method for adding a set of filters to request parameters
-func (p *APIRequestParameters) WithFilters(filters ...APIRequestFiltering) *APIRequestParameters {
+// WithFilter is a fluent method for adding a set of filters to request parameters
+func (p *APIRequestParameters) WithFilter(filters ...APIRequestFiltering) *APIRequestParameters {
 	p.Filtering = append(p.Filtering, filters...)
 
 	return p
@@ -104,6 +98,14 @@ type APIRequestFiltering struct {
 	Property string
 	Operator APIRequestFilteringOperator
 	Value    []string
+}
+
+func NewAPIRequestFiltering(property string, operator APIRequestFilteringOperator, value []string) *APIRequestFiltering {
+	return &APIRequestFiltering{
+		Property: property,
+		Operator: operator,
+		Value:    value,
+	}
 }
 
 type APIRequestFilteringOperator int
