@@ -174,3 +174,14 @@ type CreateVirtualMachineTemplateRequest struct {
 func (c *CreateVirtualMachineTemplateRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
+
+// CreateVPCRequest represents a request to create a VPC
+type CreateVPCRequest struct {
+	Name     *string `json:"name,omitempty"`
+	RegionID string  `json:"region_id"`
+}
+
+// PatchVPCRequest represents a request to patch a VPC
+type PatchVPCRequest struct {
+	Name *string `json:"name,omitempty"`
+}

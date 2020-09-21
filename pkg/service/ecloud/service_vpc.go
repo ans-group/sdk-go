@@ -70,3 +70,21 @@ func (s *Service) getVPCResponseBody(vpcID string) (*GetVPCResponseBody, error) 
 		return nil
 	})
 }
+
+// CreateVPC creates a new VPC
+func (s *Service) CreateVPC(req CreateVPCRequest) (string, error) {
+	body, err := s.createVPCResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createVPCResponseBody(req CreateVPCRequest) (*GetVPCResponseBody, error) {
+	body := &GetVPCResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/vpcs", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}

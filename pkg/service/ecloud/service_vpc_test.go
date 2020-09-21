@@ -10,6 +10,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ukfast/sdk-go/pkg/ptr"
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
@@ -136,5 +137,52 @@ func TestGetVPC(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VPCNotFoundError{}, err)
+	})
+}
+
+func TestCreateVPC(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := CreateVPCRequest{
+			Name: ptr.String("test"),
+		}
+
+		c.EXPECT().Post("/ecloud/v2/vpcs", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpc-abcdef12\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		vpc, err := s.CreateVPC(req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "vpc-abcdef12", vpc)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/vpcs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateVPC(CreateVPCRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
 	})
 }

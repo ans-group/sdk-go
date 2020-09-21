@@ -112,6 +112,9 @@ type ECloudService interface {
 	GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error)
 	GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error)
 	GetVPC(vpcID string) (VPC, error)
+	CreateVPC(req CreateVPCRequest) (string, error)
+	UpdateVPC(vpcID string, patch PatchVPCRequest) error
+	DeleteVPC(vpcID string) error
 
 	// Availability zone
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
