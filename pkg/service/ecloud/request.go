@@ -185,3 +185,25 @@ type CreateVPCRequest struct {
 type PatchVPCRequest struct {
 	Name *string `json:"name,omitempty"`
 }
+
+// CreateNetworkRequest represents a request to create a network
+type CreateNetworkRequest struct {
+	Name     *string `json:"name,omitempty"`
+	RouterID string  `json:"router_id"`
+}
+
+// PatchNetworkRequest represents a request to patch a network
+type PatchNetworkRequest struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// CreateRouterRequest represents a request to create a router
+type CreateRouterRequest struct {
+	Name     *string `json:"name,omitempty"`
+	RouterID string  `json:"router_id"`
+}
+
+// PatchRouterRequest represents a request to patch a router
+type PatchRouterRequest struct {
+	Name *string `json:"name,omitempty"`
+}

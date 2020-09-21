@@ -125,6 +125,9 @@ type ECloudService interface {
 	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
 	GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
 	GetNetwork(networkID string) (Network, error)
+	CreateNetwork(req CreateNetworkRequest) (string, error)
+	PatchNetwork(networkID string, patch PatchNetworkRequest) error
+	DeleteNetwork(networkID string) error
 
 	// DHCP
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
@@ -155,6 +158,9 @@ type ECloudService interface {
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
 	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
 	GetRouter(routerID string) (Router, error)
+	CreateRouter(req CreateRouterRequest) (string, error)
+	PatchRouter(routerID string, patch PatchRouterRequest) error
+	DeleteRouter(routerID string) error
 
 	// Region
 	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)

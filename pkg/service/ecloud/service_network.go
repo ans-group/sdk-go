@@ -70,3 +70,77 @@ func (s *Service) getNetworkResponseBody(networkID string) (*GetNetworkResponseB
 		return nil
 	})
 }
+
+// CreateNetwork creates a new Network
+func (s *Service) CreateNetwork(req CreateNetworkRequest) (string, error) {
+	body, err := s.createNetworkResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createNetworkResponseBody(req CreateNetworkRequest) (*GetNetworkResponseBody, error) {
+	body := &GetNetworkResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/networks", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
+// PatchNetwork patches a Network
+func (s *Service) PatchNetwork(networkID string, req PatchNetworkRequest) error {
+	_, err := s.patchNetworkResponseBody(networkID, req)
+
+	return err
+}
+
+func (s *Service) patchNetworkResponseBody(networkID string, req PatchNetworkRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if networkID == "" {
+		return body, fmt.Errorf("invalid network id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/networks/%s", networkID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NetworkNotFoundError{ID: networkID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteNetwork deletes a Network
+func (s *Service) DeleteNetwork(networkID string) error {
+	_, err := s.deleteNetworkResponseBody(networkID)
+
+	return err
+}
+
+func (s *Service) deleteNetworkResponseBody(networkID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if networkID == "" {
+		return body, fmt.Errorf("invalid network id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/networks/%s", networkID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NetworkNotFoundError{ID: networkID}
+		}
+
+		return nil
+	})
+}
