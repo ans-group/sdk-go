@@ -199,11 +199,17 @@ type PatchNetworkRequest struct {
 
 // CreateRouterRequest represents a request to create a router
 type CreateRouterRequest struct {
-	Name     *string `json:"name,omitempty"`
-	RouterID string  `json:"router_id"`
+	Name               *string `json:"name,omitempty"`
+	VPCID              string  `json:"vpc_id"`
+	AvailabilityZoneID string  `json:"availability_zone_id"`
 }
 
 // PatchRouterRequest represents a request to patch a router
 type PatchRouterRequest struct {
 	Name *string `json:"name,omitempty"`
+}
+
+// CreateVPNRequest represents a request to create a VPN
+type CreateVPNRequest struct {
+	RouterID string `json:"router_id"`
 }
