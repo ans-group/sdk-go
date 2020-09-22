@@ -31,11 +31,11 @@ func TestGetLoadBalancerClusters(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		lbcs, err := s.GetLoadBalancerClusters(connection.APIRequestParameters{})
+		lbc, err := s.GetLoadBalancerClusters(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, lbcs, 1)
-		assert.Equal(t, "lbc-abcdef12", lbcs[0].ID)
+		assert.Len(t, lbc, 1)
+		assert.Equal(t, "lbc-abcdef12", lbc[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {

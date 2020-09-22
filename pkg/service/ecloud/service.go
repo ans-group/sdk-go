@@ -172,7 +172,10 @@ type ECloudService interface {
 	// Load balancers
 	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
 	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
-	GetLoadBalancerCluster(lbcsID string) (LoadBalancerCluster, error)
+	GetLoadBalancerCluster(lbcID string) (LoadBalancerCluster, error)
+	CreateLoadBalancerCluster(req CreateLoadBalancerClusterRequest) (string, error)
+	PatchLoadBalancerCluster(lbcID string, patch PatchLoadBalancerClusterRequest) error
+	DeleteLoadBalancerCluster(lbcID string) error
 }
 
 // Service implements ECloudService for managing

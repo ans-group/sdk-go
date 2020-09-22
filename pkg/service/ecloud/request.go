@@ -213,3 +213,16 @@ type PatchRouterRequest struct {
 type CreateVPNRequest struct {
 	RouterID string `json:"router_id"`
 }
+
+// CreateLoadBalancerClusterRequest represents a request to create a load balancer cluster
+type CreateLoadBalancerClusterRequest struct {
+	Name               *string `json:"name,omitempty"`
+	VPCID              string  `json:"vpc_id"`
+	AvailabilityZoneID string  `json:"availability_zone_id"`
+	Nodes              int     `json:"nodes"`
+}
+
+// PatchLoadBalancerClusterRequest represents a request to patch a load balancer cluster
+type PatchLoadBalancerClusterRequest struct {
+	Name *string `json:"name,omitempty"`
+}
