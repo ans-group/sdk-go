@@ -112,6 +112,9 @@ type ECloudService interface {
 	GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error)
 	GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error)
 	GetVPC(vpcID string) (VPC, error)
+	CreateVPC(req CreateVPCRequest) (string, error)
+	PatchVPC(vpcID string, patch PatchVPCRequest) error
+	DeleteVPC(vpcID string) error
 
 	// Availability zone
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
@@ -122,6 +125,9 @@ type ECloudService interface {
 	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
 	GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
 	GetNetwork(networkID string) (Network, error)
+	CreateNetwork(req CreateNetworkRequest) (string, error)
+	PatchNetwork(networkID string, patch PatchNetworkRequest) error
+	DeleteNetwork(networkID string) error
 
 	// DHCP
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
@@ -132,6 +138,8 @@ type ECloudService interface {
 	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
 	GetVPNsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPN, error)
 	GetVPN(vpnID string) (VPN, error)
+	CreateVPN(req CreateVPNRequest) (string, error)
+	DeleteVPN(vpcID string) error
 
 	// Instance
 	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
@@ -152,6 +160,9 @@ type ECloudService interface {
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
 	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
 	GetRouter(routerID string) (Router, error)
+	CreateRouter(req CreateRouterRequest) (string, error)
+	PatchRouter(routerID string, patch PatchRouterRequest) error
+	DeleteRouter(routerID string) error
 
 	// Region
 	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)
@@ -161,7 +172,10 @@ type ECloudService interface {
 	// Load balancers
 	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
 	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
-	GetLoadBalancerCluster(lbcsID string) (LoadBalancerCluster, error)
+	GetLoadBalancerCluster(lbcID string) (LoadBalancerCluster, error)
+	CreateLoadBalancerCluster(req CreateLoadBalancerClusterRequest) (string, error)
+	PatchLoadBalancerCluster(lbcID string, patch PatchLoadBalancerClusterRequest) error
+	DeleteLoadBalancerCluster(lbcID string) error
 }
 
 // Service implements ECloudService for managing

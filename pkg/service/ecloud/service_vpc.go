@@ -70,3 +70,77 @@ func (s *Service) getVPCResponseBody(vpcID string) (*GetVPCResponseBody, error) 
 		return nil
 	})
 }
+
+// CreateVPC creates a new VPC
+func (s *Service) CreateVPC(req CreateVPCRequest) (string, error) {
+	body, err := s.createVPCResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createVPCResponseBody(req CreateVPCRequest) (*GetVPCResponseBody, error) {
+	body := &GetVPCResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/vpcs", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
+// PatchVPC patches a VPC
+func (s *Service) PatchVPC(vpcID string, req PatchVPCRequest) error {
+	_, err := s.patchVPCResponseBody(vpcID, req)
+
+	return err
+}
+
+func (s *Service) patchVPCResponseBody(vpcID string, req PatchVPCRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if vpcID == "" {
+		return body, fmt.Errorf("invalid vpc id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/vpcs/%s", vpcID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPCNotFoundError{ID: vpcID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteVPC deletes a VPC
+func (s *Service) DeleteVPC(vpcID string) error {
+	_, err := s.deleteVPCResponseBody(vpcID)
+
+	return err
+}
+
+func (s *Service) deleteVPCResponseBody(vpcID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if vpcID == "" {
+		return body, fmt.Errorf("invalid vpc id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/vpcs/%s", vpcID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPCNotFoundError{ID: vpcID}
+		}
+
+		return nil
+	})
+}

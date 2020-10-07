@@ -70,3 +70,77 @@ func (s *Service) getRouterResponseBody(routerID string) (*GetRouterResponseBody
 		return nil
 	})
 }
+
+// CreateRouter creates a new Router
+func (s *Service) CreateRouter(req CreateRouterRequest) (string, error) {
+	body, err := s.createRouterResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createRouterResponseBody(req CreateRouterRequest) (*GetRouterResponseBody, error) {
+	body := &GetRouterResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/routers", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
+// PatchRouter patches a Router
+func (s *Service) PatchRouter(routerID string, req PatchRouterRequest) error {
+	_, err := s.patchRouterResponseBody(routerID, req)
+
+	return err
+}
+
+func (s *Service) patchRouterResponseBody(routerID string, req PatchRouterRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/routers/%s", routerID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteRouter deletes a Router
+func (s *Service) DeleteRouter(routerID string) error {
+	_, err := s.deleteRouterResponseBody(routerID)
+
+	return err
+}
+
+func (s *Service) deleteRouterResponseBody(routerID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/routers/%s", routerID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}

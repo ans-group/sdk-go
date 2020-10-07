@@ -174,3 +174,55 @@ type CreateVirtualMachineTemplateRequest struct {
 func (c *CreateVirtualMachineTemplateRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
+
+// CreateVPCRequest represents a request to create a VPC
+type CreateVPCRequest struct {
+	Name     *string `json:"name,omitempty"`
+	RegionID string  `json:"region_id"`
+}
+
+// PatchVPCRequest represents a request to patch a VPC
+type PatchVPCRequest struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// CreateNetworkRequest represents a request to create a network
+type CreateNetworkRequest struct {
+	Name     *string `json:"name,omitempty"`
+	RouterID string  `json:"router_id"`
+}
+
+// PatchNetworkRequest represents a request to patch a network
+type PatchNetworkRequest struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// CreateRouterRequest represents a request to create a router
+type CreateRouterRequest struct {
+	Name               *string `json:"name,omitempty"`
+	VPCID              string  `json:"vpc_id"`
+	AvailabilityZoneID string  `json:"availability_zone_id"`
+}
+
+// PatchRouterRequest represents a request to patch a router
+type PatchRouterRequest struct {
+	Name *string `json:"name,omitempty"`
+}
+
+// CreateVPNRequest represents a request to create a VPN
+type CreateVPNRequest struct {
+	RouterID string `json:"router_id"`
+}
+
+// CreateLoadBalancerClusterRequest represents a request to create a load balancer cluster
+type CreateLoadBalancerClusterRequest struct {
+	Name               *string `json:"name,omitempty"`
+	VPCID              string  `json:"vpc_id"`
+	AvailabilityZoneID string  `json:"availability_zone_id"`
+	Nodes              int     `json:"nodes"`
+}
+
+// PatchLoadBalancerClusterRequest represents a request to patch a load balancer cluster
+type PatchLoadBalancerClusterRequest struct {
+	Name *string `json:"name,omitempty"`
+}
