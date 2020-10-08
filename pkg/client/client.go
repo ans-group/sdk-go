@@ -8,6 +8,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/draas"
 	"github.com/ukfast/sdk-go/pkg/service/ecloud"
 	"github.com/ukfast/sdk-go/pkg/service/ecloudflex"
+	"github.com/ukfast/sdk-go/pkg/service/loadbalancer"
 	"github.com/ukfast/sdk-go/pkg/service/ltaas"
 	"github.com/ukfast/sdk-go/pkg/service/pss"
 	"github.com/ukfast/sdk-go/pkg/service/registrar"
@@ -24,6 +25,7 @@ type Client interface {
 	DRaaSService() draas.DRaaSService
 	ECloudService() ecloud.ECloudService
 	ECloudFlexService() ecloudflex.ECloudFlexService
+	LoadBalancerService() loadbalancer.LoadBalancerService
 	LTaaSService() ltaas.LTaaSService
 	PSSService() pss.PSSService
 	RegistrarService() registrar.RegistrarService
@@ -65,6 +67,10 @@ func (c *UKFastClient) ECloudService() ecloud.ECloudService {
 
 func (c *UKFastClient) ECloudFlexService() ecloudflex.ECloudFlexService {
 	return ecloudflex.NewService(c.connection)
+}
+
+func (c *UKFastClient) LoadBalancerService() loadbalancer.LoadBalancerService {
+	return loadbalancer.NewService(c.connection)
 }
 
 func (c *UKFastClient) LTaaSService() ltaas.LTaaSService {
