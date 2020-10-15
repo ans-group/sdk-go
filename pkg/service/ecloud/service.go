@@ -145,6 +145,8 @@ type ECloudService interface {
 	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
 	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 	GetInstance(instanceID string) (Instance, error)
+	CreateInstance(req CreateInstanceRequest) (string, error)
+	DeleteInstance(instanceID string) error
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)

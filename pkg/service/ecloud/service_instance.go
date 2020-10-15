@@ -70,3 +70,49 @@ func (s *Service) getInstanceResponseBody(instanceID string) (*GetInstanceRespon
 		return nil
 	})
 }
+
+// CreateInstance creates a new instance
+func (s *Service) CreateInstance(req CreateInstanceRequest) (string, error) {
+	body, err := s.createInstanceResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createInstanceResponseBody(req CreateInstanceRequest) (*GetInstanceResponseBody, error) {
+	body := &GetInstanceResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/instances", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
+// DeleteInstance removes a virtual machine
+func (s *Service) DeleteInstance(instanceID string) error {
+	_, err := s.deleteInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) deleteInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}

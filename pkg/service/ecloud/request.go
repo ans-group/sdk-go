@@ -226,3 +226,20 @@ type CreateLoadBalancerClusterRequest struct {
 type PatchLoadBalancerClusterRequest struct {
 	Name *string `json:"name,omitempty"`
 }
+
+// PatchLoadBalancerClusterRequest represents a request to create an instance
+type CreateInstanceRequest struct {
+	Name               *string `json:"name,omitempty"`
+	VPCID              string  `json:"vpc_id"`
+	ApplianceID        string  `json:"appliance_id"`
+	ApplianceData      string  `json:"appliance_data,omitempty"`
+	VCPUCores          int     `json:"vcpu_cores"`
+	RAMCapacity        int     `json:"ram_capacity"`
+	AvailabilityZoneID string  `json:"availability_zone_id"`
+	Locked             bool    `json:"locked"`
+	VolumeCapacity     int     `json:"volume_capacity"`
+	NetworkID          string  `json:"network_id"`
+	FloatingIPID       string  `json:"floating_ip_id,omitempty"`
+	RequiresFloatingIP bool    `json:"requires_floating_ip"`
+	UserScript         string  `json:"user_script,omitempty"`
+}
