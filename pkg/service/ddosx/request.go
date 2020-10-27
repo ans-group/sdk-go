@@ -12,8 +12,8 @@ type CreateRecordRequest struct {
 	Name            string     `json:"name" validate:"required"`
 	SafeDNSRecordID int        `json:"safedns_record_id,omitempty"`
 	SSLID           string     `json:"ssl_id,omitempty"`
-	Type            RecordType `json:"type" validate:"required"`
-	Content         string     `json:"content" validate:"required"`
+	Type            RecordType `json:"type,omitempty"`
+	Content         string     `json:"content,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
