@@ -157,6 +157,10 @@ type ECloudService interface {
 	PowerRestartInstance(instanceID string) error
 	GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
+	GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error)
+	GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
+	GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error)
+	GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)

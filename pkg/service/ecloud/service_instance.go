@@ -387,3 +387,97 @@ func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, par
 		return nil
 	})
 }
+
+// GetInstanceCredentials retrieves a list of instance credentials
+func (s *Service) GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error) {
+	var credentials []Credential
+
+	return credentials, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceCredentialsPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, credential := range response.(*PaginatedCredential).Items {
+				credentials = append(credentials, credential)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceCredentialsPaginated retrieves a paginated list of instance credentials
+func (s *Service) GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
+	body, err := s.getInstanceCredentialsPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedCredential(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceCredentialsPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceCredentialsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
+	body := &GetCredentialSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/credentials", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// GetInstanceNICs retrieves a list of instance NICs
+func (s *Service) GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error) {
+	var nics []NIC
+
+	return nics, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceNICsPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, nic := range response.(*PaginatedNIC).Items {
+				nics = append(nics, nic)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceNICsPaginated retrieves a paginated list of instance NICs
+func (s *Service) GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+	body, err := s.getInstanceNICsPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceNICsPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
+	body := &GetNICSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/nics", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}

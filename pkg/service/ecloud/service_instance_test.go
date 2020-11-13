@@ -69,7 +69,7 @@ func TestGetInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/instances/instance-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
 				StatusCode: 200,
@@ -1001,6 +1001,172 @@ func TestGetInstanceVolumes(t *testing.T) {
 		}, nil)
 
 		_, err := s.GetInstanceVolumes("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &InstanceNotFoundError{}, err)
+	})
+}
+
+func TestGetInstanceCredentials(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		instances, err := s.GetInstanceCredentials("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, instances, 1)
+		assert.Equal(t, "vol-abcdef12", instances[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetInstanceCredentials("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetInstanceCredentials("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+
+	t.Run("404_ReturnsInstanceNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		_, err := s.GetInstanceCredentials("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &InstanceNotFoundError{}, err)
+	})
+}
+
+func TestGetInstanceNICs(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		instances, err := s.GetInstanceNICs("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, instances, 1)
+		assert.Equal(t, "vol-abcdef12", instances[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetInstanceNICs("i-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetInstanceNICs("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+
+	t.Run("404_ReturnsInstanceNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		_, err := s.GetInstanceNICs("i-abcdef12", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)
