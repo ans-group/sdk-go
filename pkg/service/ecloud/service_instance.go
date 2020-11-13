@@ -340,3 +340,50 @@ func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*connecti
 		return nil
 	})
 }
+
+// GetInstanceVolumes retrieves a list of instance volumes
+func (s *Service) GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error) {
+	var volumes []Volume
+
+	return volumes, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceVolumesPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, volume := range response.(*PaginatedVolume).Items {
+				volumes = append(volumes, volume)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceVolumesPaginated retrieves a paginated list of instance volumes
+func (s *Service) GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+	body, err := s.getInstanceVolumesPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceVolumesPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
+	body := &GetVolumeSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/volumes", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
