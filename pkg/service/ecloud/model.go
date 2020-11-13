@@ -391,10 +391,19 @@ type VPN struct {
 // +genie:model_response
 // +genie:model_paginated
 type Instance struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"Name"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	ApplianceID        string              `json:"appliance_id"`
+	VCPUCores          int                 `json:"vcpu_cores"`
+	RAMCapacity        int                 `json:"ram_capacity"`
+	Locked             bool                `json:"locked"`
+	Platform           string              `json:"platform"`
+	VolumeCapacity     int                 `json:"volume_capacity"`
+	Status             string              `json:"status"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
 // FloatingIP represents an eCloud floating IP address
@@ -446,4 +455,45 @@ type LoadBalancerCluster struct {
 	Nodes              int                 `json:"nodes"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// Credential represents an eCloud credential
+// +genie:model_response
+// +genie:model_paginated
+type Credential struct {
+	ID         string              `json:"id"`
+	Name       string              `json:"name"`
+	ResourceID string              `json:"resource_id"`
+	Host       string              `json:"host"`
+	Username   string              `json:"username"`
+	Password   string              `json:"password"`
+	Port       int                 `json:"port"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
+}
+
+// Volume represents an eCloud volume
+// +genie:model_response
+// +genie:model_paginated
+type Volume struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Capacity           int                 `json:"capacity"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// NIC represents an eCloud network interface card
+// +genie:model_response
+// +genie:model_paginated
+type NIC struct {
+	ID         string              `json:"id"`
+	MACAddress string              `json:"mac_address"`
+	InstanceID string              `json:"instance_id"`
+	NetworkID  string              `json:"network_id"`
+	IPAddress  string              `json:"ip_address"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }

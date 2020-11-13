@@ -313,3 +313,39 @@ type GetLoadBalancerClusterResponseBody struct {
 	connection.APIResponseBody
 	Data LoadBalancerCluster `json:"data"`
 }
+
+// GetCredentialSliceResponseBody represents an API response body containing []Credential data
+type GetCredentialSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Credential `json:"data"`
+}
+
+// GetCredentialResponseBody represents an API response body containing Credential data
+type GetCredentialResponseBody struct {
+	connection.APIResponseBody
+	Data Credential `json:"data"`
+}
+
+// GetVolumeSliceResponseBody represents an API response body containing []Volume data
+type GetVolumeSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Volume `json:"data"`
+}
+
+// GetVolumeResponseBody represents an API response body containing Volume data
+type GetVolumeResponseBody struct {
+	connection.APIResponseBody
+	Data Volume `json:"data"`
+}
+
+// GetNICSliceResponseBody represents an API response body containing []NIC data
+type GetNICSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []NIC `json:"data"`
+}
+
+// GetNICResponseBody represents an API response body containing NIC data
+type GetNICResponseBody struct {
+	connection.APIResponseBody
+	Data NIC `json:"data"`
+}
