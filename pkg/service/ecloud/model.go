@@ -402,6 +402,8 @@ type Instance struct {
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
 	Status             string              `json:"status"`
+	Online             *bool               `json:"online"`
+	AgentRunning       *bool               `json:"agent_running"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
