@@ -337,3 +337,45 @@ func NewPaginatedLoadBalancerCluster(getFunc connection.PaginatedGetFunc, parame
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedCredential represents a paginated collection of Credential
+type PaginatedCredential struct {
+	*connection.PaginatedBase
+	Items []Credential
+}
+
+// NewPaginatedCredential returns a pointer to an initialized PaginatedCredential struct
+func NewPaginatedCredential(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Credential) *PaginatedCredential {
+	return &PaginatedCredential{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedVolume represents a paginated collection of Volume
+type PaginatedVolume struct {
+	*connection.PaginatedBase
+	Items []Volume
+}
+
+// NewPaginatedVolume returns a pointer to an initialized PaginatedVolume struct
+func NewPaginatedVolume(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Volume) *PaginatedVolume {
+	return &PaginatedVolume{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedNIC represents a paginated collection of NIC
+type PaginatedNIC struct {
+	*connection.PaginatedBase
+	Items []NIC
+}
+
+// NewPaginatedNIC returns a pointer to an initialized PaginatedNIC struct
+func NewPaginatedNIC(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []NIC) *PaginatedNIC {
+	return &PaginatedNIC{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
