@@ -89,7 +89,35 @@ func (s *Service) createInstanceResponseBody(req CreateInstanceRequest) (*GetIns
 	return body, response.HandleResponse(body, nil)
 }
 
-// DeleteInstance removes a virtual machine
+// PatchInstance updates an instance
+func (s *Service) PatchInstance(instanceID string, req PatchInstanceRequest) error {
+	_, err := s.patchInstanceResponseBody(instanceID, req)
+
+	return err
+}
+
+func (s *Service) patchInstanceResponseBody(instanceID string, req PatchInstanceRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteInstance removes an instance
 func (s *Service) DeleteInstance(instanceID string) error {
 	_, err := s.deleteInstanceResponseBody(instanceID)
 
@@ -104,6 +132,343 @@ func (s *Service) deleteInstanceResponseBody(instanceID string) (*connection.API
 	}
 
 	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// LockInstance locks an instance from update/removal
+func (s *Service) LockInstance(instanceID string) error {
+	_, err := s.lockInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) lockInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/lock", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// UnlockInstance unlocks an instance
+func (s *Service) UnlockInstance(instanceID string) error {
+	_, err := s.unlockInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) unlockInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/unlock", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// PowerOnInstance powers on an instance
+func (s *Service) PowerOnInstance(instanceID string) error {
+	_, err := s.powerOnInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) powerOnInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/power-on", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// PowerOffInstance powers off an instance
+func (s *Service) PowerOffInstance(instanceID string) error {
+	_, err := s.powerOffInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) powerOffInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/power-off", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// PowerResetInstance resets an instance
+func (s *Service) PowerResetInstance(instanceID string) error {
+	_, err := s.powerResetInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) powerResetInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/power-reset", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// PowerShutdownInstance shuts down an instance
+func (s *Service) PowerShutdownInstance(instanceID string) error {
+	_, err := s.powerShutdownInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/power-shutdown", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// PowerRestartInstance restarts an instance
+func (s *Service) PowerRestartInstance(instanceID string) error {
+	_, err := s.powerRestartInstanceResponseBody(instanceID)
+
+	return err
+}
+
+func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/power-restart", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// GetInstanceVolumes retrieves a list of instance volumes
+func (s *Service) GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error) {
+	var volumes []Volume
+
+	return volumes, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceVolumesPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, volume := range response.(*PaginatedVolume).Items {
+				volumes = append(volumes, volume)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceVolumesPaginated retrieves a paginated list of instance volumes
+func (s *Service) GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+	body, err := s.getInstanceVolumesPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceVolumesPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
+	body := &GetVolumeSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/volumes", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// GetInstanceCredentials retrieves a list of instance credentials
+func (s *Service) GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error) {
+	var credentials []Credential
+
+	return credentials, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceCredentialsPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, credential := range response.(*PaginatedCredential).Items {
+				credentials = append(credentials, credential)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceCredentialsPaginated retrieves a paginated list of instance credentials
+func (s *Service) GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
+	body, err := s.getInstanceCredentialsPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedCredential(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceCredentialsPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceCredentialsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
+	body := &GetCredentialSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/credentials", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// GetInstanceNICs retrieves a list of instance NICs
+func (s *Service) GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error) {
+	var nics []NIC
+
+	return nics, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceNICsPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, nic := range response.(*PaginatedNIC).Items {
+				nics = append(nics, nic)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceNICsPaginated retrieves a paginated list of instance NICs
+func (s *Service) GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+	body, err := s.getInstanceNICsPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceNICsPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
+	body := &GetNICSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/nics", instanceID), parameters)
 	if err != nil {
 		return body, err
 	}
