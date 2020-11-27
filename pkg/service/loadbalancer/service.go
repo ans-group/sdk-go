@@ -9,6 +9,7 @@ type LoadBalancerService interface {
 	GetTargets(parameters connection.APIRequestParameters) ([]Target, error)
 	GetTargetsPaginated(parameters connection.APIRequestParameters) (*PaginatedTarget, error)
 	GetTarget(targetID string) (Target, error)
+	CreateTarget(req CreateTargetRequest) (string, error)
 	PatchTarget(targetID string, req PatchTargetRequest) error
 	DeleteTarget(targetID string) error
 

@@ -71,6 +71,24 @@ func (s *Service) getTargetResponseBody(targetID string) (*GetTargetResponseBody
 	})
 }
 
+// CreateTarget creates a Target
+func (s *Service) CreateTarget(req CreateTargetRequest) (string, error) {
+	body, err := s.createTargetResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createTargetResponseBody(req CreateTargetRequest) (*GetTargetResponseBody, error) {
+	body := &GetTargetResponseBody{}
+
+	response, err := s.connection.Post("/loadbalancers/v2/targets", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // PatchTarget patches a Target
 func (s *Service) PatchTarget(targetID string, req PatchTargetRequest) error {
 	_, err := s.patchTargetResponseBody(targetID, req)
