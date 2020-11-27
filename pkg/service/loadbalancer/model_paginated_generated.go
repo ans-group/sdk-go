@@ -2,29 +2,29 @@ package loadbalancer
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// PaginatedGroup represents a paginated collection of Group
-type PaginatedGroup struct {
+// PaginatedTarget represents a paginated collection of Target
+type PaginatedTarget struct {
 	*connection.PaginatedBase
-	Items []Group
+	Items []Target
 }
 
-// NewPaginatedGroup returns a pointer to an initialized PaginatedGroup struct
-func NewPaginatedGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Group) *PaginatedGroup {
-	return &PaginatedGroup{
+// NewPaginatedTarget returns a pointer to an initialized PaginatedTarget struct
+func NewPaginatedTarget(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Target) *PaginatedTarget {
+	return &PaginatedTarget{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
 
-// PaginatedConfiguration represents a paginated collection of Configuration
-type PaginatedConfiguration struct {
+// PaginatedCluster represents a paginated collection of Cluster
+type PaginatedCluster struct {
 	*connection.PaginatedBase
-	Items []Configuration
+	Items []Cluster
 }
 
-// NewPaginatedConfiguration returns a pointer to an initialized PaginatedConfiguration struct
-func NewPaginatedConfiguration(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Configuration) *PaginatedConfiguration {
-	return &PaginatedConfiguration{
+// NewPaginatedCluster returns a pointer to an initialized PaginatedCluster struct
+func NewPaginatedCluster(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Cluster) *PaginatedCluster {
+	return &PaginatedCluster{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

@@ -2,20 +2,20 @@ package loadbalancer
 
 import "fmt"
 
-// GroupNotFoundError indicates a group was not found
-type GroupNotFoundError struct {
+// TargetNotFoundError indicates a target was not found
+type TargetNotFoundError struct {
 	ID string
 }
 
-func (e *GroupNotFoundError) Error() string {
-	return fmt.Sprintf("Group not found with ID [%s]", e.ID)
+func (e *TargetNotFoundError) Error() string {
+	return fmt.Sprintf("Target not found with ID [%s]", e.ID)
 }
 
-// ConfigurationNotFoundError indicates a configuration was not found
-type ConfigurationNotFoundError struct {
+// ClusterNotFoundError indicates a cluster was not found
+type ClusterNotFoundError struct {
 	ID string
 }
 
-func (e *ConfigurationNotFoundError) Error() string {
-	return fmt.Sprintf("Configuration not found with ID [%s]", e.ID)
+func (e *ClusterNotFoundError) Error() string {
+	return fmt.Sprintf("Cluster not found with ID [%s]", e.ID)
 }

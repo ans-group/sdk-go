@@ -2,26 +2,26 @@ package loadbalancer
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// GetGroupSliceResponseBody represents an API response body containing []Group data
-type GetGroupSliceResponseBody struct {
+// GetTargetSliceResponseBody represents an API response body containing []Target data
+type GetTargetSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []Group `json:"data"`
+	Data []Target `json:"data"`
 }
 
-// GetGroupResponseBody represents an API response body containing Group data
-type GetGroupResponseBody struct {
+// GetTargetResponseBody represents an API response body containing Target data
+type GetTargetResponseBody struct {
 	connection.APIResponseBody
-	Data Group `json:"data"`
+	Data Target `json:"data"`
 }
 
-// GetConfigurationSliceResponseBody represents an API response body containing []Configuration data
-type GetConfigurationSliceResponseBody struct {
+// GetClusterSliceResponseBody represents an API response body containing []Cluster data
+type GetClusterSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []Configuration `json:"data"`
+	Data []Cluster `json:"data"`
 }
 
-// GetConfigurationResponseBody represents an API response body containing Configuration data
-type GetConfigurationResponseBody struct {
+// GetClusterResponseBody represents an API response body containing Cluster data
+type GetClusterResponseBody struct {
 	connection.APIResponseBody
-	Data Configuration `json:"data"`
+	Data Cluster `json:"data"`
 }

@@ -6,16 +6,17 @@ import (
 
 // LoadBalancerService is an interface for managing the LoadBalancer service
 type LoadBalancerService interface {
-	GetGroups(parameters connection.APIRequestParameters) ([]Group, error)
-	GetGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedGroup, error)
-	GetGroup(groupID string) (Group, error)
+	GetTargets(parameters connection.APIRequestParameters) ([]Target, error)
+	GetTargetsPaginated(parameters connection.APIRequestParameters) (*PaginatedTarget, error)
+	GetTarget(targetID string) (Target, error)
+	PatchTarget(targetID string, req PatchTargetRequest) error
+	DeleteTarget(targetID string) error
 
-	GetConfigurations(parameters connection.APIRequestParameters) ([]Configuration, error)
-	GetConfigurationsPaginated(parameters connection.APIRequestParameters) (*PaginatedConfiguration, error)
-	GetConfiguration(configurationID string) (Configuration, error)
-	CreateConfiguration(req CreateConfigurationRequest) (string, error)
-	PatchConfiguration(configurationID string, req PatchConfigurationRequest) error
-	DeleteConfiguration(configurationID string) error
+	GetClusters(parameters connection.APIRequestParameters) ([]Cluster, error)
+	GetClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedCluster, error)
+	GetCluster(configurationID string) (Cluster, error)
+	PatchCluster(configurationID string, req PatchClusterRequest) error
+	DeleteCluster(configurationID string) error
 }
 
 // Service implements LoadBalancerService for managing
