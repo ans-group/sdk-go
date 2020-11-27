@@ -43,11 +43,12 @@ func (c *PatchRecordRequest) Validate() *connection.ValidationError {
 type CreateRecordRequest struct {
 	connection.APIRequestBodyDefaultValidator
 
-	Name       string `json:"name" validate:"required"`
-	TemplateID int    `json:"template_id,omitempty"`
-	Type       string `json:"type" validate:"required"`
-	Content    string `json:"content" validate:"required"`
-	Priority   *int   `json:"priority,omitempty"`
+	Name       string     `json:"name" validate:"required"`
+	TemplateID int        `json:"template_id,omitempty"`
+	Type       string     `json:"type" validate:"required"`
+	Content    string     `json:"content" validate:"required"`
+	TTL        *RecordTTL `json:"ttl,omitempty"`
+	Priority   *int       `json:"priority,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
