@@ -334,6 +334,18 @@ type ConsoleSession struct {
 	URL string `json:"url"`
 }
 
+type SyncStatus string
+
+const (
+	SyncStatusComplete   SyncStatus = "complete"
+	SyncStatusFailed     SyncStatus = "failed"
+	SyncStatusInProgress SyncStatus = "progress"
+)
+
+func (s SyncStatus) String() string {
+	return string(s)
+}
+
 // VPC represents an eCloud VPC
 // +genie:model_response
 // +genie:model_paginated
