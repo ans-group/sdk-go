@@ -339,7 +339,7 @@ type SyncStatus string
 const (
 	SyncStatusComplete   SyncStatus = "complete"
 	SyncStatusFailed     SyncStatus = "failed"
-	SyncStatusInProgress SyncStatus = "progress"
+	SyncStatusInProgress SyncStatus = "in-progress"
 )
 
 func (s SyncStatus) String() string {
