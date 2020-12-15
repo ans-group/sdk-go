@@ -282,6 +282,20 @@ func NewPaginatedFloatingIP(getFunc connection.PaginatedGetFunc, parameters conn
 	}
 }
 
+// PaginatedFirewallPolicy represents a paginated collection of FirewallPolicy
+type PaginatedFirewallPolicy struct {
+	*connection.PaginatedBase
+	Items []FirewallPolicy
+}
+
+// NewPaginatedFirewallPolicy returns a pointer to an initialized PaginatedFirewallPolicy struct
+func NewPaginatedFirewallPolicy(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []FirewallPolicy) *PaginatedFirewallPolicy {
+	return &PaginatedFirewallPolicy{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // PaginatedFirewallRule represents a paginated collection of FirewallRule
 type PaginatedFirewallRule struct {
 	*connection.PaginatedBase

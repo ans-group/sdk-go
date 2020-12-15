@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetVPCs(t *testing.T) {
+func TestGetFirewallPolicies(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetVPCs(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpcs", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/firewall-policies", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vpc-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"fwp-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		vpcs, err := s.GetVPCs(connection.APIRequestParameters{})
+		policies, err := s.GetFirewallPolicies(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, vpcs, 1)
-		assert.Equal(t, "vpc-abcdef12", vpcs[0].ID)
+		assert.Len(t, policies, 1)
+		assert.Equal(t, "fwp-abcdef12", policies[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetVPCs(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpcs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/ecloud/v2/firewall-policies", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetVPCs(connection.APIRequestParameters{})
+		_, err := s.GetFirewallPolicies(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetVPC(t *testing.T) {
+func TestGetFirewallPolicy(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpc-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwp-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		vpc, err := s.GetVPC("vpc-abcdef12")
+		policy, err := s.GetFirewallPolicy("fwp-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "vpc-abcdef12", vpc.ID)
+		assert.Equal(t, "fwp-abcdef12", policy.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetVPC("vpc-abcdef12")
+		_, err := s.GetFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidVPCID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallPolicyID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetVPC(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetVPC("")
+		_, err := s.GetFirewallPolicy("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid vpc id", err.Error())
+		assert.Equal(t, "invalid firewall policy id", err.Error())
 	})
 
-	t.Run("404_ReturnsVPCNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallPolicyNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,21 +125,21 @@ func TestGetVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetVPC("vpc-abcdef12")
+		_, err := s.GetFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &VPCNotFoundError{}, err)
+		assert.IsType(t, &FirewallPolicyNotFoundError{}, err)
 	})
 }
 
-func TestCreateVPC(t *testing.T) {
+func TestCreateFirewallPolicy(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -150,21 +150,21 @@ func TestCreateVPC(t *testing.T) {
 			connection: c,
 		}
 
-		req := CreateVPCRequest{
+		req := CreateFirewallPolicyRequest{
 			Name: "test",
 		}
 
-		c.EXPECT().Post("/ecloud/v2/vpcs", &req).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/firewall-policies", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpc-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwp-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		vpc, err := s.CreateVPC(req)
+		policy, err := s.CreateFirewallPolicy(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "vpc-abcdef12", vpc)
+		assert.Equal(t, "fwp-abcdef12", policy)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -177,16 +177,16 @@ func TestCreateVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/vpcs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/ecloud/v2/firewall-policies", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateVPC(CreateVPCRequest{})
+		_, err := s.CreateFirewallPolicy(CreateFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestPatchVPC(t *testing.T) {
+func TestPatchFirewallPolicy(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -197,18 +197,18 @@ func TestPatchVPC(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchVPCRequest{
-			Name: "somevpc",
+		req := PatchFirewallPolicyRequest{
+			Name: "somepolicy",
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/vpcs/vpc-abcdef12", &req).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/ecloud/v2/firewall-policies/fwp-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVPC("vpc-abcdef12", req)
+		err := s.PatchFirewallPolicy("fwp-abcdef12", req)
 
 		assert.Nil(t, err)
 	})
@@ -223,15 +223,15 @@ func TestPatchVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/vpcs/vpc-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchVPC("vpc-abcdef12", PatchVPCRequest{})
+		err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidVPCID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallPolicyID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -241,13 +241,13 @@ func TestPatchVPC(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchVPC("", PatchVPCRequest{})
+		err := s.PatchFirewallPolicy("", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid vpc id", err.Error())
+		assert.Equal(t, "invalid policy id", err.Error())
 	})
 
-	t.Run("404_ReturnsVPCNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallPolicyNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -257,21 +257,21 @@ func TestPatchVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/vpcs/vpc-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVPC("vpc-abcdef12", PatchVPCRequest{})
+		err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &VPCNotFoundError{}, err)
+		assert.IsType(t, &FirewallPolicyNotFoundError{}, err)
 	})
 }
 
-func TestDeleteVPC(t *testing.T) {
+func TestDeleteFirewallPolicy(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -282,14 +282,14 @@ func TestDeleteVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/vpcs/vpc-abcdef12", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ecloud/v2/firewall-policies/fwp-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVPC("vpc-abcdef12")
+		err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.Nil(t, err)
 	})
@@ -304,15 +304,15 @@ func TestDeleteVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/vpcs/vpc-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/ecloud/v2/firewall-policies/fwp-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteVPC("vpc-abcdef12")
+		err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidVPCID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallPolicyID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -322,13 +322,13 @@ func TestDeleteVPC(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteVPC("")
+		err := s.DeleteFirewallPolicy("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid vpc id", err.Error())
+		assert.Equal(t, "invalid policy id", err.Error())
 	})
 
-	t.Run("404_ReturnsVPCNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallPolicyNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -338,16 +338,16 @@ func TestDeleteVPC(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/vpcs/vpc-abcdef12", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ecloud/v2/firewall-policies/fwp-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVPC("vpc-abcdef12")
+		err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &VPCNotFoundError{}, err)
+		assert.IsType(t, &FirewallPolicyNotFoundError{}, err)
 	})
 }
