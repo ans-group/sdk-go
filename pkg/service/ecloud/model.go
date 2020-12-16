@@ -374,7 +374,7 @@ type Network struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	RouterID  string              `json:"router_id"`
-	Sbunet    string              `json:"subnet"`
+	Subnet    string              `json:"subnet"`
 	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
