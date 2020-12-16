@@ -10,7 +10,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/ptr"
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
@@ -152,7 +151,7 @@ func TestCreateInstance(t *testing.T) {
 		}
 
 		createRequest := CreateInstanceRequest{
-			Name:        ptr.String("test instance 1"),
+			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
 		}
@@ -201,7 +200,7 @@ func TestPatchInstance(t *testing.T) {
 		}
 
 		patchRequest := PatchInstanceRequest{
-			Name:        ptr.String("test instance 1"),
+			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
 		}

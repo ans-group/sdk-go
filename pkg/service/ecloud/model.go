@@ -374,6 +374,8 @@ type Network struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	RouterID  string              `json:"router_id"`
+	Sbunet    string              `json:"subnet"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -429,6 +431,18 @@ type FloatingIP struct {
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
 
+// FirewallPolicy represents an eCloud firewall policy
+// +genie:model_response
+// +genie:model_paginated
+type FirewallPolicy struct {
+	ID        string              `json:"id"`
+	RouterID  string              `json:"router_id"`
+	Name      string              `json:"name"`
+	Sequence  int                 `json:"sequence"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
 // FirewallRule represents an eCloud firewall rule
 // +genie:model_response
 // +genie:model_paginated
@@ -454,6 +468,7 @@ type Router struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	VPCID     string              `json:"vpc_id"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
