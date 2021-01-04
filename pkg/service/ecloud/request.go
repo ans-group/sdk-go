@@ -231,11 +231,12 @@ type CreateInstanceRequest struct {
 	Name               string `json:"name,omitempty"`
 	VPCID              string `json:"vpc_id"`
 	ApplianceID        string `json:"appliance_id"`
-	ApplianceData      string `json:"appliance_data,omitempty"`
 	VCPUCores          int    `json:"vcpu_cores"`
 	RAMCapacity        int    `json:"ram_capacity"`
 	Locked             bool   `json:"locked"`
 	VolumeCapacity     int    `json:"volume_capacity"`
+	BackupEnabled      bool   `json:"backup_enabled"`
+	NetworkID          string `json:"network_id,omitempty"`
 	FloatingIPID       string `json:"floating_ip_id,omitempty"`
 	RequiresFloatingIP bool   `json:"requires_floating_ip"`
 	UserScript         string `json:"user_script,omitempty"`

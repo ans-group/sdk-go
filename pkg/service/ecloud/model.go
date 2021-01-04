@@ -418,6 +418,9 @@ type Instance struct {
 	Sync               SyncStatus          `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
+	BackupEnabled      bool                `json:"backup_enabled"`
+	NetworkID          string              `json:"network_id"`
+	FloatingIPID       string              `json:"floating_ip_id"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
