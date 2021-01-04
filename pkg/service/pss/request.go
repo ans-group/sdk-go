@@ -27,6 +27,7 @@ type PatchRequestRequest struct {
 	Secure     *bool           `json:"secure,omitempty"`
 	Read       *bool           `json:"read,omitempty"`
 	Priority   RequestPriority `json:"priority,omitempty"`
+	Status     RequestStatus   `json:"status,omitempty"`
 	RequestSMS *bool           `json:"request_sms,omitempty"`
 	Archived   *bool           `json:"archived,omitempty"`
 }

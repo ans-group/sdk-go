@@ -66,6 +66,23 @@ const (
 	RequestStatusSubmitted                RequestStatus = "Submitted"
 )
 
+var RequestStatusEnum connection.EnumSlice = []connection.Enum{
+	RequestStatusCompleted,
+	RequestStatusAwaitingCustomerResponse,
+	RequestStatusRepliedAndCompleted,
+	RequestStatusSubmitted,
+}
+
+// ParseRequestStatus attempts to parse a RequestStatus from string
+func ParseRequestStatus(s string) (RequestStatus, error) {
+	e, err := connection.ParseEnum(s, RequestStatusEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(RequestStatus), err
+}
+
 // Request represents a PSS request
 // +genie:model_response
 // +genie:model_paginated
