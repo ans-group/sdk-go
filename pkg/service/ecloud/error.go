@@ -164,6 +164,15 @@ func (e *FloatingIPNotFoundError) Error() string {
 	return fmt.Sprintf("Floating IP not found with ID [%s]", e.ID)
 }
 
+// FirewallPolicyNotFoundError indicates a firewall policy was not found
+type FirewallPolicyNotFoundError struct {
+	ID string
+}
+
+func (e *FirewallPolicyNotFoundError) Error() string {
+	return fmt.Sprintf("Firewall policy not found with ID [%s]", e.ID)
+}
+
 // FirewallRuleNotFoundError indicates a firewall rule was not found
 type FirewallRuleNotFoundError struct {
 	ID string

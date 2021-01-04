@@ -177,36 +177,35 @@ func (c *CreateVirtualMachineTemplateRequest) Validate() *connection.ValidationE
 
 // CreateVPCRequest represents a request to create a VPC
 type CreateVPCRequest struct {
-	Name     *string `json:"name,omitempty"`
-	RegionID string  `json:"region_id"`
+	Name     string `json:"name,omitempty"`
+	RegionID string `json:"region_id"`
 }
 
 // PatchVPCRequest represents a request to patch a VPC
 type PatchVPCRequest struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // CreateNetworkRequest represents a request to create a network
 type CreateNetworkRequest struct {
-	Name     *string `json:"name,omitempty"`
-	RouterID string  `json:"router_id"`
+	Name     string `json:"name,omitempty"`
+	RouterID string `json:"router_id"`
 }
 
 // PatchNetworkRequest represents a request to patch a network
 type PatchNetworkRequest struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // CreateRouterRequest represents a request to create a router
 type CreateRouterRequest struct {
-	Name               *string `json:"name,omitempty"`
-	VPCID              string  `json:"vpc_id"`
-	AvailabilityZoneID string  `json:"availability_zone_id"`
+	Name  string `json:"name,omitempty"`
+	VPCID string `json:"vpc_id"`
 }
 
 // PatchRouterRequest represents a request to patch a router
 type PatchRouterRequest struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // CreateVPNRequest represents a request to create a VPN
@@ -216,35 +215,49 @@ type CreateVPNRequest struct {
 
 // CreateLoadBalancerClusterRequest represents a request to create a load balancer cluster
 type CreateLoadBalancerClusterRequest struct {
-	Name               *string `json:"name,omitempty"`
-	VPCID              string  `json:"vpc_id"`
-	AvailabilityZoneID string  `json:"availability_zone_id"`
-	Nodes              int     `json:"nodes"`
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+	Nodes              int    `json:"nodes"`
 }
 
 // PatchLoadBalancerClusterRequest represents a request to patch a load balancer cluster
 type PatchLoadBalancerClusterRequest struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // PatchLoadBalancerClusterRequest represents a request to create an instance
 type CreateInstanceRequest struct {
-	Name               *string `json:"name,omitempty"`
-	VPCID              string  `json:"vpc_id"`
-	ApplianceID        string  `json:"appliance_id"`
-	ApplianceData      string  `json:"appliance_data,omitempty"`
-	VCPUCores          int     `json:"vcpu_cores"`
-	RAMCapacity        int     `json:"ram_capacity"`
-	Locked             bool    `json:"locked"`
-	VolumeCapacity     int     `json:"volume_capacity"`
-	FloatingIPID       string  `json:"floating_ip_id,omitempty"`
-	RequiresFloatingIP bool    `json:"requires_floating_ip"`
-	UserScript         string  `json:"user_script,omitempty"`
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	ApplianceID        string `json:"appliance_id"`
+	VCPUCores          int    `json:"vcpu_cores"`
+	RAMCapacity        int    `json:"ram_capacity"`
+	Locked             bool   `json:"locked"`
+	VolumeCapacity     int    `json:"volume_capacity"`
+	BackupEnabled      bool   `json:"backup_enabled"`
+	NetworkID          string `json:"network_id,omitempty"`
+	FloatingIPID       string `json:"floating_ip_id,omitempty"`
+	RequiresFloatingIP bool   `json:"requires_floating_ip"`
+	UserScript         string `json:"user_script,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
 type PatchInstanceRequest struct {
-	Name        *string `json:"name,omitempty"`
-	VCPUCores   int     `json:"vcpu_cores,omitempty"`
-	RAMCapacity int     `json:"ram_capacity,omitempty"`
+	Name        string `json:"name,omitempty"`
+	VCPUCores   int    `json:"vcpu_cores,omitempty"`
+	RAMCapacity int    `json:"ram_capacity,omitempty"`
+}
+
+// CreateFirewallPolicyRequest represents a request to create a firewall policy
+type CreateFirewallPolicyRequest struct {
+	RouterID string `json:"router_id"`
+	Name     string `json:"name,omitempty"`
+	Sequence *int   `json:"sequence,omitempty"`
+}
+
+// PatchFirewallPolicyRequest represents a request to patch a firewall policy
+type PatchFirewallPolicyRequest struct {
+	Name     string `json:"name,omitempty"`
+	Sequence *int   `json:"sequence,omitempty"`
 }

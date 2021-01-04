@@ -31,11 +31,11 @@ func TestGetFirewallRules(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		fwrs, err := s.GetFirewallRules(connection.APIRequestParameters{})
+		rules, err := s.GetFirewallRules(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, fwrs, 1)
-		assert.Equal(t, "fwr-abcdef12", fwrs[0].ID)
+		assert.Len(t, rules, 1)
+		assert.Equal(t, "fwr-abcdef12", rules[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -75,10 +75,10 @@ func TestGetFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		fwr, err := s.GetFirewallRule("fwr-abcdef12")
+		rule, err := s.GetFirewallRule("fwr-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "fwr-abcdef12", fwr.ID)
+		assert.Equal(t, "fwr-abcdef12", rule.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {

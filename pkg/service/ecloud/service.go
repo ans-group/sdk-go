@@ -167,10 +167,18 @@ type ECloudService interface {
 	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
 	GetFloatingIP(floatingIPID string) (FloatingIP, error)
 
-	// Firewall rule
+	// Firewall Policy
+	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)
+	GetFirewallPoliciesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallPolicy, error)
+	GetFirewallPolicy(policyID string) (FirewallPolicy, error)
+	CreateFirewallPolicy(req CreateFirewallPolicyRequest) (string, error)
+	PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) error
+	DeleteFirewallPolicy(policyID string) error
+
+	// Firewall Rule
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
-	GetFirewallRule(firewallIPID string) (FirewallRule, error)
+	GetFirewallRule(ruleID string) (FirewallRule, error)
 
 	// Router
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)

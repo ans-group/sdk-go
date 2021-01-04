@@ -334,6 +334,18 @@ type ConsoleSession struct {
 	URL string `json:"url"`
 }
 
+type SyncStatus string
+
+const (
+	SyncStatusComplete   SyncStatus = "complete"
+	SyncStatusFailed     SyncStatus = "failed"
+	SyncStatusInProgress SyncStatus = "in-progress"
+)
+
+func (s SyncStatus) String() string {
+	return string(s)
+}
+
 // VPC represents an eCloud VPC
 // +genie:model_response
 // +genie:model_paginated
@@ -362,6 +374,8 @@ type Network struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	RouterID  string              `json:"router_id"`
+	Subnet    string              `json:"subnet"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -401,9 +415,12 @@ type Instance struct {
 	Locked             bool                `json:"locked"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
-	Status             string              `json:"status"`
+	Sync               SyncStatus          `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
+	BackupEnabled      bool                `json:"backup_enabled"`
+	NetworkID          string              `json:"network_id"`
+	FloatingIPID       string              `json:"floating_ip_id"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -413,6 +430,18 @@ type Instance struct {
 // +genie:model_paginated
 type FloatingIP struct {
 	ID        string              `json:"id"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// FirewallPolicy represents an eCloud firewall policy
+// +genie:model_response
+// +genie:model_paginated
+type FirewallPolicy struct {
+	ID        string              `json:"id"`
+	RouterID  string              `json:"router_id"`
+	Name      string              `json:"name"`
+	Sequence  int                 `json:"sequence"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -442,6 +471,7 @@ type Router struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	VPCID     string              `json:"vpc_id"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }

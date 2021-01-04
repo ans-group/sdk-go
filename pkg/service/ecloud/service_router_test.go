@@ -10,7 +10,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/ptr"
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
@@ -152,7 +151,7 @@ func TestCreateRouter(t *testing.T) {
 		}
 
 		req := CreateRouterRequest{
-			Name: ptr.String("test"),
+			Name: "test",
 		}
 
 		c.EXPECT().Post("/ecloud/v2/routers", &req).Return(&connection.APIResponse{
@@ -199,7 +198,7 @@ func TestPatchRouter(t *testing.T) {
 		}
 
 		req := PatchRouterRequest{
-			Name: ptr.String("somerouter"),
+			Name: "somerouter",
 		}
 
 		c.EXPECT().Patch("/ecloud/v2/routers/rtr-abcdef12", &req).Return(&connection.APIResponse{
