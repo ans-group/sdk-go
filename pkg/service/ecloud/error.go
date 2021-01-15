@@ -208,3 +208,12 @@ type LoadBalancerClusterNotFoundError struct {
 func (e *LoadBalancerClusterNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer cluster not found with ID [%s]", e.ID)
 }
+
+// VolumeNotFoundError indicates a volume was not found
+type VolumeNotFoundError struct {
+	ID string
+}
+
+func (e *VolumeNotFoundError) Error() string {
+	return fmt.Sprintf("Volume not found with ID [%s]", e.ID)
+}

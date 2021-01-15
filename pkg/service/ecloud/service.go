@@ -200,6 +200,13 @@ type ECloudService interface {
 	CreateLoadBalancerCluster(req CreateLoadBalancerClusterRequest) (string, error)
 	PatchLoadBalancerCluster(lbcID string, patch PatchLoadBalancerClusterRequest) error
 	DeleteLoadBalancerCluster(lbcID string) error
+
+	// Volumes
+	GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error)
+	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
+	GetVolume(volumeID string) (Volume, error)
+	PatchVolume(volumeID string, patch PatchVolumeRequest) error
+	DeleteVolume(volumeID string) error
 }
 
 // Service implements ECloudService for managing

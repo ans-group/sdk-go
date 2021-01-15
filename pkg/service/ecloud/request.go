@@ -261,3 +261,9 @@ type PatchFirewallPolicyRequest struct {
 	Name     string `json:"name,omitempty"`
 	Sequence *int   `json:"sequence,omitempty"`
 }
+
+// PatchVolumeRequest represents a request to patch a volume
+type PatchVolumeRequest struct {
+	Name     string `json:"name,omitempty"`
+	Capacity int    `json:"capacity,omitempty"`
+}
