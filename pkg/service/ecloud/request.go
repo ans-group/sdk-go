@@ -190,6 +190,7 @@ type PatchVPCRequest struct {
 type CreateNetworkRequest struct {
 	Name     string `json:"name,omitempty"`
 	RouterID string `json:"router_id"`
+	Subnet   string `json:"subnet"`
 }
 
 // PatchNetworkRequest represents a request to patch a network
