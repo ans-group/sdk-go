@@ -290,6 +290,18 @@ type GetFirewallRuleResponseBody struct {
 	Data FirewallRule `json:"data"`
 }
 
+// GetFirewallRulePortSliceResponseBody represents an API response body containing []FirewallRulePort data
+type GetFirewallRulePortSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []FirewallRulePort `json:"data"`
+}
+
+// GetFirewallRulePortResponseBody represents an API response body containing FirewallRulePort data
+type GetFirewallRulePortResponseBody struct {
+	connection.APIResponseBody
+	Data FirewallRulePort `json:"data"`
+}
+
 // GetRegionSliceResponseBody represents an API response body containing []Region data
 type GetRegionSliceResponseBody struct {
 	connection.APIResponseBody

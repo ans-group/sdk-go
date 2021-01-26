@@ -8,19 +8,19 @@ import (
 
 // GetHosts retrieves a list of hosts
 func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, error) {
-	var sites []Host
+	var hosts []Host
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetHostsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedHost).Items {
-			sites = append(sites, site)
+		for _, host := range response.(*PaginatedHost).Items {
+			hosts = append(hosts, host)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return hosts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetHostsPaginated retrieves a paginated list of hosts

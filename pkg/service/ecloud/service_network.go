@@ -8,19 +8,19 @@ import (
 
 // GetNetworks retrieves a list of networks
 func (s *Service) GetNetworks(parameters connection.APIRequestParameters) ([]Network, error) {
-	var sites []Network
+	var networks []Network
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetNetworksPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedNetwork).Items {
-			sites = append(sites, site)
+		for _, network := range response.(*PaginatedNetwork).Items {
+			networks = append(networks, network)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return networks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetNetworksPaginated retrieves a paginated list of networks
@@ -143,4 +143,41 @@ func (s *Service) deleteNetworkResponseBody(networkID string) (*connection.APIRe
 
 		return nil
 	})
+}
+
+// GetNetworkNICs retrieves a list of firewall rule nics
+func (s *Service) GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error) {
+	var nics []NIC
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetNetworkNICsPaginated(networkID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, nic := range response.(*PaginatedNIC).Items {
+			nics = append(nics, nic)
+		}
+	}
+
+	return nics, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetNetworkNICsPaginated retrieves a paginated list of firewall rule nics
+func (s *Service) GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+	body, err := s.getNetworkNICsPaginatedResponseBody(networkID, parameters)
+
+	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetNetworkNICsPaginated(networkID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getNetworkNICsPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
+	body := &GetNICSliceResponseBody{}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/networks/%s/nics", networkID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
 }

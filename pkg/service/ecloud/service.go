@@ -128,6 +128,8 @@ type ECloudService interface {
 	CreateNetwork(req CreateNetworkRequest) (string, error)
 	PatchNetwork(networkID string, patch PatchNetworkRequest) error
 	DeleteNetwork(networkID string) error
+	GetNetworkNICs(networkID string, parameters connection.APIRequestParameters)
+	GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
 
 	// DHCP
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
@@ -179,6 +181,11 @@ type ECloudService interface {
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 	GetFirewallRule(ruleID string) (FirewallRule, error)
+	CreateFirewallRule(req CreateFirewallRuleRequest) (string, error)
+	PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) error
+	DeleteFirewallRule(ruleID string) error
+	GetFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
+	GetFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
 
 	// Router
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)

@@ -268,3 +268,33 @@ type PatchVolumeRequest struct {
 	Name     string `json:"name,omitempty"`
 	Capacity int    `json:"capacity,omitempty"`
 }
+
+// CreateFirewallRuleRequest represents a request to create a firewall rule
+type CreateFirewallRuleRequest struct {
+	Name        string `json:"name,omitempty"`
+	Sequence    int    `json:"sequence"`
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+	Ports       []struct {
+		Protocol    FirewallRulePortProtocol `json:"protocol"`
+		Source      string                   `json:"source"`
+		Destination string                   `json:"destination"`
+	} `json:"ports,omitempty"`
+	Action    FirewallRuleAction    `json:"action"`
+	Direction FirewallRuleDirection `json:"direction"`
+}
+
+// PatchFirewallRuleRequest represents a request to patch a firewall rule
+type PatchFirewallRuleRequest struct {
+	Name        string `json:"name,omitempty"`
+	Sequence    *int   `json:"sequence,omitempty"`
+	Source      string `json:"source,omitempty"`
+	Destination string `json:"destination,omitempty"`
+	Ports       []struct {
+		Protocol    FirewallRulePortProtocol `json:"protocol"`
+		Source      string                   `json:"source"`
+		Destination string                   `json:"destination"`
+	} `json:"ports,omitempty"`
+	Action    FirewallRuleAction    `json:"action,omitempty"`
+	Direction FirewallRuleDirection `json:"direction,omitempty"`
+}

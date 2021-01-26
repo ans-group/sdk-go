@@ -8,19 +8,19 @@ import (
 
 // GetSolutions retrieves a list of solutions
 func (s *Service) GetSolutions(parameters connection.APIRequestParameters) ([]Solution, error) {
-	var sites []Solution
+	var solutions []Solution
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedSolution).Items {
-			sites = append(sites, site)
+		for _, solution := range response.(*PaginatedSolution).Items {
+			solutions = append(solutions, solution)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return solutions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solutions

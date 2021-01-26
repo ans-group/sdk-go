@@ -350,11 +350,13 @@ func (s SyncStatus) String() string {
 // +genie:model_response
 // +genie:model_paginated
 type VPC struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"name"`
-	RegionID  string              `json:"region_id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	RegionID       string              `json:"region_id"`
+	Sync           SyncStatus          `json:"sync"`
+	SupportEnabled bool                `json:"support_enabled"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
 
 // AvailabilityZone represents an eCloud availability zone
@@ -427,9 +429,14 @@ type Instance struct {
 // +genie:model_response
 // +genie:model_paginated
 type FloatingIP struct {
-	ID        string              `json:"id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID         string              `json:"id"`
+	Name       string              `json:"name"`
+	VPCID      string              `json:"vpc_id"`
+	IPAddress  string              `json:"ip_address"`
+	ResourceID string              `json:"resource_id"`
+	Sync       SyncStatus          `json:"sync"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
 // FirewallPolicy represents an eCloud firewall policy
@@ -437,21 +444,124 @@ type FloatingIP struct {
 // +genie:model_paginated
 type FirewallPolicy struct {
 	ID        string              `json:"id"`
-	RouterID  string              `json:"router_id"`
 	Name      string              `json:"name"`
+	RouterID  string              `json:"router_id"`
 	Sequence  int                 `json:"sequence"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+type FirewallRuleAction string
+
+const (
+	FirewallRuleActionAllow  FirewallRuleAction = "ALLOW"
+	FirewallRuleActionDrop   FirewallRuleAction = "DROP"
+	FirewallRuleActionReject FirewallRuleAction = "REJECT"
+)
+
+var FirewallRuleActionEnum connection.EnumSlice = []connection.Enum{
+	FirewallRuleActionAllow,
+	FirewallRuleActionDrop,
+	FirewallRuleActionReject,
+}
+
+// ParseFirewallRuleAction attempts to parse a FirewallRuleAction from string
+func ParseFirewallRuleAction(s string) (FirewallRuleAction, error) {
+	e, err := connection.ParseEnum(s, FirewallRuleActionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRuleAction), err
+}
+
+func (s FirewallRuleAction) String() string {
+	return string(s)
+}
+
+type FirewallRuleDirection string
+
+const (
+	FirewallRuleDirectionIn    FirewallRuleDirection = "IN"
+	FirewallRuleDirectionOut   FirewallRuleDirection = "OUT"
+	FirewallRuleDirectionInOut FirewallRuleDirection = "IN_OUT"
+)
+
+var FirewallRuleDirectionEnum connection.EnumSlice = []connection.Enum{
+	FirewallRuleDirectionIn,
+	FirewallRuleDirectionOut,
+	FirewallRuleDirectionInOut,
+}
+
+// ParseFirewallRuleDirection attempts to parse a FirewallRuleDirection from string
+func ParseFirewallRuleDirection(s string) (FirewallRuleDirection, error) {
+	e, err := connection.ParseEnum(s, FirewallRuleDirectionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRuleDirection), err
+}
+
+func (s FirewallRuleDirection) String() string {
+	return string(s)
 }
 
 // FirewallRule represents an eCloud firewall rule
 // +genie:model_response
 // +genie:model_paginated
 type FirewallRule struct {
-	ID        string              `json:"id"`
-	RouterID  string              `json:"router_id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID               string                `json:"id"`
+	Name             string                `json:"name"`
+	FirewallPolicyID string                `json:"firewall_policy_id"`
+	Source           string                `json:"source"`
+	Destination      string                `json:"destination"`
+	Action           FirewallRuleAction    `json:"action"`
+	Direction        FirewallRuleDirection `json:"direction"`
+	Enabled          bool                  `json:"enabled"`
+	CreatedAt        connection.DateTime   `json:"created_at"`
+	UpdatedAt        connection.DateTime   `json:"updated_at"`
+}
+
+type FirewallRulePortProtocol string
+
+const (
+	FirewallRulePortProtocolTCP FirewallRulePortProtocol = "TCP"
+	FirewallRulePortProtocolUDP FirewallRulePortProtocol = "UDP"
+)
+
+var FirewallRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
+	FirewallRulePortProtocolTCP,
+	FirewallRulePortProtocolUDP,
+}
+
+// ParseFirewallRulePortProtocol attempts to parse a FirewallRulePortProtocol from string
+func ParseFirewallRulePortProtocol(s string) (FirewallRulePortProtocol, error) {
+	e, err := connection.ParseEnum(s, FirewallRulePortProtocolEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRulePortProtocol), err
+}
+
+func (s FirewallRulePortProtocol) String() string {
+	return string(s)
+}
+
+// FirewallRulePort represents an eCloud firewall rule port
+// +genie:model_response
+// +genie:model_paginated
+type FirewallRulePort struct {
+	ID             string                   `json:"id"`
+	Name           string                   `json:"name"`
+	FirewallRuleID string                   `json:"firewall_rule_id"`
+	Protocol       FirewallRulePortProtocol `json:"protocol"`
+	Source         string                   `json:"source"`
+	Destination    string                   `json:"destination"`
+	CreatedAt      connection.DateTime      `json:"created_at"`
+	UpdatedAt      connection.DateTime      `json:"updated_at"`
 }
 
 // Region represents an eCloud region
@@ -511,6 +621,7 @@ type Volume struct {
 	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Capacity           int                 `json:"capacity"`
+	Sync               SyncStatus          `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -526,4 +637,37 @@ type NIC struct {
 	IPAddress  string              `json:"ip_address"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
+}
+
+// RouterThroughput represents an eCloud router throughput
+// +genie:model_response
+// +genie:model_paginated
+type RouterThroughput struct {
+	ID                 string              `json:"id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Name               string              `json:"name"`
+	CommittedBandwidth int                 `json:"committed_bandwidth"`
+	BurstSize          int                 `json:"burst_size"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// DiscountPlan represents an eCloud discount plan
+// +genie:model_response
+// +genie:model_paginated
+type DiscountPlan struct {
+	ID                       string              `json:"id"`
+	ResellerID               int                 `json:"reseller_id"`
+	ContactID                int                 `json:"contact_id"`
+	Name                     string              `json:"name"`
+	CommitmentAmount         float32             `json:"commitment_amount"`
+	CommitmentBeforeDiscount float32             `json:"commitment_before_discount"`
+	DiscountRate             float32             `json:"discount_rate"`
+	TermLength               int                 `json:"term_length"`
+	TermStartDate            connection.DateTime `json:"term_start_date"`
+	TermEndDate              connection.DateTime `json:"term_end_date"`
+	Status                   string              `json:"status"`
+	ResponseDate             connection.DateTime `json:"response_date"`
+	CreatedAt                connection.DateTime `json:"created_at"`
+	UpdatedAt                connection.DateTime `json:"updated_at"`
 }

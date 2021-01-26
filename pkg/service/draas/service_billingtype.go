@@ -8,19 +8,19 @@ import (
 
 // GetBillingTypes retrieves a list of solutions
 func (s *Service) GetBillingTypes(parameters connection.APIRequestParameters) ([]BillingType, error) {
-	var sites []BillingType
+	var billingTypes []BillingType
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetBillingTypesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedBillingType).Items {
-			sites = append(sites, site)
+		for _, billingType := range response.(*PaginatedBillingType).Items {
+			billingTypes = append(billingTypes, billingType)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return billingTypes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetBillingTypesPaginated retrieves a paginated list of solutions

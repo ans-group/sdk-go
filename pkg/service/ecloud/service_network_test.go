@@ -351,3 +351,47 @@ func TestDeleteNetwork(t *testing.T) {
 		assert.IsType(t, &NetworkNotFoundError{}, err)
 	})
 }
+
+func TestGetNetworkNICs(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/networks/net-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"nic-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		nics, err := s.GetNetworkNICs("net-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, nics, 1)
+		assert.Equal(t, "nic-abcdef12", nics[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/networks/net-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetNetworkNICs("net-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}

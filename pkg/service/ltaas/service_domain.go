@@ -8,19 +8,19 @@ import (
 
 // GetDomains retrieves a list of domains
 func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Domain, error) {
-	var sites []Domain
+	var domains []Domain
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDomainsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedDomain).Items {
-			sites = append(sites, site)
+		for _, domain := range response.(*PaginatedDomain).Items {
+			domains = append(domains, domain)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return domains, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetDomainsPaginated retrieves a paginated list of domains

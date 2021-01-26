@@ -8,19 +8,19 @@ import (
 
 // GetThresholds retrieves a list of thresholds
 func (s *Service) GetThresholds(parameters connection.APIRequestParameters) ([]Threshold, error) {
-	var sites []Threshold
+	var thresholds []Threshold
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetThresholdsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedThreshold).Items {
-			sites = append(sites, site)
+		for _, threshold := range response.(*PaginatedThreshold).Items {
+			thresholds = append(thresholds, threshold)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return thresholds, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetThresholdsPaginated retrieves a paginated list of thresholds

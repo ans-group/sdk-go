@@ -8,19 +8,19 @@ import (
 
 // GetFloatingIPs retrieves a list of floating ips
 func (s *Service) GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error) {
-	var sites []FloatingIP
+	var fips []FloatingIP
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetFloatingIPsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedFloatingIP).Items {
-			sites = append(sites, site)
+		for _, fip := range response.(*PaginatedFloatingIP).Items {
+			fips = append(fips, fip)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return fips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetFloatingIPsPaginated retrieves a paginated list of floating ips

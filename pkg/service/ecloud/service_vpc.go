@@ -8,19 +8,19 @@ import (
 
 // GetVPCs retrieves a list of vpcs
 func (s *Service) GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error) {
-	var sites []VPC
+	var vpcs []VPC
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVPCsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedVPC).Items {
-			sites = append(sites, site)
+		for _, vpc := range response.(*PaginatedVPC).Items {
+			vpcs = append(vpcs, vpc)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return vpcs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetVPCsPaginated retrieves a paginated list of vpcs
