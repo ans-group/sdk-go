@@ -520,15 +520,13 @@ type FirewallRule struct {
 type FirewallRulePortProtocol string
 
 const (
-	FirewallRulePortProtocolIn    FirewallRulePortProtocol = "IN"
-	FirewallRulePortProtocolOut   FirewallRulePortProtocol = "OUT"
-	FirewallRulePortProtocolInOut FirewallRulePortProtocol = "IN_OUT"
+	FirewallRulePortProtocolTCP FirewallRulePortProtocol = "TCP"
+	FirewallRulePortProtocolUDP FirewallRulePortProtocol = "UDP"
 )
 
 var FirewallRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
-	FirewallRulePortProtocolIn,
-	FirewallRulePortProtocolOut,
-	FirewallRulePortProtocolInOut,
+	FirewallRulePortProtocolTCP,
+	FirewallRulePortProtocolUDP,
 }
 
 // ParseFirewallRulePortProtocol attempts to parse a FirewallRulePortProtocol from string

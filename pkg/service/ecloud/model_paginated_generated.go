@@ -310,6 +310,20 @@ func NewPaginatedFirewallRule(getFunc connection.PaginatedGetFunc, parameters co
 	}
 }
 
+// PaginatedFirewallRulePort represents a paginated collection of FirewallRulePort
+type PaginatedFirewallRulePort struct {
+	*connection.PaginatedBase
+	Items []FirewallRulePort
+}
+
+// NewPaginatedFirewallRulePort returns a pointer to an initialized PaginatedFirewallRulePort struct
+func NewPaginatedFirewallRulePort(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []FirewallRulePort) *PaginatedFirewallRulePort {
+	return &PaginatedFirewallRulePort{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // PaginatedRegion represents a paginated collection of Region
 type PaginatedRegion struct {
 	*connection.PaginatedBase
