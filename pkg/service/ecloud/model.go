@@ -437,21 +437,126 @@ type FloatingIP struct {
 // +genie:model_paginated
 type FirewallPolicy struct {
 	ID        string              `json:"id"`
-	RouterID  string              `json:"router_id"`
 	Name      string              `json:"name"`
+	RouterID  string              `json:"router_id"`
 	Sequence  int                 `json:"sequence"`
+	Sync      SyncStatus          `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+type FirewallRuleAction string
+
+const (
+	FirewallRuleActionAllow  FirewallRuleAction = "ALLOW"
+	FirewallRuleActionDrop   FirewallRuleAction = "DROP"
+	FirewallRuleActionReject FirewallRuleAction = "REJECT"
+)
+
+var FirewallRuleActionEnum connection.EnumSlice = []connection.Enum{
+	FirewallRuleActionAllow,
+	FirewallRuleActionDrop,
+	FirewallRuleActionReject,
+}
+
+// ParseFirewallRuleAction attempts to parse a FirewallRuleAction from string
+func ParseFirewallRuleAction(s string) (FirewallRuleAction, error) {
+	e, err := connection.ParseEnum(s, FirewallRuleActionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRuleAction), err
+}
+
+func (s FirewallRuleAction) String() string {
+	return string(s)
+}
+
+type FirewallRuleDirection string
+
+const (
+	FirewallRuleDirectionIn    FirewallRuleDirection = "IN"
+	FirewallRuleDirectionOut   FirewallRuleDirection = "OUT"
+	FirewallRuleDirectionInOut FirewallRuleDirection = "IN_OUT"
+)
+
+var FirewallRuleDirectionEnum connection.EnumSlice = []connection.Enum{
+	FirewallRuleDirectionIn,
+	FirewallRuleDirectionOut,
+	FirewallRuleDirectionInOut,
+}
+
+// ParseFirewallRuleDirection attempts to parse a FirewallRuleDirection from string
+func ParseFirewallRuleDirection(s string) (FirewallRuleDirection, error) {
+	e, err := connection.ParseEnum(s, FirewallRuleDirectionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRuleDirection), err
+}
+
+func (s FirewallRuleDirection) String() string {
+	return string(s)
 }
 
 // FirewallRule represents an eCloud firewall rule
 // +genie:model_response
 // +genie:model_paginated
 type FirewallRule struct {
-	ID        string              `json:"id"`
-	RouterID  string              `json:"router_id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID               string                `json:"id"`
+	Name             string                `json:"name"`
+	FirewallPolicyID string                `json:"firewall_policy_id"`
+	Source           string                `json:"source"`
+	Destination      string                `json:"destination"`
+	Action           FirewallRuleAction    `json:"action"`
+	Direction        FirewallRuleDirection `json:"direction"`
+	Enabled          string                `json:"enabled"`
+	CreatedAt        connection.DateTime   `json:"created_at"`
+	UpdatedAt        connection.DateTime   `json:"updated_at"`
+}
+
+type FirewallRulePortProtocol string
+
+const (
+	FirewallRulePortProtocolIn    FirewallRulePortProtocol = "IN"
+	FirewallRulePortProtocolOut   FirewallRulePortProtocol = "OUT"
+	FirewallRulePortProtocolInOut FirewallRulePortProtocol = "IN_OUT"
+)
+
+var FirewallRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
+	FirewallRulePortProtocolIn,
+	FirewallRulePortProtocolOut,
+	FirewallRulePortProtocolInOut,
+}
+
+// ParseFirewallRulePortProtocol attempts to parse a FirewallRulePortProtocol from string
+func ParseFirewallRulePortProtocol(s string) (FirewallRulePortProtocol, error) {
+	e, err := connection.ParseEnum(s, FirewallRulePortProtocolEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(FirewallRulePortProtocol), err
+}
+
+func (s FirewallRulePortProtocol) String() string {
+	return string(s)
+}
+
+// FirewallRulePort represents an eCloud firewall rule port
+// +genie:model_response
+// +genie:model_paginated
+type FirewallRulePort struct {
+	ID             string                   `json:"id"`
+	Name           string                   `json:"name"`
+	FirewallRuleID string                   `json:"firewall_rule_id"`
+	Protocol       FirewallRulePortProtocol `json:"protocol"`
+	Source         string                   `json:"source"`
+	Destination    string                   `json:"destination"`
+	CreatedAt      connection.DateTime      `json:"created_at"`
+	UpdatedAt      connection.DateTime      `json:"updated_at"`
 }
 
 // Region represents an eCloud region
