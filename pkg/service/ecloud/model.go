@@ -350,11 +350,13 @@ func (s SyncStatus) String() string {
 // +genie:model_response
 // +genie:model_paginated
 type VPC struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"name"`
-	RegionID  string              `json:"region_id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	RegionID       string              `json:"region_id"`
+	Sync           SyncStatus          `json:"sync"`
+	SupportEnabled bool                `json:"support_enabled"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
 
 // AvailabilityZone represents an eCloud availability zone
@@ -427,9 +429,14 @@ type Instance struct {
 // +genie:model_response
 // +genie:model_paginated
 type FloatingIP struct {
-	ID        string              `json:"id"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID         string              `json:"id"`
+	Name       string              `json:"name"`
+	VPCID      string              `json:"vpc_id"`
+	IPAddress  string              `json:"ip_address"`
+	ResourceID string              `json:"resource_id"`
+	Sync       SyncStatus          `json:"sync"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
 // FirewallPolicy represents an eCloud firewall policy
@@ -614,6 +621,7 @@ type Volume struct {
 	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Capacity           int                 `json:"capacity"`
+	Sync               SyncStatus          `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -629,4 +637,37 @@ type NIC struct {
 	IPAddress  string              `json:"ip_address"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
+}
+
+// RouterThroughput represents an eCloud router throughput
+// +genie:model_response
+// +genie:model_paginated
+type RouterThroughput struct {
+	ID                 string              `json:"id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Name               string              `json:"name"`
+	CommittedBandwidth int                 `json:"committed_bandwidth"`
+	BurstSize          int                 `json:"burst_size"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// DiscountPlan represents an eCloud discount plan
+// +genie:model_response
+// +genie:model_paginated
+type DiscountPlan struct {
+	ID                       string              `json:"id"`
+	ResellerID               int                 `json:"reseller_id"`
+	ContactID                int                 `json:"contact_id"`
+	Name                     string              `json:"name"`
+	CommitmentAmount         float32             `json:"commitment_amount"`
+	CommitmentBeforeDiscount float32             `json:"commitment_before_discount"`
+	DiscountRate             float32             `json:"discount_rate"`
+	TermLength               int                 `json:"term_length"`
+	TermStartDate            connection.DateTime `json:"term_start_date"`
+	TermEndDate              connection.DateTime `json:"term_end_date"`
+	Status                   string              `json:"status"`
+	ResponseDate             connection.DateTime `json:"response_date"`
+	CreatedAt                connection.DateTime `json:"created_at"`
+	UpdatedAt                connection.DateTime `json:"updated_at"`
 }
