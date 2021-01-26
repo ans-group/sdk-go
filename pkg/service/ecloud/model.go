@@ -512,7 +512,7 @@ type FirewallRule struct {
 	Destination      string                `json:"destination"`
 	Action           FirewallRuleAction    `json:"action"`
 	Direction        FirewallRuleDirection `json:"direction"`
-	Enabled          string                `json:"enabled"`
+	Enabled          bool                  `json:"enabled"`
 	CreatedAt        connection.DateTime   `json:"created_at"`
 	UpdatedAt        connection.DateTime   `json:"updated_at"`
 }
