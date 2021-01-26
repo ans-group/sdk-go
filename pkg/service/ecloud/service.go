@@ -128,7 +128,7 @@ type ECloudService interface {
 	CreateNetwork(req CreateNetworkRequest) (string, error)
 	PatchNetwork(networkID string, patch PatchNetworkRequest) error
 	DeleteNetwork(networkID string) error
-	GetNetworkNICs(networkID string, parameters connection.APIRequestParameters)
+	GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error)
 	GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
 
 	// DHCP
