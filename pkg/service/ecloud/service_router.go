@@ -8,19 +8,19 @@ import (
 
 // GetRouters retrieves a list of routers
 func (s *Service) GetRouters(parameters connection.APIRequestParameters) ([]Router, error) {
-	var sites []Router
+	var routers []Router
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetRoutersPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedRouter).Items {
-			sites = append(sites, site)
+		for _, router := range response.(*PaginatedRouter).Items {
+			routers = append(routers, router)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return routers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetRoutersPaginated retrieves a paginated list of routers

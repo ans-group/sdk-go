@@ -8,19 +8,19 @@ import (
 
 // GetLoadBalancerClusters retrieves a list of load balancer clusters
 func (s *Service) GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error) {
-	var sites []LoadBalancerCluster
+	var lbcs []LoadBalancerCluster
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetLoadBalancerClustersPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedLoadBalancerCluster).Items {
-			sites = append(sites, site)
+		for _, lbc := range response.(*PaginatedLoadBalancerCluster).Items {
+			lbcs = append(lbcs, lbc)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return lbcs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetLoadBalancerClustersPaginated retrieves a paginated list of load balancer clusters

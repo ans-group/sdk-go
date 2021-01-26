@@ -8,19 +8,19 @@ import (
 
 // GetJobs retrieves a list of jobs
 func (s *Service) GetJobs(parameters connection.APIRequestParameters) ([]Job, error) {
-	var sites []Job
+	var jobs []Job
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetJobsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedJob).Items {
-			sites = append(sites, site)
+		for _, job := range response.(*PaginatedJob).Items {
+			jobs = append(jobs, job)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return jobs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetJobsPaginated retrieves a paginated list of jobs

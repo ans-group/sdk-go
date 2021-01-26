@@ -8,19 +8,19 @@ import (
 
 // GetVolumes retrieves a list of volumes
 func (s *Service) GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error) {
-	var sites []Volume
+	var volumes []Volume
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVolumesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedVolume).Items {
-			sites = append(sites, site)
+		for _, volume := range response.(*PaginatedVolume).Items {
+			volumes = append(volumes, volume)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return volumes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetVolumesPaginated retrieves a paginated list of volumes

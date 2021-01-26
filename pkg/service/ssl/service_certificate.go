@@ -8,19 +8,19 @@ import (
 
 // GetCertificates retrieves a list of certificates
 func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([]Certificate, error) {
-	var sites []Certificate
+	var certificates []Certificate
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetCertificatesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedCertificate).Items {
-			sites = append(sites, site)
+		for _, certificate := range response.(*PaginatedCertificate).Items {
+			certificates = append(certificates, certificate)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return certificates, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetCertificatesPaginated retrieves a paginated list of certificates

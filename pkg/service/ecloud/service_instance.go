@@ -8,19 +8,19 @@ import (
 
 // GetInstances retrieves a list of instances
 func (s *Service) GetInstances(parameters connection.APIRequestParameters) ([]Instance, error) {
-	var sites []Instance
+	var instances []Instance
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetInstancesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedInstance).Items {
-			sites = append(sites, site)
+		for _, instance := range response.(*PaginatedInstance).Items {
+			instances = append(instances, instance)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetInstancesPaginated retrieves a paginated list of instances

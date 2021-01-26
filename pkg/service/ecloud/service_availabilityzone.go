@@ -8,19 +8,19 @@ import (
 
 // GetAvailabilityZones retrieves a list of azs
 func (s *Service) GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error) {
-	var sites []AvailabilityZone
+	var azs []AvailabilityZone
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetAvailabilityZonesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedAvailabilityZone).Items {
-			sites = append(sites, site)
+		for _, az := range response.(*PaginatedAvailabilityZone).Items {
+			azs = append(azs, az)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return azs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetAvailabilityZonesPaginated retrieves a paginated list of azs

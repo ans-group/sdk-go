@@ -8,19 +8,19 @@ import (
 
 // GetRegions retrieves a list of regions
 func (s *Service) GetRegions(parameters connection.APIRequestParameters) ([]Region, error) {
-	var sites []Region
+	var regions []Region
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetRegionsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedRegion).Items {
-			sites = append(sites, site)
+		for _, region := range response.(*PaginatedRegion).Items {
+			regions = append(regions, region)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return regions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetRegionsPaginated retrieves a paginated list of regions
