@@ -115,6 +115,11 @@ type ECloudService interface {
 	CreateVPC(req CreateVPCRequest) (string, error)
 	PatchVPC(vpcID string, patch PatchVPCRequest) error
 	DeleteVPC(vpcID string) error
+	DeployVPCDefaults(vpcID string) error
+	GetVPCVolumes(vpcID string, parameters connection.APIRequestParameters) ([]VPC, error)
+	GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedVPC, error)
+	GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error)
+	GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 
 	// Availability zone
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
@@ -167,7 +172,10 @@ type ECloudService interface {
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
 	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
-	GetFloatingIP(floatingIPID string) (FloatingIP, error)
+	GetFloatingIP(fipID string) (FloatingIP, error)
+	CreateFloatingIP(req CreateFloatingIPRequest) (string, error)
+	PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error
+	DeleteFloatingIP(fipID string) error
 
 	// Firewall Policy
 	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)

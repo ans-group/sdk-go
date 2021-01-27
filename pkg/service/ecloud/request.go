@@ -298,3 +298,14 @@ type PatchFirewallRuleRequest struct {
 	Action    FirewallRuleAction    `json:"action,omitempty"`
 	Direction FirewallRuleDirection `json:"direction,omitempty"`
 }
+
+// CreateFloatingIPRequest represents a request to create a floating IP
+type CreateFloatingIPRequest struct {
+	Name  string `json:"name,omitempty"`
+	VPCID string `json:"vpc_id"`
+}
+
+// PatchFloatingIPRequest represents a request to patch a floating IP
+type PatchFloatingIPRequest struct {
+	Name string `json:"name,omitempty"`
+}
