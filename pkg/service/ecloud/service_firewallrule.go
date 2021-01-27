@@ -145,12 +145,12 @@ func (s *Service) deleteFirewallRuleResponseBody(ruleID string) (*connection.API
 	})
 }
 
-// GetFirewallRulePorts retrieves a list of firewall rule ports
-func (s *Service) GetFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error) {
+// GetFirewallRuleFirewallRulePorts retrieves a list of firewall rule ports
+func (s *Service) GetFirewallRuleFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error) {
 	var ports []FirewallRulePort
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallRulePortsPaginated(firewallRuleID, p)
+		return s.GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -162,16 +162,16 @@ func (s *Service) GetFirewallRulePorts(firewallRuleID string, parameters connect
 	return ports, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetFirewallRulePortsPaginated retrieves a paginated list of firewall rule ports
-func (s *Service) GetFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error) {
-	body, err := s.getFirewallRulePortsPaginatedResponseBody(firewallRuleID, parameters)
+// GetFirewallRuleFirewallRulePortsPaginated retrieves a paginated list of firewall rule ports
+func (s *Service) GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error) {
+	body, err := s.getFirewallRuleFirewallRulePortsPaginatedResponseBody(firewallRuleID, parameters)
 
 	return NewPaginatedFirewallRulePort(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallRulePortsPaginated(firewallRuleID, p)
+		return s.GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getFirewallRulePortsPaginatedResponseBody(firewallRuleID string, parameters connection.APIRequestParameters) (*GetFirewallRulePortSliceResponseBody, error) {
+func (s *Service) getFirewallRuleFirewallRulePortsPaginatedResponseBody(firewallRuleID string, parameters connection.APIRequestParameters) (*GetFirewallRulePortSliceResponseBody, error) {
 	body := &GetFirewallRulePortSliceResponseBody{}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/firewall-rules/%s/ports", firewallRuleID), parameters)

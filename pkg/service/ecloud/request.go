@@ -299,6 +299,23 @@ type PatchFirewallRuleRequest struct {
 	Direction FirewallRuleDirection `json:"direction,omitempty"`
 }
 
+// CreateFirewallRulePortRequest represents a request to create a firewall rule port
+type CreateFirewallRulePortRequest struct {
+	Name           string                   `json:"name,omitempty"`
+	FirewallRuleID string                   `json:"firewall_rule_id"`
+	Protocol       FirewallRulePortProtocol `json:"protocol"`
+	Source         string                   `json:"source"`
+	Destination    string                   `json:"destination"`
+}
+
+// PatchFirewallRulePortRequest represents a request to patch a firewall rule port
+type PatchFirewallRulePortRequest struct {
+	Name        string                   `json:"name,omitempty"`
+	Protocol    FirewallRulePortProtocol `json:"protocol,omitempty"`
+	Source      string                   `json:"source,omitempty"`
+	Destination string                   `json:"destination,omitempty"`
+}
+
 // CreateFloatingIPRequest represents a request to create a floating IP
 type CreateFloatingIPRequest struct {
 	Name  string `json:"name,omitempty"`
@@ -308,4 +325,9 @@ type CreateFloatingIPRequest struct {
 // PatchFloatingIPRequest represents a request to patch a floating IP
 type PatchFloatingIPRequest struct {
 	Name string `json:"name,omitempty"`
+}
+
+// AssignFloatingIPRequest represents a request to assign a floating IP to a resource
+type AssignFloatingIPRequest struct {
+	ResourceID string `json:"resource_id"`
 }

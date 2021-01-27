@@ -407,3 +407,45 @@ func NewPaginatedNIC(getFunc connection.PaginatedGetFunc, parameters connection.
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedRouterThroughput represents a paginated collection of RouterThroughput
+type PaginatedRouterThroughput struct {
+	*connection.PaginatedBase
+	Items []RouterThroughput
+}
+
+// NewPaginatedRouterThroughput returns a pointer to an initialized PaginatedRouterThroughput struct
+func NewPaginatedRouterThroughput(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []RouterThroughput) *PaginatedRouterThroughput {
+	return &PaginatedRouterThroughput{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedDiscountPlan represents a paginated collection of DiscountPlan
+type PaginatedDiscountPlan struct {
+	*connection.PaginatedBase
+	Items []DiscountPlan
+}
+
+// NewPaginatedDiscountPlan returns a pointer to an initialized PaginatedDiscountPlan struct
+func NewPaginatedDiscountPlan(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []DiscountPlan) *PaginatedDiscountPlan {
+	return &PaginatedDiscountPlan{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedBillingMetric represents a paginated collection of BillingMetric
+type PaginatedBillingMetric struct {
+	*connection.PaginatedBase
+	Items []BillingMetric
+}
+
+// NewPaginatedBillingMetric returns a pointer to an initialized PaginatedBillingMetric struct
+func NewPaginatedBillingMetric(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []BillingMetric) *PaginatedBillingMetric {
+	return &PaginatedBillingMetric{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

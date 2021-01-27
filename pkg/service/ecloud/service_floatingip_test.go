@@ -351,3 +351,169 @@ func TestDeleteFloatingIP(t *testing.T) {
 		assert.IsType(t, &FloatingIPNotFoundError{}, err)
 	})
 }
+
+func TestAssignFloatingIP(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := AssignFloatingIPRequest{
+			ResourceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/assign", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.AssignFloatingIP("fip-abcdef12", req)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/assign", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidFloatingIPID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.AssignFloatingIP("", AssignFloatingIPRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid floating IP id", err.Error())
+	})
+
+	t.Run("404_ReturnsFloatingIPNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/assign", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &FloatingIPNotFoundError{}, err)
+	})
+}
+
+func TestUnassignFloatingIP(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/unassign", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.UnassignFloatingIP("fip-abcdef12")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/unassign", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.UnassignFloatingIP("fip-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidFloatingIPID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UnassignFloatingIP("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid floating IP id", err.Error())
+	})
+
+	t.Run("404_ReturnsFloatingIPNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/unassign", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.UnassignFloatingIP("fip-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &FloatingIPNotFoundError{}, err)
+	})
+}
