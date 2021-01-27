@@ -202,12 +202,22 @@ func (s *Service) GetVPCVolumesPaginated(vpcID string, parameters connection.API
 func (s *Service) getVPCVolumesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
 	body := &GetVolumeSliceResponseBody{}
 
+	if vpcID == "" {
+		return body, fmt.Errorf("invalid vpc id")
+	}
+
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpcs/%s/volumes", vpcID), parameters)
 	if err != nil {
 		return body, err
 	}
 
-	return body, response.HandleResponse(body, nil)
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPCNotFoundError{ID: vpcID}
+		}
+
+		return nil
+	})
 }
 
 // GetVPCInstances retrieves a list of firewall rule instances
@@ -239,10 +249,20 @@ func (s *Service) GetVPCInstancesPaginated(vpcID string, parameters connection.A
 func (s *Service) getVPCInstancesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetInstanceSliceResponseBody, error) {
 	body := &GetInstanceSliceResponseBody{}
 
+	if vpcID == "" {
+		return body, fmt.Errorf("invalid vpc id")
+	}
+
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpcs/%s/instances", vpcID), parameters)
 	if err != nil {
 		return body, err
 	}
 
-	return body, response.HandleResponse(body, nil)
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPCNotFoundError{ID: vpcID}
+		}
+
+		return nil
+	})
 }

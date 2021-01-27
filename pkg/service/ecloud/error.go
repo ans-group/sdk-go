@@ -182,6 +182,15 @@ func (e *FirewallRuleNotFoundError) Error() string {
 	return fmt.Sprintf("Firewall rule not found with ID [%s]", e.ID)
 }
 
+// FirewallRulePortNotFoundError indicates a firewall rule port was not found
+type FirewallRulePortNotFoundError struct {
+	ID string
+}
+
+func (e *FirewallRulePortNotFoundError) Error() string {
+	return fmt.Sprintf("Firewall rule port not found with ID [%s]", e.ID)
+}
+
 // RouterNotFoundError indicates a router was not found
 type RouterNotFoundError struct {
 	ID string
@@ -216,4 +225,40 @@ type VolumeNotFoundError struct {
 
 func (e *VolumeNotFoundError) Error() string {
 	return fmt.Sprintf("Volume not found with ID [%s]", e.ID)
+}
+
+// NICNotFoundError indicates a NIC was not found
+type NICNotFoundError struct {
+	ID string
+}
+
+func (e *NICNotFoundError) Error() string {
+	return fmt.Sprintf("NIC not found with ID [%s]", e.ID)
+}
+
+// BillingMetricNotFoundError indicates a billing metric was not found
+type BillingMetricNotFoundError struct {
+	ID string
+}
+
+func (e *BillingMetricNotFoundError) Error() string {
+	return fmt.Sprintf("Billing metric not found with ID [%s]", e.ID)
+}
+
+// RouterThroughputNotFoundError indicates a router throughput was not found
+type RouterThroughputNotFoundError struct {
+	ID string
+}
+
+func (e *RouterThroughputNotFoundError) Error() string {
+	return fmt.Sprintf("Router throughput not found with ID [%s]", e.ID)
+}
+
+// DiscountPlanNotFoundError indicates a discount plan was not found
+type DiscountPlanNotFoundError struct {
+	ID string
+}
+
+func (e *DiscountPlanNotFoundError) Error() string {
+	return fmt.Sprintf("Discount plan not found with ID [%s]", e.ID)
 }

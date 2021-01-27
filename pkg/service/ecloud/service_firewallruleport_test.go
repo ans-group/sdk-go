@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetFirewallRules(t *testing.T) {
+func TestGetFirewallRulePorts(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -31,7 +31,7 @@ func TestGetFirewallRules(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		rules, err := s.GetFirewallRules(connection.APIRequestParameters{})
+		rules, err := s.GetFirewallRulePorts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, rules, 1)
@@ -50,14 +50,14 @@ func TestGetFirewallRules(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/firewall-rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetFirewallRules(connection.APIRequestParameters{})
+		_, err := s.GetFirewallRulePorts(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetFirewallRule(t *testing.T) {
+func TestGetFirewallRulePort(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -75,7 +75,7 @@ func TestGetFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		rule, err := s.GetFirewallRule("fwr-abcdef12")
+		rule, err := s.GetFirewallRulePort("fwr-abcdef12")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "fwr-abcdef12", rule.ID)
@@ -93,13 +93,13 @@ func TestGetFirewallRule(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/firewall-rules/fwr-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetFirewallRule("fwr-abcdef12")
+		_, err := s.GetFirewallRulePort("fwr-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidFirewallRuleID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallRulePortID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetFirewallRule("")
+		_, err := s.GetFirewallRulePort("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid firewall rule id", err.Error())
 	})
 
-	t.Run("404_ReturnsFirewallRuleNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallRulePortNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -132,14 +132,14 @@ func TestGetFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetFirewallRule("fwr-abcdef12")
+		_, err := s.GetFirewallRulePort("fwr-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &FirewallRuleNotFoundError{}, err)
+		assert.IsType(t, &FirewallRulePortNotFoundError{}, err)
 	})
 }
 
-func TestCreateFirewallRule(t *testing.T) {
+func TestCreateFirewallRulePort(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -150,7 +150,7 @@ func TestCreateFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		req := CreateFirewallRuleRequest{
+		req := CreateFirewallRulePortRequest{
 			Name: "test",
 		}
 
@@ -161,7 +161,7 @@ func TestCreateFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		rule, err := s.CreateFirewallRule(req)
+		rule, err := s.CreateFirewallRulePort(req)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "fwr-abcdef12", rule)
@@ -179,14 +179,14 @@ func TestCreateFirewallRule(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/firewall-rules", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateFirewallRule(CreateFirewallRuleRequest{})
+		_, err := s.CreateFirewallRulePort(CreateFirewallRulePortRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestPatchFirewallRule(t *testing.T) {
+func TestPatchFirewallRulePort(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -197,7 +197,7 @@ func TestPatchFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchFirewallRuleRequest{
+		req := PatchFirewallRulePortRequest{
 			Name: "somerule",
 		}
 
@@ -208,7 +208,7 @@ func TestPatchFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", req)
+		err := s.PatchFirewallRulePort("fwr-abcdef12", req)
 
 		assert.Nil(t, err)
 	})
@@ -225,13 +225,13 @@ func TestPatchFirewallRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/firewall-rules/fwr-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
+		err := s.PatchFirewallRulePort("fwr-abcdef12", PatchFirewallRulePortRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidFirewallRuleID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallRulePortID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -241,13 +241,13 @@ func TestPatchFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchFirewallRule("", PatchFirewallRuleRequest{})
+		err := s.PatchFirewallRulePort("", PatchFirewallRulePortRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid firewall rule id", err.Error())
 	})
 
-	t.Run("404_ReturnsFirewallRuleNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallRulePortNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -264,14 +264,14 @@ func TestPatchFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
+		err := s.PatchFirewallRulePort("fwr-abcdef12", PatchFirewallRulePortRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &FirewallRuleNotFoundError{}, err)
+		assert.IsType(t, &FirewallRulePortNotFoundError{}, err)
 	})
 }
 
-func TestDeleteFirewallRule(t *testing.T) {
+func TestDeleteFirewallRulePort(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -289,7 +289,7 @@ func TestDeleteFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		err := s.DeleteFirewallRulePort("fwr-abcdef12")
 
 		assert.Nil(t, err)
 	})
@@ -306,13 +306,13 @@ func TestDeleteFirewallRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/firewall-rules/fwr-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		err := s.DeleteFirewallRulePort("fwr-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidFirewallRuleID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidFirewallRulePortID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -322,13 +322,13 @@ func TestDeleteFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteFirewallRule("")
+		err := s.DeleteFirewallRulePort("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid firewall rule id", err.Error())
 	})
 
-	t.Run("404_ReturnsFirewallRuleNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsFirewallRulePortNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -345,53 +345,9 @@ func TestDeleteFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		err := s.DeleteFirewallRulePort("fwr-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &FirewallRuleNotFoundError{}, err)
-	})
-}
-
-func TestGetFirewallRuleFirewallRulePorts(t *testing.T) {
-	t.Run("Single", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v2/firewall-rules/fwr-abcdef12/ports", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"fwrp-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
-				StatusCode: 200,
-			},
-		}, nil).Times(1)
-
-		rules, err := s.GetFirewallRuleFirewallRulePorts("fwr-abcdef12", connection.APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Len(t, rules, 1)
-		assert.Equal(t, "fwrp-abcdef12", rules[0].ID)
-	})
-
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Get("/ecloud/v2/firewall-rules/fwr-abcdef12/ports", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
-
-		_, err := s.GetFirewallRuleFirewallRulePorts("fwr-abcdef12", connection.APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "test error 1", err.Error())
+		assert.IsType(t, &FirewallRulePortNotFoundError{}, err)
 	})
 }

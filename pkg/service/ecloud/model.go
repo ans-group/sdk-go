@@ -671,3 +671,18 @@ type DiscountPlan struct {
 	CreatedAt                connection.DateTime `json:"created_at"`
 	UpdatedAt                connection.DateTime `json:"updated_at"`
 }
+
+// BillingMetric represents an eCloud billing metric
+// +genie:model_response
+// +genie:model_paginated
+type BillingMetric struct {
+	ID         string              `json:"id"`
+	ResourceID string              `json:"resource_id"`
+	VPCID      string              `json:"vpc_id"`
+	Key        string              `json:"key"`
+	Value      string              `json:"value"`
+	Start      connection.DateTime `json:"start"`
+	End        connection.DateTime `json:"end"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
+}

@@ -373,3 +373,39 @@ type GetNICResponseBody struct {
 	connection.APIResponseBody
 	Data NIC `json:"data"`
 }
+
+// GetRouterThroughputSliceResponseBody represents an API response body containing []RouterThroughput data
+type GetRouterThroughputSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []RouterThroughput `json:"data"`
+}
+
+// GetRouterThroughputResponseBody represents an API response body containing RouterThroughput data
+type GetRouterThroughputResponseBody struct {
+	connection.APIResponseBody
+	Data RouterThroughput `json:"data"`
+}
+
+// GetDiscountPlanSliceResponseBody represents an API response body containing []DiscountPlan data
+type GetDiscountPlanSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []DiscountPlan `json:"data"`
+}
+
+// GetDiscountPlanResponseBody represents an API response body containing DiscountPlan data
+type GetDiscountPlanResponseBody struct {
+	connection.APIResponseBody
+	Data DiscountPlan `json:"data"`
+}
+
+// GetBillingMetricSliceResponseBody represents an API response body containing []BillingMetric data
+type GetBillingMetricSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []BillingMetric `json:"data"`
+}
+
+// GetBillingMetricResponseBody represents an API response body containing BillingMetric data
+type GetBillingMetricResponseBody struct {
+	connection.APIResponseBody
+	Data BillingMetric `json:"data"`
+}
