@@ -176,6 +176,8 @@ type ECloudService interface {
 	CreateFloatingIP(req CreateFloatingIPRequest) (string, error)
 	PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error
 	DeleteFloatingIP(fipID string) error
+	AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error
+	UnassignFloatingIP(fipID string) error
 
 	// Firewall Policy
 	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)

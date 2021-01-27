@@ -89,7 +89,7 @@ func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*Ge
 	return body, response.HandleResponse(body, nil)
 }
 
-// PatchFloatingIP patches a FloatingIP
+// PatchFloatingIP patches a floating IP
 func (s *Service) PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error {
 	_, err := s.patchFloatingIPResponseBody(fipID, req)
 
@@ -117,7 +117,7 @@ func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPR
 	})
 }
 
-// DeleteFloatingIP deletes a FloatingIP
+// DeleteFloatingIP deletes a floating IP
 func (s *Service) DeleteFloatingIP(fipID string) error {
 	_, err := s.deleteFloatingIPResponseBody(fipID)
 
@@ -132,6 +132,62 @@ func (s *Service) deleteFloatingIPResponseBody(fipID string) (*connection.APIRes
 	}
 
 	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/floating-ips/%s", fipID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &FloatingIPNotFoundError{ID: fipID}
+		}
+
+		return nil
+	})
+}
+
+// AssignFloatingIP assigns a floating IP to a resource
+func (s *Service) AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error {
+	_, err := s.assignFloatingIPResponseBody(fipID, req)
+
+	return err
+}
+
+func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingIPRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if fipID == "" {
+		return body, fmt.Errorf("invalid floating IP id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/floating-ips/%s/assign", fipID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &FloatingIPNotFoundError{ID: fipID}
+		}
+
+		return nil
+	})
+}
+
+// UnassignFloatingIP unassigns a floating IP from a resource
+func (s *Service) UnassignFloatingIP(fipID string) error {
+	_, err := s.unassignFloatingIPResponseBody(fipID)
+
+	return err
+}
+
+func (s *Service) unassignFloatingIPResponseBody(fipID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if fipID == "" {
+		return body, fmt.Errorf("invalid floating IP id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/floating-ips/%s/unassign", fipID), nil)
 	if err != nil {
 		return body, err
 	}

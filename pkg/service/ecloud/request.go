@@ -309,3 +309,8 @@ type CreateFloatingIPRequest struct {
 type PatchFloatingIPRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// AssignFloatingIPRequest represents a request to assign a floating IP to a resource
+type AssignFloatingIPRequest struct {
+	ResourceID string `json:"resource_id"`
+}
