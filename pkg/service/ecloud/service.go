@@ -186,6 +186,8 @@ type ECloudService interface {
 	CreateFirewallPolicy(req CreateFirewallPolicyRequest) (string, error)
 	PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) error
 	DeleteFirewallPolicy(policyID string) error
+	GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error)
+	GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 
 	// Firewall Rule
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
