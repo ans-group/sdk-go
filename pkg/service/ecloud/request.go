@@ -254,7 +254,7 @@ type PatchInstanceRequest struct {
 type CreateFirewallPolicyRequest struct {
 	RouterID string `json:"router_id"`
 	Name     string `json:"name,omitempty"`
-	Sequence *int   `json:"sequence,omitempty"`
+	Sequence int    `json:"sequence"`
 }
 
 // PatchFirewallPolicyRequest represents a request to patch a firewall policy
@@ -271,17 +271,19 @@ type PatchVolumeRequest struct {
 
 // CreateFirewallRuleRequest represents a request to create a firewall rule
 type CreateFirewallRuleRequest struct {
-	Name        string `json:"name,omitempty"`
-	Sequence    int    `json:"sequence"`
-	Source      string `json:"source"`
-	Destination string `json:"destination"`
-	Ports       []struct {
+	Name             string `json:"name,omitempty"`
+	FirewallPolicyID string `json:"firewall_policy_id"`
+	Sequence         int    `json:"sequence"`
+	Source           string `json:"source"`
+	Destination      string `json:"destination"`
+	Ports            []struct {
 		Protocol    FirewallRulePortProtocol `json:"protocol"`
-		Source      string                   `json:"source"`
-		Destination string                   `json:"destination"`
+		Source      string                   `json:"source,omitempty"`
+		Destination string                   `json:"destination,omitempty"`
 	} `json:"ports,omitempty"`
 	Action    FirewallRuleAction    `json:"action"`
 	Direction FirewallRuleDirection `json:"direction"`
+	Enabled   bool                  `json:"enabled"`
 }
 
 // PatchFirewallRuleRequest represents a request to patch a firewall rule
@@ -291,12 +293,13 @@ type PatchFirewallRuleRequest struct {
 	Source      string `json:"source,omitempty"`
 	Destination string `json:"destination,omitempty"`
 	Ports       []struct {
-		Protocol    FirewallRulePortProtocol `json:"protocol"`
-		Source      string                   `json:"source"`
-		Destination string                   `json:"destination"`
+		Protocol    FirewallRulePortProtocol `json:"protocol,omitempty"`
+		Source      string                   `json:"source,omitempty"`
+		Destination string                   `json:"destination,omitempty"`
 	} `json:"ports,omitempty"`
 	Action    FirewallRuleAction    `json:"action,omitempty"`
 	Direction FirewallRuleDirection `json:"direction,omitempty"`
+	Enabled   bool                  `json:"enabled,omitempty"`
 }
 
 // CreateFirewallRulePortRequest represents a request to create a firewall rule port
