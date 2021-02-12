@@ -35,7 +35,7 @@ func (s *Service) GetFirewallRulePortsPaginated(parameters connection.APIRequest
 func (s *Service) getFirewallRulePortsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFirewallRulePortSliceResponseBody, error) {
 	body := &GetFirewallRulePortSliceResponseBody{}
 
-	response, err := s.connection.Get("/ecloud/v2/firewall-rules", parameters)
+	response, err := s.connection.Get("/ecloud/v2/firewall-rule-ports", parameters)
 	if err != nil {
 		return body, err
 	}
@@ -57,7 +57,7 @@ func (s *Service) getFirewallRulePortResponseBody(ruleID string) (*GetFirewallRu
 		return body, fmt.Errorf("invalid firewall rule id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/firewall-rules/%s", ruleID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/firewall-rule-ports/%s", ruleID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
@@ -81,7 +81,7 @@ func (s *Service) CreateFirewallRulePort(req CreateFirewallRulePortRequest) (str
 func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortRequest) (*GetFirewallRulePortResponseBody, error) {
 	body := &GetFirewallRulePortResponseBody{}
 
-	response, err := s.connection.Post("/ecloud/v2/firewall-rules", &req)
+	response, err := s.connection.Post("/ecloud/v2/firewall-rule-ports", &req)
 	if err != nil {
 		return body, err
 	}
@@ -103,7 +103,7 @@ func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFire
 		return body, fmt.Errorf("invalid firewall rule id")
 	}
 
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/firewall-rules/%s", ruleID), &req)
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/firewall-rule-ports/%s", ruleID), &req)
 	if err != nil {
 		return body, err
 	}
@@ -131,7 +131,7 @@ func (s *Service) deleteFirewallRulePortResponseBody(ruleID string) (*connection
 		return body, fmt.Errorf("invalid firewall rule id")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/firewall-rules/%s", ruleID), nil)
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/firewall-rule-ports/%s", ruleID), nil)
 	if err != nil {
 		return body, err
 	}

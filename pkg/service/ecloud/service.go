@@ -199,6 +199,14 @@ type ECloudService interface {
 	GetFirewallRuleFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
 	GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
 
+	// Firewall Rule Ports
+	GetFirewallRulePorts(parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
+	GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
+	GetFirewallRulePort(ruleID string) (FirewallRulePort, error)
+	CreateFirewallRulePort(req CreateFirewallRulePortRequest) (string, error)
+	PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) error
+	DeleteFirewallRulePort(ruleID string) error
+
 	// Router
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
 	GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error)
