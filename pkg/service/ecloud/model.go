@@ -579,12 +579,14 @@ type Region struct {
 // +genie:model_response
 // +genie:model_paginated
 type Router struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"name"`
-	VPCID     string              `json:"vpc_id"`
-	Sync      SyncStatus          `json:"sync"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	RouterThroughputID string              `json:"router_throughput_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Sync               SyncStatus          `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
 // LoadBalancerCluster represents an eCloud load balancer cluster
