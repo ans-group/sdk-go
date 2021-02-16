@@ -515,6 +515,7 @@ type FirewallRule struct {
 	ID               string                `json:"id"`
 	Name             string                `json:"name"`
 	FirewallPolicyID string                `json:"firewall_policy_id"`
+	Sequence         int                   `json:"sequence"`
 	Source           string                `json:"source"`
 	Destination      string                `json:"destination"`
 	Action           FirewallRuleAction    `json:"action"`
