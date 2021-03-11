@@ -227,14 +227,6 @@ type ECloudService interface {
 	GetRegionsPaginated(parameters connection.APIRequestParameters) (*PaginatedRegion, error)
 	GetRegion(regionID string) (Region, error)
 
-	// Load balancers
-	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
-	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
-	GetLoadBalancerCluster(lbcID string) (LoadBalancerCluster, error)
-	CreateLoadBalancerCluster(req CreateLoadBalancerClusterRequest) (string, error)
-	PatchLoadBalancerCluster(lbcID string, patch PatchLoadBalancerClusterRequest) error
-	DeleteLoadBalancerCluster(lbcID string) error
-
 	// Volumes
 	GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error)
 	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
@@ -258,6 +250,15 @@ type ECloudService interface {
 	GetRouterThroughputs(parameters connection.APIRequestParameters) ([]RouterThroughput, error)
 	GetRouterThroughputsPaginated(parameters connection.APIRequestParameters) (*PaginatedRouterThroughput, error)
 	GetRouterThroughput(metricID string) (RouterThroughput, error)
+
+	// Image
+	GetImages(parameters connection.APIRequestParameters) ([]Image, error)
+	GetImagesPaginated(parameters connection.APIRequestParameters) (*PaginatedImage, error)
+	GetImage(imageID string) (Image, error)
+	GetImageParameters(imageID string, parameters connection.APIRequestParameters) ([]ImageParameter, error)
+	GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageParameter, error)
+	GetImageMetadata(imageID string, parameters connection.APIRequestParameters) ([]ImageMetadata, error)
+	GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageMetadata, error)
 }
 
 // Service implements ECloudService for managing

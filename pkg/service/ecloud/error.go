@@ -262,3 +262,12 @@ type DiscountPlanNotFoundError struct {
 func (e *DiscountPlanNotFoundError) Error() string {
 	return fmt.Sprintf("Discount plan not found with ID [%s]", e.ID)
 }
+
+// ImageNotFoundError indicates an image was not found
+type ImageNotFoundError struct {
+	ID string
+}
+
+func (e *ImageNotFoundError) Error() string {
+	return fmt.Sprintf("Image not found with ID [%s]", e.ID)
+}

@@ -229,20 +229,21 @@ type PatchLoadBalancerClusterRequest struct {
 	Name string `json:"name,omitempty"`
 }
 
-// PatchLoadBalancerClusterRequest represents a request to create an instance
+// CreateInstanceRequest represents a request to create an instance
 type CreateInstanceRequest struct {
-	Name               string `json:"name,omitempty"`
-	VPCID              string `json:"vpc_id"`
-	ApplianceID        string `json:"appliance_id"`
-	VCPUCores          int    `json:"vcpu_cores"`
-	RAMCapacity        int    `json:"ram_capacity"`
-	Locked             bool   `json:"locked"`
-	VolumeCapacity     int    `json:"volume_capacity"`
-	BackupEnabled      bool   `json:"backup_enabled"`
-	NetworkID          string `json:"network_id,omitempty"`
-	FloatingIPID       string `json:"floating_ip_id,omitempty"`
-	RequiresFloatingIP bool   `json:"requires_floating_ip"`
-	UserScript         string `json:"user_script,omitempty"`
+	Name               string                 `json:"name,omitempty"`
+	VPCID              string                 `json:"vpc_id"`
+	ImageID            string                 `json:"image_id"`
+	ImageData          map[string]interface{} `json:"image_data"`
+	VCPUCores          int                    `json:"vcpu_cores"`
+	RAMCapacity        int                    `json:"ram_capacity"`
+	Locked             bool                   `json:"locked"`
+	VolumeCapacity     int                    `json:"volume_capacity"`
+	BackupEnabled      bool                   `json:"backup_enabled"`
+	NetworkID          string                 `json:"network_id,omitempty"`
+	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
+	RequiresFloatingIP bool                   `json:"requires_floating_ip"`
+	UserScript         string                 `json:"user_script,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance

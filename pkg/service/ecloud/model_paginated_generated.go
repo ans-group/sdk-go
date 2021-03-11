@@ -352,20 +352,6 @@ func NewPaginatedRouter(getFunc connection.PaginatedGetFunc, parameters connecti
 	}
 }
 
-// PaginatedLoadBalancerCluster represents a paginated collection of LoadBalancerCluster
-type PaginatedLoadBalancerCluster struct {
-	*connection.PaginatedBase
-	Items []LoadBalancerCluster
-}
-
-// NewPaginatedLoadBalancerCluster returns a pointer to an initialized PaginatedLoadBalancerCluster struct
-func NewPaginatedLoadBalancerCluster(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerCluster) *PaginatedLoadBalancerCluster {
-	return &PaginatedLoadBalancerCluster{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // PaginatedCredential represents a paginated collection of Credential
 type PaginatedCredential struct {
 	*connection.PaginatedBase
@@ -445,6 +431,48 @@ type PaginatedBillingMetric struct {
 // NewPaginatedBillingMetric returns a pointer to an initialized PaginatedBillingMetric struct
 func NewPaginatedBillingMetric(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []BillingMetric) *PaginatedBillingMetric {
 	return &PaginatedBillingMetric{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImage represents a paginated collection of Image
+type PaginatedImage struct {
+	*connection.PaginatedBase
+	Items []Image
+}
+
+// NewPaginatedImage returns a pointer to an initialized PaginatedImage struct
+func NewPaginatedImage(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Image) *PaginatedImage {
+	return &PaginatedImage{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImageParameter represents a paginated collection of ImageParameter
+type PaginatedImageParameter struct {
+	*connection.PaginatedBase
+	Items []ImageParameter
+}
+
+// NewPaginatedImageParameter returns a pointer to an initialized PaginatedImageParameter struct
+func NewPaginatedImageParameter(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ImageParameter) *PaginatedImageParameter {
+	return &PaginatedImageParameter{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImageMetadata represents a paginated collection of ImageMetadata
+type PaginatedImageMetadata struct {
+	*connection.PaginatedBase
+	Items []ImageMetadata
+}
+
+// NewPaginatedImageMetadata returns a pointer to an initialized PaginatedImageMetadata struct
+func NewPaginatedImageMetadata(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ImageMetadata) *PaginatedImageMetadata {
+	return &PaginatedImageMetadata{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
