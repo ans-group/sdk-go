@@ -326,18 +326,6 @@ type GetRouterResponseBody struct {
 	Data Router `json:"data"`
 }
 
-// GetLoadBalancerClusterSliceResponseBody represents an API response body containing []LoadBalancerCluster data
-type GetLoadBalancerClusterSliceResponseBody struct {
-	connection.APIResponseBody
-	Data []LoadBalancerCluster `json:"data"`
-}
-
-// GetLoadBalancerClusterResponseBody represents an API response body containing LoadBalancerCluster data
-type GetLoadBalancerClusterResponseBody struct {
-	connection.APIResponseBody
-	Data LoadBalancerCluster `json:"data"`
-}
-
 // GetCredentialSliceResponseBody represents an API response body containing []Credential data
 type GetCredentialSliceResponseBody struct {
 	connection.APIResponseBody
@@ -408,4 +396,40 @@ type GetBillingMetricSliceResponseBody struct {
 type GetBillingMetricResponseBody struct {
 	connection.APIResponseBody
 	Data BillingMetric `json:"data"`
+}
+
+// GetImageSliceResponseBody represents an API response body containing []Image data
+type GetImageSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Image `json:"data"`
+}
+
+// GetImageResponseBody represents an API response body containing Image data
+type GetImageResponseBody struct {
+	connection.APIResponseBody
+	Data Image `json:"data"`
+}
+
+// GetImageParameterSliceResponseBody represents an API response body containing []ImageParameter data
+type GetImageParameterSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ImageParameter `json:"data"`
+}
+
+// GetImageParameterResponseBody represents an API response body containing ImageParameter data
+type GetImageParameterResponseBody struct {
+	connection.APIResponseBody
+	Data ImageParameter `json:"data"`
+}
+
+// GetImageMetadataSliceResponseBody represents an API response body containing []ImageMetadata data
+type GetImageMetadataSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ImageMetadata `json:"data"`
+}
+
+// GetImageMetadataResponseBody represents an API response body containing ImageMetadata data
+type GetImageMetadataResponseBody struct {
+	connection.APIResponseBody
+	Data ImageMetadata `json:"data"`
 }

@@ -411,7 +411,7 @@ type Instance struct {
 	Name               string              `json:"name"`
 	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
-	ApplianceID        string              `json:"appliance_id"`
+	ImageID            string              `json:"image_id"`
 	VCPUCores          int                 `json:"vcpu_cores"`
 	RAMCapacity        int                 `json:"ram_capacity"`
 	Locked             bool                `json:"locked"`
@@ -589,19 +589,6 @@ type Router struct {
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
-// LoadBalancerCluster represents an eCloud load balancer cluster
-// +genie:model_response
-// +genie:model_paginated
-type LoadBalancerCluster struct {
-	ID                 string              `json:"id"`
-	Name               string              `json:"name"`
-	VPCID              string              `json:"vpc_id"`
-	AvailabilityZoneID string              `json:"availability_zone_id"`
-	Nodes              int                 `json:"nodes"`
-	CreatedAt          connection.DateTime `json:"created_at"`
-	UpdatedAt          connection.DateTime `json:"updated_at"`
-}
-
 // Credential represents an eCloud credential
 // +genie:model_response
 // +genie:model_paginated
@@ -690,4 +677,43 @@ type BillingMetric struct {
 	End        connection.DateTime `json:"end"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
+}
+
+// Image represents an eCloud image
+// +genie:model_response
+// +genie:model_paginated
+type Image struct {
+	ID               string              `json:"id"`
+	Name             string              `json:"name"`
+	LogoURI          string              `json:"logo_uri"`
+	Description      string              `json:"description"`
+	DocumentationURI string              `json:"documentation_uri"`
+	Publisher        string              `json:"publisher"`
+	CreatedAt        connection.DateTime `json:"created_at"`
+	UpdatedAt        connection.DateTime `json:"updated_at"`
+}
+
+// ImageParameter represents an eCloud image parameter
+// +genie:model_response
+// +genie:model_paginated
+type ImageParameter struct {
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	Key            string              `json:"key"`
+	Type           string              `json:"type"`
+	Description    string              `json:"description"`
+	Required       bool                `json:"required"`
+	ValidationRule string              `json:"validation_rule"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
+}
+
+// ImageMetadata represents eCloud image metadata
+// +genie:model_response
+// +genie:model_paginated
+type ImageMetadata struct {
+	Key       string              `json:"key"`
+	Value     string              `json:"value"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
 }
