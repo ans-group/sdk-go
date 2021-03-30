@@ -71,6 +71,24 @@ func (s *Service) getVolumeResponseBody(volumeID string) (*GetVolumeResponseBody
 	})
 }
 
+// CreateVolume creates a volume
+func (s *Service) CreateVolume(req CreateVolumeRequest) (string, error) {
+	body, err := s.createVolumeResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetVolumeResponseBody, error) {
+	body := &GetVolumeResponseBody{}
+
+	response, err := s.connection.Post("/ecloud/v2/volumes", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // PatchVolume patches a Volume
 func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) error {
 	_, err := s.patchVolumeResponseBody(volumeID, req)
