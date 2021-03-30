@@ -271,12 +271,14 @@ type CreateVolumeRequest struct {
 	Name           string             `json:"name,omitempty"`
 	VPCID          string             `json:"vpc_id"`
 	Capacity       int                `json:"capacity"`
+	Iops           int                `json:"iops,omitempty"`
 }
 
 // PatchVolumeRequest represents a request to patch a volume
 type PatchVolumeRequest struct {
 	Name     string `json:"name,omitempty"`
 	Capacity int    `json:"capacity,omitempty"`
+	Iops     int    `json:"iops,omitempty"`
 }
 
 // CreateFirewallRuleRequest represents a request to create a firewall rule
