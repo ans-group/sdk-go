@@ -167,7 +167,7 @@ func TestCreateVolume(t *testing.T) {
 		assert.Equal(t, "vol-abcdef12", id)
 	})
 
-	t.Run("ConnectionError_ReturnsError", func(t *testing.T){
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
