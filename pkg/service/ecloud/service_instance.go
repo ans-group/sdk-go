@@ -481,3 +481,31 @@ func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parame
 		return nil
 	})
 }
+
+// CreateInstanceConsoleSession creates an instance console session
+func (s *Service) CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error) {
+	body, err := s.createInstanceConsoleSessionResponseBody(instanceID)
+
+	return body.Data, err
+}
+
+func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*GetConsoleSessionResponseBody, error) {
+	body := &GetConsoleSessionResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/instances/%s/console-session", instanceID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}

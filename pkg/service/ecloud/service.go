@@ -162,6 +162,7 @@ type ECloudService interface {
 	PowerResetInstance(instanceID string) error
 	PowerShutdownInstance(instanceID string) error
 	PowerRestartInstance(instanceID string) error
+	CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error)
 	GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error)
