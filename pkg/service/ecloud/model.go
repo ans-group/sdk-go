@@ -346,6 +346,23 @@ func (s SyncStatus) String() string {
 	return string(s)
 }
 
+type SyncType string
+
+const (
+	SyncTypeUpdate SyncType = "update"
+	SyncTypeDelete SyncType = "delete"
+)
+
+func (s SyncType) String() string {
+	return string(s)
+}
+
+// ResourceSync represents the sync status of a resource
+type ResourceSync struct {
+	Status SyncStatus `json:"status"`
+	Type   SyncType   `json:"type"`
+}
+
 // VPC represents an eCloud VPC
 // +genie:model_response
 // +genie:model_paginated
@@ -353,7 +370,7 @@ type VPC struct {
 	ID             string              `json:"id"`
 	Name           string              `json:"name"`
 	RegionID       string              `json:"region_id"`
-	Sync           SyncStatus          `json:"sync"`
+	Sync           ResourceSync        `json:"sync"`
 	SupportEnabled bool                `json:"support_enabled"`
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
@@ -377,7 +394,7 @@ type Network struct {
 	Name      string              `json:"name"`
 	RouterID  string              `json:"router_id"`
 	Subnet    string              `json:"subnet"`
-	Sync      SyncStatus          `json:"sync"`
+	Sync      ResourceSync        `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -418,7 +435,7 @@ type Instance struct {
 	BackupEnabled      bool                `json:"backup_enabled"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
-	Sync               SyncStatus          `json:"sync"`
+	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
 	CreatedAt          connection.DateTime `json:"created_at"`
@@ -434,7 +451,7 @@ type FloatingIP struct {
 	VPCID      string              `json:"vpc_id"`
 	IPAddress  string              `json:"ip_address"`
 	ResourceID string              `json:"resource_id"`
-	Sync       SyncStatus          `json:"sync"`
+	Sync       ResourceSync        `json:"sync"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
@@ -447,7 +464,7 @@ type FirewallPolicy struct {
 	Name      string              `json:"name"`
 	RouterID  string              `json:"router_id"`
 	Sequence  int                 `json:"sequence"`
-	Sync      SyncStatus          `json:"sync"`
+	Sync      ResourceSync        `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -584,7 +601,7 @@ type Router struct {
 	VPCID              string              `json:"vpc_id"`
 	RouterThroughputID string              `json:"router_throughput_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
-	Sync               SyncStatus          `json:"sync"`
+	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -614,7 +631,7 @@ type Volume struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Capacity           int                 `json:"capacity"`
 	IOPS               int                 `json:"iops"`
-	Sync               SyncStatus          `json:"sync"`
+	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
