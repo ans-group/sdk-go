@@ -631,6 +631,7 @@ type Volume struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Capacity           int                 `json:"capacity"`
 	IOPS               int                 `json:"iops"`
+	Attached           bool                `json:"attached"`
 	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
