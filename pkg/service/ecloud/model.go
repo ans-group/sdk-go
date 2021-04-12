@@ -359,8 +359,8 @@ func (s SyncType) String() string {
 
 // ResourceSync represents the sync status of a resource
 type ResourceSync struct {
-	Status SyncStatus `json:"status"`
-	Type   SyncType   `json:"type"`
+	Status *SyncStatus `json:"status"`
+	Type   *SyncType   `json:"type"`
 }
 
 // VPC represents an eCloud VPC
