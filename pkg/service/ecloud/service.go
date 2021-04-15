@@ -237,6 +237,8 @@ type ECloudService interface {
 	DeleteVolume(volumeID string) error
 	GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error)
 	GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
+	AttachVolume(volumeID string, req AttachVolumeRequest) error
+	DetachVolume(volumeID string, req DetachVolumeRequest) error
 
 	// NICs
 	GetNICs(parameters connection.APIRequestParameters) ([]NIC, error)
