@@ -147,19 +147,19 @@ func (s *Service) deleteVolumeResponseBody(volumeID string) (*connection.APIResp
 
 // GetVolumeInstances retrieves a list of volume instances
 func (s *Service) GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error) {
-	var policies []Instance
+	var instances []Instance
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVolumeInstancesPaginated(volumeID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, policy := range response.(*PaginatedInstance).Items {
-			policies = append(policies, policy)
+		for _, instance := range response.(*PaginatedInstance).Items {
+			instances = append(instances, instance)
 		}
 	}
 
-	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetVolumeInstancesPaginated retrieves a paginated list of volume instances
@@ -179,6 +179,60 @@ func (s *Service) getVolumeInstancesPaginatedResponseBody(volumeID string, param
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/volumes/%s/instances", volumeID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VolumeNotFoundError{ID: volumeID}
+		}
+
+		return nil
+	})
+}
+
+func (s *Service) AttachVolume(volumeID string, req AttachVolumeRequest) error {
+	_, err := s.attachVolumeResponseBody(volumeID, req)
+
+	return err
+}
+
+func (s *Service) attachVolumeResponseBody(volumeID string, req AttachVolumeRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if volumeID == "" {
+		return body, fmt.Errorf("invalid volume id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/volumes/%s/attach", volumeID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VolumeNotFoundError{ID: volumeID}
+		}
+
+		return nil
+	})
+}
+
+func (s *Service) DetachVolume(volumeID string, req DetachVolumeRequest) error {
+	_, err := s.detachVolumeResponseBody(volumeID, req)
+
+	return err
+}
+
+func (s *Service) detachVolumeResponseBody(volumeID string, req DetachVolumeRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if volumeID == "" {
+		return body, fmt.Errorf("invalid volume id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/volumes/%s/detach", volumeID), &req)
 	if err != nil {
 		return body, err
 	}

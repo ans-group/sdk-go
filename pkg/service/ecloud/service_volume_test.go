@@ -434,3 +434,197 @@ func TestGetVolumeInstances(t *testing.T) {
 		assert.IsType(t, &VolumeNotFoundError{}, err)
 	})
 }
+
+func TestAttachVolume(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := AttachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/attach", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		err := s.AttachVolume("vol-abcdef12", req)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := AttachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/attach", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.AttachVolume("vol-abcdef12", req)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidVolumeID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := AttachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		err := s.AttachVolume("", req)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid volume id", err.Error())
+	})
+
+	t.Run("404_ReturnsVolumeNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := AttachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/attach", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.AttachVolume("vol-abcdef12", req)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VolumeNotFoundError{}, err)
+	})
+}
+
+func TestDetachVolume(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := DetachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/detach", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		err := s.DetachVolume("vol-abcdef12", req)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := DetachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/detach", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DetachVolume("vol-abcdef12", req)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidVolumeID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := DetachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		err := s.DetachVolume("", req)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid volume id", err.Error())
+	})
+
+	t.Run("404_ReturnsVolumeNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := DetachVolumeRequest{
+			InstanceID: "i-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/volumes/vol-abcdef12/detach", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DetachVolume("vol-abcdef12", req)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VolumeNotFoundError{}, err)
+	})
+}
