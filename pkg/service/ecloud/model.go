@@ -658,7 +658,6 @@ type RouterThroughput struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Name               string              `json:"name"`
 	CommittedBandwidth int                 `json:"committed_bandwidth"`
-	BurstSize          int                 `json:"burst_size"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
