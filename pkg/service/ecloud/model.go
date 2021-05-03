@@ -621,6 +621,17 @@ type Credential struct {
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
+type VolumeType string
+
+const (
+	VolumeTypeOS   VolumeType = "os"
+	VolumeTypeData VolumeType = "data"
+)
+
+func (s VolumeType) String() string {
+	return string(s)
+}
+
 // Volume represents an eCloud volume
 // +genie:model_response
 // +genie:model_paginated
@@ -632,6 +643,7 @@ type Volume struct {
 	Capacity           int                 `json:"capacity"`
 	IOPS               int                 `json:"iops"`
 	Attached           bool                `json:"attached"`
+	Type               VolumeType          `json:"type"`
 	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
