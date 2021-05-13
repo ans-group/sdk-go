@@ -1,6 +1,7 @@
 package loadbalancer
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ukfast/sdk-go/pkg/connection"
@@ -8,19 +9,19 @@ import (
 
 // GetClusters retrieves a list of clusters
 func (s *Service) GetClusters(parameters connection.APIRequestParameters) ([]Cluster, error) {
-	var sites []Cluster
+	var clusters []Cluster
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetClustersPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedCluster).Items {
-			sites = append(sites, site)
+		for _, cluster := range response.(*PaginatedCluster).Items {
+			clusters = append(clusters, cluster)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return clusters, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetClustersPaginated retrieves a paginated list of clusters
@@ -44,20 +45,20 @@ func (s *Service) getClustersPaginatedResponseBody(parameters connection.APIRequ
 }
 
 // GetCluster retrieves a single cluster by id
-func (s *Service) GetCluster(clusterID string) (Cluster, error) {
+func (s *Service) GetCluster(clusterID int) (Cluster, error) {
 	body, err := s.getClusterResponseBody(clusterID)
 
 	return body.Data, err
 }
 
-func (s *Service) getClusterResponseBody(clusterID string) (*GetClusterResponseBody, error) {
+func (s *Service) getClusterResponseBody(clusterID int) (*GetClusterResponseBody, error) {
 	body := &GetClusterResponseBody{}
 
-	if clusterID == "" {
+	if clusterID < 1 {
 		return body, fmt.Errorf("invalid cluster id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%s", clusterID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d", clusterID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
@@ -72,20 +73,20 @@ func (s *Service) getClusterResponseBody(clusterID string) (*GetClusterResponseB
 }
 
 // PatchCluster patches a Cluster
-func (s *Service) PatchCluster(clusterID string, req PatchClusterRequest) error {
+func (s *Service) PatchCluster(clusterID int, req PatchClusterRequest) error {
 	_, err := s.patchClusterResponseBody(clusterID, req)
 
 	return err
 }
 
-func (s *Service) patchClusterResponseBody(clusterID string, req PatchClusterRequest) (*connection.APIResponseBody, error) {
+func (s *Service) patchClusterResponseBody(clusterID int, req PatchClusterRequest) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
-	if clusterID == "" {
+	if clusterID < 1 {
 		return body, fmt.Errorf("invalid cluster id")
 	}
 
-	response, err := s.connection.Patch(fmt.Sprintf("/loadbalancers/v2/clusters/%s", clusterID), &req)
+	response, err := s.connection.Patch(fmt.Sprintf("/loadbalancers/v2/clusters/%d", clusterID), &req)
 	if err != nil {
 		return body, err
 	}
@@ -99,21 +100,21 @@ func (s *Service) patchClusterResponseBody(clusterID string, req PatchClusterReq
 	})
 }
 
-// DeleteCluster deletes a Cluster
-func (s *Service) DeleteCluster(clusterID string) error {
-	_, err := s.deleteClusterResponseBody(clusterID)
+// DeployCluster deploys a Cluster
+func (s *Service) DeployCluster(clusterID int) error {
+	_, err := s.deployClusterResponseBody(clusterID)
 
 	return err
 }
 
-func (s *Service) deleteClusterResponseBody(clusterID string) (*connection.APIResponseBody, error) {
+func (s *Service) deployClusterResponseBody(clusterID int) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
-	if clusterID == "" {
+	if clusterID < 1 {
 		return body, fmt.Errorf("invalid cluster id")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/loadbalancers/v2/clusters/%s", clusterID), nil)
+	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/clusters/%d/deploy", clusterID), nil)
 	if err != nil {
 		return body, err
 	}
@@ -125,4 +126,47 @@ func (s *Service) deleteClusterResponseBody(clusterID string) (*connection.APIRe
 
 		return nil
 	})
+}
+
+// ValidateCluster validates a cluster
+func (s *Service) ValidateCluster(clusterID int) error {
+	response := &connection.APIResponse{}
+
+	if clusterID < 1 {
+		return fmt.Errorf("invalid cluster id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/deploy", clusterID), connection.APIRequestParameters{})
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode == 422 {
+		body := &validateClusterResponseBody{}
+		err := response.DeserializeResponseBody(body)
+		if err != nil {
+			return err
+		}
+
+		return errors.New(body.ErrorString())
+	}
+
+	return response.HandleResponse(&connection.APIResponseBody{}, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &ClusterNotFoundError{ID: clusterID}
+		}
+
+		return nil
+	})
+}
+
+type validateClusterResponseBody struct {
+	Errors interface{} `json:"errors"`
+}
+
+func (r *validateClusterResponseBody) ErrorString() string {
+	return fmt.Sprintf("%+v", r.Errors)
+}
+func (r *validateClusterResponseBody) Pagination() connection.APIResponseMetadataPagination {
+	return connection.APIResponseMetadataPagination{}
 }

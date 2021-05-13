@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetClusters(t *testing.T) {
+func TestGetTargetGroups(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetClusters(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/target-groups", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		clusters, err := s.GetClusters(connection.APIRequestParameters{})
+		groups, err := s.GetTargetGroups(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, clusters, 1)
-		assert.Equal(t, 123, clusters[0].ID)
+		assert.Len(t, groups, 1)
+		assert.Equal(t, 123, groups[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetClusters(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/loadbalancers/v2/target-groups", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetClusters(connection.APIRequestParameters{})
+		_, err := s.GetTargetGroups(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetCluster(t *testing.T) {
+func TestGetTargetGroup(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		cluster, err := s.GetCluster(123)
+		group, err := s.GetTargetGroup(123)
 
 		assert.Nil(t, err)
-		assert.Equal(t, 123, cluster.ID)
+		assert.Equal(t, 123, group.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetCluster(123)
+		_, err := s.GetTargetGroup(123)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidClusterID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetCluster(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetCluster(0)
+		_, err := s.GetTargetGroup(0)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid cluster id", err.Error())
+		assert.Equal(t, "invalid group id", err.Error())
 	})
 
-	t.Run("404_ReturnsClusterNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,21 +125,21 @@ func TestGetCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetCluster(123)
+		_, err := s.GetTargetGroup(123)
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &ClusterNotFoundError{}, err)
+		assert.IsType(t, &TargetGroupNotFoundError{}, err)
 	})
 }
 
-func TestPatchCluster(t *testing.T) {
+func TestPatchTargetGroup(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -150,18 +150,18 @@ func TestPatchCluster(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchClusterRequest{
-			Name: "somecluster",
+		req := PatchTargetGroupRequest{
+			Name: "somegroup",
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", &req).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchCluster(123, req)
+		err := s.PatchTargetGroup(123, req)
 
 		assert.Nil(t, err)
 	})
@@ -176,15 +176,15 @@ func TestPatchCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchCluster(123, PatchClusterRequest{})
+		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidClusterID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -194,13 +194,13 @@ func TestPatchCluster(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchCluster(0, PatchClusterRequest{})
+		err := s.PatchTargetGroup(0, PatchTargetGroupRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid cluster id", err.Error())
+		assert.Equal(t, "invalid group id", err.Error())
 	})
 
-	t.Run("404_ReturnsClusterNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -210,16 +210,16 @@ func TestPatchCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchCluster(123, PatchClusterRequest{})
+		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &ClusterNotFoundError{}, err)
+		assert.IsType(t, &TargetGroupNotFoundError{}, err)
 	})
 }

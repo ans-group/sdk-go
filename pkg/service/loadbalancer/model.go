@@ -9,8 +9,9 @@ import "github.com/ukfast/sdk-go/pkg/connection"
 // +genie:model_response
 // +genie:model_paginated
 type Target struct {
-	ID            string               `json:"id"`
-	TargetGroupID string               `json:"targetgroup_id"`
+	ID            int                  `json:"id"`
+	TargetGroupID int                  `json:"targetgroup_id"`
+	Name          string               `json:"name"`
 	IP            connection.IPAddress `json:"ip"`
 	Port          int                  `json:"port"`
 	Weight        int                  `json:"weight"`
@@ -29,149 +30,139 @@ type Target struct {
 // +genie:model_response
 // +genie:model_paginated
 type TargetGroup struct {
-	ID              string              `json:"id"`
-	ClusterID       string              `json:"cluster_id"`
-	Name            string              `json:"name"`
-	Balance         string              `json:"balance"`
-	Mode            string              `json:"mode"`
-	Close           bool                `json:"close"`
-	Sticky          bool                `json:"sticky"`
-	CookieOpts      string              `json:"cookie_opts"`
-	Source          string              `json:"source"`
-	TimeoutsConnect int                 `json:"timeouts_connect"`
-	TimeoutServer   int                 `json:"timeouts_server"`
-	CustomOptions   string              `json:"custom_options"`
-	MonitorURL      string              `json:"monitor_url"`
-	MonitorHost     string              `json:"monitor_host"`
-	CreatedAt       connection.DateTime `json:"created_at"`
-	UpdatedAt       connection.DateTime `json:"updated_at"`
+	ID                   int                 `json:"id"`
+	ClusterID            int                 `json:"cluster_id"`
+	Name                 string              `json:"name"`
+	Balance              string              `json:"balance"`
+	Mode                 string              `json:"mode"`
+	Close                bool                `json:"close"`
+	Sticky               bool                `json:"sticky"`
+	CookieOpts           string              `json:"cookie_opts"`
+	Source               string              `json:"source"`
+	TimeoutsConnect      int                 `json:"timeouts_connect"`
+	TimeoutServer        int                 `json:"timeouts_server"`
+	CustomOptions        string              `json:"custom_options"`
+	MonitorURL           string              `json:"monitor_url"`
+	MonitorMethod        string              `json:"monitor_method"`
+	MonitorHost          string              `json:"monitor_host"`
+	MonitorHTTPVersion   string              `json:"monitor_http_version"`
+	MonitorExpect        string              `json:"monitor_expect"`
+	MonitorTCPMonitoring bool                `json:"monitor_tcp_monitoring"`
+	CheckPort            int                 `json:"check_port"`
+	SendProxy            bool                `json:"send_proxy"`
+	SendProxyV2          bool                `json:"send_proxy_v2"`
+	CreatedAt            connection.DateTime `json:"created_at"`
+	UpdatedAt            connection.DateTime `json:"updated_at"`
 }
 
 // Cluster represents a cluster
 // +genie:model_response
 // +genie:model_paginated
 type Cluster struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"name"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID         int                 `json:"id"`
+	Name       string              `json:"name"`
+	Deployed   bool                `json:"deployed"`
+	DeployedAt connection.DateTime `json:"deployed_at"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
 // VIP represents a target virtual IP address
 // +genie:model_response
 // +genie:model_paginated
 type VIP struct {
-	ID        string              `json:"id"`
-	ClusterID string              `json:"cluster_id"`
-	Type      string              `json:"type"`
-	CIDR      string              `json:"cidr"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID           int                 `json:"id"`
+	ClusterID    int                 `json:"cluster_id"`
+	InternalCIDR string              `json:"internal_cidr"`
+	ExternalCIDR string              `json:"external_cidr"`
+	MACAddress   string              `json:"mac_address"`
+	CreatedAt    connection.DateTime `json:"created_at"`
+	UpdatedAt    connection.DateTime `json:"updated_at"`
 }
 
 // Listener represents a listener / frontend
 // +genie:model_response
 // +genie:model_paginated
 type Listener struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	ClusterID string `json:"cluster_id"`
-	// TBC - should VIPsID and Port be removed here in favour of related binds?
-	VIPsID               string              `json:"vips_id"`
-	Port                 int                 `json:"port"`
+	ID                   int                 `json:"id"`
+	Name                 string              `json:"name"`
+	ClusterID            int                 `json:"cluster_id"`
 	HSTSEnabled          bool                `json:"hsts_enabled"`
 	Mode                 string              `json:"mode"`
 	HSTSMaxAge           int                 `json:"hsts_maxage"`
 	Close                bool                `json:"close"`
 	RedirectHTTPS        bool                `json:"redirect_https"`
-	DefaultTargetGroupID string              `json:"default_targetgroup_id"`
+	DefaultTargetGroupID int                 `json:"default_targetgroup_id"`
 	CreatedAt            connection.DateTime `json:"created_at"`
 	UpdatedAt            connection.DateTime `json:"updated_at"`
 }
 
-// ErrorPage represents an error page
+// AccessIP represents an access IP
 // +genie:model_response
 // +genie:model_paginated
-type ErrorPage struct {
-	ID         string              `json:"id"`
-	StatusCode string              `json:"status_code"`
-	Content    string              `json:"content"`
-	CreatedAt  connection.DateTime `json:"created_at"`
-	UpdatedAt  connection.DateTime `json:"updated_at"`
-}
-
-// Access represents an access rule
-// +genie:model_response
-// +genie:model_paginated
-type Access struct {
-	ID         string              `json:"id"`
-	ListenerID string              `json:"listener_id"`
-	Whitelist  bool                `json:"whitelist"`
-	CreatedAt  connection.DateTime `json:"created_at"`
-	UpdatedAt  connection.DateTime `json:"updated_at"`
+type AccessIP struct {
+	ID        int                  `json:"id"`
+	IP        connection.IPAddress `json:"ip"`
+	CreatedAt connection.DateTime  `json:"created_at"`
+	UpdatedAt connection.DateTime  `json:"updated_at"`
 }
 
 // Bind represents a bind
 // +genie:model_response
 // +genie:model_paginated
 type Bind struct {
-	ID         string              `json:"id"`
-	ListenerID string              `json:"listener_id"`
-	VIPsID     string              `json:"vips_id"`
+	ID         int                 `json:"id"`
+	ListenerID int                 `json:"listener_id"`
+	VIPID      int                 `json:"vip_id"`
 	Port       int                 `json:"port"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
-// ListenerCertificate represents a listener certificate
+// Certificate represents a certificate
 // +genie:model_response
 // +genie:model_paginated
-type ListenerCertificate struct {
-	ID         string              `json:"id"`
-	ListenerID string              `json:"listener_id"`
-	CertsName  string              `json:"certs_name"`
-	CertsPEM   string              `json:"certs_pem"`
-	CreatedAt  connection.DateTime `json:"created_at"`
-	UpdatedAt  connection.DateTime `json:"updated_at"`
-}
-
-// ListenerErrorPage represents a listener error page relationship
-// +genie:model_response
-// +genie:model_paginated
-type ListenerErrorPage struct {
-	ID          string              `json:"id"`
-	ListenerID  string              `json:"listener_id"`
-	ErrorPageID string              `json:"error_page_id"`
+type Certificate struct {
+	ID          int                 `json:"id"`
+	ListenerID  int                 `json:"listener_id"`
+	Name        string              `json:"name"`
+	key         string              `json:"key"`
+	Certificate string              `json:"certificate"`
+	CABundle    string              `json:"ca_bundle"`
 	CreatedAt   connection.DateTime `json:"created_at"`
 	UpdatedAt   connection.DateTime `json:"updated_at"`
 }
 
-// SSL represents a SSL options
+// Header represents a header
 // +genie:model_response
 // +genie:model_paginated
-type SSL struct {
-	ID                 string              `json:"id"`
-	BindsID            string              `json:"binds_id"`
-	Enabled            bool                `json:"enabled"`
-	AllowTLSv1         bool                `json:"allow_tlsv1"`
-	AllowTLSv11        bool                `json:"allow_tlsv11"`
-	DisableHTTP2       bool                `json:"disable_http2"`
-	HTTP2Only          bool                `json:"http2_only"`
-	CustomCiphers      string              `json:"custom_ciphers"`
-	CustomTLS13Ciphers string              `json:"custom_tls13_ciphers"`
-	CreatedAt          connection.DateTime `json:"created_at"`
-	UpdatedAt          connection.DateTime `json:"updated_at"`
+type Header struct {
+	Header string `json:"header"`
 }
 
-// CustomOption represents a custom option
+// ACL represents an ACL
 // +genie:model_response
 // +genie:model_paginated
-type CustomOption struct {
-	ID            string              `json:"id"`
-	ListenerID    string              `json:"listener_id"`
-	TargetGroupID string              `json:"targetgroup_id"`
-	TargetID      string              `json:"target_id"`
-	String        string              `json:"string"`
-	CreatedAt     connection.DateTime `json:"created_at"`
-	UpdatedAt     connection.DateTime `json:"updated_at"`
+type ACL struct {
+	ID            int            `json:"id"`
+	Name          string         `json:"name"`
+	ListenerID    int            `json:"listener_id"`
+	TargetGroupID int            `json:"target_group_id"`
+	Conditions    []ACLCondition `json:"conditions"`
+}
+
+// ACLCondition represents an ACL condition
+// +genie:model_response
+// +genie:model_paginated
+type ACLCondition struct {
+	Name      string                 `json:"name"`
+	Arguments []ACLConditionArgument `json:"arguments"`
+}
+
+// ACLConditionArgument represents an ACL condition argument
+// +genie:model_response
+// +genie:model_paginated
+type ACLConditionArgument struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }

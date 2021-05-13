@@ -228,7 +228,7 @@ func TestAPIResponseError_String(t *testing.T) {
 func TestAPIResponseBody_ErrorString(t *testing.T) {
 	t.Run("SingleError", func(t *testing.T) {
 		b := APIResponseBody{
-			Error: []APIResponseError{
+			Errors: []APIResponseError{
 				APIResponseError{
 					Detail: "test detail 1",
 					Source: "test source 1",
@@ -245,7 +245,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 
 	t.Run("MultipleErrors", func(t *testing.T) {
 		b := APIResponseBody{
-			Error: []APIResponseError{
+			Errors: []APIResponseError{
 				APIResponseError{
 					Detail: "test detail 1",
 					Source: "test source 1",
@@ -268,7 +268,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 
 	t.Run("WithMessage", func(t *testing.T) {
 		b := APIResponseBody{
-			Error: []APIResponseError{
+			Errors: []APIResponseError{
 				APIResponseError{
 					Detail: "test detail 1",
 					Source: "test source 1",

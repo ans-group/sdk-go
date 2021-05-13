@@ -24,7 +24,7 @@ type APIResponse struct {
 // APIResponseBody represents the base API response body
 type APIResponseBody struct {
 	Metadata APIResponseMetadata `json:"meta"`
-	Error    []APIResponseError  `json:"errors"`
+	Errors   []APIResponseError  `json:"errors"`
 	Message  string              `json:"message"`
 }
 
@@ -133,7 +133,7 @@ func (a *APIResponseBody) ErrorString() string {
 	}
 
 	// Now loop through errors and add to error array
-	for _, err := range a.Error {
+	for _, err := range a.Errors {
 		errArr = append(errArr, err.String())
 	}
 

@@ -72,29 +72,15 @@ func NewPaginatedListener(getFunc connection.PaginatedGetFunc, parameters connec
 	}
 }
 
-// PaginatedErrorPage represents a paginated collection of ErrorPage
-type PaginatedErrorPage struct {
+// PaginatedAccessIP represents a paginated collection of AccessIP
+type PaginatedAccessIP struct {
 	*connection.PaginatedBase
-	Items []ErrorPage
+	Items []AccessIP
 }
 
-// NewPaginatedErrorPage returns a pointer to an initialized PaginatedErrorPage struct
-func NewPaginatedErrorPage(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ErrorPage) *PaginatedErrorPage {
-	return &PaginatedErrorPage{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
-// PaginatedAccess represents a paginated collection of Access
-type PaginatedAccess struct {
-	*connection.PaginatedBase
-	Items []Access
-}
-
-// NewPaginatedAccess returns a pointer to an initialized PaginatedAccess struct
-func NewPaginatedAccess(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Access) *PaginatedAccess {
-	return &PaginatedAccess{
+// NewPaginatedAccessIP returns a pointer to an initialized PaginatedAccessIP struct
+func NewPaginatedAccessIP(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []AccessIP) *PaginatedAccessIP {
+	return &PaginatedAccessIP{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
@@ -114,57 +100,71 @@ func NewPaginatedBind(getFunc connection.PaginatedGetFunc, parameters connection
 	}
 }
 
-// PaginatedListenerCertificate represents a paginated collection of ListenerCertificate
-type PaginatedListenerCertificate struct {
+// PaginatedCertificate represents a paginated collection of Certificate
+type PaginatedCertificate struct {
 	*connection.PaginatedBase
-	Items []ListenerCertificate
+	Items []Certificate
 }
 
-// NewPaginatedListenerCertificate returns a pointer to an initialized PaginatedListenerCertificate struct
-func NewPaginatedListenerCertificate(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ListenerCertificate) *PaginatedListenerCertificate {
-	return &PaginatedListenerCertificate{
+// NewPaginatedCertificate returns a pointer to an initialized PaginatedCertificate struct
+func NewPaginatedCertificate(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Certificate) *PaginatedCertificate {
+	return &PaginatedCertificate{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
 
-// PaginatedListenerErrorPage represents a paginated collection of ListenerErrorPage
-type PaginatedListenerErrorPage struct {
+// PaginatedHeader represents a paginated collection of Header
+type PaginatedHeader struct {
 	*connection.PaginatedBase
-	Items []ListenerErrorPage
+	Items []Header
 }
 
-// NewPaginatedListenerErrorPage returns a pointer to an initialized PaginatedListenerErrorPage struct
-func NewPaginatedListenerErrorPage(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ListenerErrorPage) *PaginatedListenerErrorPage {
-	return &PaginatedListenerErrorPage{
+// NewPaginatedHeader returns a pointer to an initialized PaginatedHeader struct
+func NewPaginatedHeader(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Header) *PaginatedHeader {
+	return &PaginatedHeader{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
 
-// PaginatedSSL represents a paginated collection of SSL
-type PaginatedSSL struct {
+// PaginatedACL represents a paginated collection of ACL
+type PaginatedACL struct {
 	*connection.PaginatedBase
-	Items []SSL
+	Items []ACL
 }
 
-// NewPaginatedSSL returns a pointer to an initialized PaginatedSSL struct
-func NewPaginatedSSL(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []SSL) *PaginatedSSL {
-	return &PaginatedSSL{
+// NewPaginatedACL returns a pointer to an initialized PaginatedACL struct
+func NewPaginatedACL(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACL) *PaginatedACL {
+	return &PaginatedACL{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
 
-// PaginatedCustomOption represents a paginated collection of CustomOption
-type PaginatedCustomOption struct {
+// PaginatedACLCondition represents a paginated collection of ACLCondition
+type PaginatedACLCondition struct {
 	*connection.PaginatedBase
-	Items []CustomOption
+	Items []ACLCondition
 }
 
-// NewPaginatedCustomOption returns a pointer to an initialized PaginatedCustomOption struct
-func NewPaginatedCustomOption(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []CustomOption) *PaginatedCustomOption {
-	return &PaginatedCustomOption{
+// NewPaginatedACLCondition returns a pointer to an initialized PaginatedACLCondition struct
+func NewPaginatedACLCondition(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLCondition) *PaginatedACLCondition {
+	return &PaginatedACLCondition{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedACLConditionArgument represents a paginated collection of ACLConditionArgument
+type PaginatedACLConditionArgument struct {
+	*connection.PaginatedBase
+	Items []ACLConditionArgument
+}
+
+// NewPaginatedACLConditionArgument returns a pointer to an initialized PaginatedACLConditionArgument struct
+func NewPaginatedACLConditionArgument(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLConditionArgument) *PaginatedACLConditionArgument {
+	return &PaginatedACLConditionArgument{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

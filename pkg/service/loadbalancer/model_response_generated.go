@@ -62,28 +62,16 @@ type GetListenerResponseBody struct {
 	Data Listener `json:"data"`
 }
 
-// GetErrorPageSliceResponseBody represents an API response body containing []ErrorPage data
-type GetErrorPageSliceResponseBody struct {
+// GetAccessIPSliceResponseBody represents an API response body containing []AccessIP data
+type GetAccessIPSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []ErrorPage `json:"data"`
+	Data []AccessIP `json:"data"`
 }
 
-// GetErrorPageResponseBody represents an API response body containing ErrorPage data
-type GetErrorPageResponseBody struct {
+// GetAccessIPResponseBody represents an API response body containing AccessIP data
+type GetAccessIPResponseBody struct {
 	connection.APIResponseBody
-	Data ErrorPage `json:"data"`
-}
-
-// GetAccessSliceResponseBody represents an API response body containing []Access data
-type GetAccessSliceResponseBody struct {
-	connection.APIResponseBody
-	Data []Access `json:"data"`
-}
-
-// GetAccessResponseBody represents an API response body containing Access data
-type GetAccessResponseBody struct {
-	connection.APIResponseBody
-	Data Access `json:"data"`
+	Data AccessIP `json:"data"`
 }
 
 // GetBindSliceResponseBody represents an API response body containing []Bind data
@@ -98,50 +86,62 @@ type GetBindResponseBody struct {
 	Data Bind `json:"data"`
 }
 
-// GetListenerCertificateSliceResponseBody represents an API response body containing []ListenerCertificate data
-type GetListenerCertificateSliceResponseBody struct {
+// GetCertificateSliceResponseBody represents an API response body containing []Certificate data
+type GetCertificateSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []ListenerCertificate `json:"data"`
+	Data []Certificate `json:"data"`
 }
 
-// GetListenerCertificateResponseBody represents an API response body containing ListenerCertificate data
-type GetListenerCertificateResponseBody struct {
+// GetCertificateResponseBody represents an API response body containing Certificate data
+type GetCertificateResponseBody struct {
 	connection.APIResponseBody
-	Data ListenerCertificate `json:"data"`
+	Data Certificate `json:"data"`
 }
 
-// GetListenerErrorPageSliceResponseBody represents an API response body containing []ListenerErrorPage data
-type GetListenerErrorPageSliceResponseBody struct {
+// GetHeaderSliceResponseBody represents an API response body containing []Header data
+type GetHeaderSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []ListenerErrorPage `json:"data"`
+	Data []Header `json:"data"`
 }
 
-// GetListenerErrorPageResponseBody represents an API response body containing ListenerErrorPage data
-type GetListenerErrorPageResponseBody struct {
+// GetHeaderResponseBody represents an API response body containing Header data
+type GetHeaderResponseBody struct {
 	connection.APIResponseBody
-	Data ListenerErrorPage `json:"data"`
+	Data Header `json:"data"`
 }
 
-// GetSSLSliceResponseBody represents an API response body containing []SSL data
-type GetSSLSliceResponseBody struct {
+// GetACLSliceResponseBody represents an API response body containing []ACL data
+type GetACLSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []SSL `json:"data"`
+	Data []ACL `json:"data"`
 }
 
-// GetSSLResponseBody represents an API response body containing SSL data
-type GetSSLResponseBody struct {
+// GetACLResponseBody represents an API response body containing ACL data
+type GetACLResponseBody struct {
 	connection.APIResponseBody
-	Data SSL `json:"data"`
+	Data ACL `json:"data"`
 }
 
-// GetCustomOptionSliceResponseBody represents an API response body containing []CustomOption data
-type GetCustomOptionSliceResponseBody struct {
+// GetACLConditionSliceResponseBody represents an API response body containing []ACLCondition data
+type GetACLConditionSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []CustomOption `json:"data"`
+	Data []ACLCondition `json:"data"`
 }
 
-// GetCustomOptionResponseBody represents an API response body containing CustomOption data
-type GetCustomOptionResponseBody struct {
+// GetACLConditionResponseBody represents an API response body containing ACLCondition data
+type GetACLConditionResponseBody struct {
 	connection.APIResponseBody
-	Data CustomOption `json:"data"`
+	Data ACLCondition `json:"data"`
+}
+
+// GetACLConditionArgumentSliceResponseBody represents an API response body containing []ACLConditionArgument data
+type GetACLConditionArgumentSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ACLConditionArgument `json:"data"`
+}
+
+// GetACLConditionArgumentResponseBody represents an API response body containing ACLConditionArgument data
+type GetACLConditionArgumentResponseBody struct {
+	connection.APIResponseBody
+	Data ACLConditionArgument `json:"data"`
 }
