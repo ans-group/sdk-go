@@ -747,3 +747,31 @@ type ImageMetadata struct {
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
+
+// HostGroup represents an eCloud host group
+// +genie:model_response
+// +genie:model_paginated
+type HostGroup struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	WindowsEnabled     bool                `json:"windows_enabled"`
+	HostSpecID         string              `json:"host_spec_id"`
+	Sync               ResourceSync        `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// HostSpec represents an eCloud host spec
+// +genie:model_response
+// +genie:model_paginated
+type HostSpec struct {
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	CPUSockets    int    `json:"cpu_sockets"`
+	CPUType       string `json:"cpu_type"`
+	CPUCores      int    `json:"cpu_cores"`
+	CPUClockSpeed int    `json:"cpu_clock_speed"`
+	RAMCapacity   int    `json:"ram_capacity"`
+}

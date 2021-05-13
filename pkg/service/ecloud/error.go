@@ -271,3 +271,21 @@ type ImageNotFoundError struct {
 func (e *ImageNotFoundError) Error() string {
 	return fmt.Sprintf("Image not found with ID [%s]", e.ID)
 }
+
+// HostSpecFoundError indicates an host spec was not found
+type HostSpecNotFoundError struct {
+	ID string
+}
+
+func (e *HostSpecNotFoundError) Error() string {
+	return fmt.Sprintf("Host spec not found with ID [%s]", e.ID)
+}
+
+// HostGroupFoundError indicates an host group was not found
+type HostGroupNotFoundError struct {
+	ID string
+}
+
+func (e *HostGroupNotFoundError) Error() string {
+	return fmt.Sprintf("Host group not found with ID [%s]", e.ID)
+}

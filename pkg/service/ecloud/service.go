@@ -263,6 +263,19 @@ type ECloudService interface {
 	GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageParameter, error)
 	GetImageMetadata(imageID string, parameters connection.APIRequestParameters) ([]ImageMetadata, error)
 	GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageMetadata, error)
+
+	// HostSpecs
+	GetHostSpecs(parameters connection.APIRequestParameters) ([]HostSpec, error)
+	GetHostSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostSpec, error)
+	GetHostSpec(specID string) (HostSpec, error)
+
+	// HostGroups
+	GetHostGroups(parameters connection.APIRequestParameters) ([]HostGroup, error)
+	GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostGroup, error)
+	GetHostGroup(hostGroupID string) (HostGroup, error)
+	CreateHostGroup(req CreateHostGroupRequest) (string, error)
+	PatchHostGroup(hostGroupID string, patch PatchHostGroupRequest) error
+	DeleteHostGroup(hostGroupID string) error
 }
 
 // Service implements ECloudService for managing
