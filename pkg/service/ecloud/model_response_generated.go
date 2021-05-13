@@ -433,3 +433,15 @@ type GetImageMetadataResponseBody struct {
 	connection.APIResponseBody
 	Data ImageMetadata `json:"data"`
 }
+
+// GetHostSpecSliceResponseBody represents an API response body containing []HostSpec data
+type GetHostSpecSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []HostSpec `json:"data"`
+}
+
+// GetHostSpecResponseBody represents an API response body containing HostSpec data
+type GetHostSpecResponseBody struct {
+	connection.APIResponseBody
+	Data HostSpec `json:"data"`
+}

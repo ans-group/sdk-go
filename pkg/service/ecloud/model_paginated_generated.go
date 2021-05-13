@@ -477,3 +477,17 @@ func NewPaginatedImageMetadata(getFunc connection.PaginatedGetFunc, parameters c
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedHostSpec represents a paginated collection of HostSpec
+type PaginatedHostSpec struct {
+	*connection.PaginatedBase
+	Items []HostSpec
+}
+
+// NewPaginatedHostSpec returns a pointer to an initialized PaginatedHostSpec struct
+func NewPaginatedHostSpec(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []HostSpec) *PaginatedHostSpec {
+	return &PaginatedHostSpec{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
