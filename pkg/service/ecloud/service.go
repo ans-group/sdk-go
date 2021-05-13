@@ -115,6 +115,11 @@ type ECloudService interface {
 	CreateVPC(req CreateVPCRequest) (string, error)
 	PatchVPC(vpcID string, patch PatchVPCRequest) error
 	DeleteVPC(vpcID string) error
+	DeployVPCDefaults(vpcID string) error
+	GetVPCVolumes(vpcID string, parameters connection.APIRequestParameters) ([]Volume, error)
+	GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
+	GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error)
+	GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 
 	// Availability zone
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
@@ -128,6 +133,8 @@ type ECloudService interface {
 	CreateNetwork(req CreateNetworkRequest) (string, error)
 	PatchNetwork(networkID string, patch PatchNetworkRequest) error
 	DeleteNetwork(networkID string) error
+	GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error)
+	GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
 
 	// DHCP
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
@@ -155,6 +162,7 @@ type ECloudService interface {
 	PowerResetInstance(instanceID string) error
 	PowerShutdownInstance(instanceID string) error
 	PowerRestartInstance(instanceID string) error
+	CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error)
 	GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error)
@@ -165,7 +173,12 @@ type ECloudService interface {
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
 	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
-	GetFloatingIP(floatingIPID string) (FloatingIP, error)
+	GetFloatingIP(fipID string) (FloatingIP, error)
+	CreateFloatingIP(req CreateFloatingIPRequest) (string, error)
+	PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error
+	DeleteFloatingIP(fipID string) error
+	AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error
+	UnassignFloatingIP(fipID string) error
 
 	// Firewall Policy
 	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)
@@ -174,11 +187,26 @@ type ECloudService interface {
 	CreateFirewallPolicy(req CreateFirewallPolicyRequest) (string, error)
 	PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) error
 	DeleteFirewallPolicy(policyID string) error
+	GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error)
+	GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 
 	// Firewall Rule
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 	GetFirewallRule(ruleID string) (FirewallRule, error)
+	CreateFirewallRule(req CreateFirewallRuleRequest) (string, error)
+	PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) error
+	DeleteFirewallRule(ruleID string) error
+	GetFirewallRuleFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
+	GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
+
+	// Firewall Rule Ports
+	GetFirewallRulePorts(parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
+	GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
+	GetFirewallRulePort(ruleID string) (FirewallRulePort, error)
+	CreateFirewallRulePort(req CreateFirewallRulePortRequest) (string, error)
+	PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) error
+	DeleteFirewallRulePort(ruleID string) error
 
 	// Router
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
@@ -187,19 +215,54 @@ type ECloudService interface {
 	CreateRouter(req CreateRouterRequest) (string, error)
 	PatchRouter(routerID string, patch PatchRouterRequest) error
 	DeleteRouter(routerID string) error
+	GetRouterFirewallPolicies(routerID string, parameters connection.APIRequestParameters) ([]FirewallPolicy, error)
+	GetRouterFirewallPoliciesPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedFirewallPolicy, error)
+	GetRouterNetworks(routerID string, parameters connection.APIRequestParameters) ([]Network, error)
+	GetRouterNetworksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetRouterVPNs(routerID string, parameters connection.APIRequestParameters) ([]VPN, error)
+	GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedVPN, error)
+	DeployRouterDefaultFirewallPolicies(routerID string) error
 
 	// Region
 	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)
 	GetRegionsPaginated(parameters connection.APIRequestParameters) (*PaginatedRegion, error)
 	GetRegion(regionID string) (Region, error)
 
-	// Load balancers
-	GetLoadBalancerClusters(parameters connection.APIRequestParameters) ([]LoadBalancerCluster, error)
-	GetLoadBalancerClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerCluster, error)
-	GetLoadBalancerCluster(lbcID string) (LoadBalancerCluster, error)
-	CreateLoadBalancerCluster(req CreateLoadBalancerClusterRequest) (string, error)
-	PatchLoadBalancerCluster(lbcID string, patch PatchLoadBalancerClusterRequest) error
-	DeleteLoadBalancerCluster(lbcID string) error
+	// Volumes
+	GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error)
+	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
+	GetVolume(volumeID string) (Volume, error)
+	CreateVolume(req CreateVolumeRequest) (string, error)
+	PatchVolume(volumeID string, patch PatchVolumeRequest) error
+	DeleteVolume(volumeID string) error
+	GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error)
+	GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
+	AttachVolume(volumeID string, req AttachVolumeRequest) error
+	DetachVolume(volumeID string, req DetachVolumeRequest) error
+
+	// NICs
+	GetNICs(parameters connection.APIRequestParameters) ([]NIC, error)
+	GetNICsPaginated(parameters connection.APIRequestParameters) (*PaginatedNIC, error)
+	GetNIC(nicID string) (NIC, error)
+
+	// Billing metrics
+	GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error)
+	GetBillingMetricsPaginated(parameters connection.APIRequestParameters) (*PaginatedBillingMetric, error)
+	GetBillingMetric(metricID string) (BillingMetric, error)
+
+	// Router throughputs
+	GetRouterThroughputs(parameters connection.APIRequestParameters) ([]RouterThroughput, error)
+	GetRouterThroughputsPaginated(parameters connection.APIRequestParameters) (*PaginatedRouterThroughput, error)
+	GetRouterThroughput(metricID string) (RouterThroughput, error)
+
+	// Image
+	GetImages(parameters connection.APIRequestParameters) ([]Image, error)
+	GetImagesPaginated(parameters connection.APIRequestParameters) (*PaginatedImage, error)
+	GetImage(imageID string) (Image, error)
+	GetImageParameters(imageID string, parameters connection.APIRequestParameters) ([]ImageParameter, error)
+	GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageParameter, error)
+	GetImageMetadata(imageID string, parameters connection.APIRequestParameters) ([]ImageMetadata, error)
+	GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageMetadata, error)
 }
 
 // Service implements ECloudService for managing

@@ -8,19 +8,19 @@ import (
 
 // GetDHCPs retrieves a list of dhcps
 func (s *Service) GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error) {
-	var sites []DHCP
+	var dhcps []DHCP
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetDHCPsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedDHCP).Items {
-			sites = append(sites, site)
+		for _, dhcp := range response.(*PaginatedDHCP).Items {
+			dhcps = append(dhcps, dhcp)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return dhcps, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetDHCPsPaginated retrieves a paginated list of dhcps

@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetLoadBalancerClusters(t *testing.T) {
+func TestGetRouterThroughputs(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetLoadBalancerClusters(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/lbcs", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/router-throughputs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"lbc-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"rtp-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		lbc, err := s.GetLoadBalancerClusters(connection.APIRequestParameters{})
+		throughputs, err := s.GetRouterThroughputs(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, lbc, 1)
-		assert.Equal(t, "lbc-abcdef12", lbc[0].ID)
+		assert.Len(t, throughputs, 1)
+		assert.Equal(t, "rtp-abcdef12", throughputs[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetLoadBalancerClusters(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/lbcs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/ecloud/v2/router-throughputs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetLoadBalancerClusters(connection.APIRequestParameters{})
+		_, err := s.GetRouterThroughputs(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetLoadBalancerCluster(t *testing.T) {
+func TestGetRouterThroughput(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetLoadBalancerCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/lbcs/lbc-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/router-throughputs/rtp-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lbc-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"rtp-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		lbc, err := s.GetLoadBalancerCluster("lbc-abcdef12")
+		throughput, err := s.GetRouterThroughput("rtp-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "lbc-abcdef12", lbc.ID)
+		assert.Equal(t, "rtp-abcdef12", throughput.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetLoadBalancerCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/lbcs/lbc-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/ecloud/v2/router-throughputs/rtp-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetLoadBalancerCluster("lbc-abcdef12")
+		_, err := s.GetRouterThroughput("rtp-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidLoadBalancerClusterID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidRouterThroughputID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetLoadBalancerCluster(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetLoadBalancerCluster("")
+		_, err := s.GetRouterThroughput("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid load balancer cluster id", err.Error())
+		assert.Equal(t, "invalid router throughput id", err.Error())
 	})
 
-	t.Run("404_ReturnsLoadBalancerClusterNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsRouterThroughputNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,16 +125,16 @@ func TestGetLoadBalancerCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/lbcs/lbc-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/router-throughputs/rtp-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetLoadBalancerCluster("lbc-abcdef12")
+		_, err := s.GetRouterThroughput("rtp-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &LoadBalancerClusterNotFoundError{}, err)
+		assert.IsType(t, &RouterThroughputNotFoundError{}, err)
 	})
 }

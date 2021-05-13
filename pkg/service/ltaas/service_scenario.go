@@ -6,19 +6,19 @@ import (
 
 // GetScenarios retrieves a list of scenarios
 func (s *Service) GetScenarios(parameters connection.APIRequestParameters) ([]Scenario, error) {
-	var sites []Scenario
+	var scenarios []Scenario
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetScenariosPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedScenario).Items {
-			sites = append(sites, site)
+		for _, scenario := range response.(*PaginatedScenario).Items {
+			scenarios = append(scenarios, scenario)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return scenarios, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetScenariosPaginated retrieves a paginated list of scenarios

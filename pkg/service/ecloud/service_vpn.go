@@ -8,19 +8,19 @@ import (
 
 // GetVPNs retrieves a list of vpns
 func (s *Service) GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error) {
-	var sites []VPN
+	var vpns []VPN
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVPNsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedVPN).Items {
-			sites = append(sites, site)
+		for _, vpn := range response.(*PaginatedVPN).Items {
+			vpns = append(vpns, vpn)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return vpns, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetVPNsPaginated retrieves a paginated list of vpns

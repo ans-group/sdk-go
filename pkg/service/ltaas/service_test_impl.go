@@ -8,19 +8,19 @@ import (
 
 // GetTests retrieves a list of tests
 func (s *Service) GetTests(parameters connection.APIRequestParameters) ([]Test, error) {
-	var sites []Test
+	var tests []Test
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetTestsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedTest).Items {
-			sites = append(sites, site)
+		for _, test := range response.(*PaginatedTest).Items {
+			tests = append(tests, test)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return tests, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetTestsPaginated retrieves a paginated list of tests

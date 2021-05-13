@@ -8,19 +8,19 @@ import (
 
 // GetRouters retrieves a list of routers
 func (s *Service) GetRouters(parameters connection.APIRequestParameters) ([]Router, error) {
-	var sites []Router
+	var routers []Router
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetRoutersPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedRouter).Items {
-			sites = append(sites, site)
+		for _, router := range response.(*PaginatedRouter).Items {
+			routers = append(routers, router)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return routers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetRoutersPaginated retrieves a paginated list of routers
@@ -132,6 +132,175 @@ func (s *Service) deleteRouterResponseBody(routerID string) (*connection.APIResp
 	}
 
 	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/routers/%s", routerID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}
+
+// GetRouterFirewallPolicies retrieves a list of firewall rule policies
+func (s *Service) GetRouterFirewallPolicies(routerID string, parameters connection.APIRequestParameters) ([]FirewallPolicy, error) {
+	var policies []FirewallPolicy
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, policy := range response.(*PaginatedFirewallPolicy).Items {
+			policies = append(policies, policy)
+		}
+	}
+
+	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetRouterFirewallPoliciesPaginated retrieves a paginated list of firewall rule policies
+func (s *Service) GetRouterFirewallPoliciesPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedFirewallPolicy, error) {
+	body, err := s.getRouterFirewallPoliciesPaginatedResponseBody(routerID, parameters)
+
+	return NewPaginatedFirewallPolicy(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getRouterFirewallPoliciesPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetFirewallPolicySliceResponseBody, error) {
+	body := &GetFirewallPolicySliceResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/routers/%s/firewall-policies", routerID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}
+
+// GetRouterNetworks retrieves a list of router networks
+func (s *Service) GetRouterNetworks(routerID string, parameters connection.APIRequestParameters) ([]Network, error) {
+	var policies []Network
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterNetworksPaginated(routerID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, policy := range response.(*PaginatedNetwork).Items {
+			policies = append(policies, policy)
+		}
+	}
+
+	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetRouterNetworksPaginated retrieves a paginated list of router networks
+func (s *Service) GetRouterNetworksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+	body, err := s.getRouterNetworksPaginatedResponseBody(routerID, parameters)
+
+	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterNetworksPaginated(routerID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getRouterNetworksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
+	body := &GetNetworkSliceResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/routers/%s/networks", routerID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}
+
+// GetRouterVPNs retrieves a list of router VPNs
+func (s *Service) GetRouterVPNs(routerID string, parameters connection.APIRequestParameters) ([]VPN, error) {
+	var policies []VPN
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterVPNsPaginated(routerID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, policy := range response.(*PaginatedVPN).Items {
+			policies = append(policies, policy)
+		}
+	}
+
+	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetRouterVPNsPaginated retrieves a paginated list of router VPNs
+func (s *Service) GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedVPN, error) {
+	body, err := s.getRouterVPNsPaginatedResponseBody(routerID, parameters)
+
+	return NewPaginatedVPN(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterVPNsPaginated(routerID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getRouterVPNsPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetVPNSliceResponseBody, error) {
+	body := &GetVPNSliceResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/routers/%s/vpns", routerID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}
+
+// DeployRouterDefaultFirewallPolicies deploys default firewall policy resources for specified router
+func (s *Service) DeployRouterDefaultFirewallPolicies(routerID string) error {
+	_, err := s.deployRouterDefaultFirewallPolicies(routerID)
+
+	return err
+}
+
+func (s *Service) deployRouterDefaultFirewallPolicies(routerID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/routers/%s/configure-default-policies", routerID), nil)
 	if err != nil {
 		return body, err
 	}

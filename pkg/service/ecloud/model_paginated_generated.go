@@ -310,6 +310,20 @@ func NewPaginatedFirewallRule(getFunc connection.PaginatedGetFunc, parameters co
 	}
 }
 
+// PaginatedFirewallRulePort represents a paginated collection of FirewallRulePort
+type PaginatedFirewallRulePort struct {
+	*connection.PaginatedBase
+	Items []FirewallRulePort
+}
+
+// NewPaginatedFirewallRulePort returns a pointer to an initialized PaginatedFirewallRulePort struct
+func NewPaginatedFirewallRulePort(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []FirewallRulePort) *PaginatedFirewallRulePort {
+	return &PaginatedFirewallRulePort{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // PaginatedRegion represents a paginated collection of Region
 type PaginatedRegion struct {
 	*connection.PaginatedBase
@@ -333,20 +347,6 @@ type PaginatedRouter struct {
 // NewPaginatedRouter returns a pointer to an initialized PaginatedRouter struct
 func NewPaginatedRouter(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Router) *PaginatedRouter {
 	return &PaginatedRouter{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
-// PaginatedLoadBalancerCluster represents a paginated collection of LoadBalancerCluster
-type PaginatedLoadBalancerCluster struct {
-	*connection.PaginatedBase
-	Items []LoadBalancerCluster
-}
-
-// NewPaginatedLoadBalancerCluster returns a pointer to an initialized PaginatedLoadBalancerCluster struct
-func NewPaginatedLoadBalancerCluster(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerCluster) *PaginatedLoadBalancerCluster {
-	return &PaginatedLoadBalancerCluster{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
@@ -389,6 +389,90 @@ type PaginatedNIC struct {
 // NewPaginatedNIC returns a pointer to an initialized PaginatedNIC struct
 func NewPaginatedNIC(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []NIC) *PaginatedNIC {
 	return &PaginatedNIC{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedRouterThroughput represents a paginated collection of RouterThroughput
+type PaginatedRouterThroughput struct {
+	*connection.PaginatedBase
+	Items []RouterThroughput
+}
+
+// NewPaginatedRouterThroughput returns a pointer to an initialized PaginatedRouterThroughput struct
+func NewPaginatedRouterThroughput(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []RouterThroughput) *PaginatedRouterThroughput {
+	return &PaginatedRouterThroughput{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedDiscountPlan represents a paginated collection of DiscountPlan
+type PaginatedDiscountPlan struct {
+	*connection.PaginatedBase
+	Items []DiscountPlan
+}
+
+// NewPaginatedDiscountPlan returns a pointer to an initialized PaginatedDiscountPlan struct
+func NewPaginatedDiscountPlan(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []DiscountPlan) *PaginatedDiscountPlan {
+	return &PaginatedDiscountPlan{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedBillingMetric represents a paginated collection of BillingMetric
+type PaginatedBillingMetric struct {
+	*connection.PaginatedBase
+	Items []BillingMetric
+}
+
+// NewPaginatedBillingMetric returns a pointer to an initialized PaginatedBillingMetric struct
+func NewPaginatedBillingMetric(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []BillingMetric) *PaginatedBillingMetric {
+	return &PaginatedBillingMetric{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImage represents a paginated collection of Image
+type PaginatedImage struct {
+	*connection.PaginatedBase
+	Items []Image
+}
+
+// NewPaginatedImage returns a pointer to an initialized PaginatedImage struct
+func NewPaginatedImage(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Image) *PaginatedImage {
+	return &PaginatedImage{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImageParameter represents a paginated collection of ImageParameter
+type PaginatedImageParameter struct {
+	*connection.PaginatedBase
+	Items []ImageParameter
+}
+
+// NewPaginatedImageParameter returns a pointer to an initialized PaginatedImageParameter struct
+func NewPaginatedImageParameter(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ImageParameter) *PaginatedImageParameter {
+	return &PaginatedImageParameter{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedImageMetadata represents a paginated collection of ImageMetadata
+type PaginatedImageMetadata struct {
+	*connection.PaginatedBase
+	Items []ImageMetadata
+}
+
+// NewPaginatedImageMetadata returns a pointer to an initialized PaginatedImageMetadata struct
+func NewPaginatedImageMetadata(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ImageMetadata) *PaginatedImageMetadata {
+	return &PaginatedImageMetadata{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

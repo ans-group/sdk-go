@@ -8,19 +8,19 @@ import (
 
 // GetInstances retrieves a list of instances
 func (s *Service) GetInstances(parameters connection.APIRequestParameters) ([]Instance, error) {
-	var sites []Instance
+	var instances []Instance
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetInstancesPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedInstance).Items {
-			sites = append(sites, site)
+		for _, instance := range response.(*PaginatedInstance).Items {
+			instances = append(instances, instance)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetInstancesPaginated retrieves a paginated list of instances
@@ -469,6 +469,34 @@ func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parame
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/nics", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// CreateInstanceConsoleSession creates an instance console session
+func (s *Service) CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error) {
+	body, err := s.createInstanceConsoleSessionResponseBody(instanceID)
+
+	return body.Data, err
+}
+
+func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*GetConsoleSessionResponseBody, error) {
+	body := &GetConsoleSessionResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/instances/%s/console-session", instanceID), nil)
 	if err != nil {
 		return body, err
 	}

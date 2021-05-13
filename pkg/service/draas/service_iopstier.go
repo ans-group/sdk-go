@@ -8,19 +8,19 @@ import (
 
 // GetIOPSTiers retrieves a list of solutions
 func (s *Service) GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error) {
-	var sites []IOPSTier
+	var tiers []IOPSTier
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetIOPSTiersPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedIOPSTier).Items {
-			sites = append(sites, site)
+		for _, tier := range response.(*PaginatedIOPSTier).Items {
+			tiers = append(tiers, tier)
 		}
 	}
 
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return tiers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
 // GetIOPSTiersPaginated retrieves a paginated list of solutions

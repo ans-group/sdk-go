@@ -290,6 +290,18 @@ type GetFirewallRuleResponseBody struct {
 	Data FirewallRule `json:"data"`
 }
 
+// GetFirewallRulePortSliceResponseBody represents an API response body containing []FirewallRulePort data
+type GetFirewallRulePortSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []FirewallRulePort `json:"data"`
+}
+
+// GetFirewallRulePortResponseBody represents an API response body containing FirewallRulePort data
+type GetFirewallRulePortResponseBody struct {
+	connection.APIResponseBody
+	Data FirewallRulePort `json:"data"`
+}
+
 // GetRegionSliceResponseBody represents an API response body containing []Region data
 type GetRegionSliceResponseBody struct {
 	connection.APIResponseBody
@@ -312,18 +324,6 @@ type GetRouterSliceResponseBody struct {
 type GetRouterResponseBody struct {
 	connection.APIResponseBody
 	Data Router `json:"data"`
-}
-
-// GetLoadBalancerClusterSliceResponseBody represents an API response body containing []LoadBalancerCluster data
-type GetLoadBalancerClusterSliceResponseBody struct {
-	connection.APIResponseBody
-	Data []LoadBalancerCluster `json:"data"`
-}
-
-// GetLoadBalancerClusterResponseBody represents an API response body containing LoadBalancerCluster data
-type GetLoadBalancerClusterResponseBody struct {
-	connection.APIResponseBody
-	Data LoadBalancerCluster `json:"data"`
 }
 
 // GetCredentialSliceResponseBody represents an API response body containing []Credential data
@@ -360,4 +360,76 @@ type GetNICSliceResponseBody struct {
 type GetNICResponseBody struct {
 	connection.APIResponseBody
 	Data NIC `json:"data"`
+}
+
+// GetRouterThroughputSliceResponseBody represents an API response body containing []RouterThroughput data
+type GetRouterThroughputSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []RouterThroughput `json:"data"`
+}
+
+// GetRouterThroughputResponseBody represents an API response body containing RouterThroughput data
+type GetRouterThroughputResponseBody struct {
+	connection.APIResponseBody
+	Data RouterThroughput `json:"data"`
+}
+
+// GetDiscountPlanSliceResponseBody represents an API response body containing []DiscountPlan data
+type GetDiscountPlanSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []DiscountPlan `json:"data"`
+}
+
+// GetDiscountPlanResponseBody represents an API response body containing DiscountPlan data
+type GetDiscountPlanResponseBody struct {
+	connection.APIResponseBody
+	Data DiscountPlan `json:"data"`
+}
+
+// GetBillingMetricSliceResponseBody represents an API response body containing []BillingMetric data
+type GetBillingMetricSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []BillingMetric `json:"data"`
+}
+
+// GetBillingMetricResponseBody represents an API response body containing BillingMetric data
+type GetBillingMetricResponseBody struct {
+	connection.APIResponseBody
+	Data BillingMetric `json:"data"`
+}
+
+// GetImageSliceResponseBody represents an API response body containing []Image data
+type GetImageSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Image `json:"data"`
+}
+
+// GetImageResponseBody represents an API response body containing Image data
+type GetImageResponseBody struct {
+	connection.APIResponseBody
+	Data Image `json:"data"`
+}
+
+// GetImageParameterSliceResponseBody represents an API response body containing []ImageParameter data
+type GetImageParameterSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ImageParameter `json:"data"`
+}
+
+// GetImageParameterResponseBody represents an API response body containing ImageParameter data
+type GetImageParameterResponseBody struct {
+	connection.APIResponseBody
+	Data ImageParameter `json:"data"`
+}
+
+// GetImageMetadataSliceResponseBody represents an API response body containing []ImageMetadata data
+type GetImageMetadataSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ImageMetadata `json:"data"`
+}
+
+// GetImageMetadataResponseBody represents an API response body containing ImageMetadata data
+type GetImageMetadataResponseBody struct {
+	connection.APIResponseBody
+	Data ImageMetadata `json:"data"`
 }

@@ -144,3 +144,50 @@ func (s *Service) deleteFirewallPolicyResponseBody(policyID string) (*connection
 		return nil
 	})
 }
+
+// GetFirewallPolicyFirewallRules retrieves a list of firewall policy rules
+func (s *Service) GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error) {
+	var firewallRules []FirewallRule
+
+	return firewallRules, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetFirewallPolicyFirewallRulesPaginated(policyID, p)
+		},
+		func(response connection.Paginated) {
+			for _, firewallRule := range response.(*PaginatedFirewallRule).Items {
+				firewallRules = append(firewallRules, firewallRule)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetFirewallPolicyFirewallRulesPaginated retrieves a paginated list of firewall policy FirewallRules
+func (s *Service) GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error) {
+	body, err := s.getFirewallPolicyFirewallRulesPaginatedResponseBody(policyID, parameters)
+
+	return NewPaginatedFirewallRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetFirewallPolicyFirewallRulesPaginated(policyID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getFirewallPolicyFirewallRulesPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*GetFirewallRuleSliceResponseBody, error) {
+	body := &GetFirewallRuleSliceResponseBody{}
+
+	if policyID == "" {
+		return body, fmt.Errorf("invalid firewall policy id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/firewall-policies/%s/firewall-rules", policyID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &FirewallPolicyNotFoundError{ID: policyID}
+		}
+
+		return nil
+	})
+}
