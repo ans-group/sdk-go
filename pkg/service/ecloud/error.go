@@ -280,3 +280,12 @@ type HostSpecNotFoundError struct {
 func (e *HostSpecNotFoundError) Error() string {
 	return fmt.Sprintf("Host spec not found with ID [%s]", e.ID)
 }
+
+// HostGroupFoundError indicates an host group was not found
+type HostGroupNotFoundError struct {
+	ID string
+}
+
+func (e *HostGroupNotFoundError) Error() string {
+	return fmt.Sprintf("Host group not found with ID [%s]", e.ID)
+}

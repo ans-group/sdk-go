@@ -268,6 +268,14 @@ type ECloudService interface {
 	GetHostSpecs(parameters connection.APIRequestParameters) ([]HostSpec, error)
 	GetHostSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostSpec, error)
 	GetHostSpec(specID string) (HostSpec, error)
+
+	// HostGroups
+	GetHostGroups(parameters connection.APIRequestParameters) ([]HostGroup, error)
+	GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostGroup, error)
+	GetHostGroup(hostGroupID string) (HostGroup, error)
+	CreateHostGroup(req CreateHostGroupRequest) (string, error)
+	PatchHostGroup(hostGroupID string, patch PatchHostGroupRequest) error
+	DeleteHostGroup(hostGroupID string) error
 }
 
 // Service implements ECloudService for managing

@@ -491,3 +491,17 @@ func NewPaginatedHostSpec(getFunc connection.PaginatedGetFunc, parameters connec
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedHostGroup represents a paginated collection of HostGroup
+type PaginatedHostGroup struct {
+	*connection.PaginatedBase
+	Items []HostGroup
+}
+
+// NewPaginatedHostGroup returns a pointer to an initialized PaginatedHostGroup struct
+func NewPaginatedHostGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []HostGroup) *PaginatedHostGroup {
+	return &PaginatedHostGroup{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

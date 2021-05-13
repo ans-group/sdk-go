@@ -283,12 +283,12 @@ type PatchVolumeRequest struct {
 
 // AttachVolumeRequest represents a request to attach a volume to an instance
 type AttachVolumeRequest struct {
-	InstanceID  string  `json:"instance_id"`
+	InstanceID string `json:"instance_id"`
 }
 
 // DetachVolumeRequest represents a request to detach a volume from an instance
 type DetachVolumeRequest struct {
-	InstanceID  string  `json:"instance_id"`
+	InstanceID string `json:"instance_id"`
 }
 
 // CreateFirewallRuleRequest represents a request to create a firewall rule
@@ -347,4 +347,18 @@ type PatchFloatingIPRequest struct {
 // AssignFloatingIPRequest represents a request to assign a floating IP to a resource
 type AssignFloatingIPRequest struct {
 	ResourceID string `json:"resource_id"`
+}
+
+// CreateHostGroupRequest represents a request to create a host group
+type CreateHostGroupRequest struct {
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+	HostSpecID         string `json:"host_spec_id"`
+	WindowsEnabled     bool   `json:"windows_enabled"`
+}
+
+// PatchHostGroupRequest represents a request to patch a host group
+type PatchHostGroupRequest struct {
+	Name     string `json:"name,omitempty"`
 }

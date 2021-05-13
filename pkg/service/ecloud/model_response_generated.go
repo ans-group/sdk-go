@@ -445,3 +445,15 @@ type GetHostSpecResponseBody struct {
 	connection.APIResponseBody
 	Data HostSpec `json:"data"`
 }
+
+// GetHostGroupSliceResponseBody represents an API response body containing []HostGroup data
+type GetHostGroupSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []HostGroup `json:"data"`
+}
+
+// GetHostGroupResponseBody represents an API response body containing HostGroup data
+type GetHostGroupResponseBody struct {
+	connection.APIResponseBody
+	Data HostGroup `json:"data"`
+}
