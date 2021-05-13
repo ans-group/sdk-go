@@ -239,6 +239,7 @@ type CreateInstanceRequest struct {
 	RAMCapacity        int                    `json:"ram_capacity"`
 	Locked             bool                   `json:"locked"`
 	VolumeCapacity     int                    `json:"volume_capacity"`
+	VolumeIOPS         int                    `json:"volume_iops,omitempty"`
 	BackupEnabled      bool                   `json:"backup_enabled"`
 	NetworkID          string                 `json:"network_id,omitempty"`
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
