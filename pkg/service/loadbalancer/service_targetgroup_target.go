@@ -142,3 +142,35 @@ func (s *Service) patchTargetGroupTargetResponseBody(groupID int, targetID int, 
 		return nil
 	})
 }
+
+// DeleteTargetGroupTarget deletes a target
+func (s *Service) DeleteTargetGroupTarget(groupID int, targetID int) error {
+	_, err := s.deleteTargetGroupTargetResponseBody(groupID, targetID)
+
+	return err
+}
+
+func (s *Service) deleteTargetGroupTargetResponseBody(groupID int, targetID int) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if groupID < 1 {
+		return body, fmt.Errorf("invalid group id")
+	}
+
+	if targetID < 1 {
+		return body, fmt.Errorf("invalid target id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/targets/%d", groupID, targetID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &TargetNotFoundError{ID: groupID}
+		}
+
+		return nil
+	})
+}

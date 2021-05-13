@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetTargetGroupTargets(t *testing.T) {
+func TestGetListenerCertificates(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetTargetGroupTargets(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		targets, err := s.GetTargetGroupTargets(123, connection.APIRequestParameters{})
+		certificates, err := s.GetListenerCertificates(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, targets, 1)
-		assert.Equal(t, 456, targets[0].ID)
+		assert.Len(t, certificates, 1)
+		assert.Equal(t, 456, certificates[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetTargetGroupTargets(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetTargetGroupTargets(123, connection.APIRequestParameters{})
+		_, err := s.GetListenerCertificates(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetTargetGroupTarget(t *testing.T) {
+func TestGetListenerCertificate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		target, err := s.GetTargetGroupTarget(123, 456)
+		certificate, err := s.GetListenerCertificate(123, 456)
 
 		assert.Nil(t, err)
-		assert.Equal(t, 456, target.ID)
+		assert.Equal(t, 456, certificate.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetTargetGroupTarget(123, 456)
+		_, err := s.GetListenerCertificate(123, 456)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetTargetGroupTarget(0, 456)
+		_, err := s.GetListenerCertificate(0, 456)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
-	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidCertificateID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,13 +125,13 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetTargetGroupTarget(123, 0)
+		_, err := s.GetListenerCertificate(123, 0)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid target id", err.Error())
+		assert.Equal(t, "invalid certificate id", err.Error())
 	})
 
-	t.Run("404_ReturnsTargetGroupTargetNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsListenerCertificateNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -141,21 +141,21 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetTargetGroupTarget(123, 456)
+		_, err := s.GetListenerCertificate(123, 456)
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TargetNotFoundError{}, err)
+		assert.IsType(t, &CertificateNotFoundError{}, err)
 	})
 }
 
-func TestCreateTargetGroupTarget(t *testing.T) {
+func TestCreateListenerCertificate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -166,18 +166,18 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		req := CreateTargetRequest{
-			Name: "test",
+		req := CreateCertificateRequest{
+			Key: "test",
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets/456", &req).Return(&connection.APIResponse{
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateTargetGroupTarget(123, 456, req)
+		err := s.CreateListenerCertificate(123, 456, req)
 
 		assert.Nil(t, err)
 	})
@@ -192,15 +192,15 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateTargetGroupTarget(123, 456, CreateTargetRequest{})
+		err := s.CreateListenerCertificate(123, 456, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -210,13 +210,13 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.CreateTargetGroupTarget(0, 456, CreateTargetRequest{})
+		err := s.CreateListenerCertificate(0, 456, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
-	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidCertificateID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -226,13 +226,13 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.CreateTargetGroupTarget(123, 0, CreateTargetRequest{})
+		err := s.CreateListenerCertificate(123, 0, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid target id", err.Error())
+		assert.Equal(t, "invalid certificate id", err.Error())
 	})
 
-	t.Run("404_ReturnsTargetGroupTargetNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsListenerCertificateNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -242,21 +242,21 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateTargetGroupTarget(123, 456, CreateTargetRequest{})
+		err := s.CreateListenerCertificate(123, 456, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TargetNotFoundError{}, err)
+		assert.IsType(t, &CertificateNotFoundError{}, err)
 	})
 }
 
-func TestPatchTargetGroupTarget(t *testing.T) {
+func TestPatchListenerCertificate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -267,18 +267,18 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchTargetRequest{
-			Name: "somegroup",
+		req := PatchCertificateRequest{
+			Key: "test",
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", &req).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchTargetGroupTarget(123, 456, req)
+		err := s.PatchListenerCertificate(123, 456, req)
 
 		assert.Nil(t, err)
 	})
@@ -293,15 +293,15 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchTargetGroupTarget(123, 456, PatchTargetRequest{})
+		err := s.PatchListenerCertificate(123, 456, PatchCertificateRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -311,13 +311,13 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchTargetGroupTarget(0, 456, PatchTargetRequest{})
+		err := s.PatchListenerCertificate(0, 456, PatchCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
-	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidCertificateID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -327,13 +327,13 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchTargetGroupTarget(123, 0, PatchTargetRequest{})
+		err := s.PatchListenerCertificate(123, 0, PatchCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid target id", err.Error())
+		assert.Equal(t, "invalid certificate id", err.Error())
 	})
 
-	t.Run("404_ReturnsTargetGroupTargetNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsListenerCertificateNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -343,21 +343,21 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchTargetGroupTarget(123, 456, PatchTargetRequest{})
+		err := s.PatchListenerCertificate(123, 456, PatchCertificateRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TargetNotFoundError{}, err)
+		assert.IsType(t, &CertificateNotFoundError{}, err)
 	})
 }
 
-func TestDeleteTargetGroupTarget(t *testing.T) {
+func TestDeleteListenerCertificate(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -368,14 +368,14 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteTargetGroupTarget(123, 456)
+		err := s.DeleteListenerCertificate(123, 456)
 
 		assert.Nil(t, err)
 	})
@@ -390,15 +390,15 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteTargetGroupTarget(123, 456)
+		err := s.DeleteListenerCertificate(123, 456)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidTargetGroupID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -408,13 +408,13 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteTargetGroupTarget(0, 456)
+		err := s.DeleteListenerCertificate(0, 456)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
-	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidCertificateID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -424,13 +424,13 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteTargetGroupTarget(123, 0)
+		err := s.DeleteListenerCertificate(123, 0)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid target id", err.Error())
+		assert.Equal(t, "invalid certificate id", err.Error())
 	})
 
-	t.Run("404_ReturnsTargetGroupTargetNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsListenerCertificateNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -440,16 +440,16 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteTargetGroupTarget(123, 456)
+		err := s.DeleteListenerCertificate(123, 456)
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TargetNotFoundError{}, err)
+		assert.IsType(t, &CertificateNotFoundError{}, err)
 	})
 }

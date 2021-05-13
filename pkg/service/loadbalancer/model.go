@@ -126,7 +126,7 @@ type Certificate struct {
 	ID          int                 `json:"id"`
 	ListenerID  int                 `json:"listener_id"`
 	Name        string              `json:"name"`
-	key         string              `json:"key"`
+	Key         string              `json:"key"`
 	Certificate string              `json:"certificate"`
 	CABundle    string              `json:"ca_bundle"`
 	CreatedAt   connection.DateTime `json:"created_at"`

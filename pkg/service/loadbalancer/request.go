@@ -129,36 +129,44 @@ type PatchListenerRequest struct {
 
 // CreateAccessIPRequest represents a request to create an access rule
 type CreateAccessIPRequest struct {
-	Whitelist bool `json:"whitelist"`
+	IP connection.IPAddress `json:"ip"`
 }
 
 // PatchAccessIPRequest represents a request to patch an access rule
 type PatchAccessIPRequest struct {
-	Whitelist *bool `json:"whitelist,omitempty"`
+	IP connection.IPAddress `json:"ip,omitempty"`
 }
 
 // CreateBindRequest represents a request to create a bind
 type CreateBindRequest struct {
-	VIPsID string `json:"vips_id"`
-	Port   int    `json:"port"`
+	ListenerID int `json:"listener_id"`
+	VIPID      int `json:"vip_id"`
+	Port       int `json:"port"`
 }
 
 // PatchBindRequest represents a request to patch a bind
 type PatchBindRequest struct {
-	VIPsID string `json:"vips_id,omitempty"`
-	Port   int    `json:"port,omitempty"`
+	ListenerID int `json:"listener_id,omitempty"`
+	VIPID      int `json:"vip_id,omitempty"`
+	Port       int `json:"port,omitempty"`
 }
 
 // CreateCertificateRequest represents a request to create a certificate
 type CreateCertificateRequest struct {
-	CertsName string `json:"certs_name"`
-	CertsPEM  string `json:"certs_pem"`
+	ListenerID  int    `json:"listener_id"`
+	Name        string `json:"name"`
+	Key         string `json:"key"`
+	Certificate string `json:"certificate"`
+	CABundle    string `json:"ca_bundle"`
 }
 
 // PatchListenerCertificateRequest represents a request to patch a certificate
 type PatchCertificateRequest struct {
-	CertsName string `json:"certs_name,omitempty"`
-	CertsPEM  string `json:"certs_pem,omitempty"`
+	ListenerID  int    `json:"listener_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Key         string `json:"key,omitempty"`
+	Certificate string `json:"certificate,omitempty"`
+	CABundle    string `json:"ca_bundle,omitempty"`
 }
 
 // CreateACLRequest represents a request to create a ACL
