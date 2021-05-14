@@ -363,6 +363,18 @@ type ResourceSync struct {
 	Type   SyncType   `json:"type"`
 }
 
+type TaskStatus string
+
+const (
+	TaskStatusComplete   TaskStatus = "complete"
+	TaskStatusFailed     TaskStatus = "failed"
+	TaskStatusInProgress TaskStatus = "in-progress"
+)
+
+func (s TaskStatus) String() string {
+	return string(s)
+}
+
 // VPC represents an eCloud VPC
 // +genie:model_response
 // +genie:model_paginated
@@ -774,4 +786,15 @@ type HostSpec struct {
 	CPUCores      int    `json:"cpu_cores"`
 	CPUClockSpeed int    `json:"cpu_clock_speed"`
 	RAMCapacity   int    `json:"ram_capacity"`
+}
+
+// Task represents a task against an eCloud resource
+// +genie:model_response
+// +genie:model_paginated
+type Task struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	Status    TaskStatus          `json:"status"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
 }

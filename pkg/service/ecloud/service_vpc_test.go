@@ -529,7 +529,7 @@ func TestGetVPCInstances(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12/instances", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"i-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -538,7 +538,7 @@ func TestGetVPCInstances(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, instances, 1)
-		assert.Equal(t, "vol-abcdef12", instances[0].ID)
+		assert.Equal(t, "i-abcdef12", instances[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -593,6 +593,89 @@ func TestGetVPCInstances(t *testing.T) {
 		}, nil).Times(1)
 
 		_, err := s.GetVPCInstances("vpc-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VPCNotFoundError{}, err)
+	})
+}
+
+func TestGetVPCTasks(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		tasks, err := s.GetVPCTasks("vpc-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, tasks, 1)
+		assert.Equal(t, "task-abcdef12", tasks[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetVPCTasks("vpc-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidVPCID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetVPCTasks("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid vpc id", err.Error())
+	})
+
+	t.Run("404_ReturnsRouterNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/vpcs/vpc-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetVPCTasks("vpc-abcdef12", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VPCNotFoundError{}, err)

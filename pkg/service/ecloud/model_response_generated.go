@@ -457,3 +457,15 @@ type GetHostGroupResponseBody struct {
 	connection.APIResponseBody
 	Data HostGroup `json:"data"`
 }
+
+// GetTaskSliceResponseBody represents an API response body containing []Task data
+type GetTaskSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Task `json:"data"`
+}
+
+// GetTaskResponseBody represents an API response body containing Task data
+type GetTaskResponseBody struct {
+	connection.APIResponseBody
+	Data Task `json:"data"`
+}

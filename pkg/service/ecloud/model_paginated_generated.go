@@ -505,3 +505,17 @@ func NewPaginatedHostGroup(getFunc connection.PaginatedGetFunc, parameters conne
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedTask represents a paginated collection of tasks
+type PaginatedTask struct {
+	*connection.PaginatedBase
+	Items []Task
+}
+
+// NewPaginatedTask returns a pointer to an initialized PaginatedTask struct
+func NewPaginatedTask(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Task) *PaginatedTask {
+	return &PaginatedTask{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
