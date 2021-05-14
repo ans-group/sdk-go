@@ -192,14 +192,14 @@ func (s *Service) getVolumeInstancesPaginatedResponseBody(volumeID string, param
 	})
 }
 
-func (s *Service) AttachVolume(volumeID string, req AttachVolumeRequest) error {
-	_, err := s.attachVolumeResponseBody(volumeID, req)
+func (s *Service) AttachVolume(volumeID string, req AttachVolumeRequest) (string, error) {
+	body, err := s.attachVolumeResponseBody(volumeID, req)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) attachVolumeResponseBody(volumeID string, req AttachVolumeRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) attachVolumeResponseBody(volumeID string, req AttachVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -219,14 +219,14 @@ func (s *Service) attachVolumeResponseBody(volumeID string, req AttachVolumeRequ
 	})
 }
 
-func (s *Service) DetachVolume(volumeID string, req DetachVolumeRequest) error {
-	_, err := s.detachVolumeResponseBody(volumeID, req)
+func (s *Service) DetachVolume(volumeID string, req DetachVolumeRequest) (string, error) {
+	body, err := s.detachVolumeResponseBody(volumeID, req)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) detachVolumeResponseBody(volumeID string, req DetachVolumeRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) detachVolumeResponseBody(volumeID string, req DetachVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")

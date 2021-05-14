@@ -798,3 +798,9 @@ type Task struct {
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
+
+// TaskReference represents a reference to an on-going task
+// +genie:model_response
+type TaskReference struct {
+	TaskID string `json:"task_id"`
+}
