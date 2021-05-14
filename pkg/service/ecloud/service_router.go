@@ -313,3 +313,50 @@ func (s *Service) deployRouterDefaultFirewallPolicies(routerID string) (*connect
 		return nil
 	})
 }
+
+// GetRouterTasks retrieves a list of Router tasks
+func (s *Service) GetRouterTasks(routerID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterTasksPaginated(routerID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetRouterTasksPaginated retrieves a paginated list of Router tasks
+func (s *Service) GetRouterTasksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getRouterTasksPaginatedResponseBody(routerID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetRouterTasksPaginated(routerID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getRouterTasksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if routerID == "" {
+		return body, fmt.Errorf("invalid router id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/routers/%s/tasks", routerID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RouterNotFoundError{ID: routerID}
+		}
+
+		return nil
+	})
+}

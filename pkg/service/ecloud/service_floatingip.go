@@ -200,3 +200,50 @@ func (s *Service) unassignFloatingIPResponseBody(fipID string) (*connection.APIR
 		return nil
 	})
 }
+
+// GetFloatingIPTasks retrieves a list of FloatingIP tasks
+func (s *Service) GetFloatingIPTasks(fipID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetFloatingIPTasksPaginated(fipID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetFloatingIPTasksPaginated retrieves a paginated list of FloatingIP tasks
+func (s *Service) GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getFloatingIPTasksPaginatedResponseBody(fipID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetFloatingIPTasksPaginated(fipID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getFloatingIPTasksPaginatedResponseBody(fipID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if fipID == "" {
+		return body, fmt.Errorf("invalid floating ip id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/floating-ips/%s/tasks", fipID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &FloatingIPNotFoundError{ID: fipID}
+		}
+
+		return nil
+	})
+}

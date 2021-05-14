@@ -144,3 +144,50 @@ func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*connection.A
 		return nil
 	})
 }
+
+// GetHostGroupTasks retrieves a list of HostGroup tasks
+func (s *Service) GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetHostGroupTasksPaginated(hostGroupID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetHostGroupTasksPaginated retrieves a paginated list of HostGroup tasks
+func (s *Service) GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getHostGroupTasksPaginatedResponseBody(hostGroupID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetHostGroupTasksPaginated(hostGroupID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getHostGroupTasksPaginatedResponseBody(hostGroupID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if hostGroupID == "" {
+		return body, fmt.Errorf("invalid host group id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/host-groups/%s/tasks", hostGroupID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &HostGroupNotFoundError{ID: hostGroupID}
+		}
+
+		return nil
+	})
+}

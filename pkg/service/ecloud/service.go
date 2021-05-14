@@ -120,6 +120,8 @@ type ECloudService interface {
 	GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error)
 	GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
+	GetVPCTasks(vpcID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetVPCTasksPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Availability zone
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
@@ -135,11 +137,15 @@ type ECloudService interface {
 	DeleteNetwork(networkID string) error
 	GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error)
 	GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
+	GetNetworkTasks(networkID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetNetworkTasksPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// DHCP
 	GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error)
 	GetDHCPsPaginated(parameters connection.APIRequestParameters) (*PaginatedDHCP, error)
 	GetDHCP(dhcpID string) (DHCP, error)
+	GetDHCPTasks(dhcpID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// VPN
 	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
@@ -169,6 +175,8 @@ type ECloudService interface {
 	GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
 	GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error)
 	GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error)
+	GetInstanceTasks(instanceID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
@@ -179,6 +187,8 @@ type ECloudService interface {
 	DeleteFloatingIP(fipID string) error
 	AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error
 	UnassignFloatingIP(fipID string) error
+	GetFloatingIPTasks(fipID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Firewall Policy
 	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)
@@ -189,6 +199,8 @@ type ECloudService interface {
 	DeleteFirewallPolicy(policyID string) error
 	GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
+	GetFirewallPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetIFirewallPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Firewall Rule
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
@@ -222,6 +234,8 @@ type ECloudService interface {
 	GetRouterVPNs(routerID string, parameters connection.APIRequestParameters) ([]VPN, error)
 	GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedVPN, error)
 	DeployRouterDefaultFirewallPolicies(routerID string) error
+	GetRouterTasks(routerID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetRouterTasksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Region
 	GetRegions(parameters connection.APIRequestParameters) ([]Region, error)
@@ -232,18 +246,22 @@ type ECloudService interface {
 	GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error)
 	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetVolume(volumeID string) (Volume, error)
-	CreateVolume(req CreateVolumeRequest) (string, error)
-	PatchVolume(volumeID string, patch PatchVolumeRequest) error
-	DeleteVolume(volumeID string) error
+	CreateVolume(req CreateVolumeRequest) (TaskReference, error)
+	PatchVolume(volumeID string, patch PatchVolumeRequest) (string, error)
+	DeleteVolume(volumeID string) (string, error)
 	GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error)
 	GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
-	AttachVolume(volumeID string, req AttachVolumeRequest) error
-	DetachVolume(volumeID string, req DetachVolumeRequest) error
+	AttachVolume(volumeID string, req AttachVolumeRequest) (string, error)
+	DetachVolume(volumeID string, req DetachVolumeRequest) (string, error)
+	GetVolumeTasks(volumeID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetVolumeTasksPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// NICs
 	GetNICs(parameters connection.APIRequestParameters) ([]NIC, error)
 	GetNICsPaginated(parameters connection.APIRequestParameters) (*PaginatedNIC, error)
 	GetNIC(nicID string) (NIC, error)
+	GetNICTasks(nicID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetNICTasksPaginated(nicID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Billing metrics
 	GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error)
@@ -276,6 +294,8 @@ type ECloudService interface {
 	CreateHostGroup(req CreateHostGroupRequest) (string, error)
 	PatchHostGroup(hostGroupID string, patch PatchHostGroupRequest) error
 	DeleteHostGroup(hostGroupID string) error
+	GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 }
 
 // Service implements ECloudService for managing

@@ -191,3 +191,50 @@ func (s *Service) getFirewallPolicyFirewallRulesPaginatedResponseBody(policyID s
 		return nil
 	})
 }
+
+// GetFirewallPolicyTasks retrieves a list of FirewallPolicy tasks
+func (s *Service) GetFirewallPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetFirewallPolicyTasksPaginated(policyID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetFirewallPolicyTasksPaginated retrieves a paginated list of FirewallPolicy tasks
+func (s *Service) GetFirewallPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getFirewallPolicyTasksPaginatedResponseBody(policyID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetFirewallPolicyTasksPaginated(policyID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getFirewallPolicyTasksPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if policyID == "" {
+		return body, fmt.Errorf("invalid firewall policy id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/firewall-policies/%s/tasks", policyID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &FirewallPolicyNotFoundError{ID: policyID}
+		}
+
+		return nil
+	})
+}
