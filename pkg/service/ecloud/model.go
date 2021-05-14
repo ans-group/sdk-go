@@ -775,3 +775,12 @@ type HostSpec struct {
 	CPUClockSpeed int    `json:"cpu_clock_speed"`
 	RAMCapacity   int    `json:"ram_capacity"`
 }
+
+// SSHKeyPair represents an eCloud SSH key pair
+// +genie:model_response
+// +genie:model_paginated
+type SSHKeyPair struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	PublicKey string `json:"public_key"`
+}

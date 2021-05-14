@@ -361,5 +361,17 @@ type CreateHostGroupRequest struct {
 
 // PatchHostGroupRequest represents a request to patch a host group
 type PatchHostGroupRequest struct {
-	Name     string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+// CreateSSHKeyPairRequest represents a request to create a SSH key pair
+type CreateSSHKeyPairRequest struct {
+	Name      string `json:"name,omitempty"`
+	PublicKey string `json:"public_key"`
+}
+
+// PatchSSHKeyPairRequest represents a request to patch a SSH key pair
+type PatchSSHKeyPairRequest struct {
+	Name      string `json:"name,omitempty"`
+	PublicKey string `json:"public_key,omitempty"`
 }
