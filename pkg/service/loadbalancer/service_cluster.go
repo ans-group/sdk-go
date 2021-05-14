@@ -136,7 +136,7 @@ func (s *Service) ValidateCluster(clusterID int) error {
 		return fmt.Errorf("invalid cluster id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/deploy", clusterID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/validate", clusterID), connection.APIRequestParameters{})
 	if err != nil {
 		return err
 	}
