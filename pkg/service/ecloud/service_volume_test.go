@@ -156,15 +156,16 @@ func TestCreateVolume(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/volumes", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vol-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vol-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		id, err := s.CreateVolume(req)
+		taskRef, err := s.CreateVolume(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "vol-abcdef12", id)
+		assert.Equal(t, "vol-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,15 @@ func TestPatchVolume(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/volumes/vol-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVolume("vol-abcdef12", req)
+		taskID, err := s.PatchVolume("vol-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +227,7 @@ func TestPatchVolume(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/volumes/vol-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchVolume("vol-abcdef12", PatchVolumeRequest{})
+		_, err := s.PatchVolume("vol-abcdef12", PatchVolumeRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +243,7 @@ func TestPatchVolume(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchVolume("", PatchVolumeRequest{})
+		_, err := s.PatchVolume("", PatchVolumeRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid volume id", err.Error())
@@ -264,7 +266,7 @@ func TestPatchVolume(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVolume("vol-abcdef12", PatchVolumeRequest{})
+		_, err := s.PatchVolume("vol-abcdef12", PatchVolumeRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VolumeNotFoundError{}, err)
@@ -284,14 +286,15 @@ func TestDeleteVolume(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/volumes/vol-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVolume("vol-abcdef12")
+		taskID, err := s.DeleteVolume("vol-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +309,7 @@ func TestDeleteVolume(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/volumes/vol-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteVolume("vol-abcdef12")
+		_, err := s.DeleteVolume("vol-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +325,7 @@ func TestDeleteVolume(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteVolume("")
+		_, err := s.DeleteVolume("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid volume id", err.Error())
@@ -345,7 +348,7 @@ func TestDeleteVolume(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVolume("vol-abcdef12")
+		_, err := s.DeleteVolume("vol-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VolumeNotFoundError{}, err)

@@ -72,14 +72,14 @@ func (s *Service) getVolumeResponseBody(volumeID string) (*GetVolumeResponseBody
 }
 
 // CreateVolume creates a volume
-func (s *Service) CreateVolume(req CreateVolumeRequest) (string, error) {
+func (s *Service) CreateVolume(req CreateVolumeRequest) (TaskReference, error) {
 	body, err := s.createVolumeResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetVolumeResponseBody, error) {
-	body := &GetVolumeResponseBody{}
+func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/volumes", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetVolumeR
 }
 
 // PatchVolume patches a Volume
-func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) error {
-	_, err := s.patchVolumeResponseBody(volumeID, req)
+func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) (string, error) {
+	body, err := s.patchVolumeResponseBody(volumeID, req)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -118,14 +118,14 @@ func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeReques
 }
 
 // DeleteVolume deletes a Volume
-func (s *Service) DeleteVolume(volumeID string) error {
-	_, err := s.deleteVolumeResponseBody(volumeID)
+func (s *Service) DeleteVolume(volumeID string) (string, error) {
+	body, err := s.deleteVolumeResponseBody(volumeID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVolumeResponseBody(volumeID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteVolumeResponseBody(volumeID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")

@@ -802,5 +802,6 @@ type Task struct {
 // TaskReference represents a reference to an on-going task
 // +genie:model_response
 type TaskReference struct {
-	TaskID string `json:"task_id"`
+	TaskID     string `json:"task_id"`
+	ResourceID string `json:"id"`
 }

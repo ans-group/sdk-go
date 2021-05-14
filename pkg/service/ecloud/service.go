@@ -246,9 +246,9 @@ type ECloudService interface {
 	GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error)
 	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetVolume(volumeID string) (Volume, error)
-	CreateVolume(req CreateVolumeRequest) (string, error)
-	PatchVolume(volumeID string, patch PatchVolumeRequest) error
-	DeleteVolume(volumeID string) error
+	CreateVolume(req CreateVolumeRequest) (TaskReference, error)
+	PatchVolume(volumeID string, patch PatchVolumeRequest) (string, error)
+	DeleteVolume(volumeID string) (string, error)
 	GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error)
 	GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
 	AttachVolume(volumeID string, req AttachVolumeRequest) (string, error)
