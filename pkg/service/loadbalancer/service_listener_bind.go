@@ -80,24 +80,20 @@ func (s *Service) getListenerBindResponseBody(listenerID int, bindID int) (*GetB
 }
 
 // CreateListenerBind creates an bind
-func (s *Service) CreateListenerBind(listenerID int, bindID int, req CreateBindRequest) error {
-	_, err := s.createListenerBindResponseBody(listenerID, bindID, req)
+func (s *Service) CreateListenerBind(listenerID int, req CreateBindRequest) (int, error) {
+	body, err := s.createListenerBindResponseBody(listenerID, req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createListenerBindResponseBody(listenerID int, bindID int, req CreateBindRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createListenerBindResponseBody(listenerID int, req CreateBindRequest) (*GetBindResponseBody, error) {
+	body := &GetBindResponseBody{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
 	}
 
-	if bindID < 1 {
-		return body, fmt.Errorf("invalid bind id")
-	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds/%d", listenerID, bindID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds", listenerID), &req)
 	if err != nil {
 		return body, err
 	}

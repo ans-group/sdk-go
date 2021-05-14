@@ -72,14 +72,14 @@ func (s *Service) getTargetGroupResponseBody(groupID int) (*GetTargetGroupRespon
 }
 
 // PatchTargetGroup patches a target group
-func (s *Service) CreateTargetGroup(req CreateTargetGroupRequest) error {
-	_, err := s.createTargetGroupResponseBody(req)
+func (s *Service) CreateTargetGroup(req CreateTargetGroupRequest) (int, error) {
+	body, err := s.createTargetGroupResponseBody(req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*GetTargetGroupResponseBody, error) {
+	body := &GetTargetGroupResponseBody{}
 
 	response, err := s.connection.Patch("/loadbalancers/v2/target-groups", &req)
 	if err != nil {

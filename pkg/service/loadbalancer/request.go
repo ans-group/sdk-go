@@ -171,12 +171,16 @@ type PatchCertificateRequest struct {
 
 // CreateACLRequest represents a request to create a ACL
 type CreateACLRequest struct {
-	CertsName string `json:"certs_name"`
-	CertsPEM  string `json:"certs_pem"`
+	Name          string         `json:"name"`
+	ListenerID    int            `json:"listener_id"`
+	TargetGroupID int            `json:"target_group_id"`
+	Conditions    []ACLCondition `json:"conditions"`
 }
 
 // PatchListenerACLRequest represents a request to patch a ACL
 type PatchACLRequest struct {
-	CertsName string `json:"certs_name,omitempty"`
-	CertsPEM  string `json:"certs_pem,omitempty"`
+	Name          string         `json:"name,omitempty"`
+	ListenerID    int            `json:"listener_id,omitempty"`
+	TargetGroupID int            `json:"target_group_id,omitempty"`
+	Conditions    []ACLCondition `json:"conditions,omitempty"`
 }

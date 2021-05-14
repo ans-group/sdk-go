@@ -170,16 +170,17 @@ func TestCreateListenerCertificate(t *testing.T) {
 			Key: "test",
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", &req).Return(&connection.APIResponse{
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateListenerCertificate(123, 456, req)
+		id, err := s.CreateListenerCertificate(123, req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, 456, id)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -192,9 +193,9 @@ func TestCreateListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateListenerCertificate(123, 456, CreateCertificateRequest{})
+		_, err := s.CreateListenerCertificate(123, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -210,26 +211,10 @@ func TestCreateListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.CreateListenerCertificate(0, 456, CreateCertificateRequest{})
+		_, err := s.CreateListenerCertificate(0, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid listener id", err.Error())
-	})
-
-	t.Run("InvalidCertificateID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		err := s.CreateListenerCertificate(123, 0, CreateCertificateRequest{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid certificate id", err.Error())
 	})
 
 	t.Run("404_ReturnsListenerCertificateNotFoundError", func(t *testing.T) {
@@ -242,14 +227,14 @@ func TestCreateListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateListenerCertificate(123, 456, CreateCertificateRequest{})
+		_, err := s.CreateListenerCertificate(123, CreateCertificateRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &CertificateNotFoundError{}, err)

@@ -80,24 +80,20 @@ func (s *Service) getListenerAccessIPResponseBody(listenerID int, accessID int) 
 }
 
 // CreateListenerAccessIP creates an access IP
-func (s *Service) CreateListenerAccessIP(listenerID int, accessID int, req CreateAccessIPRequest) error {
-	_, err := s.createListenerAccessIPResponseBody(listenerID, accessID, req)
+func (s *Service) CreateListenerAccessIP(listenerID int, req CreateAccessIPRequest) (int, error) {
+	body, err := s.createListenerAccessIPResponseBody(listenerID, req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createListenerAccessIPResponseBody(listenerID int, accessID int, req CreateAccessIPRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createListenerAccessIPResponseBody(listenerID int, req CreateAccessIPRequest) (*GetAccessIPResponseBody, error) {
+	body := &GetAccessIPResponseBody{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
 	}
 
-	if accessID < 1 {
-		return body, fmt.Errorf("invalid access id")
-	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/access-ips/%d", listenerID, accessID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/access-ips", listenerID), &req)
 	if err != nil {
 		return body, err
 	}

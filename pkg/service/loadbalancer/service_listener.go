@@ -72,14 +72,14 @@ func (s *Service) getListenerResponseBody(listenerID int) (*GetListenerResponseB
 }
 
 // CreateListener creates a listener
-func (s *Service) CreateListener(req CreateListenerRequest) error {
-	_, err := s.createListenerResponseBody(req)
+func (s *Service) CreateListener(req CreateListenerRequest) (int, error) {
+	body, err := s.createListenerResponseBody(req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createListenerResponseBody(req CreateListenerRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createListenerResponseBody(req CreateListenerRequest) (*GetListenerResponseBody, error) {
+	body := &GetListenerResponseBody{}
 
 	response, err := s.connection.Patch("/loadbalancers/v2/listeners", &req)
 	if err != nil {

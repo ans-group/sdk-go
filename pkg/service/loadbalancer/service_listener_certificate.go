@@ -80,24 +80,20 @@ func (s *Service) getListenerCertificateResponseBody(listenerID int, certificate
 }
 
 // CreateListenerCertificate creates an certificate
-func (s *Service) CreateListenerCertificate(listenerID int, certificateID int, req CreateCertificateRequest) error {
-	_, err := s.createListenerCertificateResponseBody(listenerID, certificateID, req)
+func (s *Service) CreateListenerCertificate(listenerID int, req CreateCertificateRequest) (int, error) {
+	body, err := s.createListenerCertificateResponseBody(listenerID, req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createListenerCertificateResponseBody(listenerID int, certificateID int, req CreateCertificateRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createListenerCertificateResponseBody(listenerID int, req CreateCertificateRequest) (*GetCertificateResponseBody, error) {
+	body := &GetCertificateResponseBody{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
 	}
 
-	if certificateID < 1 {
-		return body, fmt.Errorf("invalid certificate id")
-	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/certs/%d", listenerID, certificateID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/listeners/%d/certs", listenerID), &req)
 	if err != nil {
 		return body, err
 	}

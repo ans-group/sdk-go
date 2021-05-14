@@ -80,24 +80,20 @@ func (s *Service) getTargetGroupTargetResponseBody(groupID int, targetID int) (*
 }
 
 // CreateTargetGroupTarget creates a target
-func (s *Service) CreateTargetGroupTarget(groupID int, targetID int, req CreateTargetRequest) error {
-	_, err := s.createTargetGroupTargetResponseBody(groupID, targetID, req)
+func (s *Service) CreateTargetGroupTarget(groupID int, req CreateTargetRequest) (int, error) {
+	body, err := s.createTargetGroupTargetResponseBody(groupID, req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createTargetGroupTargetResponseBody(groupID int, targetID int, req CreateTargetRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createTargetGroupTargetResponseBody(groupID int, req CreateTargetRequest) (*GetTargetResponseBody, error) {
+	body := &GetTargetResponseBody{}
 
 	if groupID < 1 {
 		return body, fmt.Errorf("invalid group id")
 	}
 
-	if targetID < 1 {
-		return body, fmt.Errorf("invalid target id")
-	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/targets/%d", groupID, targetID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/targets", groupID), &req)
 	if err != nil {
 		return body, err
 	}

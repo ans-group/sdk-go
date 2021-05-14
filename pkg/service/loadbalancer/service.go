@@ -23,8 +23,8 @@ type LoadBalancerService interface {
 	DeleteTargetGroup(groupID int) error
 
 	// Target Group Target
-	GetTargetGroupTargets(groupID int) ([]Target, error)
-	GetTargetGroupTargetsPaginated(groupID int) (*PaginatedTarget, error)
+	GetTargetGroupTargets(groupID int, parameters connection.APIRequestParameters) ([]Target, error)
+	GetTargetGroupTargetsPaginated(groupID int, parameters connection.APIRequestParameters) (*PaginatedTarget, error)
 	GetTargetGroupTarget(groupID int, targetID int) (Target, error)
 	CreateTargetGroupTarget(groupID int, req CreateTargetRequest) (int, error)
 	PatchTargetGroupTarget(groupID int, targetID int, req PatchTargetRequest) error
@@ -39,22 +39,22 @@ type LoadBalancerService interface {
 	GetListeners(parameters connection.APIRequestParameters) ([]Listener, error)
 	GetListenersPaginated(parameters connection.APIRequestParameters) (*PaginatedListener, error)
 	GetListener(listenerID int) (Listener, error)
-	CreateListener(req CreateListenerRequest) (string, error)
+	CreateListener(req CreateListenerRequest) (int, error)
 	PatchListener(listenerID int, req PatchListenerRequest) error
 	DeleteListener(listenerID int) error
 
 	// Listener Access IP
-	GetListenerAccessIPs(listenerID int) ([]AccessIP, error)
-	GetListenerAccessIPsPaginated(listenerID int) (*PaginatedAccessIP, error)
-	CreateListenerAccessIP(listenerID int, req CreateAccessIPRequest) error
+	GetListenerAccessIPs(listenerID int, parameters connection.APIRequestParameters) ([]AccessIP, error)
+	GetListenerAccessIPsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedAccessIP, error)
+	CreateListenerAccessIP(listenerID int, req CreateAccessIPRequest) (int, error)
 
 	// Listener Bind
 	GetListenerBinds(listenerID int, parameters connection.APIRequestParameters) ([]Bind, error)
 	GetListenerBindsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedBind, error)
-	GetListenerBind(listenerID int, bindID string) (Bind, error)
-	CreateListenerBind(listenerID int, req CreateBindRequest) (string, error)
-	PatchListenerBind(listenerID int, bindID string, req PatchBindRequest) error
-	DeleteListenerBind(listenerID int, bindID string) error
+	GetListenerBind(listenerID int, bindID int) (Bind, error)
+	CreateListenerBind(listenerID int, req CreateBindRequest) (int, error)
+	PatchListenerBind(listenerID int, bindID int, req PatchBindRequest) error
+	DeleteListenerBind(listenerID int, bindID int) error
 
 	// Access IP
 	GetAccessIP(accessIP int) (AccessIP, error)
@@ -64,10 +64,10 @@ type LoadBalancerService interface {
 	// Listener Certificate
 	GetListenerCertificates(listenerID int, parameters connection.APIRequestParameters) ([]Certificate, error)
 	GetListenerCertificatesPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedCertificate, error)
-	GetListenerCertificate(listenerID int, certificateID string) (Certificate, error)
-	CreateListenerCertificate(listenerID int, req CreateCertificateRequest) (string, error)
-	PatchListenerCertificate(listenerID int, certificateID string, req PatchCertificateRequest) error
-	DeleteListenerCertificate(listenerID int, certificateID string) error
+	GetListenerCertificate(listenerID int, certificateID int) (Certificate, error)
+	CreateListenerCertificate(listenerID int, req CreateCertificateRequest) (int, error)
+	PatchListenerCertificate(listenerID int, certificateID int, req PatchCertificateRequest) error
+	DeleteListenerCertificate(listenerID int, certificateID int) error
 
 	// Bind
 	GetBinds(parameters connection.APIRequestParameters) ([]Bind, error)
@@ -81,7 +81,7 @@ type LoadBalancerService interface {
 	GetACLs(parameters connection.APIRequestParameters) ([]ACL, error)
 	GetACLsPaginated(parameters connection.APIRequestParameters) (*PaginatedACL, error)
 	GetACL(aclID int) (ACL, error)
-	CreateACL(req CreateACLRequest) (string, error)
+	CreateACL(req CreateACLRequest) (int, error)
 	PatchACL(aclID int, req PatchACLRequest) error
 	DeleteACL(aclID int) error
 }

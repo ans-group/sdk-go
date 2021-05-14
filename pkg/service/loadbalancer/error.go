@@ -73,3 +73,12 @@ type CertificateNotFoundError struct {
 func (e *CertificateNotFoundError) Error() string {
 	return fmt.Sprintf("Certificate not found with ID [%d]", e.ID)
 }
+
+// ACLNotFoundError indicates a certificate was not found
+type ACLNotFoundError struct {
+	ID int
+}
+
+func (e *ACLNotFoundError) Error() string {
+	return fmt.Sprintf("ACL not found with ID [%d]", e.ID)
+}
