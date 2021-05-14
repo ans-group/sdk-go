@@ -24,7 +24,7 @@ type APIResponse struct {
 // APIResponseBody represents the base API response body
 type APIResponseBody struct {
 	Metadata APIResponseMetadata `json:"meta"`
-	Error    []APIResponseError  `json:"errors"`
+	Errors   []APIResponseError  `json:"errors"`
 	Message  string              `json:"message"`
 }
 
@@ -97,16 +97,18 @@ type ResponseHandler func(resp *APIResponse) error
 
 // HandleResponse deserializes the response body into provided respBody, and validates
 // the response using the optionally provided ResponseHandler handler
-func (r *APIResponse) HandleResponse(respBody ResponseBody, handler ResponseHandler) error {
+func (r *APIResponse) HandleResponse(respBody ResponseBody, handlers ...ResponseHandler) error {
 	err := r.DeserializeResponseBody(respBody)
 	if err != nil {
 		return err
 	}
 
-	if handler != nil {
-		err = handler(r)
-		if err != nil {
-			return err
+	for _, handler := range handlers {
+		if handler != nil {
+			err = handler(r)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -131,7 +133,7 @@ func (a *APIResponseBody) ErrorString() string {
 	}
 
 	// Now loop through errors and add to error array
-	for _, err := range a.Error {
+	for _, err := range a.Errors {
 		errArr = append(errArr, err.String())
 	}
 
