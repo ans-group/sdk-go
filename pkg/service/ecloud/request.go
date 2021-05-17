@@ -245,6 +245,7 @@ type CreateInstanceRequest struct {
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
 	RequiresFloatingIP bool                   `json:"requires_floating_ip"`
 	UserScript         string                 `json:"user_script,omitempty"`
+	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
