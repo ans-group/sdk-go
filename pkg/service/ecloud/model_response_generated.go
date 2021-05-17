@@ -434,6 +434,18 @@ type GetImageMetadataResponseBody struct {
 	Data ImageMetadata `json:"data"`
 }
 
+// GetHostGroupSliceResponseBody represents an API response body containing []HostGroup data
+type GetHostGroupSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []HostGroup `json:"data"`
+}
+
+// GetHostGroupResponseBody represents an API response body containing HostGroup data
+type GetHostGroupResponseBody struct {
+	connection.APIResponseBody
+	Data HostGroup `json:"data"`
+}
+
 // GetHostSpecSliceResponseBody represents an API response body containing []HostSpec data
 type GetHostSpecSliceResponseBody struct {
 	connection.APIResponseBody
@@ -446,16 +458,16 @@ type GetHostSpecResponseBody struct {
 	Data HostSpec `json:"data"`
 }
 
-// GetHostGroupSliceResponseBody represents an API response body containing []HostGroup data
-type GetHostGroupSliceResponseBody struct {
+// GetSSHKeyPairSliceResponseBody represents an API response body containing []SSHKeyPair data
+type GetSSHKeyPairSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []HostGroup `json:"data"`
+	Data []SSHKeyPair `json:"data"`
 }
 
-// GetHostGroupResponseBody represents an API response body containing HostGroup data
-type GetHostGroupResponseBody struct {
+// GetSSHKeyPairResponseBody represents an API response body containing SSHKeyPair data
+type GetSSHKeyPairResponseBody struct {
 	connection.APIResponseBody
-	Data HostGroup `json:"data"`
+	Data SSHKeyPair `json:"data"`
 }
 
 // GetTaskSliceResponseBody represents an API response body containing []Task data

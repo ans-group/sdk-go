@@ -296,6 +296,14 @@ type ECloudService interface {
 	DeleteHostGroup(hostGroupID string) error
 	GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+
+	// SSHKeyPairs
+	GetSSHKeyPairs(parameters connection.APIRequestParameters) ([]SSHKeyPair, error)
+	GetSSHKeyPairsPaginated(parameters connection.APIRequestParameters) (*PaginatedSSHKeyPair, error)
+	GetSSHKeyPair(keypairID string) (SSHKeyPair, error)
+	CreateSSHKeyPair(req CreateSSHKeyPairRequest) (string, error)
+	PatchSSHKeyPair(keypairID string, patch PatchSSHKeyPairRequest) error
+	DeleteSSHKeyPair(keypairID string) error
 }
 
 // Service implements ECloudService for managing

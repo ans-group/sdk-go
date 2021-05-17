@@ -478,6 +478,20 @@ func NewPaginatedImageMetadata(getFunc connection.PaginatedGetFunc, parameters c
 	}
 }
 
+// PaginatedHostGroup represents a paginated collection of HostGroup
+type PaginatedHostGroup struct {
+	*connection.PaginatedBase
+	Items []HostGroup
+}
+
+// NewPaginatedHostGroup returns a pointer to an initialized PaginatedHostGroup struct
+func NewPaginatedHostGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []HostGroup) *PaginatedHostGroup {
+	return &PaginatedHostGroup{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // PaginatedHostSpec represents a paginated collection of HostSpec
 type PaginatedHostSpec struct {
 	*connection.PaginatedBase
@@ -492,15 +506,15 @@ func NewPaginatedHostSpec(getFunc connection.PaginatedGetFunc, parameters connec
 	}
 }
 
-// PaginatedHostGroup represents a paginated collection of HostGroup
-type PaginatedHostGroup struct {
+// PaginatedSSHKeyPair represents a paginated collection of SSHKeyPair
+type PaginatedSSHKeyPair struct {
 	*connection.PaginatedBase
-	Items []HostGroup
+	Items []SSHKeyPair
 }
 
-// NewPaginatedHostGroup returns a pointer to an initialized PaginatedHostGroup struct
-func NewPaginatedHostGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []HostGroup) *PaginatedHostGroup {
-	return &PaginatedHostGroup{
+// NewPaginatedSSHKeyPair returns a pointer to an initialized PaginatedSSHKeyPair struct
+func NewPaginatedSSHKeyPair(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []SSHKeyPair) *PaginatedSSHKeyPair {
+	return &PaginatedSSHKeyPair{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

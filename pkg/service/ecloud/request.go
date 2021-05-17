@@ -245,6 +245,7 @@ type CreateInstanceRequest struct {
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
 	RequiresFloatingIP bool                   `json:"requires_floating_ip"`
 	UserScript         string                 `json:"user_script,omitempty"`
+	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
@@ -361,5 +362,17 @@ type CreateHostGroupRequest struct {
 
 // PatchHostGroupRequest represents a request to patch a host group
 type PatchHostGroupRequest struct {
-	Name     string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+// CreateSSHKeyPairRequest represents a request to create a SSH key pair
+type CreateSSHKeyPairRequest struct {
+	Name      string `json:"name,omitempty"`
+	PublicKey string `json:"public_key"`
+}
+
+// PatchSSHKeyPairRequest represents a request to patch a SSH key pair
+type PatchSSHKeyPairRequest struct {
+	Name      string `json:"name,omitempty"`
+	PublicKey string `json:"public_key,omitempty"`
 }

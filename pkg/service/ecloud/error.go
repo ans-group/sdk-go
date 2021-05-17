@@ -289,3 +289,12 @@ type HostGroupNotFoundError struct {
 func (e *HostGroupNotFoundError) Error() string {
 	return fmt.Sprintf("Host group not found with ID [%s]", e.ID)
 }
+
+// SSHKeyPairFoundError indicates a SSH key pair was not found
+type SSHKeyPairNotFoundError struct {
+	ID string
+}
+
+func (e *SSHKeyPairNotFoundError) Error() string {
+	return fmt.Sprintf("SSH key pair not found with ID [%s]", e.ID)
+}
