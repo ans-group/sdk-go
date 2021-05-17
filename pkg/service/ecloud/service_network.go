@@ -181,3 +181,50 @@ func (s *Service) getNetworkNICsPaginatedResponseBody(networkID string, paramete
 
 	return body, response.HandleResponse(body, nil)
 }
+
+// GetNetworkTasks retrieves a list of Network tasks
+func (s *Service) GetNetworkTasks(networkID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetNetworkTasksPaginated(networkID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetNetworkTasksPaginated retrieves a paginated list of Network tasks
+func (s *Service) GetNetworkTasksPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getNetworkTasksPaginatedResponseBody(networkID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetNetworkTasksPaginated(networkID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getNetworkTasksPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if networkID == "" {
+		return body, fmt.Errorf("invalid network id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/networks/%s/tasks", networkID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NetworkNotFoundError{ID: networkID}
+		}
+
+		return nil
+	})
+}

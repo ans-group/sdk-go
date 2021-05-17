@@ -509,3 +509,50 @@ func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*
 		return nil
 	})
 }
+
+// GetInstanceTasks retrieves a list of Instance tasks
+func (s *Service) GetInstanceTasks(instanceID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceTasksPaginated(instanceID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetInstanceTasksPaginated retrieves a paginated list of Instance tasks
+func (s *Service) GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getInstanceTasksPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceTasksPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceTasksPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/tasks", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}

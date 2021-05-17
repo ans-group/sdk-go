@@ -266,3 +266,50 @@ func (s *Service) getVPCInstancesPaginatedResponseBody(vpcID string, parameters 
 		return nil
 	})
 }
+
+// GetVPCTasks retrieves a list of VPC tasks
+func (s *Service) GetVPCTasks(vpcID string, parameters connection.APIRequestParameters) ([]Task, error) {
+	var tasks []Task
+
+	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetVPCTasksPaginated(vpcID, p)
+	}
+
+	responseFunc := func(response connection.Paginated) {
+		for _, task := range response.(*PaginatedTask).Items {
+			tasks = append(tasks, task)
+		}
+	}
+
+	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+}
+
+// GetVPCTasksPaginated retrieves a paginated list of VPC tasks
+func (s *Service) GetVPCTasksPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+	body, err := s.getVPCTasksPaginatedResponseBody(vpcID, parameters)
+
+	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetVPCTasksPaginated(vpcID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getVPCTasksPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
+	body := &GetTaskSliceResponseBody{}
+
+	if vpcID == "" {
+		return body, fmt.Errorf("invalid vpc id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpcs/%s/tasks", vpcID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPCNotFoundError{ID: vpcID}
+		}
+
+		return nil
+	})
+}

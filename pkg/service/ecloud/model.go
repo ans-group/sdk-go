@@ -363,6 +363,18 @@ type ResourceSync struct {
 	Type   SyncType   `json:"type"`
 }
 
+type TaskStatus string
+
+const (
+	TaskStatusComplete   TaskStatus = "complete"
+	TaskStatusFailed     TaskStatus = "failed"
+	TaskStatusInProgress TaskStatus = "in-progress"
+)
+
+func (s TaskStatus) String() string {
+	return string(s)
+}
+
 // VPC represents an eCloud VPC
 // +genie:model_response
 // +genie:model_paginated
@@ -783,4 +795,22 @@ type SSHKeyPair struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
 	PublicKey string `json:"public_key"`
+}
+
+// Task represents a task against an eCloud resource
+// +genie:model_response
+// +genie:model_paginated
+type Task struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	Status    TaskStatus          `json:"status"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// TaskReference represents a reference to an on-going task
+// +genie:model_response
+type TaskReference struct {
+	TaskID     string `json:"task_id"`
+	ResourceID string `json:"id"`
 }
