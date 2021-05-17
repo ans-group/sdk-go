@@ -520,7 +520,7 @@ func NewPaginatedSSHKeyPair(getFunc connection.PaginatedGetFunc, parameters conn
 	}
 }
 
-// PaginatedTask represents a paginated collection of tasks
+// PaginatedTask represents a paginated collection of Task
 type PaginatedTask struct {
 	*connection.PaginatedBase
 	Items []Task

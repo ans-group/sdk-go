@@ -200,7 +200,7 @@ type ECloudService interface {
 	GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 	GetFirewallPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error)
-	GetIFirewallPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+	GetFirewallPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// Firewall Rule
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)

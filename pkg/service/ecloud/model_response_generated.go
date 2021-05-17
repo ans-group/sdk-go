@@ -482,6 +482,12 @@ type GetTaskResponseBody struct {
 	Data Task `json:"data"`
 }
 
+// GetTaskReferenceSliceResponseBody represents an API response body containing []TaskReference data
+type GetTaskReferenceSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []TaskReference `json:"data"`
+}
+
 // GetTaskReferenceResponseBody represents an API response body containing TaskReference data
 type GetTaskReferenceResponseBody struct {
 	connection.APIResponseBody
