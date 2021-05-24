@@ -283,16 +283,6 @@ type PatchVolumeRequest struct {
 	IOPS     int    `json:"iops,omitempty"`
 }
 
-// AttachVolumeRequest represents a request to attach a volume to an instance
-type AttachVolumeRequest struct {
-	InstanceID string `json:"instance_id"`
-}
-
-// DetachVolumeRequest represents a request to detach a volume from an instance
-type DetachVolumeRequest struct {
-	InstanceID string `json:"instance_id"`
-}
-
 // CreateFirewallRuleRequest represents a request to create a firewall rule
 type CreateFirewallRuleRequest struct {
 	Name             string                          `json:"name,omitempty"`
@@ -375,4 +365,9 @@ type CreateSSHKeyPairRequest struct {
 type PatchSSHKeyPairRequest struct {
 	Name      string `json:"name,omitempty"`
 	PublicKey string `json:"public_key,omitempty"`
+}
+
+// AttachDetachInstanceVolumeRequest represents a request to attach / detach a volume to/from an instance
+type AttachDetachInstanceVolumeRequest struct {
+	VolumeID string `json:"volume_id"`
 }

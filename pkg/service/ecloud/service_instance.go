@@ -556,3 +556,59 @@ func (s *Service) getInstanceTasksPaginatedResponseBody(instanceID string, param
 		return nil
 	})
 }
+
+// AttachInstanceVolume attaches a volume to an instance
+func (s *Service) AttachInstanceVolume(instanceID string, req AttachDetachInstanceVolumeRequest) (string, error) {
+	body, err := s.attachInstanceVolumeResponseBody(instanceID, req)
+
+	return body.Data.TaskID, err
+}
+
+func (s *Service) attachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/instances/%s/volume-attach", instanceID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
+// DetachInstanceVolume detaches a volume from an instance
+func (s *Service) DetachInstanceVolume(instanceID string, req AttachDetachInstanceVolumeRequest) (string, error) {
+	body, err := s.detachInstanceVolumeResponseBody(instanceID, req)
+
+	return body.Data.TaskID, err
+}
+
+func (s *Service) detachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/instances/%s/volume-detach", instanceID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
