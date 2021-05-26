@@ -458,6 +458,18 @@ type GetHostSpecResponseBody struct {
 	Data HostSpec `json:"data"`
 }
 
+// GetHostSliceResponseBody represents an API response body containing []Host data
+type GetHostSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Host `json:"data"`
+}
+
+// GetHostResponseBody represents an API response body containing Host data
+type GetHostResponseBody struct {
+	connection.APIResponseBody
+	Data Host `json:"data"`
+}
+
 // GetSSHKeyPairSliceResponseBody represents an API response body containing []SSHKeyPair data
 type GetSSHKeyPairSliceResponseBody struct {
 	connection.APIResponseBody

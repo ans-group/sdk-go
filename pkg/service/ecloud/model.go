@@ -788,6 +788,17 @@ type HostSpec struct {
 	RAMCapacity   int    `json:"ram_capacity"`
 }
 
+// Host represents an eCloud v2 host
+// +genie:model_response
+// +genie:model_paginated
+type Host struct {
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	HostGroupID int                 `json:"host_group_id"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	UpdatedAt   connection.DateTime `json:"updated_at"`
+}
+
 // SSHKeyPair represents an eCloud SSH key pair
 // +genie:model_response
 // +genie:model_paginated

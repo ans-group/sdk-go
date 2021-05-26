@@ -297,6 +297,16 @@ type ECloudService interface {
 	GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
+	// Hosts
+	GetHosts(parameters connection.APIRequestParameters) ([]Host, error)
+	GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error)
+	GetHost(hostID string) (Host, error)
+	CreateHost(req CreateHostRequest) (string, error)
+	PatchHost(hostID string, patch PatchHostRequest) error
+	DeleteHost(hostID string) error
+	GetHostTasks(hostID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+
 	// SSHKeyPairs
 	GetSSHKeyPairs(parameters connection.APIRequestParameters) ([]SSHKeyPair, error)
 	GetSSHKeyPairsPaginated(parameters connection.APIRequestParameters) (*PaginatedSSHKeyPair, error)

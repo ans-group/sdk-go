@@ -38,12 +38,12 @@ func (e *SiteNotFoundError) Error() string {
 	return fmt.Sprintf("site not found with ID [%d]", e.ID)
 }
 
-// HostNotFoundError indicates a host was not found within eCloud
-type HostNotFoundError struct {
+// V1HostNotFoundError indicates a v1 host was not found within eCloud
+type V1HostNotFoundError struct {
 	ID int
 }
 
-func (e *HostNotFoundError) Error() string {
+func (e *V1HostNotFoundError) Error() string {
 	return fmt.Sprintf("host not found with ID [%d]", e.ID)
 }
 
@@ -297,4 +297,13 @@ type SSHKeyPairNotFoundError struct {
 
 func (e *SSHKeyPairNotFoundError) Error() string {
 	return fmt.Sprintf("SSH key pair not found with ID [%s]", e.ID)
+}
+
+// HostFoundError indicates an host was not found
+type HostNotFoundError struct {
+	ID string
+}
+
+func (e *HostNotFoundError) Error() string {
+	return fmt.Sprintf("Host not found with ID [%s]", e.ID)
 }
