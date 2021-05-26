@@ -6,16 +6,16 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// GetHosts retrieves a list of hosts
-func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, error) {
-	var hosts []Host
+// GetV1Hosts retrieves a list of v1 hosts
+func (s *Service) GetV1Hosts(parameters connection.APIRequestParameters) ([]V1Host, error) {
+	var hosts []V1Host
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
+		return s.GetV1HostsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedHost).Items {
+		for _, host := range response.(*PaginatedV1Host).Items {
 			hosts = append(hosts, host)
 		}
 	}
@@ -23,17 +23,17 @@ func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, 
 	return hosts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetHostsPaginated retrieves a paginated list of hosts
-func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error) {
-	body, err := s.getHostsPaginatedResponseBody(parameters)
+// GetV1HostsPaginated retrieves a paginated list of v1 hosts
+func (s *Service) GetV1HostsPaginated(parameters connection.APIRequestParameters) (*PaginatedV1Host, error) {
+	body, err := s.getV1HostsPaginatedResponseBody(parameters)
 
-	return NewPaginatedHost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
+	return NewPaginatedV1Host(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetV1HostsPaginated(p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
-	body := &GetHostSliceResponseBody{}
+func (s *Service) getV1HostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetV1HostSliceResponseBody, error) {
+	body := &GetV1HostSliceResponseBody{}
 
 	response, err := s.connection.Get("/ecloud/v1/hosts", parameters)
 	if err != nil {
@@ -43,15 +43,15 @@ func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequest
 	return body, response.HandleResponse(body, nil)
 }
 
-// GetHost retrieves a single host by ID
-func (s *Service) GetHost(hostID int) (Host, error) {
-	body, err := s.getHostResponseBody(hostID)
+// GetV1Host retrieves a single v1 host by ID
+func (s *Service) GetV1Host(hostID int) (V1Host, error) {
+	body, err := s.getV1HostResponseBody(hostID)
 
 	return body.Data, err
 }
 
-func (s *Service) getHostResponseBody(hostID int) (*GetHostResponseBody, error) {
-	body := &GetHostResponseBody{}
+func (s *Service) getV1HostResponseBody(hostID int) (*GetV1HostResponseBody, error) {
+	body := &GetV1HostResponseBody{}
 
 	if hostID < 1 {
 		return body, fmt.Errorf("invalid host id")

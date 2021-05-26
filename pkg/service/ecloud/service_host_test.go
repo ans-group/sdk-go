@@ -14,7 +14,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetHosts(t *testing.T) {
+func TestGetV1Hosts(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -32,7 +32,7 @@ func TestGetHosts(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		hosts, err := s.GetHosts(connection.APIRequestParameters{})
+		hosts, err := s.GetV1Hosts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, hosts, 1)
@@ -64,7 +64,7 @@ func TestGetHosts(t *testing.T) {
 			}, nil),
 		)
 
-		hosts, err := s.GetHosts(connection.APIRequestParameters{})
+		hosts, err := s.GetV1Hosts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, hosts, 2)
@@ -84,14 +84,14 @@ func TestGetHosts(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/hosts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetHosts(connection.APIRequestParameters{})
+		_, err := s.GetV1Hosts(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetHost(t *testing.T) {
+func TestGetV1Host(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -109,7 +109,7 @@ func TestGetHost(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		host, err := s.GetHost(123)
+		host, err := s.GetV1Host(123)
 
 		assert.Nil(t, err)
 		assert.Equal(t, 123, host.ID)
@@ -127,7 +127,7 @@ func TestGetHost(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/hosts/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetHost(123)
+		_, err := s.GetV1Host(123)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -143,7 +143,7 @@ func TestGetHost(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetHost(0)
+		_, err := s.GetV1Host(0)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid host id", err.Error())
@@ -166,7 +166,7 @@ func TestGetHost(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetHost(123)
+		_, err := s.GetV1Host(123)
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &HostNotFoundError{}, err)

@@ -72,15 +72,15 @@ func NewPaginatedV1Network(getFunc connection.PaginatedGetFunc, parameters conne
 	}
 }
 
-// PaginatedHost represents a paginated collection of Host
-type PaginatedHost struct {
+// PaginatedV1Host represents a paginated collection of v1 Host
+type PaginatedV1Host struct {
 	*connection.PaginatedBase
-	Items []Host
+	Items []V1Host
 }
 
-// NewPaginatedHost returns a pointer to an initialized PaginatedHost struct
-func NewPaginatedHost(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Host) *PaginatedHost {
-	return &PaginatedHost{
+// NewPaginatedV1Host returns a pointer to an initialized PaginatedV1Host struct
+func NewPaginatedV1Host(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []V1Host) *PaginatedV1Host {
+	return &PaginatedV1Host{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

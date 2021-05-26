@@ -173,10 +173,10 @@ type V1Network struct {
 	Name string `json:"name"`
 }
 
-// Host represents an eCloud host
+// V1Host represents an eCloud v1 host
 // +genie:model_response
 // +genie:model_paginated
-type Host struct {
+type V1Host struct {
 	ID         int     `json:"id"`
 	SolutionID int     `json:"solution_id"`
 	PodID      int     `json:"pod_id"`
