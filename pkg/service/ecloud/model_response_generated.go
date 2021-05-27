@@ -62,16 +62,16 @@ type GetV1NetworkResponseBody struct {
 	Data V1Network `json:"data"`
 }
 
-// GetHostSliceResponseBody represents an API response body containing []Host data
-type GetHostSliceResponseBody struct {
+// GetV1HostSliceResponseBody represents an API response body containing []V1Host data
+type GetV1HostSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []Host `json:"data"`
+	Data []V1Host `json:"data"`
 }
 
-// GetHostResponseBody represents an API response body containing Host data
-type GetHostResponseBody struct {
+// GetV1HostResponseBody represents an API response body containing V1Host data
+type GetV1HostResponseBody struct {
 	connection.APIResponseBody
-	Data Host `json:"data"`
+	Data V1Host `json:"data"`
 }
 
 // GetDatastoreSliceResponseBody represents an API response body containing []Datastore data
@@ -456,6 +456,18 @@ type GetHostSpecSliceResponseBody struct {
 type GetHostSpecResponseBody struct {
 	connection.APIResponseBody
 	Data HostSpec `json:"data"`
+}
+
+// GetHostSliceResponseBody represents an API response body containing []Host data
+type GetHostSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Host `json:"data"`
+}
+
+// GetHostResponseBody represents an API response body containing Host data
+type GetHostResponseBody struct {
+	connection.APIResponseBody
+	Data Host `json:"data"`
 }
 
 // GetSSHKeyPairSliceResponseBody represents an API response body containing []SSHKeyPair data

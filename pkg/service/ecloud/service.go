@@ -40,8 +40,8 @@ type ECloudService interface {
 	GetSolutionSitesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedSite, error)
 	GetSolutionDatastores(solutionID int, parameters connection.APIRequestParameters) ([]Datastore, error)
 	GetSolutionDatastoresPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedDatastore, error)
-	GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]Host, error)
-	GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedHost, error)
+	GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]V1Host, error)
+	GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Host, error)
 	GetSolutionNetworks(solutionID int, parameters connection.APIRequestParameters) ([]V1Network, error)
 	GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Network, error)
 	GetSolutionFirewalls(solutionID int, parameters connection.APIRequestParameters) ([]Firewall, error)
@@ -64,9 +64,9 @@ type ECloudService interface {
 	GetSite(siteID int) (Site, error)
 
 	// Host
-	GetHosts(parameters connection.APIRequestParameters) ([]Host, error)
-	GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error)
-	GetHost(hostID int) (Host, error)
+	GetV1Hosts(parameters connection.APIRequestParameters) ([]V1Host, error)
+	GetV1HostsPaginated(parameters connection.APIRequestParameters) (*PaginatedV1Host, error)
+	GetV1Host(hostID int) (V1Host, error)
 
 	// Datastore
 	GetDatastores(parameters connection.APIRequestParameters) ([]Datastore, error)
@@ -296,6 +296,16 @@ type ECloudService interface {
 	DeleteHostGroup(hostGroupID string) error
 	GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+
+	// Hosts
+	GetHosts(parameters connection.APIRequestParameters) ([]Host, error)
+	GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error)
+	GetHost(hostID string) (Host, error)
+	CreateHost(req CreateHostRequest) (string, error)
+	PatchHost(hostID string, patch PatchHostRequest) error
+	DeleteHost(hostID string) error
+	GetHostTasks(hostID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
 	// SSHKeyPairs
 	GetSSHKeyPairs(parameters connection.APIRequestParameters) ([]SSHKeyPair, error)

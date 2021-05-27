@@ -371,3 +371,14 @@ type PatchSSHKeyPairRequest struct {
 type AttachDetachInstanceVolumeRequest struct {
 	VolumeID string `json:"volume_id"`
 }
+
+// CreateHostRequest represents a request to create a host
+type CreateHostRequest struct {
+	Name          string `json:"name,omitempty"`
+	HostGroupID   string `json:"host_group_id"`
+}
+
+// PatchHostRequest represents a request to patch a host
+type PatchHostRequest struct {
+	Name string `json:"name,omitempty"`
+}

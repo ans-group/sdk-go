@@ -241,15 +241,15 @@ func (s *Service) getSolutionDatastoresPaginatedResponseBody(solutionID int, par
 }
 
 // GetSolutionHosts retrieves a list of hosts
-func (s *Service) GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]Host, error) {
-	var hosts []Host
+func (s *Service) GetSolutionHosts(solutionID int, parameters connection.APIRequestParameters) ([]V1Host, error) {
+	var hosts []V1Host
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionHostsPaginated(solutionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedHost).Items {
+		for _, host := range response.(*PaginatedV1Host).Items {
 			hosts = append(hosts, host)
 		}
 	}
@@ -258,16 +258,16 @@ func (s *Service) GetSolutionHosts(solutionID int, parameters connection.APIRequ
 }
 
 // GetSolutionHostsPaginated retrieves a paginated list of domains
-func (s *Service) GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedHost, error) {
+func (s *Service) GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedV1Host, error) {
 	body, err := s.getSolutionHostsPaginatedResponseBody(solutionID, parameters)
 
-	return NewPaginatedHost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return NewPaginatedV1Host(func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetSolutionHostsPaginated(solutionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
-	body := &GetHostSliceResponseBody{}
+func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*GetV1HostSliceResponseBody, error) {
+	body := &GetV1HostSliceResponseBody{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")

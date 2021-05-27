@@ -173,10 +173,10 @@ type V1Network struct {
 	Name string `json:"name"`
 }
 
-// Host represents an eCloud host
+// V1Host represents an eCloud v1 host
 // +genie:model_response
 // +genie:model_paginated
-type Host struct {
+type V1Host struct {
 	ID         int     `json:"id"`
 	SolutionID int     `json:"solution_id"`
 	PodID      int     `json:"pod_id"`
@@ -786,6 +786,17 @@ type HostSpec struct {
 	CPUCores      int    `json:"cpu_cores"`
 	CPUClockSpeed int    `json:"cpu_clock_speed"`
 	RAMCapacity   int    `json:"ram_capacity"`
+}
+
+// Host represents an eCloud v2 host
+// +genie:model_response
+// +genie:model_paginated
+type Host struct {
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	HostGroupID int                 `json:"host_group_id"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	UpdatedAt   connection.DateTime `json:"updated_at"`
 }
 
 // SSHKeyPair represents an eCloud SSH key pair
