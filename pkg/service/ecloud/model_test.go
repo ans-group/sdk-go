@@ -90,3 +90,21 @@ func TestParseTemplateType(t *testing.T) {
 		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
 	})
 }
+
+func TestParseTaskStatus(t *testing.T) {
+	t.Run("Valid_ReturnsEnum", func(t *testing.T) {
+		v := "complete"
+		s, err := ParseTaskStatus(v)
+
+		assert.Nil(t, err)
+		assert.Equal(t, TaskStatusComplete, s)
+	})
+
+	t.Run("Invalid_ReturnsError", func(t *testing.T) {
+		v := "invalid"
+		_, err := ParseTaskStatus(v)
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &connection.ErrInvalidEnumValue{}, err)
+	})
+}

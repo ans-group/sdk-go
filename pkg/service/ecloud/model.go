@@ -371,6 +371,22 @@ const (
 	TaskStatusInProgress TaskStatus = "in-progress"
 )
 
+var TaskStatusEnum connection.EnumSlice = []connection.Enum{
+	TaskStatusComplete,
+	TaskStatusFailed,
+	TaskStatusInProgress,
+}
+
+// ParseTaskStatus attempts to parse a TaskStatus from string
+func ParseTaskStatus(s string) (TaskStatus, error) {
+	e, err := connection.ParseEnum(s, TaskStatusEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(TaskStatus), err
+}
+
 func (s TaskStatus) String() string {
 	return string(s)
 }
