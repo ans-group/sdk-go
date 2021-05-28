@@ -314,6 +314,11 @@ type ECloudService interface {
 	CreateSSHKeyPair(req CreateSSHKeyPairRequest) (string, error)
 	PatchSSHKeyPair(keypairID string, patch PatchSSHKeyPairRequest) error
 	DeleteSSHKeyPair(keypairID string) error
+
+	// Tasks
+	GetTasks(parameters connection.APIRequestParameters) ([]Task, error)
+	GetTasksPaginated(parameters connection.APIRequestParameters) (*PaginatedTask, error)
+	GetTask(taskID string) (Task, error)
 }
 
 // Service implements ECloudService for managing
