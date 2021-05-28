@@ -307,3 +307,12 @@ type HostNotFoundError struct {
 func (e *HostNotFoundError) Error() string {
 	return fmt.Sprintf("Host not found with ID [%s]", e.ID)
 }
+
+// TaskFoundError indicates an task was not found
+type TaskNotFoundError struct {
+	ID string
+}
+
+func (e *TaskNotFoundError) Error() string {
+	return fmt.Sprintf("Task not found with ID [%s]", e.ID)
+}
