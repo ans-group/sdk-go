@@ -26,7 +26,7 @@ func TestGetTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -35,7 +35,7 @@ func TestGetTasks(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Len(t, tasks, 1)
-		assert.Equal(t, "vol-abcdef12", tasks[0].ID)
+		assert.Equal(t, "task-abcdef12", tasks[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -68,17 +68,17 @@ func TestGetTask(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/tasks/vol-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/tasks/task-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vol-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		task, err := s.GetTask("vol-abcdef12")
+		task, err := s.GetTask("task-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "vol-abcdef12", task.ID)
+		assert.Equal(t, "task-abcdef12", task.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,9 +91,9 @@ func TestGetTask(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/tasks/vol-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/ecloud/v2/tasks/task-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetTask("vol-abcdef12")
+		_, err := s.GetTask("task-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -125,14 +125,14 @@ func TestGetTask(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/tasks/vol-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/tasks/task-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetTask("vol-abcdef12")
+		_, err := s.GetTask("task-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &TaskNotFoundError{}, err)
