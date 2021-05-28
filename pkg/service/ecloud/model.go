@@ -828,11 +828,12 @@ type SSHKeyPair struct {
 // +genie:model_response
 // +genie:model_paginated
 type Task struct {
-	ID        string              `json:"id"`
-	Name      string              `json:"name"`
-	Status    TaskStatus          `json:"status"`
-	CreatedAt connection.DateTime `json:"created_at"`
-	UpdatedAt connection.DateTime `json:"updated_at"`
+	ID         string              `json:"id"`
+	ResourceID string              `json:"resource_id"`
+	Name       string              `json:"name"`
+	Status     TaskStatus          `json:"status"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
 // TaskReference represents a reference to an on-going task
