@@ -72,14 +72,14 @@ func (s *Service) getFirewallRulePortResponseBody(ruleID string) (*GetFirewallRu
 }
 
 // CreateFirewallRulePort creates a new FirewallRulePort
-func (s *Service) CreateFirewallRulePort(req CreateFirewallRulePortRequest) (string, error) {
+func (s *Service) CreateFirewallRulePort(req CreateFirewallRulePortRequest) (TaskReference, error) {
 	body, err := s.createFirewallRulePortResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortRequest) (*GetFirewallRulePortResponseBody, error) {
-	body := &GetFirewallRulePortResponseBody{}
+func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/firewall-rule-ports", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortR
 }
 
 // PatchFirewallRulePort patches a FirewallRulePort
-func (s *Service) PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) error {
-	_, err := s.patchFirewallRulePortResponseBody(ruleID, req)
+func (s *Service) PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) (TaskReference, error) {
+	body, err := s.patchFirewallRulePortResponseBody(ruleID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFirewallRulePortRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFirewallRulePortRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")
@@ -118,14 +118,14 @@ func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFire
 }
 
 // DeleteFirewallRulePort deletes a FirewallRulePort
-func (s *Service) DeleteFirewallRulePort(ruleID string) error {
-	_, err := s.deleteFirewallRulePortResponseBody(ruleID)
+func (s *Service) DeleteFirewallRulePort(ruleID string) (string, error) {
+	body, err := s.deleteFirewallRulePortResponseBody(ruleID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFirewallRulePortResponseBody(ruleID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteFirewallRulePortResponseBody(ruleID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")

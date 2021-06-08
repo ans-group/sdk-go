@@ -90,10 +90,10 @@ func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetTaskRef
 }
 
 // PatchVolume patches a Volume
-func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) (string, error) {
+func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) (TaskReference, error) {
 	body, err := s.patchVolumeResponseBody(volumeID, req)
 
-	return body.Data.TaskID, err
+	return body.Data, err
 }
 
 func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeRequest) (*GetTaskReferenceResponseBody, error) {

@@ -156,15 +156,16 @@ func TestCreateFirewallRule(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/firewall-rules", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwr-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwr-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		rule, err := s.CreateFirewallRule(req)
+		taskRef, err := s.CreateFirewallRule(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "fwr-abcdef12", rule)
+		assert.Equal(t, "fwr-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,16 @@ func TestPatchFirewallRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/firewall-rules/fwr-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwr-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", req)
+		task, err := s.PatchFirewallRule("fwr-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "fwr-abcdef12", task.ResourceID)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +228,7 @@ func TestPatchFirewallRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/firewall-rules/fwr-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
+		_, err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +244,7 @@ func TestPatchFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchFirewallRule("", PatchFirewallRuleRequest{})
+		_, err := s.PatchFirewallRule("", PatchFirewallRuleRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid firewall rule id", err.Error())
@@ -264,7 +267,7 @@ func TestPatchFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
+		_, err := s.PatchFirewallRule("fwr-abcdef12", PatchFirewallRuleRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FirewallRuleNotFoundError{}, err)
@@ -284,14 +287,15 @@ func TestDeleteFirewallRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/firewall-rules/fwr-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		taskID, err := s.DeleteFirewallRule("fwr-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +310,7 @@ func TestDeleteFirewallRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/firewall-rules/fwr-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		_, err := s.DeleteFirewallRule("fwr-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +326,7 @@ func TestDeleteFirewallRule(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteFirewallRule("")
+		_, err := s.DeleteFirewallRule("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid firewall rule id", err.Error())
@@ -345,7 +349,7 @@ func TestDeleteFirewallRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallRule("fwr-abcdef12")
+		_, err := s.DeleteFirewallRule("fwr-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FirewallRuleNotFoundError{}, err)

@@ -204,15 +204,16 @@ func TestPatchVolume(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/volumes/vol-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vol-abcdef12\",\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		taskID, err := s.PatchVolume("vol-abcdef12", req)
+		task, err := s.PatchVolume("vol-abcdef12", req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "task-abcdef12", taskID)
+		assert.Equal(t, "vol-abcdef12", task.ResourceID)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {

@@ -156,15 +156,16 @@ func TestCreateFirewallPolicy(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/firewall-policies", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwp-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwp-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		policy, err := s.CreateFirewallPolicy(req)
+		taskRef, err := s.CreateFirewallPolicy(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "fwp-abcdef12", policy)
+		assert.Equal(t, "fwp-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,16 @@ func TestPatchFirewallPolicy(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/firewall-policies/fwp-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fwp-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallPolicy("fwp-abcdef12", req)
+		task, err := s.PatchFirewallPolicy("fwp-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "fwp-abcdef12", task.ResourceID)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +228,7 @@ func TestPatchFirewallPolicy(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/firewall-policies/fwp-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
+		_, err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +244,7 @@ func TestPatchFirewallPolicy(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchFirewallPolicy("", PatchFirewallPolicyRequest{})
+		_, err := s.PatchFirewallPolicy("", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid policy id", err.Error())
@@ -264,7 +267,7 @@ func TestPatchFirewallPolicy(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
+		_, err := s.PatchFirewallPolicy("fwp-abcdef12", PatchFirewallPolicyRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FirewallPolicyNotFoundError{}, err)
@@ -284,14 +287,15 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/firewall-policies/fwp-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallPolicy("fwp-abcdef12")
+		taskID, err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +310,7 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/firewall-policies/fwp-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteFirewallPolicy("fwp-abcdef12")
+		_, err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +326,7 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteFirewallPolicy("")
+		_, err := s.DeleteFirewallPolicy("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid policy id", err.Error())
@@ -345,7 +349,7 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFirewallPolicy("fwp-abcdef12")
+		_, err := s.DeleteFirewallPolicy("fwp-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FirewallPolicyNotFoundError{}, err)

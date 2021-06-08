@@ -196,9 +196,9 @@ type ECloudService interface {
 	GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error)
 	GetFirewallPoliciesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallPolicy, error)
 	GetFirewallPolicy(policyID string) (FirewallPolicy, error)
-	CreateFirewallPolicy(req CreateFirewallPolicyRequest) (string, error)
-	PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) error
-	DeleteFirewallPolicy(policyID string) error
+	CreateFirewallPolicy(req CreateFirewallPolicyRequest) (TaskReference, error)
+	PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) (TaskReference, error)
+	DeleteFirewallPolicy(policyID string) (string, error)
 	GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 	GetFirewallPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error)
@@ -208,9 +208,9 @@ type ECloudService interface {
 	GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error)
 	GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRule, error)
 	GetFirewallRule(ruleID string) (FirewallRule, error)
-	CreateFirewallRule(req CreateFirewallRuleRequest) (string, error)
-	PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) error
-	DeleteFirewallRule(ruleID string) error
+	CreateFirewallRule(req CreateFirewallRuleRequest) (TaskReference, error)
+	PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) (TaskReference, error)
+	DeleteFirewallRule(ruleID string) (string, error)
 	GetFirewallRuleFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
 	GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
 
@@ -218,9 +218,9 @@ type ECloudService interface {
 	GetFirewallRulePorts(parameters connection.APIRequestParameters) ([]FirewallRulePort, error)
 	GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error)
 	GetFirewallRulePort(ruleID string) (FirewallRulePort, error)
-	CreateFirewallRulePort(req CreateFirewallRulePortRequest) (string, error)
-	PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) error
-	DeleteFirewallRulePort(ruleID string) error
+	CreateFirewallRulePort(req CreateFirewallRulePortRequest) (TaskReference, error)
+	PatchFirewallRulePort(ruleID string, req PatchFirewallRulePortRequest) (TaskReference, error)
+	DeleteFirewallRulePort(ruleID string) (string, error)
 
 	// Router
 	GetRouters(parameters connection.APIRequestParameters) ([]Router, error)
@@ -249,7 +249,7 @@ type ECloudService interface {
 	GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 	GetVolume(volumeID string) (Volume, error)
 	CreateVolume(req CreateVolumeRequest) (TaskReference, error)
-	PatchVolume(volumeID string, patch PatchVolumeRequest) (string, error)
+	PatchVolume(volumeID string, patch PatchVolumeRequest) (TaskReference, error)
 	DeleteVolume(volumeID string) (string, error)
 	GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error)
 	GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error)
