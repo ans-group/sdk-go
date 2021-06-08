@@ -316,3 +316,30 @@ type TaskNotFoundError struct {
 func (e *TaskNotFoundError) Error() string {
 	return fmt.Sprintf("Task not found with ID [%s]", e.ID)
 }
+
+// NetworkPolicyFoundError indicates a network policy was not found
+type NetworkPolicyNotFoundError struct {
+	ID string
+}
+
+func (e *NetworkPolicyNotFoundError) Error() string {
+	return fmt.Sprintf("Network policy not found with ID [%s]", e.ID)
+}
+
+// NetworkRuleNotFoundError indicates a network rule was not found
+type NetworkRuleNotFoundError struct {
+	ID string
+}
+
+func (e *NetworkRuleNotFoundError) Error() string {
+	return fmt.Sprintf("Network rule not found with ID [%s]", e.ID)
+}
+
+// NetworkRulePortNotFoundError indicates a network rule port was not found
+type NetworkRulePortNotFoundError struct {
+	ID string
+}
+
+func (e *NetworkRulePortNotFoundError) Error() string {
+	return fmt.Sprintf("Network rule port not found with ID [%s]", e.ID)
+}

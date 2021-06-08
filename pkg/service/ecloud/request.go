@@ -374,11 +374,94 @@ type AttachDetachInstanceVolumeRequest struct {
 
 // CreateHostRequest represents a request to create a host
 type CreateHostRequest struct {
-	Name          string `json:"name,omitempty"`
-	HostGroupID   string `json:"host_group_id"`
+	Name        string `json:"name,omitempty"`
+	HostGroupID string `json:"host_group_id"`
 }
 
 // PatchHostRequest represents a request to patch a host
 type PatchHostRequest struct {
 	Name string `json:"name,omitempty"`
+}
+
+type NetworkPolicyCatchallRuleAction string
+
+const (
+	NetworkPolicyCatchallRuleActionAllow  NetworkPolicyCatchallRuleAction = "ALLOW"
+	NetworkPolicyCatchallRuleActionDrop   NetworkPolicyCatchallRuleAction = "DROP"
+	NetworkPolicyCatchallRuleActionReject NetworkPolicyCatchallRuleAction = "REJECT"
+)
+
+var NetworkPolicyCatchallRuleActionEnum connection.EnumSlice = []connection.Enum{
+	NetworkPolicyCatchallRuleActionAllow,
+	NetworkPolicyCatchallRuleActionDrop,
+	NetworkPolicyCatchallRuleActionReject,
+}
+
+// ParseNetworkPolicyCatchallRuleAction attempts to parse a NetworkPolicyCatchallRuleAction from string
+func ParseNetworkPolicyCatchallRuleAction(s string) (NetworkPolicyCatchallRuleAction, error) {
+	e, err := connection.ParseEnum(s, NetworkPolicyCatchallRuleActionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(NetworkPolicyCatchallRuleAction), err
+}
+
+func (s NetworkPolicyCatchallRuleAction) String() string {
+	return string(s)
+}
+
+// CreateNetworkPolicyRequest represents a request to create a network policy
+type CreateNetworkPolicyRequest struct {
+	Name               string                          `json:"name,omitempty"`
+	NetworkID          string                          `json:"network_id"`
+	CatchallRuleAction NetworkPolicyCatchallRuleAction `json:"catchall_rule_action,omitempty"`
+}
+
+// PatchNetworkPolicyRequest represents a request to patch a network policy
+type PatchNetworkPolicyRequest struct {
+	Name               string                          `json:"name,omitempty"`
+	CatchallRuleAction NetworkPolicyCatchallRuleAction `json:"catchall_rule_action,omitempty"`
+}
+
+// CreateNetworkRuleRequest represents a request to create a network rule
+type CreateNetworkRuleRequest struct {
+	Name            string                         `json:"name,omitempty"`
+	NetworkPolicyID string                         `json:"network_policy_id"`
+	Sequence        int                            `json:"sequence"`
+	Source          string                         `json:"source"`
+	Destination     string                         `json:"destination"`
+	Ports           []CreateNetworkRulePortRequest `json:"ports,omitempty"`
+	Action          NetworkRuleAction              `json:"action"`
+	Direction       NetworkRuleDirection           `json:"direction"`
+	Enabled         bool                           `json:"enabled"`
+}
+
+// PatchNetworkRuleRequest represents a request to patch a network rule
+type PatchNetworkRuleRequest struct {
+	Name        string                        `json:"name,omitempty"`
+	Sequence    *int                          `json:"sequence,omitempty"`
+	Source      string                        `json:"source,omitempty"`
+	Destination string                        `json:"destination,omitempty"`
+	Ports       []PatchNetworkRulePortRequest `json:"ports,omitempty"`
+	Action      NetworkRuleAction             `json:"action,omitempty"`
+	Direction   NetworkRuleDirection          `json:"direction,omitempty"`
+	Enabled     *bool                         `json:"enabled,omitempty"`
+}
+
+// CreateNetworkRulePortRequest represents a request to create a network rule port
+type CreateNetworkRulePortRequest struct {
+	Name          string                  `json:"name,omitempty"`
+	NetworkRuleID string                  `json:"network_rule_id"`
+	Protocol      NetworkRulePortProtocol `json:"protocol"`
+	Source        string                  `json:"source"`
+	Destination   string                  `json:"destination"`
+}
+
+// PatchNetworkRulePortRequest represents a request to patch a network rule port
+type PatchNetworkRulePortRequest struct {
+	Name        string                  `json:"name,omitempty"`
+	Protocol    NetworkRulePortProtocol `json:"protocol,omitempty"`
+	Source      string                  `json:"source,omitempty"`
+	Destination string                  `json:"destination,omitempty"`
 }
