@@ -72,14 +72,14 @@ func (s *Service) getFirewallRuleResponseBody(ruleID string) (*GetFirewallRuleRe
 }
 
 // CreateFirewallRule creates a new FirewallRule
-func (s *Service) CreateFirewallRule(req CreateFirewallRuleRequest) (string, error) {
+func (s *Service) CreateFirewallRule(req CreateFirewallRuleRequest) (TaskReference, error) {
 	body, err := s.createFirewallRuleResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createFirewallRuleResponseBody(req CreateFirewallRuleRequest) (*GetFirewallRuleResponseBody, error) {
-	body := &GetFirewallRuleResponseBody{}
+func (s *Service) createFirewallRuleResponseBody(req CreateFirewallRuleRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/firewall-rules", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createFirewallRuleResponseBody(req CreateFirewallRuleRequest) 
 }
 
 // PatchFirewallRule patches a FirewallRule
-func (s *Service) PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) error {
-	_, err := s.patchFirewallRuleResponseBody(ruleID, req)
+func (s *Service) PatchFirewallRule(ruleID string, req PatchFirewallRuleRequest) (TaskReference, error) {
+	body, err := s.patchFirewallRuleResponseBody(ruleID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchFirewallRuleResponseBody(ruleID string, req PatchFirewallRuleRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchFirewallRuleResponseBody(ruleID string, req PatchFirewallRuleRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")
@@ -118,14 +118,14 @@ func (s *Service) patchFirewallRuleResponseBody(ruleID string, req PatchFirewall
 }
 
 // DeleteFirewallRule deletes a FirewallRule
-func (s *Service) DeleteFirewallRule(ruleID string) error {
-	_, err := s.deleteFirewallRuleResponseBody(ruleID)
+func (s *Service) DeleteFirewallRule(ruleID string) (string, error) {
+	body, err := s.deleteFirewallRuleResponseBody(ruleID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFirewallRuleResponseBody(ruleID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteFirewallRuleResponseBody(ruleID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")

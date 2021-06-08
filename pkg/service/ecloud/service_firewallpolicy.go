@@ -72,14 +72,14 @@ func (s *Service) getFirewallPolicyResponseBody(policyID string) (*GetFirewallPo
 }
 
 // CreateFirewallPolicy creates a new FirewallPolicy
-func (s *Service) CreateFirewallPolicy(req CreateFirewallPolicyRequest) (string, error) {
+func (s *Service) CreateFirewallPolicy(req CreateFirewallPolicyRequest) (TaskReference, error) {
 	body, err := s.createFirewallPolicyResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createFirewallPolicyResponseBody(req CreateFirewallPolicyRequest) (*GetFirewallPolicyResponseBody, error) {
-	body := &GetFirewallPolicyResponseBody{}
+func (s *Service) createFirewallPolicyResponseBody(req CreateFirewallPolicyRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/firewall-policies", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createFirewallPolicyResponseBody(req CreateFirewallPolicyReque
 }
 
 // PatchFirewallPolicy patches a FirewallPolicy
-func (s *Service) PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) error {
-	_, err := s.patchFirewallPolicyResponseBody(policyID, req)
+func (s *Service) PatchFirewallPolicy(policyID string, req PatchFirewallPolicyRequest) (TaskReference, error) {
+	body, err := s.patchFirewallPolicyResponseBody(policyID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchFirewallPolicyResponseBody(policyID string, req PatchFirewallPolicyRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchFirewallPolicyResponseBody(policyID string, req PatchFirewallPolicyRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid policy id")
@@ -118,14 +118,14 @@ func (s *Service) patchFirewallPolicyResponseBody(policyID string, req PatchFire
 }
 
 // DeleteFirewallPolicy deletes a FirewallPolicy
-func (s *Service) DeleteFirewallPolicy(policyID string) error {
-	_, err := s.deleteFirewallPolicyResponseBody(policyID)
+func (s *Service) DeleteFirewallPolicy(policyID string) (string, error) {
+	body, err := s.deleteFirewallPolicyResponseBody(policyID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFirewallPolicyResponseBody(policyID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteFirewallPolicyResponseBody(policyID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid policy id")
