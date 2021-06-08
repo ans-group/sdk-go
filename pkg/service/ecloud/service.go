@@ -319,6 +319,36 @@ type ECloudService interface {
 	GetTasks(parameters connection.APIRequestParameters) ([]Task, error)
 	GetTasksPaginated(parameters connection.APIRequestParameters) (*PaginatedTask, error)
 	GetTask(taskID string) (Task, error)
+
+	// Network Policy
+	GetNetworkPolicies(parameters connection.APIRequestParameters) ([]NetworkPolicy, error)
+	GetNetworkPoliciesPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkPolicy, error)
+	GetNetworkPolicy(policyID string) (NetworkPolicy, error)
+	CreateNetworkPolicy(req CreateNetworkPolicyRequest) (TaskReference, error)
+	PatchNetworkPolicy(policyID string, req PatchNetworkPolicyRequest) (TaskReference, error)
+	DeleteNetworkPolicy(policyID string) (string, error)
+	GetNetworkPolicyNetworkRules(policyID string, parameters connection.APIRequestParameters) ([]NetworkRule, error)
+	GetNetworkPolicyNetworkRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedNetworkRule, error)
+	GetNetworkPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error)
+	GetNetworkPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+
+	// Network Rule
+	GetNetworkRules(parameters connection.APIRequestParameters) ([]NetworkRule, error)
+	GetNetworkRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkRule, error)
+	GetNetworkRule(ruleID string) (NetworkRule, error)
+	CreateNetworkRule(req CreateNetworkRuleRequest) (TaskReference, error)
+	PatchNetworkRule(ruleID string, req PatchNetworkRuleRequest) (TaskReference, error)
+	DeleteNetworkRule(ruleID string) (string, error)
+	GetNetworkRuleNetworkRulePorts(networkRuleID string, parameters connection.APIRequestParameters) ([]NetworkRulePort, error)
+	GetNetworkRuleNetworkRulePortsPaginated(networkRuleID string, parameters connection.APIRequestParameters) (*PaginatedNetworkRulePort, error)
+
+	// Network Rule Ports
+	GetNetworkRulePorts(parameters connection.APIRequestParameters) ([]NetworkRulePort, error)
+	GetNetworkRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkRulePort, error)
+	GetNetworkRulePort(ruleID string) (NetworkRulePort, error)
+	CreateNetworkRulePort(req CreateNetworkRulePortRequest) (TaskReference, error)
+	PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRequest) (TaskReference, error)
+	DeleteNetworkRulePort(ruleID string) (string, error)
 }
 
 // Service implements ECloudService for managing

@@ -842,3 +842,131 @@ type TaskReference struct {
 	TaskID     string `json:"task_id"`
 	ResourceID string `json:"id"`
 }
+
+// NetworkPolicy represents an eCloud network policy
+// +genie:model_response
+// +genie:model_paginated
+type NetworkPolicy struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	NetworkID string              `json:"network_id"`
+	Sync      ResourceSync        `json:"sync"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+type NetworkRuleAction string
+
+const (
+	NetworkRuleActionAllow  NetworkRuleAction = "ALLOW"
+	NetworkRuleActionDrop   NetworkRuleAction = "DROP"
+	NetworkRuleActionReject NetworkRuleAction = "REJECT"
+)
+
+var NetworkRuleActionEnum connection.EnumSlice = []connection.Enum{
+	NetworkRuleActionAllow,
+	NetworkRuleActionDrop,
+	NetworkRuleActionReject,
+}
+
+// ParseNetworkRuleAction attempts to parse a NetworkRuleAction from string
+func ParseNetworkRuleAction(s string) (NetworkRuleAction, error) {
+	e, err := connection.ParseEnum(s, NetworkRuleActionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(NetworkRuleAction), err
+}
+
+func (s NetworkRuleAction) String() string {
+	return string(s)
+}
+
+type NetworkRuleDirection string
+
+const (
+	NetworkRuleDirectionIn    NetworkRuleDirection = "IN"
+	NetworkRuleDirectionOut   NetworkRuleDirection = "OUT"
+	NetworkRuleDirectionInOut NetworkRuleDirection = "IN_OUT"
+)
+
+var NetworkRuleDirectionEnum connection.EnumSlice = []connection.Enum{
+	NetworkRuleDirectionIn,
+	NetworkRuleDirectionOut,
+	NetworkRuleDirectionInOut,
+}
+
+// ParseNetworkRuleDirection attempts to parse a NetworkRuleDirection from string
+func ParseNetworkRuleDirection(s string) (NetworkRuleDirection, error) {
+	e, err := connection.ParseEnum(s, NetworkRuleDirectionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(NetworkRuleDirection), err
+}
+
+func (s NetworkRuleDirection) String() string {
+	return string(s)
+}
+
+// NetworkRule represents an eCloud network rule
+// +genie:model_response
+// +genie:model_paginated
+type NetworkRule struct {
+	ID              string               `json:"id"`
+	Name            string               `json:"name"`
+	NetworkPolicyID string               `json:"network_policy_id"`
+	Sequence        int                  `json:"sequence"`
+	Source          string               `json:"source"`
+	Destination     string               `json:"destination"`
+	Type            string               `json:"type"`
+	Action          NetworkRuleAction    `json:"action"`
+	Direction       NetworkRuleDirection `json:"direction"`
+	Enabled         bool                 `json:"enabled"`
+	CreatedAt       connection.DateTime  `json:"created_at"`
+	UpdatedAt       connection.DateTime  `json:"updated_at"`
+}
+
+type NetworkRulePortProtocol string
+
+const (
+	NetworkRulePortProtocolTCP    NetworkRulePortProtocol = "TCP"
+	NetworkRulePortProtocolUDP    NetworkRulePortProtocol = "UDP"
+	NetworkRulePortProtocolICMPv4 NetworkRulePortProtocol = "ICMPv4"
+)
+
+var NetworkRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
+	NetworkRulePortProtocolTCP,
+	NetworkRulePortProtocolUDP,
+	NetworkRulePortProtocolICMPv4,
+}
+
+// ParseNetworkRulePortProtocol attempts to parse a NetworkRulePortProtocol from string
+func ParseNetworkRulePortProtocol(s string) (NetworkRulePortProtocol, error) {
+	e, err := connection.ParseEnum(s, NetworkRulePortProtocolEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(NetworkRulePortProtocol), err
+}
+
+func (s NetworkRulePortProtocol) String() string {
+	return string(s)
+}
+
+// NetworkRulePort represents an eCloud network rule port
+// +genie:model_response
+// +genie:model_paginated
+type NetworkRulePort struct {
+	ID            string                  `json:"id"`
+	Name          string                  `json:"name"`
+	NetworkRuleID string                  `json:"network_rule_id"`
+	Protocol      NetworkRulePortProtocol `json:"protocol"`
+	Source        string                  `json:"source"`
+	Destination   string                  `json:"destination"`
+	CreatedAt     connection.DateTime     `json:"created_at"`
+	UpdatedAt     connection.DateTime     `json:"updated_at"`
+}

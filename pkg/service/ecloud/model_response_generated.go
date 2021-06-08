@@ -505,3 +505,39 @@ type GetTaskReferenceResponseBody struct {
 	connection.APIResponseBody
 	Data TaskReference `json:"data"`
 }
+
+// GetNetworkPolicySliceResponseBody represents an API response body containing []NetworkPolicy data
+type GetNetworkPolicySliceResponseBody struct {
+	connection.APIResponseBody
+	Data []NetworkPolicy `json:"data"`
+}
+
+// GetNetworkPolicyResponseBody represents an API response body containing NetworkPolicy data
+type GetNetworkPolicyResponseBody struct {
+	connection.APIResponseBody
+	Data NetworkPolicy `json:"data"`
+}
+
+// GetNetworkRuleSliceResponseBody represents an API response body containing []NetworkRule data
+type GetNetworkRuleSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []NetworkRule `json:"data"`
+}
+
+// GetNetworkRuleResponseBody represents an API response body containing NetworkRule data
+type GetNetworkRuleResponseBody struct {
+	connection.APIResponseBody
+	Data NetworkRule `json:"data"`
+}
+
+// GetNetworkRulePortSliceResponseBody represents an API response body containing []NetworkRulePort data
+type GetNetworkRulePortSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []NetworkRulePort `json:"data"`
+}
+
+// GetNetworkRulePortResponseBody represents an API response body containing NetworkRulePort data
+type GetNetworkRulePortResponseBody struct {
+	connection.APIResponseBody
+	Data NetworkRulePort `json:"data"`
+}

@@ -72,7 +72,7 @@ func NewPaginatedV1Network(getFunc connection.PaginatedGetFunc, parameters conne
 	}
 }
 
-// PaginatedV1Host represents a paginated collection of v1 Host
+// PaginatedV1Host represents a paginated collection of V1Host
 type PaginatedV1Host struct {
 	*connection.PaginatedBase
 	Items []V1Host
@@ -506,7 +506,7 @@ func NewPaginatedHostSpec(getFunc connection.PaginatedGetFunc, parameters connec
 	}
 }
 
-// PaginatedHost represents a paginated collection of Hosts
+// PaginatedHost represents a paginated collection of Host
 type PaginatedHost struct {
 	*connection.PaginatedBase
 	Items []Host
@@ -543,6 +543,48 @@ type PaginatedTask struct {
 // NewPaginatedTask returns a pointer to an initialized PaginatedTask struct
 func NewPaginatedTask(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []Task) *PaginatedTask {
 	return &PaginatedTask{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedNetworkPolicy represents a paginated collection of NetworkPolicy
+type PaginatedNetworkPolicy struct {
+	*connection.PaginatedBase
+	Items []NetworkPolicy
+}
+
+// NewPaginatedNetworkPolicy returns a pointer to an initialized PaginatedNetworkPolicy struct
+func NewPaginatedNetworkPolicy(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []NetworkPolicy) *PaginatedNetworkPolicy {
+	return &PaginatedNetworkPolicy{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedNetworkRule represents a paginated collection of NetworkRule
+type PaginatedNetworkRule struct {
+	*connection.PaginatedBase
+	Items []NetworkRule
+}
+
+// NewPaginatedNetworkRule returns a pointer to an initialized PaginatedNetworkRule struct
+func NewPaginatedNetworkRule(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []NetworkRule) *PaginatedNetworkRule {
+	return &PaginatedNetworkRule{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedNetworkRulePort represents a paginated collection of NetworkRulePort
+type PaginatedNetworkRulePort struct {
+	*connection.PaginatedBase
+	Items []NetworkRulePort
+}
+
+// NewPaginatedNetworkRulePort returns a pointer to an initialized PaginatedNetworkRulePort struct
+func NewPaginatedNetworkRulePort(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []NetworkRulePort) *PaginatedNetworkRulePort {
+	return &PaginatedNetworkRulePort{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
