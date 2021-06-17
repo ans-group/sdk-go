@@ -479,3 +479,89 @@ func TestGetRequestConversation(t *testing.T) {
 		assert.IsType(t, &RequestNotFoundError{}, err)
 	})
 }
+
+func TestCreateRequestFeedback(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		expectedRequest := CreateFeedbackRequest{
+			ContactID: 1,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/feedback", &expectedRequest).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		id, err := s.CreateRequestFeedback(123, expectedRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/feedback", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateRequestFeedback(123, CreateFeedbackRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidRequestID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateRequestFeedback(0, CreateFeedbackRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid request id", err.Error())
+	})
+
+	t.Run("404_ReturnsRequestNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v1/requests/123/feedback", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.CreateRequestFeedback(123, CreateFeedbackRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &RequestNotFoundError{}, err)
+	})
+}

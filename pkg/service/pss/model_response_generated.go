@@ -25,3 +25,15 @@ type GetReplyResponseBody struct {
 	connection.APIResponseBody
 	Data Reply `json:"data"`
 }
+
+// GetFeedbackSliceResponseBody represents an API response body containing []Feedback data
+type GetFeedbackSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []Feedback `json:"data"`
+}
+
+// GetFeedbackResponseBody represents an API response body containing Feedback data
+type GetFeedbackResponseBody struct {
+	connection.APIResponseBody
+	Data Feedback `json:"data"`
+}
