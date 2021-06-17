@@ -201,3 +201,59 @@ func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, par
 		return nil
 	})
 }
+
+// GetRequestFeedback retrieves feedback for a request
+func (s *Service) GetRequestFeedback(requestID int) (Feedback, error) {
+	body, err := s.getRequestFeedbackResponseBody(requestID)
+
+	return body.Data, err
+}
+
+func (s *Service) getRequestFeedbackResponseBody(requestID int) (*GetFeedbackResponseBody, error) {
+	body := &GetFeedbackResponseBody{}
+
+	if requestID < 1 {
+		return body, fmt.Errorf("invalid request id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RequestFeedbackNotFoundError{RequestID: requestID}
+		}
+
+		return nil
+	})
+}
+
+// CreateRequestFeedback creates a new request feedback
+func (s *Service) CreateRequestFeedback(requestID int, req CreateFeedbackRequest) (int, error) {
+	body, err := s.createRequestFeedbackResponseBody(requestID, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createRequestFeedbackResponseBody(requestID int, req CreateFeedbackRequest) (*GetFeedbackResponseBody, error) {
+	body := &GetFeedbackResponseBody{}
+
+	if requestID < 1 {
+		return body, fmt.Errorf("invalid request id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &RequestNotFoundError{ID: requestID}
+		}
+
+		return nil
+	})
+}

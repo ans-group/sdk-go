@@ -28,3 +28,12 @@ type AttachmentNotFoundError struct {
 func (e *AttachmentNotFoundError) Error() string {
 	return fmt.Sprintf("Attachment not found with name [%s]", e.Name)
 }
+
+// RequestFeedbackNotFoundError indicates feedback for a request was not found
+type RequestFeedbackNotFoundError struct {
+	RequestID int
+}
+
+func (e *RequestFeedbackNotFoundError) Error() string {
+	return fmt.Sprintf("Feedback not found for request [%d]", e.RequestID)
+}

@@ -14,6 +14,9 @@ type PSSService interface {
 	GetRequest(requestID int) (Request, error)
 	PatchRequest(requestID int, req PatchRequestRequest) error
 
+	GetRequestFeedback(requestID int) (Feedback, error)
+	CreateRequestFeedback(requestID int, req CreateFeedbackRequest) (int, error)
+
 	CreateRequestReply(requestID int, req CreateReplyRequest) (string, error)
 	GetRequestReplies(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error)
 	GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)

@@ -44,3 +44,14 @@ type CreateReplyRequest struct {
 func (c *CreateReplyRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
+
+// CreateFeedbackRequest represents a request to create PSS request feedback
+type CreateFeedbackRequest struct {
+	ContactID         int    `json:"contact_id"`
+	Score             int    `json:"score"`
+	Comment           string `json:"comment"`
+	SpeedResolved     int    `json:"speed_resolved"`
+	Quality           int    `json:"quality"`
+	NPSScore          int    `json:"nps_score"`
+	ThirdPartyConsent bool   `json:"thirdparty_consent"`
+}

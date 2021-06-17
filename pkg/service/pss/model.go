@@ -101,6 +101,9 @@ type Request struct {
 	CustomerReference string              `json:"customer_reference"`
 	Product           Product             `json:"product"`
 	LastRepliedAt     connection.DateTime `json:"last_replied_at"`
+	CC                []string            `json:"cc"`
+	UnreadReplies     int                 `json:"unread_replies"`
+	ContactMethod     string              `json:"contact_method"`
 }
 
 // Author represents a PSS request author
@@ -115,10 +118,12 @@ type Author struct {
 // +genie:model_paginated
 type Reply struct {
 	ID          string              `json:"id"`
+	RequestID   int                 `json:"request_id"`
 	Author      Author              `json:"author"`
 	Description string              `json:"description"`
-	CreatedAt   connection.DateTime `json:"created_at"`
 	Attachments []Attachment        `json:"attachments"`
+	Read        bool                `json:"read"`
+	CreatedAt   connection.DateTime `json:"created_at"`
 }
 
 // Attachment represents a PSS attachment
@@ -131,4 +136,18 @@ type Product struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
+}
+
+// Feedback represents PSS feedback
+// +genie:model_response
+type Feedback struct {
+	ID               int                 `json:"id"`
+	ContactID        int                 `json:"contact_id"`
+	Score            int                 `json:"score"`
+	Comment          string              `json:"comment"`
+	SpeedResolved    int                 `json:"speed_resolved"`
+	Quality          int                 `json:"quality"`
+	NPSScore         int                 `json:"nps_score"`
+	ThirdPartConsent bool                `json:"thirdparty_consent"`
+	CreatedAt        connection.DateTime `json:"created_at"`
 }
