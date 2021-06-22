@@ -810,7 +810,8 @@ type HostSpec struct {
 type Host struct {
 	ID          string              `json:"id"`
 	Name        string              `json:"name"`
-	HostGroupID int                 `json:"host_group_id"`
+	HostGroupID string              `json:"host_group_id"`
+	Sync        ResourceSync        `json:"sync"`
 	CreatedAt   connection.DateTime `json:"created_at"`
 	UpdatedAt   connection.DateTime `json:"updated_at"`
 }
