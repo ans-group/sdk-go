@@ -72,14 +72,14 @@ func (s *Service) getHostGroupResponseBody(hostGroupID string) (*GetHostGroupRes
 }
 
 // CreateHostGroup creates a host group
-func (s *Service) CreateHostGroup(req CreateHostGroupRequest) (string, error) {
+func (s *Service) CreateHostGroup(req CreateHostGroupRequest) (TaskReference, error) {
 	body, err := s.createHostGroupResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createHostGroupResponseBody(req CreateHostGroupRequest) (*GetHostGroupResponseBody, error) {
-	body := &GetHostGroupResponseBody{}
+func (s *Service) createHostGroupResponseBody(req CreateHostGroupRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/host-groups", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createHostGroupResponseBody(req CreateHostGroupRequest) (*GetH
 }
 
 // PatchHostGroup patches a host group
-func (s *Service) PatchHostGroup(hostGroupID string, req PatchHostGroupRequest) error {
-	_, err := s.patchHostGroupResponseBody(hostGroupID, req)
+func (s *Service) PatchHostGroup(hostGroupID string, req PatchHostGroupRequest) (TaskReference, error) {
+	body, err := s.patchHostGroupResponseBody(hostGroupID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchHostGroupResponseBody(hostGroupID string, req PatchHostGroupRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchHostGroupResponseBody(hostGroupID string, req PatchHostGroupRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")
@@ -118,14 +118,14 @@ func (s *Service) patchHostGroupResponseBody(hostGroupID string, req PatchHostGr
 }
 
 // DeleteHostGroup deletes a host group
-func (s *Service) DeleteHostGroup(hostGroupID string) error {
-	_, err := s.deleteHostGroupResponseBody(hostGroupID)
+func (s *Service) DeleteHostGroup(hostGroupID string) (string, error) {
+	body, err := s.deleteHostGroupResponseBody(hostGroupID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")

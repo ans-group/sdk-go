@@ -156,15 +156,16 @@ func TestCreateHostGroup(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/host-groups", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"hg-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"hg-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		id, err := s.CreateHostGroup(req)
+		taskRef, err := s.CreateHostGroup(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "hg-abcdef12", id)
+		assert.Equal(t, "hg-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,15 @@ func TestPatchHostGroup(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/host-groups/hg-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchHostGroup("hg-abcdef12", req)
+		taskRef, err := s.PatchHostGroup("hg-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +227,7 @@ func TestPatchHostGroup(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/host-groups/hg-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchHostGroup("hg-abcdef12", PatchHostGroupRequest{})
+		_, err := s.PatchHostGroup("hg-abcdef12", PatchHostGroupRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +243,7 @@ func TestPatchHostGroup(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchHostGroup("", PatchHostGroupRequest{})
+		_, err := s.PatchHostGroup("", PatchHostGroupRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid host group id", err.Error())
@@ -264,7 +266,7 @@ func TestPatchHostGroup(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchHostGroup("hg-abcdef12", PatchHostGroupRequest{})
+		_, err := s.PatchHostGroup("hg-abcdef12", PatchHostGroupRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &HostGroupNotFoundError{}, err)
@@ -284,14 +286,15 @@ func TestDeleteHostGroup(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/host-groups/hg-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteHostGroup("hg-abcdef12")
+		taskID, err := s.DeleteHostGroup("hg-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +309,7 @@ func TestDeleteHostGroup(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/host-groups/hg-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteHostGroup("hg-abcdef12")
+		_, err := s.DeleteHostGroup("hg-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +325,7 @@ func TestDeleteHostGroup(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteHostGroup("")
+		_, err := s.DeleteHostGroup("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid host group id", err.Error())
@@ -345,7 +348,7 @@ func TestDeleteHostGroup(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteHostGroup("hg-abcdef12")
+		_, err := s.DeleteHostGroup("hg-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &HostGroupNotFoundError{}, err)

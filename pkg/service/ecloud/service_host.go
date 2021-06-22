@@ -72,14 +72,14 @@ func (s *Service) getHostResponseBody(hostID string) (*GetHostResponseBody, erro
 }
 
 // CreateHost creates a host
-func (s *Service) CreateHost(req CreateHostRequest) (string, error) {
+func (s *Service) CreateHost(req CreateHostRequest) (TaskReference, error) {
 	body, err := s.createHostResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createHostResponseBody(req CreateHostRequest) (*GetHostResponseBody, error) {
-	body := &GetHostResponseBody{}
+func (s *Service) createHostResponseBody(req CreateHostRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/hosts", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createHostResponseBody(req CreateHostRequest) (*GetHostRespons
 }
 
 // PatchHost patches a host
-func (s *Service) PatchHost(hostID string, req PatchHostRequest) error {
-	_, err := s.patchHostResponseBody(hostID, req)
+func (s *Service) PatchHost(hostID string, req PatchHostRequest) (TaskReference, error) {
+	body, err := s.patchHostResponseBody(hostID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")
@@ -118,14 +118,14 @@ func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*c
 }
 
 // DeleteHost deletes a host
-func (s *Service) DeleteHost(hostID string) error {
-	_, err := s.deleteHostResponseBody(hostID)
+func (s *Service) DeleteHost(hostID string) (string, error) {
+	body, err := s.deleteHostResponseBody(hostID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteHostResponseBody(hostID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteHostResponseBody(hostID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")
