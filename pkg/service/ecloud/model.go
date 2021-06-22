@@ -412,6 +412,7 @@ type AvailabilityZone struct {
 	Code             string `json:"code"`
 	Name             string `json:"name"`
 	DatacentreSiteID int    `json:"datacentre_site_id"`
+	RegionID         string `json:"region_id"`
 }
 
 // Network represents an eCloud network
