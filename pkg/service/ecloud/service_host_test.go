@@ -156,15 +156,16 @@ func TestCreateHost(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/hosts", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"h-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"h-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		id, err := s.CreateHost(req)
+		taskRef, err := s.CreateHost(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "h-abcdef12", id)
+		assert.Equal(t, "h-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,15 @@ func TestPatchHost(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/hosts/h-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchHost("h-abcdef12", req)
+		taskRef, err := s.PatchHost("h-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +227,7 @@ func TestPatchHost(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/hosts/h-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchHost("h-abcdef12", PatchHostRequest{})
+		_, err := s.PatchHost("h-abcdef12", PatchHostRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +243,7 @@ func TestPatchHost(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchHost("", PatchHostRequest{})
+		_, err := s.PatchHost("", PatchHostRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid host id", err.Error())
@@ -264,7 +266,7 @@ func TestPatchHost(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchHost("h-abcdef12", PatchHostRequest{})
+		_, err := s.PatchHost("h-abcdef12", PatchHostRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &HostNotFoundError{}, err)
@@ -284,14 +286,15 @@ func TestDeleteHost(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/hosts/h-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteHost("h-abcdef12")
+		taskID, err := s.DeleteHost("h-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +309,7 @@ func TestDeleteHost(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/hosts/h-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteHost("h-abcdef12")
+		_, err := s.DeleteHost("h-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +325,7 @@ func TestDeleteHost(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteHost("")
+		_, err := s.DeleteHost("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid host id", err.Error())
@@ -345,7 +348,7 @@ func TestDeleteHost(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteHost("h-abcdef12")
+		_, err := s.DeleteHost("h-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &HostNotFoundError{}, err)

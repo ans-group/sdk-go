@@ -291,9 +291,9 @@ type ECloudService interface {
 	GetHostGroups(parameters connection.APIRequestParameters) ([]HostGroup, error)
 	GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostGroup, error)
 	GetHostGroup(hostGroupID string) (HostGroup, error)
-	CreateHostGroup(req CreateHostGroupRequest) (string, error)
-	PatchHostGroup(hostGroupID string, patch PatchHostGroupRequest) error
-	DeleteHostGroup(hostGroupID string) error
+	CreateHostGroup(req CreateHostGroupRequest) (TaskReference, error)
+	PatchHostGroup(hostGroupID string, patch PatchHostGroupRequest) (TaskReference, error)
+	DeleteHostGroup(hostGroupID string) (string, error)
 	GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
@@ -301,9 +301,9 @@ type ECloudService interface {
 	GetHosts(parameters connection.APIRequestParameters) ([]Host, error)
 	GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error)
 	GetHost(hostID string) (Host, error)
-	CreateHost(req CreateHostRequest) (string, error)
-	PatchHost(hostID string, patch PatchHostRequest) error
-	DeleteHost(hostID string) error
+	CreateHost(req CreateHostRequest) (TaskReference, error)
+	PatchHost(hostID string, patch PatchHostRequest) (TaskReference, error)
+	DeleteHost(hostID string) (string, error)
 	GetHostTasks(hostID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
