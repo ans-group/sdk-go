@@ -139,6 +139,53 @@ func TestGetTargetGroup(t *testing.T) {
 	})
 }
 
+func TestCreateTargetGroup(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := CreateTargetGroupRequest{
+			Name: "somegroup",
+		}
+
+		c.EXPECT().Post("/loadbalancers/v2/target-groups", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		groupID, err := s.CreateTargetGroup(req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, groupID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/loadbalancers/v2/target-groups", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateTargetGroup(CreateTargetGroupRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
 func TestPatchTargetGroup(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

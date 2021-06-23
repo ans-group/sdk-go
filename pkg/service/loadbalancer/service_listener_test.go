@@ -152,7 +152,7 @@ func TestCreateListener(t *testing.T) {
 
 		req := CreateListenerRequest{
 			ClusterID:            1,
-			Mode:                 ListenerModeHTTP,
+			Mode:                 ModeHTTP,
 			DefaultTargetGroupID: 1,
 			Name:                 "somelistener",
 		}

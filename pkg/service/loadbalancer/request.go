@@ -42,21 +42,21 @@ type PatchTargetRequest struct {
 // CreateTargetGroupRequest represents a request to create a target group
 type CreateTargetGroupRequest struct {
 	ClusterID            int                      `json:"cluster_id"`
-	Name                 string                   `json:"name,omitempty"`
-	Balance              TargetGroupBalance       `json:"balance,omitempty"`
-	Mode                 Mode                     `json:"mode,omitempty"`
+	Name                 string                   `json:"name"`
+	Balance              TargetGroupBalance       `json:"balance"`
+	Mode                 Mode                     `json:"mode"`
 	Close                bool                     `json:"close"`
 	Sticky               bool                     `json:"sticky"`
-	CookieOpts           string                   `json:"cookie_opts,omitempty"`
-	Source               string                   `json:"source,omitempty"`
+	CookieOpts           string                   `json:"cookie_opts"`
+	Source               string                   `json:"source"`
 	TimeoutsConnect      int                      `json:"timeouts_connect,omitempty"`
 	TimeoutServer        int                      `json:"timeouts_server,omitempty"`
-	CustomOptions        string                   `json:"custom_options,omitempty"`
-	MonitorURL           string                   `json:"monitor_url,omitempty"`
-	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method,omitempty"`
-	MonitorHost          string                   `json:"monitor_host,omitempty"`
-	MonitorHTTPVersion   string                   `json:"monitor_http_version,omitempty"`
-	MonitorExpect        string                   `json:"monitor_expect,omitempty"`
+	CustomOptions        string                   `json:"custom_options"`
+	MonitorURL           string                   `json:"monitor_url"`
+	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method"`
+	MonitorHost          string                   `json:"monitor_host"`
+	MonitorHTTPVersion   string                   `json:"monitor_http_version"`
+	MonitorExpect        string                   `json:"monitor_expect"`
 	MonitorTCPMonitoring bool                     `json:"monitor_tcp_monitoring"`
 	CheckPort            int                      `json:"check_port,omitempty"`
 	SendProxy            bool                     `json:"send_proxy"`

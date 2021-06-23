@@ -81,7 +81,7 @@ func (s *Service) CreateTargetGroup(req CreateTargetGroupRequest) (int, error) {
 func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*GetTargetGroupResponseBody, error) {
 	body := &GetTargetGroupResponseBody{}
 
-	response, err := s.connection.Patch("/loadbalancers/v2/target-groups", &req)
+	response, err := s.connection.Post("/loadbalancers/v2/target-groups", &req)
 	if err != nil {
 		return body, err
 	}
