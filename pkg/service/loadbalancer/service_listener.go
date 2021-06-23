@@ -81,7 +81,7 @@ func (s *Service) CreateListener(req CreateListenerRequest) (int, error) {
 func (s *Service) createListenerResponseBody(req CreateListenerRequest) (*GetListenerResponseBody, error) {
 	body := &GetListenerResponseBody{}
 
-	response, err := s.connection.Patch("/loadbalancers/v2/listeners", &req)
+	response, err := s.connection.Post("/loadbalancers/v2/listeners", &req)
 	if err != nil {
 		return body, err
 	}
