@@ -29,7 +29,7 @@ func TestGetListenerCertificates(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		certificates, err := s.GetListenerCertificates(123, connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		certificate, err := s.GetListenerCertificate(123, 456)
 
@@ -91,7 +91,7 @@ func TestGetListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetListenerCertificate(123, 456)
 
@@ -146,7 +146,7 @@ func TestGetListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetListenerCertificate(123, 456)
 
@@ -175,7 +175,7 @@ func TestCreateListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		id, err := s.CreateListenerCertificate(123, req)
 
@@ -193,7 +193,7 @@ func TestCreateListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.CreateListenerCertificate(123, CreateCertificateRequest{})
 
@@ -232,7 +232,7 @@ func TestCreateListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.CreateListenerCertificate(123, CreateCertificateRequest{})
 
@@ -261,7 +261,7 @@ func TestPatchListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchListenerCertificate(123, 456, req)
 
@@ -278,7 +278,7 @@ func TestPatchListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchListenerCertificate(123, 456, PatchCertificateRequest{})
 
@@ -333,7 +333,7 @@ func TestPatchListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchListenerCertificate(123, 456, PatchCertificateRequest{})
 
@@ -358,7 +358,7 @@ func TestDeleteListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteListenerCertificate(123, 456)
 
@@ -375,7 +375,7 @@ func TestDeleteListenerCertificate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeleteListenerCertificate(123, 456)
 
@@ -430,7 +430,7 @@ func TestDeleteListenerCertificate(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteListenerCertificate(123, 456)
 

@@ -29,7 +29,7 @@ func TestGetBinds(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		binds, err := s.GetBinds(connection.APIRequestParameters{})
 

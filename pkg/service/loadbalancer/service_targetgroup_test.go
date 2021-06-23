@@ -29,7 +29,7 @@ func TestGetTargetGroups(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		groups, err := s.GetTargetGroups(connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		group, err := s.GetTargetGroup(123)
 
@@ -91,7 +91,7 @@ func TestGetTargetGroup(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetTargetGroup(123)
 
@@ -130,7 +130,7 @@ func TestGetTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetTargetGroup(123)
 
@@ -159,7 +159,7 @@ func TestPatchTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroup(123, req)
 
@@ -176,7 +176,7 @@ func TestPatchTargetGroup(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 
@@ -215,7 +215,7 @@ func TestPatchTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 

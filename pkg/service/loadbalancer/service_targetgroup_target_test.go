@@ -29,7 +29,7 @@ func TestGetTargetGroupTargets(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		targets, err := s.GetTargetGroupTargets(123, connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		target, err := s.GetTargetGroupTarget(123, 456)
 
@@ -91,7 +91,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetTargetGroupTarget(123, 456)
 
@@ -146,7 +146,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetTargetGroupTarget(123, 456)
 
@@ -175,7 +175,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		id, err := s.CreateTargetGroupTarget(123, req)
 
@@ -193,7 +193,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.CreateTargetGroupTarget(123, CreateTargetRequest{})
 
@@ -232,7 +232,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.CreateTargetGroupTarget(123, CreateTargetRequest{})
 
@@ -261,7 +261,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroupTarget(123, 456, req)
 
@@ -278,7 +278,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchTargetGroupTarget(123, 456, PatchTargetRequest{})
 
@@ -333,7 +333,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroupTarget(123, 456, PatchTargetRequest{})
 
@@ -358,7 +358,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteTargetGroupTarget(123, 456)
 
@@ -375,7 +375,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeleteTargetGroupTarget(123, 456)
 
@@ -430,7 +430,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteTargetGroupTarget(123, 456)
 

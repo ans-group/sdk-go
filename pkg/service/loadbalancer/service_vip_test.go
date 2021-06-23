@@ -29,7 +29,7 @@ func TestGetVIPs(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		vips, err := s.GetVIPs(connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetVIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		vip, err := s.GetVIP(123)
 
@@ -91,7 +91,7 @@ func TestGetVIP(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/vips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/vips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetVIP(123)
 
@@ -130,7 +130,7 @@ func TestGetVIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetVIP(123)
 
