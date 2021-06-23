@@ -80,6 +80,32 @@ type VIP struct {
 	UpdatedAt    connection.DateTime `json:"updated_at"`
 }
 
+type ListenerMode string
+
+const (
+	ListenerModeHTTP ListenerMode = "http"
+	ListenerModeTCP  ListenerMode = "tcp"
+)
+
+var ListenerModeEnum connection.EnumSlice = []connection.Enum{
+	ListenerModeHTTP,
+	ListenerModeTCP,
+}
+
+// ParseListenerMode attempts to parse a ListenerMode from string
+func ParseListenerMode(s string) (ListenerMode, error) {
+	e, err := connection.ParseEnum(s, ListenerModeEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(ListenerMode), err
+}
+
+func (s ListenerMode) String() string {
+	return string(s)
+}
+
 // Listener represents a listener / frontend
 // +genie:model_response
 // +genie:model_paginated
@@ -88,11 +114,17 @@ type Listener struct {
 	Name                 string              `json:"name"`
 	ClusterID            int                 `json:"cluster_id"`
 	HSTSEnabled          bool                `json:"hsts_enabled"`
-	Mode                 string              `json:"mode"`
+	Mode                 ListenerMode        `json:"mode"`
 	HSTSMaxAge           int                 `json:"hsts_maxage"`
 	Close                bool                `json:"close"`
 	RedirectHTTPS        bool                `json:"redirect_https"`
 	DefaultTargetGroupID int                 `json:"default_targetgroup_id"`
+	AllowTLSV1           bool                `json:"allow_tlsv1"`
+	AllowTLSV11          bool                `json:"allow_tlsv11"`
+	DisableTLSV12        bool                `json:"disable_tlsv12"`
+	DisableHTTP2         bool                `json:"disable_http2"`
+	HTTP2Only            bool                `json:"http2_only"`
+	CustomCiphers        string              `json:"custom_ciphers"`
 	CreatedAt            connection.DateTime `json:"created_at"`
 	UpdatedAt            connection.DateTime `json:"updated_at"`
 }

@@ -102,29 +102,37 @@ type PatchVIPRequest struct {
 
 // CreateListenerRequest represents a request to create a listener
 type CreateListenerRequest struct {
-	Name                 string `json:"name"`
-	ClusterID            int    `json:"cluster_id"`
-	VIPID                int    `json:"vips_id"`
-	Port                 int    `json:"port"`
-	HSTSEnabled          bool   `json:"hsts_enabled"`
-	Mode                 string `json:"mode"`
-	HSTSMaxAge           int    `json:"hsts_maxage"`
-	Close                bool   `json:"close"`
-	RedirectHTTPS        bool   `json:"redirect_https"`
-	DefaultTargetGroupID string `json:"default_targetgroup_id"`
+	Name                 string       `json:"name"`
+	ClusterID            int          `json:"cluster_id"`
+	HSTSEnabled          bool         `json:"hsts_enabled"`
+	Mode                 ListenerMode `json:"mode"`
+	HSTSMaxAge           int          `json:"hsts_maxage"`
+	Close                bool         `json:"close"`
+	RedirectHTTPS        bool         `json:"redirect_https"`
+	DefaultTargetGroupID int          `json:"default_target_group_id"`
+	AllowTLSV1           bool         `json:"allow_tlsv1"`
+	AllowTLSV11          bool         `json:"allow_tlsv11"`
+	DisableTLSV12        bool         `json:"disable_tlsv12"`
+	DisableHTTP2         bool         `json:"disable_http2"`
+	HTTP2Only            bool         `json:"http2_only"`
+	CustomCiphers        string       `json:"custom_ciphers"`
 }
 
 // PatchListenerRequest represents a request to patch a listener
 type PatchListenerRequest struct {
-	Name                 string `json:"name,omitempty"`
-	VIPID                int    `json:"vips_id,omitempty"`
-	Port                 int    `json:"port,omitempty"`
-	HSTSEnabled          *bool  `json:"hsts_enabled,omitempty"`
-	Mode                 string `json:"mode,omitempty"`
-	HSTSMaxAge           int    `json:"hsts_maxage,omitempty"`
-	Close                *bool  `json:"close,omitempty"`
-	RedirectHTTPS        *bool  `json:"redirect_https,omitempty"`
-	DefaultTargetGroupID int    `json:"default_targetgroup_id,omitempty"`
+	Name                 string       `json:"name,omitempty"`
+	HSTSEnabled          *bool        `json:"hsts_enabled,omitempty"`
+	Mode                 ListenerMode `json:"mode,omitempty"`
+	HSTSMaxAge           int          `json:"hsts_maxage,omitempty"`
+	Close                *bool        `json:"close,omitempty"`
+	RedirectHTTPS        *bool        `json:"redirect_https,omitempty"`
+	DefaultTargetGroupID int          `json:"default_target_group_id,omitempty"`
+	AllowTLSV1           *bool        `json:"allow_tlsv1,omitempty"`
+	AllowTLSV11          *bool        `json:"allow_tlsv11,omitempty"`
+	DisableTLSV12        *bool        `json:"disable_tlsv12,omitempty"`
+	DisableHTTP2         *bool        `json:"disable_http2,omitempty"`
+	HTTP2Only            *bool        `json:"http2_only,omitempty"`
+	CustomCiphers        string       `json:"custom_ciphers,omitempty"`
 }
 
 // CreateAccessIPRequest represents a request to create an access rule
