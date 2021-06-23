@@ -106,7 +106,7 @@ type TargetGroup struct {
 	CookieOpts           string                   `json:"cookie_opts"`
 	Source               string                   `json:"source"`
 	TimeoutsConnect      int                      `json:"timeouts_connect"`
-	TimeoutServer        int                      `json:"timeouts_server"`
+	TimeoutsServer       int                      `json:"timeouts_server"`
 	CustomOptions        string                   `json:"custom_options"`
 	MonitorURL           string                   `json:"monitor_url"`
 	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method"`
