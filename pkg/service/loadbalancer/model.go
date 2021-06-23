@@ -26,33 +26,102 @@ type Target struct {
 	UpdatedAt     connection.DateTime  `json:"updated_at"`
 }
 
+type TargetGroupBalance string
+
+const (
+	TargetGroupBalanceRoundRobin TargetGroupBalance = "roundrobin"
+	TargetGroupBalanceStaticRR   TargetGroupBalance = "static-rr"
+	TargetGroupBalanceLeastConn  TargetGroupBalance = "leastconn"
+	TargetGroupBalanceFirst      TargetGroupBalance = "first"
+	TargetGroupBalanceRDPCookie  TargetGroupBalance = "rdp-cookie"
+	TargetGroupBalanceURI        TargetGroupBalance = "uri"
+	TargetGroupBalanceHDR        TargetGroupBalance = "hdr"
+	TargetGroupBalanceURLParam   TargetGroupBalance = "url_param"
+)
+
+var TargetGroupBalanceEnum connection.EnumSlice = []connection.Enum{
+	TargetGroupBalanceRoundRobin,
+	TargetGroupBalanceStaticRR,
+	TargetGroupBalanceLeastConn,
+	TargetGroupBalanceFirst,
+	TargetGroupBalanceRDPCookie,
+	TargetGroupBalanceURI,
+	TargetGroupBalanceHDR,
+	TargetGroupBalanceURLParam,
+}
+
+// ParseTargetGroupBalance attempts to parse a TargetGroupBalance from string
+func ParseTargetGroupBalance(s string) (TargetGroupBalance, error) {
+	e, err := connection.ParseEnum(s, TargetGroupBalanceEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(TargetGroupBalance), err
+}
+
+func (s TargetGroupBalance) String() string {
+	return string(s)
+}
+
+type TargetGroupMonitorMethod string
+
+const (
+	TargetGroupMonitorMethodGET     TargetGroupMonitorMethod = "GET"
+	TargetGroupMonitorMethodHEAD    TargetGroupMonitorMethod = "HEAD"
+	TargetGroupMonitorMethodOPTIONS TargetGroupMonitorMethod = "OPTIONS"
+)
+
+var TargetGroupMonitorMethodEnum connection.EnumSlice = []connection.Enum{
+	TargetGroupMonitorMethodGET,
+	TargetGroupMonitorMethodHEAD,
+	TargetGroupMonitorMethodOPTIONS,
+}
+
+// ParseTargetGroupMonitorMethod attempts to parse a TargetGroupMonitorMethod from string
+func ParseTargetGroupMonitorMethod(s string) (TargetGroupMonitorMethod, error) {
+	e, err := connection.ParseEnum(s, TargetGroupMonitorMethodEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(TargetGroupMonitorMethod), err
+}
+
+func (s TargetGroupMonitorMethod) String() string {
+	return string(s)
+}
+
 // TargetGroup represents a target group
 // +genie:model_response
 // +genie:model_paginated
 type TargetGroup struct {
-	ID                   int                 `json:"id"`
-	ClusterID            int                 `json:"cluster_id"`
-	Name                 string              `json:"name"`
-	Balance              string              `json:"balance"`
-	Mode                 string              `json:"mode"`
-	Close                bool                `json:"close"`
-	Sticky               bool                `json:"sticky"`
-	CookieOpts           string              `json:"cookie_opts"`
-	Source               string              `json:"source"`
-	TimeoutsConnect      int                 `json:"timeouts_connect"`
-	TimeoutServer        int                 `json:"timeouts_server"`
-	CustomOptions        string              `json:"custom_options"`
-	MonitorURL           string              `json:"monitor_url"`
-	MonitorMethod        string              `json:"monitor_method"`
-	MonitorHost          string              `json:"monitor_host"`
-	MonitorHTTPVersion   string              `json:"monitor_http_version"`
-	MonitorExpect        string              `json:"monitor_expect"`
-	MonitorTCPMonitoring bool                `json:"monitor_tcp_monitoring"`
-	CheckPort            int                 `json:"check_port"`
-	SendProxy            bool                `json:"send_proxy"`
-	SendProxyV2          bool                `json:"send_proxy_v2"`
-	CreatedAt            connection.DateTime `json:"created_at"`
-	UpdatedAt            connection.DateTime `json:"updated_at"`
+	ID                   int                      `json:"id"`
+	ClusterID            int                      `json:"cluster_id"`
+	Name                 string                   `json:"name"`
+	Balance              TargetGroupBalance       `json:"balance"`
+	Mode                 Mode                     `json:"mode"`
+	Close                bool                     `json:"close"`
+	Sticky               bool                     `json:"sticky"`
+	CookieOpts           string                   `json:"cookie_opts"`
+	Source               string                   `json:"source"`
+	TimeoutsConnect      int                      `json:"timeouts_connect"`
+	TimeoutServer        int                      `json:"timeouts_server"`
+	CustomOptions        string                   `json:"custom_options"`
+	MonitorURL           string                   `json:"monitor_url"`
+	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method"`
+	MonitorHost          string                   `json:"monitor_host"`
+	MonitorHTTPVersion   string                   `json:"monitor_http_version"`
+	MonitorExpect        string                   `json:"monitor_expect"`
+	MonitorTCPMonitoring bool                     `json:"monitor_tcp_monitoring"`
+	CheckPort            int                      `json:"check_port"`
+	SendProxy            bool                     `json:"send_proxy"`
+	SendProxyV2          bool                     `json:"send_proxy_v2"`
+	SSL                  bool                     `json:"ssl"`
+	SSLVerify            bool                     `json:"ssl_verify"`
+	SNI                  bool                     `json:"sni"`
+	CreatedAt            connection.DateTime      `json:"created_at"`
+	UpdatedAt            connection.DateTime      `json:"updated_at"`
 }
 
 // Cluster represents a cluster
@@ -80,29 +149,29 @@ type VIP struct {
 	UpdatedAt    connection.DateTime `json:"updated_at"`
 }
 
-type ListenerMode string
+type Mode string
 
 const (
-	ListenerModeHTTP ListenerMode = "http"
-	ListenerModeTCP  ListenerMode = "tcp"
+	ModeHTTP Mode = "http"
+	ModeTCP  Mode = "tcp"
 )
 
-var ListenerModeEnum connection.EnumSlice = []connection.Enum{
-	ListenerModeHTTP,
-	ListenerModeTCP,
+var ModeEnum connection.EnumSlice = []connection.Enum{
+	ModeHTTP,
+	ModeTCP,
 }
 
-// ParseListenerMode attempts to parse a ListenerMode from string
-func ParseListenerMode(s string) (ListenerMode, error) {
-	e, err := connection.ParseEnum(s, ListenerModeEnum)
+// ParseMode attempts to parse a Mode from string
+func ParseMode(s string) (Mode, error) {
+	e, err := connection.ParseEnum(s, ModeEnum)
 	if err != nil {
 		return "", err
 	}
 
-	return e.(ListenerMode), err
+	return e.(Mode), err
 }
 
-func (s ListenerMode) String() string {
+func (s Mode) String() string {
 	return string(s)
 }
 
@@ -114,7 +183,7 @@ type Listener struct {
 	Name                 string              `json:"name"`
 	ClusterID            int                 `json:"cluster_id"`
 	HSTSEnabled          bool                `json:"hsts_enabled"`
-	Mode                 ListenerMode        `json:"mode"`
+	Mode                 Mode                `json:"mode"`
 	HSTSMaxAge           int                 `json:"hsts_maxage"`
 	Close                bool                `json:"close"`
 	RedirectHTTPS        bool                `json:"redirect_https"`

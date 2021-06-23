@@ -41,50 +41,56 @@ type PatchTargetRequest struct {
 
 // CreateTargetGroupRequest represents a request to create a target group
 type CreateTargetGroupRequest struct {
-	ClusterID            int    `json:"cluster_id"`
-	Name                 string `json:"name,omitempty"`
-	Balance              string `json:"balance,omitempty"`
-	Mode                 string `json:"mode,omitempty"`
-	Close                bool   `json:"close"`
-	Sticky               bool   `json:"sticky"`
-	CookieOpts           string `json:"cookie_opts,omitempty"`
-	Source               string `json:"source,omitempty"`
-	TimeoutsConnect      int    `json:"timeouts_connect,omitempty"`
-	TimeoutServer        int    `json:"timeouts_server,omitempty"`
-	CustomOptions        string `json:"custom_options,omitempty"`
-	MonitorURL           string `json:"monitor_url,omitempty"`
-	MonitorMethod        string `json:"monitor_method,omitempty"`
-	MonitorHost          string `json:"monitor_host,omitempty"`
-	MonitorHTTPVersion   string `json:"monitor_http_version,omitempty"`
-	MonitorExpect        string `json:"monitor_expect,omitempty"`
-	MonitorTCPMonitoring bool   `json:"monitor_tcp_monitoring"`
-	CheckPort            int    `json:"check_port,omitempty"`
-	SendProxy            bool   `json:"send_proxy"`
-	SendProxyV2          bool   `json:"send_proxy_v2"`
+	ClusterID            int                      `json:"cluster_id"`
+	Name                 string                   `json:"name,omitempty"`
+	Balance              TargetGroupBalance       `json:"balance,omitempty"`
+	Mode                 Mode                     `json:"mode,omitempty"`
+	Close                bool                     `json:"close"`
+	Sticky               bool                     `json:"sticky"`
+	CookieOpts           string                   `json:"cookie_opts,omitempty"`
+	Source               string                   `json:"source,omitempty"`
+	TimeoutsConnect      int                      `json:"timeouts_connect,omitempty"`
+	TimeoutServer        int                      `json:"timeouts_server,omitempty"`
+	CustomOptions        string                   `json:"custom_options,omitempty"`
+	MonitorURL           string                   `json:"monitor_url,omitempty"`
+	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method,omitempty"`
+	MonitorHost          string                   `json:"monitor_host,omitempty"`
+	MonitorHTTPVersion   string                   `json:"monitor_http_version,omitempty"`
+	MonitorExpect        string                   `json:"monitor_expect,omitempty"`
+	MonitorTCPMonitoring bool                     `json:"monitor_tcp_monitoring"`
+	CheckPort            int                      `json:"check_port,omitempty"`
+	SendProxy            bool                     `json:"send_proxy"`
+	SendProxyV2          bool                     `json:"send_proxy_v2"`
+	SSL                  bool                     `json:"ssl"`
+	SSLVerify            bool                     `json:"ssl_verify"`
+	SNI                  bool                     `json:"sni"`
 }
 
 // PatchTargetGroupRequest represents a request to patch a target group
 type PatchTargetGroupRequest struct {
-	ClusterID            int    `json:"cluster_id,omitempty"`
-	Name                 string `json:"name,omitempty"`
-	Balance              string `json:"balance,omitempty"`
-	Mode                 string `json:"mode,omitempty"`
-	Close                *bool  `json:"close,omitempty"`
-	Sticky               *bool  `json:"sticky,omitempty"`
-	CookieOpts           string `json:"cookie_opts,omitempty"`
-	Source               string `json:"source,omitempty"`
-	TimeoutsConnect      int    `json:"timeouts_connect,omitempty"`
-	TimeoutServer        int    `json:"timeouts_server,omitempty"`
-	CustomOptions        string `json:"custom_options,omitempty"`
-	MonitorURL           string `json:"monitor_url,omitempty"`
-	MonitorMethod        string `json:"monitor_method,omitempty"`
-	MonitorHost          string `json:"monitor_host,omitempty"`
-	MonitorHTTPVersion   string `json:"monitor_http_version,omitempty"`
-	MonitorExpect        string `json:"monitor_expect,omitempty"`
-	MonitorTCPMonitoring *bool  `json:"monitor_tcp_monitoring,omitempty"`
-	CheckPort            int    `json:"check_port,omitempty"`
-	SendProxy            *bool  `json:"send_proxy,omitempty"`
-	SendProxyV2          *bool  `json:"send_proxy_v2,omitempty"`
+	ClusterID            int                      `json:"cluster_id,omitempty"`
+	Name                 string                   `json:"name,omitempty"`
+	Balance              TargetGroupBalance       `json:"balance,omitempty"`
+	Mode                 Mode                     `json:"mode,omitempty"`
+	Close                *bool                    `json:"close,omitempty"`
+	Sticky               *bool                    `json:"sticky,omitempty"`
+	CookieOpts           string                   `json:"cookie_opts,omitempty"`
+	Source               string                   `json:"source,omitempty"`
+	TimeoutsConnect      int                      `json:"timeouts_connect,omitempty"`
+	TimeoutServer        int                      `json:"timeouts_server,omitempty"`
+	CustomOptions        string                   `json:"custom_options,omitempty"`
+	MonitorURL           string                   `json:"monitor_url,omitempty"`
+	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method,omitempty"`
+	MonitorHost          string                   `json:"monitor_host,omitempty"`
+	MonitorHTTPVersion   string                   `json:"monitor_http_version,omitempty"`
+	MonitorExpect        string                   `json:"monitor_expect,omitempty"`
+	MonitorTCPMonitoring *bool                    `json:"monitor_tcp_monitoring,omitempty"`
+	CheckPort            int                      `json:"check_port,omitempty"`
+	SendProxy            *bool                    `json:"send_proxy,omitempty"`
+	SendProxyV2          *bool                    `json:"send_proxy_v2,omitempty"`
+	SSL                  *bool                    `json:"ssl,omitempty"`
+	SSLVerify            *bool                    `json:"ssl_verify,omitempty"`
+	SNI                  *bool                    `json:"sni,omitempty"`
 }
 
 // CreateVIPRequest represents a request to create a target group
@@ -102,37 +108,37 @@ type PatchVIPRequest struct {
 
 // CreateListenerRequest represents a request to create a listener
 type CreateListenerRequest struct {
-	Name                 string       `json:"name"`
-	ClusterID            int          `json:"cluster_id"`
-	HSTSEnabled          bool         `json:"hsts_enabled"`
-	Mode                 ListenerMode `json:"mode"`
-	HSTSMaxAge           int          `json:"hsts_maxage"`
-	Close                bool         `json:"close"`
-	RedirectHTTPS        bool         `json:"redirect_https"`
-	DefaultTargetGroupID int          `json:"default_target_group_id"`
-	AllowTLSV1           bool         `json:"allow_tlsv1"`
-	AllowTLSV11          bool         `json:"allow_tlsv11"`
-	DisableTLSV12        bool         `json:"disable_tlsv12"`
-	DisableHTTP2         bool         `json:"disable_http2"`
-	HTTP2Only            bool         `json:"http2_only"`
-	CustomCiphers        string       `json:"custom_ciphers"`
+	Name                 string `json:"name"`
+	ClusterID            int    `json:"cluster_id"`
+	HSTSEnabled          bool   `json:"hsts_enabled"`
+	Mode                 Mode   `json:"mode"`
+	HSTSMaxAge           int    `json:"hsts_maxage"`
+	Close                bool   `json:"close"`
+	RedirectHTTPS        bool   `json:"redirect_https"`
+	DefaultTargetGroupID int    `json:"default_target_group_id"`
+	AllowTLSV1           bool   `json:"allow_tlsv1"`
+	AllowTLSV11          bool   `json:"allow_tlsv11"`
+	DisableTLSV12        bool   `json:"disable_tlsv12"`
+	DisableHTTP2         bool   `json:"disable_http2"`
+	HTTP2Only            bool   `json:"http2_only"`
+	CustomCiphers        string `json:"custom_ciphers"`
 }
 
 // PatchListenerRequest represents a request to patch a listener
 type PatchListenerRequest struct {
-	Name                 string       `json:"name,omitempty"`
-	HSTSEnabled          *bool        `json:"hsts_enabled,omitempty"`
-	Mode                 ListenerMode `json:"mode,omitempty"`
-	HSTSMaxAge           int          `json:"hsts_maxage,omitempty"`
-	Close                *bool        `json:"close,omitempty"`
-	RedirectHTTPS        *bool        `json:"redirect_https,omitempty"`
-	DefaultTargetGroupID int          `json:"default_target_group_id,omitempty"`
-	AllowTLSV1           *bool        `json:"allow_tlsv1,omitempty"`
-	AllowTLSV11          *bool        `json:"allow_tlsv11,omitempty"`
-	DisableTLSV12        *bool        `json:"disable_tlsv12,omitempty"`
-	DisableHTTP2         *bool        `json:"disable_http2,omitempty"`
-	HTTP2Only            *bool        `json:"http2_only,omitempty"`
-	CustomCiphers        string       `json:"custom_ciphers,omitempty"`
+	Name                 string `json:"name,omitempty"`
+	HSTSEnabled          *bool  `json:"hsts_enabled,omitempty"`
+	Mode                 Mode   `json:"mode,omitempty"`
+	HSTSMaxAge           int    `json:"hsts_maxage,omitempty"`
+	Close                *bool  `json:"close,omitempty"`
+	RedirectHTTPS        *bool  `json:"redirect_https,omitempty"`
+	DefaultTargetGroupID int    `json:"default_target_group_id,omitempty"`
+	AllowTLSV1           *bool  `json:"allow_tlsv1,omitempty"`
+	AllowTLSV11          *bool  `json:"allow_tlsv11,omitempty"`
+	DisableTLSV12        *bool  `json:"disable_tlsv12,omitempty"`
+	DisableHTTP2         *bool  `json:"disable_http2,omitempty"`
+	HTTP2Only            *bool  `json:"http2_only,omitempty"`
+	CustomCiphers        string `json:"custom_ciphers,omitempty"`
 }
 
 // CreateAccessIPRequest represents a request to create an access rule
