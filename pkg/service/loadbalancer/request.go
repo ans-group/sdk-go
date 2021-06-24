@@ -152,16 +152,14 @@ type PatchAccessIPRequest struct {
 
 // CreateBindRequest represents a request to create a bind
 type CreateBindRequest struct {
-	ListenerID int `json:"listener_id"`
-	VIPID      int `json:"vip_id"`
-	Port       int `json:"port"`
+	VIPID int `json:"vip_id"`
+	Port  int `json:"port"`
 }
 
 // PatchBindRequest represents a request to patch a bind
 type PatchBindRequest struct {
-	ListenerID int `json:"listener_id,omitempty"`
-	VIPID      int `json:"vip_id,omitempty"`
-	Port       int `json:"port,omitempty"`
+	VIPID int `json:"vip_id,omitempty"`
+	Port  int `json:"port,omitempty"`
 }
 
 // CreateCertificateRequest represents a request to create a certificate
