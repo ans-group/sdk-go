@@ -22,6 +22,10 @@ type LoadBalancerService interface {
 	PatchTargetGroup(groupID int, req PatchTargetGroupRequest) error
 	DeleteTargetGroup(groupID int) error
 
+	// Target Group ACL
+	GetTargetGroupACLs(targetGroupID int, parameters connection.APIRequestParameters) ([]ACL, error)
+	GetTargetGroupACLsPaginated(targetGroupID int, parameters connection.APIRequestParameters) (*PaginatedACL, error)
+
 	// Target Group Target
 	GetTargetGroupTargets(groupID int, parameters connection.APIRequestParameters) ([]Target, error)
 	GetTargetGroupTargetsPaginated(groupID int, parameters connection.APIRequestParameters) (*PaginatedTarget, error)
@@ -42,6 +46,10 @@ type LoadBalancerService interface {
 	CreateListener(req CreateListenerRequest) (int, error)
 	PatchListener(listenerID int, req PatchListenerRequest) error
 	DeleteListener(listenerID int) error
+
+	// Listener ACL
+	GetListenerACLs(listenerID int, parameters connection.APIRequestParameters) ([]ACL, error)
+	GetListenerACLsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedACL, error)
 
 	// Listener Access IP
 	GetListenerAccessIPs(listenerID int, parameters connection.APIRequestParameters) ([]AccessIP, error)

@@ -7,6 +7,7 @@ import (
 )
 
 // GetACLs retrieves a list of ACLs
+// Currently, a target_group_id or listener_id filter must be provided for this to return data
 func (s *Service) GetACLs(parameters connection.APIRequestParameters) ([]ACL, error) {
 	var acls []ACL
 
@@ -24,6 +25,7 @@ func (s *Service) GetACLs(parameters connection.APIRequestParameters) ([]ACL, er
 }
 
 // GetACLsPaginated retrieves a paginated list of ACLs
+// Currently, a target_group_id or listener_id filter must be provided for this to return data
 func (s *Service) GetACLsPaginated(parameters connection.APIRequestParameters) (*PaginatedACL, error) {
 	body, err := s.getACLsPaginatedResponseBody(parameters)
 

@@ -38,6 +38,22 @@ func TestGetListenerCertificates(t *testing.T) {
 		assert.Equal(t, 456, certificates[0].ID)
 	})
 
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetListenerCertificates(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid listener id", err.Error())
+	})
+
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()

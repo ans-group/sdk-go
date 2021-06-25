@@ -112,7 +112,7 @@ func TestGetTargetGroup(t *testing.T) {
 		_, err := s.GetTargetGroup(0)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {
@@ -244,7 +244,7 @@ func TestPatchTargetGroup(t *testing.T) {
 		err := s.PatchTargetGroup(0, PatchTargetGroupRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {

@@ -251,20 +251,37 @@ type ACL struct {
 	ListenerID    int            `json:"listener_id"`
 	TargetGroupID int            `json:"target_group_id"`
 	Conditions    []ACLCondition `json:"conditions"`
+	Actions       []ACLAction    `json:"actions"`
 }
 
 // ACLCondition represents an ACL condition
 // +genie:model_response
 // +genie:model_paginated
 type ACLCondition struct {
-	Name      string                 `json:"name"`
-	Arguments []ACLConditionArgument `json:"arguments"`
+	Name      string                          `json:"name"`
+	Arguments map[string]ACLConditionArgument `json:"arguments"`
 }
 
 // ACLConditionArgument represents an ACL condition argument
 // +genie:model_response
 // +genie:model_paginated
 type ACLConditionArgument struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// ACLAction represents an ACL action
+// +genie:model_response
+// +genie:model_paginated
+type ACLAction struct {
+	Name      string                       `json:"name"`
+	Arguments map[string]ACLActionArgument `json:"arguments"`
+}
+
+// ACLActionArgument represents an ACL action argument
+// +genie:model_response
+// +genie:model_paginated
+type ACLActionArgument struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }

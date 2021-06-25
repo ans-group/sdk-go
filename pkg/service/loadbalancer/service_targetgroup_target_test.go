@@ -38,6 +38,22 @@ func TestGetTargetGroupTargets(t *testing.T) {
 		assert.Equal(t, 456, targets[0].ID)
 	})
 
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetTargetGroupTargets(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid target group id", err.Error())
+	})
+
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -112,7 +128,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 		_, err := s.GetTargetGroupTarget(0, 456)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
@@ -214,7 +230,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 		_, err := s.CreateTargetGroupTarget(0, CreateTargetRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("404_ReturnsTargetGroupTargetNotFoundError", func(t *testing.T) {
@@ -299,7 +315,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 		err := s.PatchTargetGroupTarget(0, 456, PatchTargetRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
@@ -396,7 +412,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 		err := s.DeleteTargetGroupTarget(0, 456)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("InvalidTargetID_ReturnsError", func(t *testing.T) {
