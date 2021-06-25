@@ -10,7 +10,7 @@ import "github.com/ukfast/sdk-go/pkg/connection"
 // +genie:model_paginated
 type Target struct {
 	ID            int                  `json:"id"`
-	TargetGroupID int                  `json:"targetgroup_id"`
+	TargetGroupID int                  `json:"target_group_id"`
 	Name          string               `json:"name"`
 	IP            connection.IPAddress `json:"ip"`
 	Port          int                  `json:"port"`
@@ -22,6 +22,7 @@ type Target struct {
 	CheckFall     int                  `json:"check_fall"`
 	DisableHTTP2  bool                 `json:"disable_http2"`
 	HTTP2Only     bool                 `json:"http2_only"`
+	Active        bool                 `json:"active"`
 	CreatedAt     connection.DateTime  `json:"created_at"`
 	UpdatedAt     connection.DateTime  `json:"updated_at"`
 }
@@ -187,7 +188,7 @@ type Listener struct {
 	HSTSMaxAge           int                 `json:"hsts_maxage"`
 	Close                bool                `json:"close"`
 	RedirectHTTPS        bool                `json:"redirect_https"`
-	DefaultTargetGroupID int                 `json:"default_targetgroup_id"`
+	DefaultTargetGroupID int                 `json:"default_target_group_id"`
 	AllowTLSV1           bool                `json:"allow_tlsv1"`
 	AllowTLSV11          bool                `json:"allow_tlsv11"`
 	DisableTLSV12        bool                `json:"disable_tlsv12"`
