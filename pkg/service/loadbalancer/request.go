@@ -190,8 +190,6 @@ type CreateACLRequest struct {
 
 // PatchListenerACLRequest represents a request to patch a ACL
 type PatchACLRequest struct {
-	Name          string         `json:"name,omitempty"`
-	ListenerID    int            `json:"listener_id,omitempty"`
-	TargetGroupID int            `json:"target_group_id,omitempty"`
-	Conditions    []ACLCondition `json:"conditions,omitempty"`
+	Name       string         `json:"name,omitempty"`
+	Conditions []ACLCondition `json:"conditions,omitempty"`
 }
