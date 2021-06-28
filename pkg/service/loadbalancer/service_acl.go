@@ -83,7 +83,7 @@ func (s *Service) CreateACL(req CreateACLRequest) (int, error) {
 func (s *Service) createACLResponseBody(req CreateACLRequest) (*GetACLResponseBody, error) {
 	body := &GetACLResponseBody{}
 
-	response, err := s.connection.Patch("/loadbalancers/v2/acls", &req)
+	response, err := s.connection.Post("/loadbalancers/v2/acls", &req)
 	if err != nil {
 		return body, err
 	}

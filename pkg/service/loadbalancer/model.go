@@ -285,3 +285,38 @@ type ACLActionArgument struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+// ACLTemplates represents a collection of ACL condition/action templates
+// +genie:model_response
+type ACLTemplates struct {
+	Conditions []ACLTemplateCondition `json:"conditions"`
+	Actions    []ACLTemplateAction    `json:"actions"`
+}
+
+type ACLTemplateCondition struct {
+	Name         string                         `json:"name"`
+	FriendlyName string                         `json:"friendly_name"`
+	Description  string                         `json:"description"`
+	Arguments    []ACLTemplateConditionArgument `json:"arguments"`
+}
+
+type ACLTemplateConditionArgument struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Example     string   `json:"example"`
+	Values      []string `json:"values"`
+}
+
+type ACLTemplateAction struct {
+	Name         string                      `json:"name"`
+	FriendlyName string                      `json:"friendly_name"`
+	Description  string                      `json:"description"`
+	Arguments    []ACLTemplateActionArgument `json:"arguments"`
+}
+
+type ACLTemplateActionArgument struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Example     string   `json:"example"`
+	Values      []string `json:"values"`
+}

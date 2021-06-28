@@ -170,3 +170,31 @@ func (r *validateClusterResponseBody) ErrorString() string {
 func (r *validateClusterResponseBody) Pagination() connection.APIResponseMetadataPagination {
 	return connection.APIResponseMetadataPagination{}
 }
+
+// GetCluster retrieves a single cluster by id
+func (s *Service) GetClusterACLTemplates(clusterID int) (ACLTemplates, error) {
+	body, err := s.getClusterACLTemplatesResponseBody(clusterID)
+
+	return body.Data, err
+}
+
+func (s *Service) getClusterACLTemplatesResponseBody(clusterID int) (*GetACLTemplatesResponseBody, error) {
+	body := &GetACLTemplatesResponseBody{}
+
+	if clusterID < 1 {
+		return body, fmt.Errorf("invalid cluster id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/templates", clusterID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &ClusterNotFoundError{ID: clusterID}
+		}
+
+		return nil
+	})
+}

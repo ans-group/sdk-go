@@ -14,6 +14,9 @@ type LoadBalancerService interface {
 	DeployCluster(clusterID int) error
 	ValidateCluster(clusterID int) error
 
+	// Cluster ACL Templates
+	GetClusterACLTemplates(clusterID int) (ACLTemplates, error)
+
 	// Target Group
 	GetTargetGroups(parameters connection.APIRequestParameters) ([]TargetGroup, error)
 	GetTargetGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedTargetGroup, error)
