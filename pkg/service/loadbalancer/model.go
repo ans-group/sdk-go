@@ -254,36 +254,28 @@ type ACL struct {
 	Actions       []ACLAction    `json:"actions"`
 }
 
+// ACLArgument represents an ACL condition/action argument
+// +genie:model_response
+// +genie:model_paginated
+type ACLArgument struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 // ACLCondition represents an ACL condition
 // +genie:model_response
 // +genie:model_paginated
 type ACLCondition struct {
-	Name      string                          `json:"name"`
-	Arguments map[string]ACLConditionArgument `json:"arguments"`
-}
-
-// ACLConditionArgument represents an ACL condition argument
-// +genie:model_response
-// +genie:model_paginated
-type ACLConditionArgument struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name      string                 `json:"name"`
+	Arguments map[string]ACLArgument `json:"arguments"`
 }
 
 // ACLAction represents an ACL action
 // +genie:model_response
 // +genie:model_paginated
 type ACLAction struct {
-	Name      string                       `json:"name"`
-	Arguments map[string]ACLActionArgument `json:"arguments"`
-}
-
-// ACLActionArgument represents an ACL action argument
-// +genie:model_response
-// +genie:model_paginated
-type ACLActionArgument struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name      string                 `json:"name"`
+	Arguments map[string]ACLArgument `json:"arguments"`
 }
 
 // ACLTemplates represents a collection of ACL condition/action templates

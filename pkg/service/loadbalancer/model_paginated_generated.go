@@ -156,15 +156,15 @@ func NewPaginatedACLCondition(getFunc connection.PaginatedGetFunc, parameters co
 	}
 }
 
-// PaginatedACLConditionArgument represents a paginated collection of ACLConditionArgument
-type PaginatedACLConditionArgument struct {
+// PaginatedACLArgument represents a paginated collection of ACLArgument
+type PaginatedACLArgument struct {
 	*connection.PaginatedBase
-	Items []ACLConditionArgument
+	Items []ACLArgument
 }
 
-// NewPaginatedACLConditionArgument returns a pointer to an initialized PaginatedACLConditionArgument struct
-func NewPaginatedACLConditionArgument(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLConditionArgument) *PaginatedACLConditionArgument {
-	return &PaginatedACLConditionArgument{
+// NewPaginatedACLArgument returns a pointer to an initialized PaginatedACLArgument struct
+func NewPaginatedACLArgument(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLArgument) *PaginatedACLArgument {
+	return &PaginatedACLArgument{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
@@ -179,20 +179,6 @@ type PaginatedACLAction struct {
 // NewPaginatedACLAction returns a pointer to an initialized PaginatedACLAction struct
 func NewPaginatedACLAction(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLAction) *PaginatedACLAction {
 	return &PaginatedACLAction{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
-// PaginatedACLActionArgument represents a paginated collection of ACLActionArgument
-type PaginatedACLActionArgument struct {
-	*connection.PaginatedBase
-	Items []ACLActionArgument
-}
-
-// NewPaginatedACLActionArgument returns a pointer to an initialized PaginatedACLActionArgument struct
-func NewPaginatedACLActionArgument(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLActionArgument) *PaginatedACLActionArgument {
-	return &PaginatedACLActionArgument{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

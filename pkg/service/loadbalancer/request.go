@@ -185,7 +185,7 @@ type CreateACLRequest struct {
 	Name          string         `json:"name"`
 	ListenerID    int            `json:"listener_id,omitempty"`
 	TargetGroupID int            `json:"target_group_id,omitempty"`
-	Conditions    []ACLCondition `json:"conditions"`
+	Conditions    []ACLCondition `json:"conditions,omitempty"`
 	Actions       []ACLAction    `json:"actions"`
 }
 
