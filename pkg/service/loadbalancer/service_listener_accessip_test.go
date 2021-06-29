@@ -29,13 +29,29 @@ func TestGetListenerAccessIPs(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		accesss, err := s.GetListenerAccessIPs(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, accesss, 1)
 		assert.Equal(t, 456, accesss[0].ID)
+	})
+
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetListenerAccessIPs(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -73,7 +89,7 @@ func TestGetListenerAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		access, err := s.GetListenerAccessIP(123, 456)
 
@@ -91,7 +107,7 @@ func TestGetListenerAccessIP(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/listeners/123/access-ips/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/access-ips/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetListenerAccessIP(123, 456)
 
@@ -146,7 +162,7 @@ func TestGetListenerAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetListenerAccessIP(123, 456)
 

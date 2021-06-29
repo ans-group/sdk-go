@@ -29,7 +29,7 @@ func TestGetClusters(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		clusters, err := s.GetClusters(connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		cluster, err := s.GetCluster(123)
 
@@ -91,7 +91,7 @@ func TestGetCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetCluster(123)
 
@@ -130,7 +130,7 @@ func TestGetCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetCluster(123)
 
@@ -159,7 +159,7 @@ func TestPatchCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchCluster(123, req)
 
@@ -176,7 +176,7 @@ func TestPatchCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchCluster(123, PatchClusterRequest{})
 
@@ -215,7 +215,7 @@ func TestPatchCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchCluster(123, PatchClusterRequest{})
 
@@ -240,7 +240,7 @@ func TestDeployCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeployCluster(123)
 
@@ -257,7 +257,7 @@ func TestDeployCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/clusters/123/deploy", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/clusters/123/deploy", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeployCluster(123)
 
@@ -296,7 +296,7 @@ func TestDeployCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeployCluster(123)
 
@@ -321,7 +321,7 @@ func TestValidateCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.ValidateCluster(123)
 
@@ -338,7 +338,7 @@ func TestValidateCluster(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/clusters/123/validate", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/clusters/123/validate", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.ValidateCluster(123)
 
@@ -377,7 +377,7 @@ func TestValidateCluster(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.ValidateCluster(123)
 

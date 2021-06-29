@@ -29,7 +29,7 @@ func TestGetACLs(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		acls, err := s.GetACLs(connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		acl, err := s.GetACL(123)
 
@@ -91,7 +91,7 @@ func TestGetACL(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetACL(123)
 
@@ -130,7 +130,7 @@ func TestGetACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetACL(123)
 
@@ -159,7 +159,7 @@ func TestPatchACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchACL(123, req)
 
@@ -176,7 +176,7 @@ func TestPatchACL(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchACL(123, PatchACLRequest{})
 
@@ -215,7 +215,7 @@ func TestPatchACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchACL(123, PatchACLRequest{})
 
@@ -240,7 +240,7 @@ func TestDeleteACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteACL(123)
 
@@ -257,7 +257,7 @@ func TestDeleteACL(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeleteACL(123)
 
@@ -296,7 +296,7 @@ func TestDeleteACL(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteACL(123)
 

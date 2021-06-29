@@ -29,7 +29,7 @@ func TestGetAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		listener, err := s.GetAccessIP(123)
 
@@ -47,7 +47,7 @@ func TestGetAccessIP(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetAccessIP(123)
 
@@ -86,7 +86,7 @@ func TestGetAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetAccessIP(123)
 
@@ -115,7 +115,7 @@ func TestPatchAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchAccessIP(123, req)
 
@@ -132,7 +132,7 @@ func TestPatchAccessIP(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchAccessIP(123, PatchAccessIPRequest{})
 
@@ -171,7 +171,7 @@ func TestPatchAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchAccessIP(123, PatchAccessIPRequest{})
 
@@ -196,7 +196,7 @@ func TestDeleteAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteAccessIP(123)
 
@@ -213,7 +213,7 @@ func TestDeleteAccessIP(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/access-ips/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeleteAccessIP(123)
 
@@ -252,7 +252,7 @@ func TestDeleteAccessIP(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteAccessIP(123)
 

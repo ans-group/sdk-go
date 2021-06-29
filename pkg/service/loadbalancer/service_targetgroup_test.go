@@ -29,7 +29,7 @@ func TestGetTargetGroups(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		groups, err := s.GetTargetGroups(connection.APIRequestParameters{})
 
@@ -73,7 +73,7 @@ func TestGetTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		group, err := s.GetTargetGroup(123)
 
@@ -91,7 +91,7 @@ func TestGetTargetGroup(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetTargetGroup(123)
 
@@ -112,7 +112,7 @@ func TestGetTargetGroup(t *testing.T) {
 		_, err := s.GetTargetGroup(0)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {
@@ -130,12 +130,59 @@ func TestGetTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetTargetGroup(123)
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &TargetGroupNotFoundError{}, err)
+	})
+}
+
+func TestCreateTargetGroup(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := CreateTargetGroupRequest{
+			Name: "somegroup",
+		}
+
+		c.EXPECT().Post("/loadbalancers/v2/target-groups", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		groupID, err := s.CreateTargetGroup(req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, 123, groupID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/loadbalancers/v2/target-groups", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateTargetGroup(CreateTargetGroupRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
@@ -159,7 +206,7 @@ func TestPatchTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroup(123, req)
 
@@ -176,7 +223,7 @@ func TestPatchTargetGroup(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 
@@ -197,7 +244,7 @@ func TestPatchTargetGroup(t *testing.T) {
 		err := s.PatchTargetGroup(0, PatchTargetGroupRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid group id", err.Error())
+		assert.Equal(t, "invalid target group id", err.Error())
 	})
 
 	t.Run("404_ReturnsTargetGroupNotFoundError", func(t *testing.T) {
@@ -215,7 +262,7 @@ func TestPatchTargetGroup(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchTargetGroup(123, PatchTargetGroupRequest{})
 

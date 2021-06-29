@@ -29,13 +29,29 @@ func TestGetListenerBinds(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		binds, err := s.GetListenerBinds(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, binds, 1)
 		assert.Equal(t, 456, binds[0].ID)
+	})
+
+	t.Run("InvalidListenerID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetListenerBinds(0, connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -73,7 +89,7 @@ func TestGetListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		bind, err := s.GetListenerBind(123, 456)
 
@@ -91,7 +107,7 @@ func TestGetListenerBind(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetListenerBind(123, 456)
 
@@ -146,7 +162,7 @@ func TestGetListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.GetListenerBind(123, 456)
 
@@ -175,7 +191,7 @@ func TestCreateListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		id, err := s.CreateListenerBind(123, req)
 
@@ -193,7 +209,7 @@ func TestCreateListenerBind(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/loadbalancers/v2/listeners/123/binds", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/loadbalancers/v2/listeners/123/binds", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.CreateListenerBind(123, CreateBindRequest{})
 
@@ -232,7 +248,7 @@ func TestCreateListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		_, err := s.CreateListenerBind(123, CreateBindRequest{})
 
@@ -261,7 +277,7 @@ func TestPatchListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchListenerBind(123, 456, req)
 
@@ -278,7 +294,7 @@ func TestPatchListenerBind(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.PatchListenerBind(123, 456, PatchBindRequest{})
 
@@ -333,7 +349,7 @@ func TestPatchListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.PatchListenerBind(123, 456, PatchBindRequest{})
 
@@ -358,7 +374,7 @@ func TestDeleteListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteListenerBind(123, 456)
 
@@ -375,7 +391,7 @@ func TestDeleteListenerBind(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/binds/456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		err := s.DeleteListenerBind(123, 456)
 
@@ -430,7 +446,7 @@ func TestDeleteListenerBind(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		err := s.DeleteListenerBind(123, 456)
 

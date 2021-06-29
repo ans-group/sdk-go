@@ -54,7 +54,7 @@ func (s *Service) getTargetGroupResponseBody(groupID int) (*GetTargetGroupRespon
 	body := &GetTargetGroupResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/target-groups/%d", groupID), connection.APIRequestParameters{})
@@ -81,7 +81,7 @@ func (s *Service) CreateTargetGroup(req CreateTargetGroupRequest) (int, error) {
 func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*GetTargetGroupResponseBody, error) {
 	body := &GetTargetGroupResponseBody{}
 
-	response, err := s.connection.Patch("/loadbalancers/v2/target-groups", &req)
+	response, err := s.connection.Post("/loadbalancers/v2/target-groups", &req)
 	if err != nil {
 		return body, err
 	}
@@ -100,7 +100,7 @@ func (s *Service) patchTargetGroupResponseBody(groupID int, req PatchTargetGroup
 	body := &connection.APIResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	response, err := s.connection.Patch(fmt.Sprintf("/loadbalancers/v2/target-groups/%d", groupID), &req)
@@ -128,7 +128,7 @@ func (s *Service) deleteTargetGroupResponseBody(groupID int) (*connection.APIRes
 	body := &connection.APIResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	response, err := s.connection.Delete(fmt.Sprintf("/loadbalancers/v2/target-groups/%d", groupID), nil)

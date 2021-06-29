@@ -134,14 +134,38 @@ type GetACLConditionResponseBody struct {
 	Data ACLCondition `json:"data"`
 }
 
-// GetACLConditionArgumentSliceResponseBody represents an API response body containing []ACLConditionArgument data
-type GetACLConditionArgumentSliceResponseBody struct {
+// GetACLArgumentSliceResponseBody represents an API response body containing []ACLArgument data
+type GetACLArgumentSliceResponseBody struct {
 	connection.APIResponseBody
-	Data []ACLConditionArgument `json:"data"`
+	Data []ACLArgument `json:"data"`
 }
 
-// GetACLConditionArgumentResponseBody represents an API response body containing ACLConditionArgument data
-type GetACLConditionArgumentResponseBody struct {
+// GetACLArgumentResponseBody represents an API response body containing ACLArgument data
+type GetACLArgumentResponseBody struct {
 	connection.APIResponseBody
-	Data ACLConditionArgument `json:"data"`
+	Data ACLArgument `json:"data"`
+}
+
+// GetACLActionSliceResponseBody represents an API response body containing []ACLAction data
+type GetACLActionSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ACLAction `json:"data"`
+}
+
+// GetACLActionResponseBody represents an API response body containing ACLAction data
+type GetACLActionResponseBody struct {
+	connection.APIResponseBody
+	Data ACLAction `json:"data"`
+}
+
+// GetACLTemplatesSliceResponseBody represents an API response body containing []ACLTemplates data
+type GetACLTemplatesSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ACLTemplates `json:"data"`
+}
+
+// GetACLTemplatesResponseBody represents an API response body containing ACLTemplates data
+type GetACLTemplatesResponseBody struct {
+	connection.APIResponseBody
+	Data ACLTemplates `json:"data"`
 }

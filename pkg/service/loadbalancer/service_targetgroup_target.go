@@ -36,7 +36,7 @@ func (s *Service) getTargetGroupTargetsPaginatedResponseBody(groupID int, parame
 	body := &GetTargetSliceResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/targets", groupID), parameters)
@@ -58,7 +58,7 @@ func (s *Service) getTargetGroupTargetResponseBody(groupID int, targetID int) (*
 	body := &GetTargetResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	if targetID < 1 {
@@ -90,7 +90,7 @@ func (s *Service) createTargetGroupTargetResponseBody(groupID int, req CreateTar
 	body := &GetTargetResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	response, err := s.connection.Post(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/targets", groupID), &req)
@@ -118,7 +118,7 @@ func (s *Service) patchTargetGroupTargetResponseBody(groupID int, targetID int, 
 	body := &connection.APIResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	if targetID < 1 {
@@ -150,7 +150,7 @@ func (s *Service) deleteTargetGroupTargetResponseBody(groupID int, targetID int)
 	body := &connection.APIResponseBody{}
 
 	if groupID < 1 {
-		return body, fmt.Errorf("invalid group id")
+		return body, fmt.Errorf("invalid target group id")
 	}
 
 	if targetID < 1 {

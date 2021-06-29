@@ -14,6 +14,9 @@ type LoadBalancerService interface {
 	DeployCluster(clusterID int) error
 	ValidateCluster(clusterID int) error
 
+	// Cluster ACL Templates
+	GetClusterACLTemplates(clusterID int) (ACLTemplates, error)
+
 	// Target Group
 	GetTargetGroups(parameters connection.APIRequestParameters) ([]TargetGroup, error)
 	GetTargetGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedTargetGroup, error)
@@ -21,6 +24,10 @@ type LoadBalancerService interface {
 	CreateTargetGroup(req CreateTargetGroupRequest) (int, error)
 	PatchTargetGroup(groupID int, req PatchTargetGroupRequest) error
 	DeleteTargetGroup(groupID int) error
+
+	// Target Group ACL
+	GetTargetGroupACLs(targetGroupID int, parameters connection.APIRequestParameters) ([]ACL, error)
+	GetTargetGroupACLsPaginated(targetGroupID int, parameters connection.APIRequestParameters) (*PaginatedACL, error)
 
 	// Target Group Target
 	GetTargetGroupTargets(groupID int, parameters connection.APIRequestParameters) ([]Target, error)
@@ -42,6 +49,10 @@ type LoadBalancerService interface {
 	CreateListener(req CreateListenerRequest) (int, error)
 	PatchListener(listenerID int, req PatchListenerRequest) error
 	DeleteListener(listenerID int) error
+
+	// Listener ACL
+	GetListenerACLs(listenerID int, parameters connection.APIRequestParameters) ([]ACL, error)
+	GetListenerACLsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedACL, error)
 
 	// Listener Access IP
 	GetListenerAccessIPs(listenerID int, parameters connection.APIRequestParameters) ([]AccessIP, error)

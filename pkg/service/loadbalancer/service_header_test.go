@@ -29,7 +29,7 @@ func TestGetHeaders(t *testing.T) {
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"header\":\"content-type\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
-		}, nil).Times(1)
+		}, nil)
 
 		headers, err := s.GetHeaders(connection.APIRequestParameters{})
 
