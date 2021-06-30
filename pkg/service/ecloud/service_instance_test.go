@@ -531,14 +531,15 @@ func TestPowerOnInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-on", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.PowerOnInstance("i-abcdef12")
+		taskID, err := s.PowerOnInstance("i-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -553,7 +554,7 @@ func TestPowerOnInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-on", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PowerOnInstance("i-abcdef12")
+		_, err := s.PowerOnInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -569,7 +570,7 @@ func TestPowerOnInstance(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PowerOnInstance("")
+		_, err := s.PowerOnInstance("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
@@ -592,7 +593,7 @@ func TestPowerOnInstance(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PowerOnInstance("i-abcdef12")
+		_, err := s.PowerOnInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)
@@ -612,14 +613,15 @@ func TestPowerOffInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-off", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.PowerOffInstance("i-abcdef12")
+		taskID, err := s.PowerOffInstance("i-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -634,7 +636,7 @@ func TestPowerOffInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-off", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PowerOffInstance("i-abcdef12")
+		_, err := s.PowerOffInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -650,7 +652,7 @@ func TestPowerOffInstance(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PowerOffInstance("")
+		_, err := s.PowerOffInstance("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
@@ -673,7 +675,7 @@ func TestPowerOffInstance(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PowerOffInstance("i-abcdef12")
+		_, err := s.PowerOffInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)
@@ -693,14 +695,15 @@ func TestPowerResetInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-reset", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.PowerResetInstance("i-abcdef12")
+		taskID, err := s.PowerResetInstance("i-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -715,7 +718,7 @@ func TestPowerResetInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-reset", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PowerResetInstance("i-abcdef12")
+		_, err := s.PowerResetInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -731,7 +734,7 @@ func TestPowerResetInstance(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PowerResetInstance("")
+		_, err := s.PowerResetInstance("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
@@ -754,7 +757,7 @@ func TestPowerResetInstance(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PowerResetInstance("i-abcdef12")
+		_, err := s.PowerResetInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)
@@ -774,14 +777,15 @@ func TestPowerShutdownInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-shutdown", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.PowerShutdownInstance("i-abcdef12")
+		taskID, err := s.PowerShutdownInstance("i-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -796,7 +800,7 @@ func TestPowerShutdownInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-shutdown", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PowerShutdownInstance("i-abcdef12")
+		_, err := s.PowerShutdownInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -812,7 +816,7 @@ func TestPowerShutdownInstance(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PowerShutdownInstance("")
+		_, err := s.PowerShutdownInstance("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
@@ -835,7 +839,7 @@ func TestPowerShutdownInstance(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PowerShutdownInstance("i-abcdef12")
+		_, err := s.PowerShutdownInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)
@@ -855,14 +859,15 @@ func TestPowerRestartInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-restart", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.PowerRestartInstance("i-abcdef12")
+		taskID, err := s.PowerRestartInstance("i-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -877,7 +882,7 @@ func TestPowerRestartInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-restart", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PowerRestartInstance("i-abcdef12")
+		_, err := s.PowerRestartInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -893,7 +898,7 @@ func TestPowerRestartInstance(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PowerRestartInstance("")
+		_, err := s.PowerRestartInstance("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
@@ -916,7 +921,7 @@ func TestPowerRestartInstance(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PowerRestartInstance("i-abcdef12")
+		_, err := s.PowerRestartInstance("i-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &InstanceNotFoundError{}, err)

@@ -163,11 +163,11 @@ type ECloudService interface {
 	DeleteInstance(instanceID string) error
 	LockInstance(instanceID string) error
 	UnlockInstance(instanceID string) error
-	PowerOnInstance(instanceID string) error
-	PowerOffInstance(instanceID string) error
-	PowerResetInstance(instanceID string) error
-	PowerShutdownInstance(instanceID string) error
-	PowerRestartInstance(instanceID string) error
+	PowerOnInstance(instanceID string) (string, error)
+	PowerOffInstance(instanceID string) (string, error)
+	PowerResetInstance(instanceID string) (string, error)
+	PowerShutdownInstance(instanceID string) (string, error)
+	PowerRestartInstance(instanceID string) (string, error)
 	CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error)
 	GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)

@@ -202,14 +202,14 @@ func (s *Service) unlockInstanceResponseBody(instanceID string) (*connection.API
 }
 
 // PowerOnInstance powers on an instance
-func (s *Service) PowerOnInstance(instanceID string) error {
-	_, err := s.powerOnInstanceResponseBody(instanceID)
+func (s *Service) PowerOnInstance(instanceID string) (string, error) {
+	body, err := s.powerOnInstanceResponseBody(instanceID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) powerOnInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) powerOnInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -230,14 +230,14 @@ func (s *Service) powerOnInstanceResponseBody(instanceID string) (*connection.AP
 }
 
 // PowerOffInstance powers off an instance
-func (s *Service) PowerOffInstance(instanceID string) error {
-	_, err := s.powerOffInstanceResponseBody(instanceID)
+func (s *Service) PowerOffInstance(instanceID string) (string, error) {
+	body, err := s.powerOffInstanceResponseBody(instanceID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) powerOffInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) powerOffInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -258,14 +258,14 @@ func (s *Service) powerOffInstanceResponseBody(instanceID string) (*connection.A
 }
 
 // PowerResetInstance resets an instance
-func (s *Service) PowerResetInstance(instanceID string) error {
-	_, err := s.powerResetInstanceResponseBody(instanceID)
+func (s *Service) PowerResetInstance(instanceID string) (string, error) {
+	body, err := s.powerResetInstanceResponseBody(instanceID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) powerResetInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) powerResetInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -286,14 +286,14 @@ func (s *Service) powerResetInstanceResponseBody(instanceID string) (*connection
 }
 
 // PowerShutdownInstance shuts down an instance
-func (s *Service) PowerShutdownInstance(instanceID string) error {
-	_, err := s.powerShutdownInstanceResponseBody(instanceID)
+func (s *Service) PowerShutdownInstance(instanceID string) (string, error) {
+	body, err := s.powerShutdownInstanceResponseBody(instanceID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -314,14 +314,14 @@ func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*connect
 }
 
 // PowerRestartInstance restarts an instance
-func (s *Service) PowerRestartInstance(instanceID string) error {
-	_, err := s.powerRestartInstanceResponseBody(instanceID)
+func (s *Service) PowerRestartInstance(instanceID string) (string, error) {
+	body, err := s.powerRestartInstanceResponseBody(instanceID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
