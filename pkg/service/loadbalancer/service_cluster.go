@@ -185,7 +185,7 @@ func (s *Service) getClusterACLTemplatesResponseBody(clusterID int) (*GetACLTemp
 		return body, fmt.Errorf("invalid cluster id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/templates", clusterID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/clusters/%d/acl-templates", clusterID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
