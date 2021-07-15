@@ -164,7 +164,6 @@ type PatchBindRequest struct {
 
 // CreateCertificateRequest represents a request to create a certificate
 type CreateCertificateRequest struct {
-	ListenerID  int    `json:"listener_id"`
 	Name        string `json:"name"`
 	Key         string `json:"key"`
 	Certificate string `json:"certificate"`
@@ -173,7 +172,6 @@ type CreateCertificateRequest struct {
 
 // PatchListenerCertificateRequest represents a request to patch a certificate
 type PatchCertificateRequest struct {
-	ListenerID  int    `json:"listener_id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Key         string `json:"key,omitempty"`
 	Certificate string `json:"certificate,omitempty"`
