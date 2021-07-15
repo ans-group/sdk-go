@@ -189,6 +189,7 @@ type Listener struct {
 	Close                bool                `json:"close"`
 	RedirectHTTPS        bool                `json:"redirect_https"`
 	DefaultTargetGroupID int                 `json:"default_target_group_id"`
+	AccessIsAllowList    bool                `json:"access_is_allow_list"`
 	AllowTLSV1           bool                `json:"allow_tlsv1"`
 	AllowTLSV11          bool                `json:"allow_tlsv11"`
 	DisableTLSV12        bool                `json:"disable_tlsv12"`
