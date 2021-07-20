@@ -177,8 +177,9 @@ func (c *CreateVirtualMachineTemplateRequest) Validate() *connection.ValidationE
 
 // CreateVPCRequest represents a request to create a VPC
 type CreateVPCRequest struct {
-	Name     string `json:"name,omitempty"`
-	RegionID string `json:"region_id"`
+	Name               string `json:"name,omitempty"`
+	RegionID           string `json:"region_id"`
+	AdvancedNetworking *bool  `json:"advanced_networking,omitempty"`
 }
 
 // PatchVPCRequest represents a request to patch a VPC

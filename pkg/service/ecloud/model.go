@@ -395,13 +395,15 @@ func (s TaskStatus) String() string {
 // +genie:model_response
 // +genie:model_paginated
 type VPC struct {
-	ID             string              `json:"id"`
-	Name           string              `json:"name"`
-	RegionID       string              `json:"region_id"`
-	Sync           ResourceSync        `json:"sync"`
-	SupportEnabled bool                `json:"support_enabled"`
-	CreatedAt      connection.DateTime `json:"created_at"`
-	UpdatedAt      connection.DateTime `json:"updated_at"`
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	RegionID           string              `json:"region_id"`
+	Sync               ResourceSync        `json:"sync"`
+	SupportEnabled     bool                `json:"support_enabled"`
+	ConsoleEnabled     bool                `json:"console_enabled"`
+	AdvancedNetworking bool                `json:"advanced_networking"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
 // AvailabilityZone represents an eCloud availability zone
@@ -852,6 +854,7 @@ type NetworkPolicy struct {
 	ID        string              `json:"id"`
 	Name      string              `json:"name"`
 	NetworkID string              `json:"network_id"`
+	VPCID     string              `json:"vpc_id"`
 	Sync      ResourceSync        `json:"sync"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
