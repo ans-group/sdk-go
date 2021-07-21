@@ -72,14 +72,14 @@ func (s *Service) getFloatingIPResponseBody(fipID string) (*GetFloatingIPRespons
 }
 
 // CreateFloatingIP creates a new FloatingIP
-func (s *Service) CreateFloatingIP(req CreateFloatingIPRequest) (string, error) {
+func (s *Service) CreateFloatingIP(req CreateFloatingIPRequest) (TaskReference, error) {
 	body, err := s.createFloatingIPResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*GetFloatingIPResponseBody, error) {
-	body := &GetFloatingIPResponseBody{}
+func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/floating-ips", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*Ge
 }
 
 // PatchFloatingIP patches a floating IP
-func (s *Service) PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error {
-	_, err := s.patchFloatingIPResponseBody(fipID, req)
+func (s *Service) PatchFloatingIP(fipID string, req PatchFloatingIPRequest) (TaskReference, error) {
+	body, err := s.patchFloatingIPResponseBody(fipID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -118,14 +118,14 @@ func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPR
 }
 
 // DeleteFloatingIP deletes a floating IP
-func (s *Service) DeleteFloatingIP(fipID string) error {
-	_, err := s.deleteFloatingIPResponseBody(fipID)
+func (s *Service) DeleteFloatingIP(fipID string) (string, error) {
+	body, err := s.deleteFloatingIPResponseBody(fipID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFloatingIPResponseBody(fipID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteFloatingIPResponseBody(fipID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -146,14 +146,14 @@ func (s *Service) deleteFloatingIPResponseBody(fipID string) (*connection.APIRes
 }
 
 // AssignFloatingIP assigns a floating IP to a resource
-func (s *Service) AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error {
-	_, err := s.assignFloatingIPResponseBody(fipID, req)
+func (s *Service) AssignFloatingIP(fipID string, req AssignFloatingIPRequest) (string, error) {
+	body, err := s.assignFloatingIPResponseBody(fipID, req)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingIPRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -174,14 +174,14 @@ func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingI
 }
 
 // UnassignFloatingIP unassigns a floating IP from a resource
-func (s *Service) UnassignFloatingIP(fipID string) error {
-	_, err := s.unassignFloatingIPResponseBody(fipID)
+func (s *Service) UnassignFloatingIP(fipID string) (string, error) {
+	body, err := s.unassignFloatingIPResponseBody(fipID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) unassignFloatingIPResponseBody(fipID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) unassignFloatingIPResponseBody(fipID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
