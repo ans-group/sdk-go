@@ -184,11 +184,11 @@ type ECloudService interface {
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
 	GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
 	GetFloatingIP(fipID string) (FloatingIP, error)
-	CreateFloatingIP(req CreateFloatingIPRequest) (string, error)
-	PatchFloatingIP(fipID string, req PatchFloatingIPRequest) error
-	DeleteFloatingIP(fipID string) error
-	AssignFloatingIP(fipID string, req AssignFloatingIPRequest) error
-	UnassignFloatingIP(fipID string) error
+	CreateFloatingIP(req CreateFloatingIPRequest) (TaskReference, error)
+	PatchFloatingIP(fipID string, req PatchFloatingIPRequest) (TaskReference, error)
+	DeleteFloatingIP(fipID string) (string, error)
+	AssignFloatingIP(fipID string, req AssignFloatingIPRequest) (string, error)
+	UnassignFloatingIP(fipID string) (string, error)
 	GetFloatingIPTasks(fipID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 

@@ -156,15 +156,16 @@ func TestCreateFloatingIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/floating-ips", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fip-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"fip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		fip, err := s.CreateFloatingIP(req)
+		taskRef, err := s.CreateFloatingIP(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "fip-abcdef12", fip)
+		assert.Equal(t, "fip-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,15 @@ func TestPatchFloatingIP(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/floating-ips/fip-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFloatingIP("fip-abcdef12", req)
+		taskRef, err := s.PatchFloatingIP("fip-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +227,7 @@ func TestPatchFloatingIP(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/floating-ips/fip-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchFloatingIP("fip-abcdef12", PatchFloatingIPRequest{})
+		_, err := s.PatchFloatingIP("fip-abcdef12", PatchFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +243,7 @@ func TestPatchFloatingIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchFloatingIP("", PatchFloatingIPRequest{})
+		_, err := s.PatchFloatingIP("", PatchFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid floating IP id", err.Error())
@@ -264,7 +266,7 @@ func TestPatchFloatingIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchFloatingIP("fip-abcdef12", PatchFloatingIPRequest{})
+		_, err := s.PatchFloatingIP("fip-abcdef12", PatchFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FloatingIPNotFoundError{}, err)
@@ -284,14 +286,15 @@ func TestDeleteFloatingIP(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/floating-ips/fip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFloatingIP("fip-abcdef12")
+		taskID, err := s.DeleteFloatingIP("fip-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +309,7 @@ func TestDeleteFloatingIP(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/floating-ips/fip-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteFloatingIP("fip-abcdef12")
+		_, err := s.DeleteFloatingIP("fip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +325,7 @@ func TestDeleteFloatingIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteFloatingIP("")
+		_, err := s.DeleteFloatingIP("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid floating IP id", err.Error())
@@ -345,7 +348,7 @@ func TestDeleteFloatingIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteFloatingIP("fip-abcdef12")
+		_, err := s.DeleteFloatingIP("fip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FloatingIPNotFoundError{}, err)
@@ -369,14 +372,15 @@ func TestAssignFloatingIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/assign", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.AssignFloatingIP("fip-abcdef12", req)
+		taskID, err := s.AssignFloatingIP("fip-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -391,7 +395,7 @@ func TestAssignFloatingIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/assign", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
+		_, err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -407,7 +411,7 @@ func TestAssignFloatingIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.AssignFloatingIP("", AssignFloatingIPRequest{})
+		_, err := s.AssignFloatingIP("", AssignFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid floating IP id", err.Error())
@@ -430,7 +434,7 @@ func TestAssignFloatingIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
+		_, err := s.AssignFloatingIP("fip-abcdef12", AssignFloatingIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FloatingIPNotFoundError{}, err)
@@ -450,14 +454,15 @@ func TestUnassignFloatingIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/unassign", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.UnassignFloatingIP("fip-abcdef12")
+		taskID, err := s.UnassignFloatingIP("fip-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -472,7 +477,7 @@ func TestUnassignFloatingIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/floating-ips/fip-abcdef12/unassign", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.UnassignFloatingIP("fip-abcdef12")
+		_, err := s.UnassignFloatingIP("fip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -488,7 +493,7 @@ func TestUnassignFloatingIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.UnassignFloatingIP("")
+		_, err := s.UnassignFloatingIP("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid floating IP id", err.Error())
@@ -511,7 +516,7 @@ func TestUnassignFloatingIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.UnassignFloatingIP("fip-abcdef12")
+		_, err := s.UnassignFloatingIP("fip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &FloatingIPNotFoundError{}, err)
