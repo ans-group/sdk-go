@@ -477,14 +477,15 @@ type Instance struct {
 // +genie:model_response
 // +genie:model_paginated
 type FloatingIP struct {
-	ID         string              `json:"id"`
-	Name       string              `json:"name"`
-	VPCID      string              `json:"vpc_id"`
-	IPAddress  string              `json:"ip_address"`
-	ResourceID string              `json:"resource_id"`
-	Sync       ResourceSync        `json:"sync"`
-	CreatedAt  connection.DateTime `json:"created_at"`
-	UpdatedAt  connection.DateTime `json:"updated_at"`
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	IPAddress          string              `json:"ip_address"`
+	ResourceID         string              `json:"resource_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Sync               ResourceSync        `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
 // FirewallPolicy represents an eCloud firewall policy
