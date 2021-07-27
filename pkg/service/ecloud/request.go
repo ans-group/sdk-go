@@ -328,8 +328,9 @@ type PatchFirewallRulePortRequest struct {
 
 // CreateFloatingIPRequest represents a request to create a floating IP
 type CreateFloatingIPRequest struct {
-	Name  string `json:"name,omitempty"`
-	VPCID string `json:"vpc_id"`
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
 }
 
 // PatchFloatingIPRequest represents a request to patch a floating IP
