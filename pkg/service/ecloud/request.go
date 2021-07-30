@@ -271,10 +271,11 @@ type PatchFirewallPolicyRequest struct {
 
 // CreateVolumeRequest represents a request to create a volume
 type CreateVolumeRequest struct {
-	Name     string `json:"name,omitempty"`
-	VPCID    string `json:"vpc_id"`
-	Capacity int    `json:"capacity"`
-	IOPS     int    `json:"iops,omitempty"`
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	Capacity           int    `json:"capacity"`
+	IOPS               int    `json:"iops,omitempty"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
 }
 
 // PatchVolumeRequest represents a request to patch a volume
