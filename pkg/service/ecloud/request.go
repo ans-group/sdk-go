@@ -203,6 +203,7 @@ type PatchNetworkRequest struct {
 type CreateRouterRequest struct {
 	Name               string `json:"name,omitempty"`
 	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
 	RouterThroughputID string `json:"router_throughput_id,omitempty"`
 }
 
