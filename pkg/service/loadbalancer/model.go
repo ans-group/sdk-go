@@ -226,14 +226,11 @@ type Bind struct {
 // +genie:model_response
 // +genie:model_paginated
 type Certificate struct {
-	ID          int                 `json:"id"`
-	ListenerID  int                 `json:"listener_id"`
-	Name        string              `json:"name"`
-	Key         string              `json:"key"`
-	Certificate string              `json:"certificate"`
-	CABundle    string              `json:"ca_bundle"`
-	CreatedAt   connection.DateTime `json:"created_at"`
-	UpdatedAt   connection.DateTime `json:"updated_at"`
+	ID         int                 `json:"id"`
+	ListenerID int                 `json:"listener_id"`
+	Name       string              `json:"name"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
 // Header represents a header
