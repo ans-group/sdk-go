@@ -39,7 +39,7 @@ func (s *Service) getTargetGroupACLsPaginatedResponseBody(targetGroupID int, par
 		return body, fmt.Errorf("invalid target group id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/acls?target_group_id=%d", targetGroupID), parameters)
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/acls", targetGroupID), parameters)
 	if err != nil {
 		return body, err
 	}

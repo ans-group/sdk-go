@@ -39,7 +39,7 @@ func (s *Service) getListenerACLsPaginatedResponseBody(listenerID int, parameter
 		return body, fmt.Errorf("invalid listener id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/acls?listener_id=%d", listenerID), parameters)
+	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/listeners/%d/acls", listenerID), parameters)
 	if err != nil {
 		return body, err
 	}
