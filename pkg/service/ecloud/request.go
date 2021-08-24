@@ -469,3 +469,8 @@ type PatchNetworkRulePortRequest struct {
 	Source      string                  `json:"source,omitempty"`
 	Destination string                  `json:"destination,omitempty"`
 }
+
+// MigrateInstanceRequest represents a request to migrate an instance
+type MigrateInstanceRequest struct {
+	HostGroupID string `json:"host_group_id"`
+}
