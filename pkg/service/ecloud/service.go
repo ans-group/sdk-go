@@ -349,6 +349,32 @@ type ECloudService interface {
 	CreateNetworkRulePort(req CreateNetworkRulePortRequest) (TaskReference, error)
 	PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRequest) (TaskReference, error)
 	DeleteNetworkRulePort(ruleID string) (string, error)
+
+	// VPN Endpoint
+	GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error)
+	GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNEndpoint, error)
+	GetVPNEndpoint(endpointID string) (VPNEndpoint, error)
+	CreateVPNEndpoint(req CreateVPNEndpointRequest) (TaskReference, error)
+	PatchVPNEndpoint(endpointID string, req PatchVPNEndpointRequest) (TaskReference, error)
+	DeleteVPNEndpoint(endpointID string) (string, error)
+
+	// VPN Service
+	GetVPNServices(parameters connection.APIRequestParameters) ([]VPNService, error)
+	GetVPNServicesPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNService, error)
+	GetVPNService(serviceID string) (VPNService, error)
+	CreateVPNService(req CreateVPNServiceRequest) (TaskReference, error)
+	PatchVPNService(serviceID string, req PatchVPNServiceRequest) (TaskReference, error)
+	DeleteVPNService(serviceID string) (string, error)
+
+	// VPN Session
+	GetVPNSessions(parameters connection.APIRequestParameters) ([]VPNSession, error)
+	GetVPNSessionsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNSession, error)
+	GetVPNSession(sessionID string) (VPNSession, error)
+	CreateVPNSession(req CreateVPNSessionRequest) (TaskReference, error)
+	PatchVPNSession(sessionID string, req PatchVPNSessionRequest) (TaskReference, error)
+	DeleteVPNSession(sessionID string) (string, error)
+	GetVPNSessionVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error)
+	GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
 }
 
 // Service implements ECloudService for managing

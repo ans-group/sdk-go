@@ -541,3 +541,51 @@ type GetNetworkRulePortResponseBody struct {
 	connection.APIResponseBody
 	Data NetworkRulePort `json:"data"`
 }
+
+// GetVPNProfileGroupSliceResponseBody represents an API response body containing []VPNProfileGroup data
+type GetVPNProfileGroupSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPNProfileGroup `json:"data"`
+}
+
+// GetVPNProfileGroupResponseBody represents an API response body containing VPNProfileGroup data
+type GetVPNProfileGroupResponseBody struct {
+	connection.APIResponseBody
+	Data VPNProfileGroup `json:"data"`
+}
+
+// GetVPNServiceSliceResponseBody represents an API response body containing []VPNService data
+type GetVPNServiceSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPNService `json:"data"`
+}
+
+// GetVPNServiceResponseBody represents an API response body containing VPNService data
+type GetVPNServiceResponseBody struct {
+	connection.APIResponseBody
+	Data VPNService `json:"data"`
+}
+
+// GetVPNEndpointSliceResponseBody represents an API response body containing []VPNEndpoint data
+type GetVPNEndpointSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPNEndpoint `json:"data"`
+}
+
+// GetVPNEndpointResponseBody represents an API response body containing VPNEndpoint data
+type GetVPNEndpointResponseBody struct {
+	connection.APIResponseBody
+	Data VPNEndpoint `json:"data"`
+}
+
+// GetVPNSessionSliceResponseBody represents an API response body containing []VPNSession data
+type GetVPNSessionSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPNSession `json:"data"`
+}
+
+// GetVPNSessionResponseBody represents an API response body containing VPNSession data
+type GetVPNSessionResponseBody struct {
+	connection.APIResponseBody
+	Data VPNSession `json:"data"`
+}
