@@ -368,6 +368,11 @@ type ECloudService interface {
 	DeleteVPNSession(sessionID string) (string, error)
 	GetVPNSessionVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error)
 	GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
+
+	// VPN Profile Group
+	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
+	GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error)
+	GetVPNProfileGroup(sessionID string) (VPNProfileGroup, error)
 }
 
 // Service implements ECloudService for managing
