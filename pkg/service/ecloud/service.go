@@ -147,13 +147,6 @@ type ECloudService interface {
 	GetDHCPTasks(dhcpID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
-	// VPN
-	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
-	GetVPNsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPN, error)
-	GetVPN(vpnID string) (VPN, error)
-	CreateVPN(req CreateVPNRequest) (string, error)
-	DeleteVPN(vpcID string) error
-
 	// Instance
 	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
 	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
