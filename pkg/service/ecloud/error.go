@@ -343,3 +343,12 @@ type NetworkRulePortNotFoundError struct {
 func (e *NetworkRulePortNotFoundError) Error() string {
 	return fmt.Sprintf("Network rule port not found with ID [%s]", e.ID)
 }
+
+// VolumeGroupNotFoundError indicates a volume group was not found
+type VolumeGroupNotFoundError struct {
+	ID string
+}
+
+func (e *VolumeGroupNotFoundError) Error() string {
+	return fmt.Sprintf("Volume group not found with ID [%s]", e.ID)
+}

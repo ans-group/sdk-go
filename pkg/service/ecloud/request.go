@@ -474,3 +474,15 @@ type PatchNetworkRulePortRequest struct {
 type MigrateInstanceRequest struct {
 	HostGroupID string `json:"host_group_id"`
 }
+
+// CreateVolumeGroupRequest represents a request to create a volume group
+type CreateVolumeGroupRequest struct {
+	Name               string `json:"name,omitempty"`
+	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+}
+
+// PatchVolumeGroupRequest represents a request to patch a volume group
+type PatchVolumeGroupRequest struct {
+	Name string `json:"name,omitempty"`
+}

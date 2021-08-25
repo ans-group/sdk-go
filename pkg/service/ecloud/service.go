@@ -350,6 +350,14 @@ type ECloudService interface {
 	CreateNetworkRulePort(req CreateNetworkRulePortRequest) (TaskReference, error)
 	PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRequest) (TaskReference, error)
 	DeleteNetworkRulePort(ruleID string) (string, error)
+
+	//Volume Groups
+	GetVolumeGroups(parameters connection.APIRequestParameters) ([]VolumeGroup, error)
+	GetVolumeGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVolumeGroup, error)
+	GetVolumeGroup(groupID string) (VolumeGroup, error)
+	CreateVolumeGroup(req CreateVolumeGroupRequest) (TaskReference, error)
+	PatchVolumeGroup(groupID string, patch PatchVolumeGroupRequest) (TaskReference, error)
+	DeleteVolumeGroup(groupID string) (string, error)
 }
 
 // Service implements ECloudService for managing
