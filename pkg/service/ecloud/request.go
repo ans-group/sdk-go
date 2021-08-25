@@ -248,6 +248,7 @@ type CreateInstanceRequest struct {
 	RequiresFloatingIP bool                   `json:"requires_floating_ip"`
 	UserScript         string                 `json:"user_script,omitempty"`
 	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
+	HostGroupID        string                 `json:"host_group_id,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
@@ -472,5 +473,5 @@ type PatchNetworkRulePortRequest struct {
 
 // MigrateInstanceRequest represents a request to migrate an instance
 type MigrateInstanceRequest struct {
-	HostGroupID string `json:"host_group_id"`
+	HostGroupID string `json:"host_group_id,omitempty"`
 }

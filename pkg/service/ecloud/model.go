@@ -466,6 +466,7 @@ type Instance struct {
 	BackupEnabled      bool                `json:"backup_enabled"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
+	HostGroupID        string              `json:"host_group_id"`
 	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
