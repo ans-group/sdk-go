@@ -370,3 +370,12 @@ type VPNServiceNotFoundError struct {
 func (e *VPNServiceNotFoundError) Error() string {
 	return fmt.Sprintf("VPN service not found with ID [%s]", e.ID)
 }
+
+// VPNProfileGroupNotFoundError indicates a VPN profile group was not found
+type VPNProfileGroupNotFoundError struct {
+	ID string
+}
+
+func (e *VPNProfileGroupNotFoundError) Error() string {
+	return fmt.Sprintf("VPN profile group not found with ID [%s]", e.ID)
+}
