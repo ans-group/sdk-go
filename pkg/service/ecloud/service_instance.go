@@ -341,6 +341,34 @@ func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*GetTaskR
 	})
 }
 
+// MigrateInstance migrates an instance
+func (s *Service) MigrateInstance(instanceID string, req MigrateInstanceRequest) (string, error) {
+	body, err := s.migrateInstanceResponseBody(instanceID, req)
+
+	return body.Data.TaskID, err
+}
+
+func (s *Service) migrateInstanceResponseBody(instanceID string, req MigrateInstanceRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/migrate", instanceID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}
+
 // GetInstanceVolumes retrieves a list of instance volumes
 func (s *Service) GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error) {
 	var volumes []Volume

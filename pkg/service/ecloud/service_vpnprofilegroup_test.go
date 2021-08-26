@@ -31,11 +31,11 @@ func TestGetVPNProfileGroups(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		sessions, err := s.GetVPNProfileGroups(connection.APIRequestParameters{})
+		profileGroups, err := s.GetVPNProfileGroups(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, sessions, 1)
-		assert.Equal(t, "vpnpg-abcdef12", sessions[0].ID)
+		assert.Len(t, profileGroups, 1)
+		assert.Equal(t, "vpnpg-abcdef12", profileGroups[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -112,7 +112,7 @@ func TestGetVPNProfileGroup(t *testing.T) {
 		_, err := s.GetVPNProfileGroup("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid vpn session id", err.Error())
+		assert.Equal(t, "invalid vpn profile group id", err.Error())
 	})
 
 	t.Run("404_ReturnsVPNProfileGroupNotFoundError", func(t *testing.T) {

@@ -6,24 +6,24 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// GetVPNProfileGroups retrieves a list of VPN sessions
+// GetVPNProfileGroups retrieves a list of VPN profile groups
 func (s *Service) GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error) {
-	var sessions []VPNProfileGroup
+	var profileGroups []VPNProfileGroup
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
 		return s.GetVPNProfileGroupsPaginated(p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, session := range response.(*PaginatedVPNProfileGroup).Items {
-			sessions = append(sessions, session)
+		for _, group := range response.(*PaginatedVPNProfileGroup).Items {
+			profileGroups = append(profileGroups, group)
 		}
 	}
 
-	return sessions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return profileGroups, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetVPNProfileGroupsPaginated retrieves a paginated list of VPN sessions
+// GetVPNProfileGroupsPaginated retrieves a paginated list of VPN profile groups
 func (s *Service) GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error) {
 	body, err := s.getVPNProfileGroupsPaginatedResponseBody(parameters)
 
@@ -43,28 +43,28 @@ func (s *Service) getVPNProfileGroupsPaginatedResponseBody(parameters connection
 	return body, response.HandleResponse(body, nil)
 }
 
-// GetVPNProfileGroup retrieves a single VPN session by id
-func (s *Service) GetVPNProfileGroup(sessionID string) (VPNProfileGroup, error) {
-	body, err := s.getVPNProfileGroupResponseBody(sessionID)
+// GetVPNProfileGroup retrieves a single VPN profile group by id
+func (s *Service) GetVPNProfileGroup(profileGroupID string) (VPNProfileGroup, error) {
+	body, err := s.getVPNProfileGroupResponseBody(profileGroupID)
 
 	return body.Data, err
 }
 
-func (s *Service) getVPNProfileGroupResponseBody(sessionID string) (*GetVPNProfileGroupResponseBody, error) {
+func (s *Service) getVPNProfileGroupResponseBody(profileGroupID string) (*GetVPNProfileGroupResponseBody, error) {
 	body := &GetVPNProfileGroupResponseBody{}
 
-	if sessionID == "" {
-		return body, fmt.Errorf("invalid vpn session id")
+	if profileGroupID == "" {
+		return body, fmt.Errorf("invalid vpn profile group id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-profile-groups/%s", sessionID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-profile-groups/%s", profileGroupID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &VPNProfileGroupNotFoundError{ID: sessionID}
+			return &VPNProfileGroupNotFoundError{ID: profileGroupID}
 		}
 
 		return nil

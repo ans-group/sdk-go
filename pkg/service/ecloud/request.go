@@ -512,3 +512,8 @@ type CreateVPNServiceRequest struct {
 type PatchVPNServiceRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// MigrateInstanceRequest represents a request to migrate an instance
+type MigrateInstanceRequest struct {
+	HostGroupID string `json:"host_group_id"`
+}

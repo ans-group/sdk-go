@@ -161,6 +161,7 @@ type ECloudService interface {
 	PowerResetInstance(instanceID string) (string, error)
 	PowerShutdownInstance(instanceID string) (string, error)
 	PowerRestartInstance(instanceID string) (string, error)
+	MigrateInstance(instanceID string, req MigrateInstanceRequest) (string, error)
 	CreateInstanceConsoleSession(instanceID string) (ConsoleSession, error)
 	GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
@@ -372,7 +373,7 @@ type ECloudService interface {
 	// VPN Profile Group
 	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
 	GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error)
-	GetVPNProfileGroup(sessionID string) (VPNProfileGroup, error)
+	GetVPNProfileGroup(groupID string) (VPNProfileGroup, error)
 }
 
 // Service implements ECloudService for managing
