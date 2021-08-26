@@ -471,6 +471,49 @@ type PatchNetworkRulePortRequest struct {
 	Destination string                  `json:"destination,omitempty"`
 }
 
+// CreateVPNEndpointRequest represents a request to create a VPN endpoint
+type CreateVPNEndpointRequest struct {
+	Name         string `json:"name,omitempty"`
+	VPNServiceID string `json:"vpn_service_id"`
+	FloatingIPID string `json:"floating_ip_id"`
+}
+
+// PatchVPNEndpointRequest represents a request to patch a VPN endpoint
+type PatchVPNEndpointRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// CreateVPNSessionRequest represents a request to create a VPN session
+type CreateVPNSessionRequest struct {
+	Name              string               `json:"name,omitempty"`
+	VPNProfileGroupID string               `json:"vpn_profile_group_id"`
+	VPNServiceID      string               `json:"vpn_service_id"`
+	VPNEndpointID     string               `json:"vpn_endpoint_id"`
+	RemoteIP          connection.IPAddress `json:"remote_ip"`
+	RemoteNetworks    string               `json:"remote_networks"`
+	LocalNetworks     string               `json:"local_networks"`
+}
+
+// PatchVPNSessionRequest represents a request to patch a VPN session
+type PatchVPNSessionRequest struct {
+	Name              string               `json:"name,omitempty"`
+	VPNProfileGroupID string               `json:"vpn_profile_group_id,omitempty"`
+	RemoteIP          connection.IPAddress `json:"remote_ip,omitempty"`
+	RemoteNetworks    string               `json:"remote_networks,omitempty"`
+	LocalNetworks     string               `json:"local_networks,omitempty"`
+}
+
+// CreateVPNServiceRequest represents a request to create a VPN service
+type CreateVPNServiceRequest struct {
+	Name     string `json:"name,omitempty"`
+	RouterID string `json:"vpn_profile_group_id"`
+}
+
+// PatchVPNServiceRequest represents a request to patch a VPN service
+type PatchVPNServiceRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
 // MigrateInstanceRequest represents a request to migrate an instance
 type MigrateInstanceRequest struct {
 	HostGroupID string `json:"host_group_id,omitempty"`

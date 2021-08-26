@@ -147,13 +147,6 @@ type ECloudService interface {
 	GetDHCPTasks(dhcpID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 
-	// VPN
-	GetVPNs(parameters connection.APIRequestParameters) ([]VPN, error)
-	GetVPNsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPN, error)
-	GetVPN(vpnID string) (VPN, error)
-	CreateVPN(req CreateVPNRequest) (string, error)
-	DeleteVPN(vpcID string) error
-
 	// Instance
 	GetInstances(parameters connection.APIRequestParameters) ([]Instance, error)
 	GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error)
@@ -350,6 +343,37 @@ type ECloudService interface {
 	CreateNetworkRulePort(req CreateNetworkRulePortRequest) (TaskReference, error)
 	PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRequest) (TaskReference, error)
 	DeleteNetworkRulePort(ruleID string) (string, error)
+
+	// VPN Endpoint
+	GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error)
+	GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNEndpoint, error)
+	GetVPNEndpoint(endpointID string) (VPNEndpoint, error)
+	CreateVPNEndpoint(req CreateVPNEndpointRequest) (TaskReference, error)
+	PatchVPNEndpoint(endpointID string, req PatchVPNEndpointRequest) (TaskReference, error)
+	DeleteVPNEndpoint(endpointID string) (string, error)
+
+	// VPN Service
+	GetVPNServices(parameters connection.APIRequestParameters) ([]VPNService, error)
+	GetVPNServicesPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNService, error)
+	GetVPNService(serviceID string) (VPNService, error)
+	CreateVPNService(req CreateVPNServiceRequest) (TaskReference, error)
+	PatchVPNService(serviceID string, req PatchVPNServiceRequest) (TaskReference, error)
+	DeleteVPNService(serviceID string) (string, error)
+
+	// VPN Session
+	GetVPNSessions(parameters connection.APIRequestParameters) ([]VPNSession, error)
+	GetVPNSessionsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNSession, error)
+	GetVPNSession(sessionID string) (VPNSession, error)
+	CreateVPNSession(req CreateVPNSessionRequest) (TaskReference, error)
+	PatchVPNSession(sessionID string, req PatchVPNSessionRequest) (TaskReference, error)
+	DeleteVPNSession(sessionID string) (string, error)
+	GetVPNSessionVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error)
+	GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
+
+	// VPN Profile Group
+	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
+	GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error)
+	GetVPNProfileGroup(groupID string) (VPNProfileGroup, error)
 }
 
 // Service implements ECloudService for managing
