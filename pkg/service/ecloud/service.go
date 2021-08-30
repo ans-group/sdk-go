@@ -367,8 +367,8 @@ type ECloudService interface {
 	CreateVPNSession(req CreateVPNSessionRequest) (TaskReference, error)
 	PatchVPNSession(sessionID string, req PatchVPNSessionRequest) (TaskReference, error)
 	DeleteVPNSession(sessionID string) (string, error)
-	GetVPNSessionVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error)
-	GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
+	GetVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error)
+	GetVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error)
 
 	// VPN Profile Group
 	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)

@@ -192,12 +192,12 @@ func (s *Service) getVPNSessionTasksPaginatedResponseBody(sessionID string, para
 	})
 }
 
-// GetVPNSessionVPNSessionCredentials retrieves a list of VPN session credentials
-func (s *Service) GetVPNSessionVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error) {
+// GetVPNSessionCredentials retrieves a list of VPN session credentials
+func (s *Service) GetVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error) {
 	var credentials []Credential
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID, p)
+		return s.GetVPNSessionCredentialsPaginated(vpnSessionID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -209,16 +209,16 @@ func (s *Service) GetVPNSessionVPNSessionCredentials(vpnSessionID string, parame
 	return credentials, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetVPNSessionVPNSessionCredentialsPaginated retrieves a paginated list of VPN session credentials
-func (s *Service) GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
-	body, err := s.getVPNSessionVPNSessionCredentialsPaginatedResponseBody(vpnSessionID, parameters)
+// GetVPNSessionCredentialsPaginated retrieves a paginated list of VPN session credentials
+func (s *Service) GetVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
+	body, err := s.getVPNSessionCredentialsPaginatedResponseBody(vpnSessionID, parameters)
 
 	return NewPaginatedCredential(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionVPNSessionCredentialsPaginated(vpnSessionID, p)
+		return s.GetVPNSessionCredentialsPaginated(vpnSessionID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getVPNSessionVPNSessionCredentialsPaginatedResponseBody(vpnSessionID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
+func (s *Service) getVPNSessionCredentialsPaginatedResponseBody(vpnSessionID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
 	body := &GetCredentialSliceResponseBody{}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s/credentials", vpnSessionID), parameters)

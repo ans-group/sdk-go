@@ -439,7 +439,7 @@ func TestGetVPNSessionTasks(t *testing.T) {
 	})
 }
 
-func TestGetVPNSessionVPNSessionCredentials(t *testing.T) {
+func TestGetVPNSessionCredentials(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -457,7 +457,7 @@ func TestGetVPNSessionVPNSessionCredentials(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		sessions, err := s.GetVPNSessionVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
+		sessions, err := s.GetVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, sessions, 1)
@@ -476,7 +476,7 @@ func TestGetVPNSessionVPNSessionCredentials(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-sessions/nr-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetVPNSessionVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
+		_, err := s.GetVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
