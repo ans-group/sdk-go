@@ -506,7 +506,7 @@ type PatchVPNSessionRequest struct {
 // CreateVPNServiceRequest represents a request to create a VPN service
 type CreateVPNServiceRequest struct {
 	Name     string `json:"name,omitempty"`
-	RouterID string `json:"vpn_profile_group_id"`
+	RouterID string `json:"router_id"`
 }
 
 // PatchVPNServiceRequest represents a request to patch a VPN service
