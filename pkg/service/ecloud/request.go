@@ -475,7 +475,7 @@ type PatchNetworkRulePortRequest struct {
 type CreateVPNEndpointRequest struct {
 	Name         string `json:"name,omitempty"`
 	VPNServiceID string `json:"vpn_service_id"`
-	FloatingIPID string `json:"floating_ip_id"`
+	FloatingIPID string `json:"floating_ip_id,omitempty"`
 }
 
 // PatchVPNEndpointRequest represents a request to patch a VPN endpoint
@@ -490,8 +490,8 @@ type CreateVPNSessionRequest struct {
 	VPNServiceID      string               `json:"vpn_service_id"`
 	VPNEndpointID     string               `json:"vpn_endpoint_id"`
 	RemoteIP          connection.IPAddress `json:"remote_ip"`
-	RemoteNetworks    string               `json:"remote_networks"`
-	LocalNetworks     string               `json:"local_networks"`
+	RemoteNetworks    string               `json:"remote_networks,omitempty"`
+	LocalNetworks     string               `json:"local_networks,omitempty"`
 }
 
 // PatchVPNSessionRequest represents a request to patch a VPN session
