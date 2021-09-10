@@ -439,8 +439,8 @@ func TestGetVPNSessionTasks(t *testing.T) {
 	})
 }
 
-func TestGetVPNSessionCredentials(t *testing.T) {
-	t.Run("Single", func(t *testing.T) {
+func TestGetVPNSessionPreSharedKey(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -450,18 +450,17 @@ func TestGetVPNSessionCredentials(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpn-sessions/nr-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/vpn-sessions/vpns-abcdef12/pre-shared-key", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"cred-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"psk\":\"testpsk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		sessions, err := s.GetVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
+		session, err := s.GetVPNSessionPreSharedKey("vpns-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Len(t, sessions, 1)
-		assert.Equal(t, "cred-abcdef12", sessions[0].ID)
+		assert.Equal(t, "testpsk", session.PSK)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -474,11 +473,50 @@ func TestGetVPNSessionCredentials(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/vpn-sessions/nr-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/ecloud/v2/vpn-sessions/vpns-abcdef12/pre-shared-key", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetVPNSessionCredentials("nr-abcdef12", connection.APIRequestParameters{})
+		_, err := s.GetVPNSessionPreSharedKey("vpns-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidVPNSessionPreSharedKeyID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetVPNSessionPreSharedKey("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid vpn session id", err.Error())
+	})
+
+	t.Run("404_ReturnsVPNSessionNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/vpn-sessions/vpns-abcdef12/pre-shared-key", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetVPNSessionPreSharedKey("vpns-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &VPNSessionNotFoundError{}, err)
 	})
 }

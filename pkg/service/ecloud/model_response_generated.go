@@ -589,3 +589,15 @@ type GetVPNSessionResponseBody struct {
 	connection.APIResponseBody
 	Data VPNSession `json:"data"`
 }
+
+// GetVPNSessionPreSharedKeySliceResponseBody represents an API response body containing []VPNSessionPreSharedKey data
+type GetVPNSessionPreSharedKeySliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VPNSessionPreSharedKey `json:"data"`
+}
+
+// GetVPNSessionPreSharedKeyResponseBody represents an API response body containing VPNSessionPreSharedKey data
+type GetVPNSessionPreSharedKeyResponseBody struct {
+	connection.APIResponseBody
+	Data VPNSessionPreSharedKey `json:"data"`
+}

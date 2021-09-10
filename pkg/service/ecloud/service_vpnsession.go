@@ -192,39 +192,30 @@ func (s *Service) getVPNSessionTasksPaginatedResponseBody(sessionID string, para
 	})
 }
 
-// GetVPNSessionCredentials retrieves a list of VPN session credentials
-func (s *Service) GetVPNSessionCredentials(vpnSessionID string, parameters connection.APIRequestParameters) ([]Credential, error) {
-	var credentials []Credential
+// GetVPNSession retrieves a single VPN session by id
+func (s *Service) GetVPNSessionPreSharedKey(sessionID string) (VPNSessionPreSharedKey, error) {
+	body, err := s.getVPNSessionPreSharedKeyResponseBody(sessionID)
 
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionCredentialsPaginated(vpnSessionID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, credential := range response.(*PaginatedCredential).Items {
-			credentials = append(credentials, credential)
-		}
-	}
-
-	return credentials, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return body.Data, err
 }
 
-// GetVPNSessionCredentialsPaginated retrieves a paginated list of VPN session credentials
-func (s *Service) GetVPNSessionCredentialsPaginated(vpnSessionID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
-	body, err := s.getVPNSessionCredentialsPaginatedResponseBody(vpnSessionID, parameters)
+func (s *Service) getVPNSessionPreSharedKeyResponseBody(sessionID string) (*GetVPNSessionPreSharedKeyResponseBody, error) {
+	body := &GetVPNSessionPreSharedKeyResponseBody{}
 
-	return NewPaginatedCredential(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionCredentialsPaginated(vpnSessionID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
-}
+	if sessionID == "" {
+		return body, fmt.Errorf("invalid vpn session id")
+	}
 
-func (s *Service) getVPNSessionCredentialsPaginatedResponseBody(vpnSessionID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
-	body := &GetCredentialSliceResponseBody{}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s/credentials", vpnSessionID), parameters)
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s/pre-shared-key", sessionID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
 
-	return body, response.HandleResponse(body, nil)
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPNSessionNotFoundError{ID: sessionID}
+		}
+
+		return nil
+	})
 }

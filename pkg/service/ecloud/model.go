@@ -1032,3 +1032,9 @@ type VPNSession struct {
 	CreatedAt         connection.DateTime  `json:"created_at"`
 	UpdatedAt         connection.DateTime  `json:"updated_at"`
 }
+
+// VPNSessionPreSharedKey represents an eCloud VPN session pre-shared key
+// +genie:model_response
+type VPNSessionPreSharedKey struct {
+	PSK string `json:"psk"`
+}
