@@ -978,6 +978,24 @@ type NetworkRulePort struct {
 	UpdatedAt     connection.DateTime     `json:"updated_at"`
 }
 
+// VolumeGroup represents an eCloud volume group resource
+// +genie:model_response
+// +genie:model_paginated
+type VolumeGroup struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Usage              VolumeGroupUsage    `json:"usage"`
+	Sync               ResourceSync        `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+type VolumeGroupUsage struct {
+	Volumes int `json:"volumes"`
+}
+
 // VPNProfileGroup represents an eCloud VPN profile group
 // +genie:model_response
 // +genie:model_paginated

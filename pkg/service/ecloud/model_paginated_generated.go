@@ -590,6 +590,20 @@ func NewPaginatedNetworkRulePort(getFunc connection.PaginatedGetFunc, parameters
 	}
 }
 
+// PaginatedVolumeGroup represents a paginated collection of VolumeGroup
+type PaginatedVolumeGroup struct {
+	*connection.PaginatedBase
+	Items []VolumeGroup
+}
+
+// NewPaginatedVolumeGroup returns a pointer to an initialized PaginatedVolumeGroup struct
+func NewPaginatedVolumeGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VolumeGroup) *PaginatedVolumeGroup {
+	return &PaginatedVolumeGroup{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
 // PaginatedVPNProfileGroup represents a paginated collection of VPNProfileGroup
 type PaginatedVPNProfileGroup struct {
 	*connection.PaginatedBase

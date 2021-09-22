@@ -344,6 +344,16 @@ type ECloudService interface {
 	PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRequest) (TaskReference, error)
 	DeleteNetworkRulePort(ruleID string) (string, error)
 
+	//Volume Groups
+	GetVolumeGroups(parameters connection.APIRequestParameters) ([]VolumeGroup, error)
+	GetVolumeGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVolumeGroup, error)
+	GetVolumeGroup(groupID string) (VolumeGroup, error)
+	CreateVolumeGroup(req CreateVolumeGroupRequest) (TaskReference, error)
+	PatchVolumeGroup(groupID string, patch PatchVolumeGroupRequest) (TaskReference, error)
+	DeleteVolumeGroup(groupID string) (string, error)
+	GetVolumeGroupVolumes(groupID string, parameters connection.APIRequestParameters) ([]Volume, error)
+	GetVolumeGroupVolumesPaginated(groupID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
+
 	// VPN Endpoint
 	GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error)
 	GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNEndpoint, error)

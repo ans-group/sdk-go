@@ -542,6 +542,18 @@ type GetNetworkRulePortResponseBody struct {
 	Data NetworkRulePort `json:"data"`
 }
 
+// GetVolumeGroupSliceResponseBody represents an API response body containing []VolumeGroup data
+type GetVolumeGroupSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VolumeGroup `json:"data"`
+}
+
+// GetVolumeGroupResponseBody represents an API response body containing VolumeGroup data
+type GetVolumeGroupResponseBody struct {
+	connection.APIResponseBody
+	Data VolumeGroup `json:"data"`
+}
+
 // GetVPNProfileGroupSliceResponseBody represents an API response body containing []VPNProfileGroup data
 type GetVPNProfileGroupSliceResponseBody struct {
 	connection.APIResponseBody
