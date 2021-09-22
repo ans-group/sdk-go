@@ -603,3 +603,59 @@ func NewPaginatedVolumeGroup(getFunc connection.PaginatedGetFunc, parameters con
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedVPNProfileGroup represents a paginated collection of VPNProfileGroup
+type PaginatedVPNProfileGroup struct {
+	*connection.PaginatedBase
+	Items []VPNProfileGroup
+}
+
+// NewPaginatedVPNProfileGroup returns a pointer to an initialized PaginatedVPNProfileGroup struct
+func NewPaginatedVPNProfileGroup(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VPNProfileGroup) *PaginatedVPNProfileGroup {
+	return &PaginatedVPNProfileGroup{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedVPNService represents a paginated collection of VPNService
+type PaginatedVPNService struct {
+	*connection.PaginatedBase
+	Items []VPNService
+}
+
+// NewPaginatedVPNService returns a pointer to an initialized PaginatedVPNService struct
+func NewPaginatedVPNService(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VPNService) *PaginatedVPNService {
+	return &PaginatedVPNService{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedVPNEndpoint represents a paginated collection of VPNEndpoint
+type PaginatedVPNEndpoint struct {
+	*connection.PaginatedBase
+	Items []VPNEndpoint
+}
+
+// NewPaginatedVPNEndpoint returns a pointer to an initialized PaginatedVPNEndpoint struct
+func NewPaginatedVPNEndpoint(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VPNEndpoint) *PaginatedVPNEndpoint {
+	return &PaginatedVPNEndpoint{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedVPNSession represents a paginated collection of VPNSession
+type PaginatedVPNSession struct {
+	*connection.PaginatedBase
+	Items []VPNSession
+}
+
+// NewPaginatedVPNSession returns a pointer to an initialized PaginatedVPNSession struct
+func NewPaginatedVPNSession(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VPNSession) *PaginatedVPNSession {
+	return &PaginatedVPNSession{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

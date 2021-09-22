@@ -122,18 +122,6 @@ type GetACLResponseBody struct {
 	Data ACL `json:"data"`
 }
 
-// GetACLConditionSliceResponseBody represents an API response body containing []ACLCondition data
-type GetACLConditionSliceResponseBody struct {
-	connection.APIResponseBody
-	Data []ACLCondition `json:"data"`
-}
-
-// GetACLConditionResponseBody represents an API response body containing ACLCondition data
-type GetACLConditionResponseBody struct {
-	connection.APIResponseBody
-	Data ACLCondition `json:"data"`
-}
-
 // GetACLArgumentSliceResponseBody represents an API response body containing []ACLArgument data
 type GetACLArgumentSliceResponseBody struct {
 	connection.APIResponseBody
@@ -144,6 +132,18 @@ type GetACLArgumentSliceResponseBody struct {
 type GetACLArgumentResponseBody struct {
 	connection.APIResponseBody
 	Data ACLArgument `json:"data"`
+}
+
+// GetACLConditionSliceResponseBody represents an API response body containing []ACLCondition data
+type GetACLConditionSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []ACLCondition `json:"data"`
+}
+
+// GetACLConditionResponseBody represents an API response body containing ACLCondition data
+type GetACLConditionResponseBody struct {
+	connection.APIResponseBody
+	Data ACLCondition `json:"data"`
 }
 
 // GetACLActionSliceResponseBody represents an API response body containing []ACLAction data

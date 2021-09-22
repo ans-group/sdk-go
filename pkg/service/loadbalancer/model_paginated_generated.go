@@ -142,20 +142,6 @@ func NewPaginatedACL(getFunc connection.PaginatedGetFunc, parameters connection.
 	}
 }
 
-// PaginatedACLCondition represents a paginated collection of ACLCondition
-type PaginatedACLCondition struct {
-	*connection.PaginatedBase
-	Items []ACLCondition
-}
-
-// NewPaginatedACLCondition returns a pointer to an initialized PaginatedACLCondition struct
-func NewPaginatedACLCondition(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLCondition) *PaginatedACLCondition {
-	return &PaginatedACLCondition{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // PaginatedACLArgument represents a paginated collection of ACLArgument
 type PaginatedACLArgument struct {
 	*connection.PaginatedBase
@@ -165,6 +151,20 @@ type PaginatedACLArgument struct {
 // NewPaginatedACLArgument returns a pointer to an initialized PaginatedACLArgument struct
 func NewPaginatedACLArgument(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLArgument) *PaginatedACLArgument {
 	return &PaginatedACLArgument{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedACLCondition represents a paginated collection of ACLCondition
+type PaginatedACLCondition struct {
+	*connection.PaginatedBase
+	Items []ACLCondition
+}
+
+// NewPaginatedACLCondition returns a pointer to an initialized PaginatedACLCondition struct
+func NewPaginatedACLCondition(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []ACLCondition) *PaginatedACLCondition {
+	return &PaginatedACLCondition{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

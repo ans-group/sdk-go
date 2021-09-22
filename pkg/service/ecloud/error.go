@@ -352,3 +352,39 @@ type VolumeGroupNotFoundError struct {
 func (e *VolumeGroupNotFoundError) Error() string {
 	return fmt.Sprintf("Volume group not found with ID [%s]", e.ID)
 }
+
+// VPNEndpointNotFoundError indicates a VPN endpoint was not found
+type VPNEndpointNotFoundError struct {
+	ID string
+}
+
+func (e *VPNEndpointNotFoundError) Error() string {
+	return fmt.Sprintf("VPN endpoint not found with ID [%s]", e.ID)
+}
+
+// VPNSessionNotFoundError indicates a VPN session was not found
+type VPNSessionNotFoundError struct {
+	ID string
+}
+
+func (e *VPNSessionNotFoundError) Error() string {
+	return fmt.Sprintf("VPN session not found with ID [%s]", e.ID)
+}
+
+// VPNServiceNotFoundError indicates a VPN service was not found
+type VPNServiceNotFoundError struct {
+	ID string
+}
+
+func (e *VPNServiceNotFoundError) Error() string {
+	return fmt.Sprintf("VPN service not found with ID [%s]", e.ID)
+}
+
+// VPNProfileGroupNotFoundError indicates a VPN profile group was not found
+type VPNProfileGroupNotFoundError struct {
+	ID string
+}
+
+func (e *VPNProfileGroupNotFoundError) Error() string {
+	return fmt.Sprintf("VPN profile group not found with ID [%s]", e.ID)
+}

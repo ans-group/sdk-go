@@ -355,7 +355,7 @@ func (s *Service) migrateInstanceResponseBody(instanceID string, req MigrateInst
 		return body, fmt.Errorf("invalid instance id")
 	}
 
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/instances/%s/migrate", instanceID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/instances/%s/migrate", instanceID), &req)
 	if err != nil {
 		return body, err
 	}

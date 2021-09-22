@@ -943,7 +943,7 @@ func TestMigrateInstance(t *testing.T) {
 			HostGroupID: "hg-abcdef12",
 		}
 
-		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/migrate", &req).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
@@ -966,7 +966,7 @@ func TestMigrateInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/migrate", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.MigrateInstance("i-abcdef12", MigrateInstanceRequest{})
 
@@ -1000,7 +1000,7 @@ func TestMigrateInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/migrate", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,

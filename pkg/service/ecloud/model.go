@@ -466,6 +466,7 @@ type Instance struct {
 	BackupEnabled      bool                `json:"backup_enabled"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
+	HostGroupID        string              `json:"host_group_id"`
 	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
@@ -985,7 +986,73 @@ type VolumeGroup struct {
 	Name               string              `json:"name"`
 	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
-	Status             TaskStatus          `json:"status"`
+	Usage              VolumeGroupUsage    `json:"usage"`
+	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+type VolumeGroupUsage struct {
+	Volumes int `json:"volumes"`
+}
+
+// VPNProfileGroup represents an eCloud VPN profile group
+// +genie:model_response
+// +genie:model_paginated
+type VPNProfileGroup struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	Description        string              `json:"description"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// VPNService represents an eCloud VPN service
+// +genie:model_response
+// +genie:model_paginated
+type VPNService struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	RouterID  string              `json:"router_id"`
+	VPCID     string              `json:"vpc_id"`
+	Sync      ResourceSync        `json:"sync"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// VPNEndpoint represents an eCloud VPN endpoint
+// +genie:model_response
+// +genie:model_paginated
+type VPNEndpoint struct {
+	ID           string              `json:"id"`
+	Name         string              `json:"name"`
+	VPNServiceID string              `json:"vpn_service_id"`
+	FloatingIPID string              `json:"floating_ip_id"`
+	Sync         ResourceSync        `json:"sync"`
+	CreatedAt    connection.DateTime `json:"created_at"`
+	UpdatedAt    connection.DateTime `json:"updated_at"`
+}
+
+// VPNSession represents an eCloud VPN session
+// +genie:model_response
+// +genie:model_paginated
+type VPNSession struct {
+	ID                string               `json:"id"`
+	Name              string               `json:"name"`
+	VPNProfileGroupID string               `json:"vpn_profile_group_id"`
+	VPNServiceID      string               `json:"vpn_service_id"`
+	VPNEndpointID     string               `json:"vpn_endpoint_id"`
+	RemoteIP          connection.IPAddress `json:"remote_ip"`
+	RemoteNetworks    string               `json:"remote_networks"`
+	LocalNetworks     string               `json:"local_networks"`
+	Sync              ResourceSync         `json:"sync"`
+	CreatedAt         connection.DateTime  `json:"created_at"`
+	UpdatedAt         connection.DateTime  `json:"updated_at"`
+}
+
+// VPNSessionPreSharedKey represents an eCloud VPN session pre-shared key
+// +genie:model_response
+type VPNSessionPreSharedKey struct {
+	PSK string `json:"psk"`
 }
