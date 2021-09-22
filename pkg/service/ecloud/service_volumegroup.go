@@ -145,40 +145,40 @@ func (s *Service) deleteVolumeGroupResponseBody(volumeGroupID string) (*GetTaskR
 	})
 }
 
-// GetVolumeGroupTasks retrieves a list of VolumeGroup tasks
-func (s *Service) GetVolumeGroupTasks(volumeGroupID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
+// GetVolumeGroupVolumes retrieves a list of VolumeGroup volumes
+func (s *Service) GetVolumeGroupVolumes(volumeGroupID string, parameters connection.APIRequestParameters) ([]Volume, error) {
+	var volumes []Volume
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumeGroupTasksPaginated(volumeGroupID, p)
+		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
+		for _, volume := range response.(*PaginatedVolume).Items {
+			volumes = append(volumes, volume)
 		}
 	}
 
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return volumes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetVolumeGroupTasksPaginated retrieves a paginated list of VolumeGroup tasks
-func (s *Service) GetVolumeGroupTasksPaginated(volumeGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
-	body, err := s.getVolumeGroupTasksPaginatedResponseBody(volumeGroupID, parameters)
+// GetVolumeGroupVolumesPaginated retrieves a paginated list of VolumeGroup volumes
+func (s *Service) GetVolumeGroupVolumesPaginated(volumeGroupID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+	body, err := s.getVolumeGroupVolumesPaginatedResponseBody(volumeGroupID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumeGroupTasksPaginated(volumeGroupID, p)
+	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getVolumeGroupTasksPaginatedResponseBody(volumeGroupID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVolumeGroupVolumesPaginatedResponseBody(volumeGroupID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
+	body := &GetVolumeSliceResponseBody{}
 
 	if volumeGroupID == "" {
 		return body, fmt.Errorf("invalid volume group id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/volume-groups/%s/tasks", volumeGroupID), parameters)
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/volume-groups/%s/volumes", volumeGroupID), parameters)
 	if err != nil {
 		return body, err
 	}

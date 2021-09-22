@@ -351,6 +351,8 @@ type ECloudService interface {
 	CreateVolumeGroup(req CreateVolumeGroupRequest) (TaskReference, error)
 	PatchVolumeGroup(groupID string, patch PatchVolumeGroupRequest) (TaskReference, error)
 	DeleteVolumeGroup(groupID string) (string, error)
+	GetVolumeGroupVolumes(groupID string, parameters connection.APIRequestParameters) ([]Volume, error)
+	GetVolumeGroupVolumesPaginated(groupID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error)
 
 	// VPN Endpoint
 	GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error)
