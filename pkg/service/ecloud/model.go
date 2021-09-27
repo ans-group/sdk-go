@@ -466,6 +466,7 @@ type Instance struct {
 	BackupEnabled      bool                `json:"backup_enabled"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
+	VolumeGroupID      string              `json:"volume_group_id"`
 	HostGroupID        string              `json:"host_group_id"`
 	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
@@ -677,6 +678,7 @@ type Volume struct {
 	IOPS               int                 `json:"iops"`
 	Attached           bool                `json:"attached"`
 	Type               VolumeType          `json:"type"`
+	VolumeGroupID      string              `json:"volume_group_id"`
 	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
