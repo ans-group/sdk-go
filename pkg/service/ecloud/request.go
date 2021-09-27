@@ -253,9 +253,10 @@ type CreateInstanceRequest struct {
 
 // PatchInstanceRequest represents a request to patch an instance
 type PatchInstanceRequest struct {
-	Name        string `json:"name,omitempty"`
-	VCPUCores   int    `json:"vcpu_cores,omitempty"`
-	RAMCapacity int    `json:"ram_capacity,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	VCPUCores     int     `json:"vcpu_cores,omitempty"`
+	RAMCapacity   int     `json:"ram_capacity,omitempty"`
+	VolumeGroupID *string `json:"volume_group_id,omitempty"`
 }
 
 // CreateFirewallPolicyRequest represents a request to create a firewall policy
@@ -278,13 +279,15 @@ type CreateVolumeRequest struct {
 	Capacity           int    `json:"capacity"`
 	IOPS               int    `json:"iops,omitempty"`
 	AvailabilityZoneID string `json:"availability_zone_id"`
+	VolumeGroupID      string `json:"volume_group_id,omitempty"`
 }
 
 // PatchVolumeRequest represents a request to patch a volume
 type PatchVolumeRequest struct {
-	Name     string `json:"name,omitempty"`
-	Capacity int    `json:"capacity,omitempty"`
-	IOPS     int    `json:"iops,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	Capacity      int     `json:"capacity,omitempty"`
+	IOPS          int     `json:"iops,omitempty"`
+	VolumeGroupID *string `json:"volume_group_id,omitempty"`
 }
 
 // CreateFirewallRuleRequest represents a request to create a firewall rule
