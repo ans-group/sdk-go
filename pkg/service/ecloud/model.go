@@ -1040,17 +1040,30 @@ type VPNEndpoint struct {
 // +genie:model_response
 // +genie:model_paginated
 type VPNSession struct {
-	ID                string               `json:"id"`
-	Name              string               `json:"name"`
-	VPNProfileGroupID string               `json:"vpn_profile_group_id"`
-	VPNServiceID      string               `json:"vpn_service_id"`
-	VPNEndpointID     string               `json:"vpn_endpoint_id"`
-	RemoteIP          connection.IPAddress `json:"remote_ip"`
-	RemoteNetworks    string               `json:"remote_networks"`
-	LocalNetworks     string               `json:"local_networks"`
-	Sync              ResourceSync         `json:"sync"`
-	CreatedAt         connection.DateTime  `json:"created_at"`
-	UpdatedAt         connection.DateTime  `json:"updated_at"`
+	ID                string                   `json:"id"`
+	Name              string                   `json:"name"`
+	VPNProfileGroupID string                   `json:"vpn_profile_group_id"`
+	VPNServiceID      string                   `json:"vpn_service_id"`
+	VPNEndpointID     string                   `json:"vpn_endpoint_id"`
+	RemoteIP          connection.IPAddress     `json:"remote_ip"`
+	RemoteNetworks    string                   `json:"remote_networks"`
+	LocalNetworks     string                   `json:"local_networks"`
+	TunnelDetails     *VPNSessionTunnelDetails `json:"tunnel_details"`
+	Sync              ResourceSync             `json:"sync"`
+	CreatedAt         connection.DateTime      `json:"created_at"`
+	UpdatedAt         connection.DateTime      `json:"updated_at"`
+}
+
+type VPNSessionTunnelDetails struct {
+	SessionState     string                       `json:"session_state"`
+	TunnelStatistics []VPNSessionTunnelStatistics `json:"tunnel_statistics"`
+}
+
+type VPNSessionTunnelStatistics struct {
+	TunnelStatus     string `json:"tunnel_status"`
+	TunnelDownReason string `json:"tunnel_down_reason"`
+	LocalSubnet      string `json:"local_subnet"`
+	PeerSubnet       string `json:"peer_subnet"`
 }
 
 // VPNSessionPreSharedKey represents an eCloud VPN session pre-shared key
