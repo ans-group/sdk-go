@@ -240,7 +240,7 @@ func TestDeleteDomain(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteDomain("testdomain1.co.uk")
+		err := s.DeleteDomain("testdomain1.co.uk", DeleteDomainRequest{})
 
 		assert.Nil(t, err)
 	})
@@ -257,7 +257,7 @@ func TestDeleteDomain(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteDomain("testdomain1.co.uk")
+		err := s.DeleteDomain("testdomain1.co.uk", DeleteDomainRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -273,7 +273,7 @@ func TestDeleteDomain(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteDomain("")
+		err := s.DeleteDomain("", DeleteDomainRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid domain name", err.Error())
@@ -296,7 +296,7 @@ func TestDeleteDomain(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteDomain("testdomain1.co.uk")
+		err := s.DeleteDomain("testdomain1.co.uk", DeleteDomainRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &DomainNotFoundError{}, err)

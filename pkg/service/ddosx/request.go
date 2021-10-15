@@ -33,6 +33,12 @@ func (c *CreateDomainRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
 
+// DeleteDomainRequest represents a DDoSX domain removal request
+type DeleteDomainRequest struct {
+	Summary     string `json:"summary"`
+	Description string `json:"description"`
+}
+
 // PatchDomainPropertyRequest represents a DDoSX Domain Property patch request
 type PatchDomainPropertyRequest struct {
 	Value interface{} `json:"value,omitempty"`

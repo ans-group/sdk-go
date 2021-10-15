@@ -93,20 +93,20 @@ func (s *Service) createDomainResponseBody(req CreateDomainRequest) (*connection
 }
 
 // DeleteDomain removes a domain
-func (s *Service) DeleteDomain(domainName string) error {
-	_, err := s.deleteDomainResponseBody(domainName)
+func (s *Service) DeleteDomain(domainName string, req DeleteDomainRequest) error {
+	_, err := s.deleteDomainResponseBody(domainName, req)
 
 	return err
 }
 
-func (s *Service) deleteDomainResponseBody(domainName string) (*connection.APIResponseBody, error) {
+func (s *Service) deleteDomainResponseBody(domainName string, req DeleteDomainRequest) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s", domainName), nil)
+	response, err := s.connection.Delete(fmt.Sprintf("/ddosx/v1/domains/%s", domainName), &req)
 	if err != nil {
 		return body, err
 	}
