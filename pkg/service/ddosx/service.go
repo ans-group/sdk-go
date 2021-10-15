@@ -15,7 +15,7 @@ type DDoSXService interface {
 	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
 	GetDomain(domainName string) (Domain, error)
 	CreateDomain(req CreateDomainRequest) error
-	DeleteDomain(domainName string) error
+	DeleteDomain(domainName string, req DeleteDomainRequest) error
 	DeployDomain(domainName string) error
 
 	GetDomainRecords(domainName string, parameters connection.APIRequestParameters) ([]Record, error)
