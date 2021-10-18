@@ -640,3 +640,50 @@ func (s *Service) detachInstanceVolumeResponseBody(instanceID string, req Attach
 		return nil
 	})
 }
+
+// GetInstanceFloatingIPs retrieves a list of instance fips
+func (s *Service) GetInstanceFloatingIPs(instanceID string, parameters connection.APIRequestParameters) ([]FloatingIP, error) {
+	var fips []FloatingIP
+
+	return fips, connection.InvokeRequestAll(
+		func(p connection.APIRequestParameters) (connection.Paginated, error) {
+			return s.GetInstanceFloatingIPsPaginated(instanceID, p)
+		},
+		func(response connection.Paginated) {
+			for _, fip := range response.(*PaginatedFloatingIP).Items {
+				fips = append(fips, fip)
+			}
+		},
+		parameters,
+	)
+}
+
+// GetInstanceFloatingIPsPaginated retrieves a paginated list of instance floating IPs
+func (s *Service) GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error) {
+	body, err := s.getInstanceFloatingIPsPaginatedResponseBody(instanceID, parameters)
+
+	return NewPaginatedFloatingIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+		return s.GetInstanceFloatingIPsPaginated(instanceID, p)
+	}, parameters, body.Metadata.Pagination, body.Data), err
+}
+
+func (s *Service) getInstanceFloatingIPsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetFloatingIPSliceResponseBody, error) {
+	body := &GetFloatingIPSliceResponseBody{}
+
+	if instanceID == "" {
+		return body, fmt.Errorf("invalid instance id")
+	}
+
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/instances/%s/floating-ips", instanceID), parameters)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &InstanceNotFoundError{ID: instanceID}
+		}
+
+		return nil
+	})
+}

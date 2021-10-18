@@ -173,6 +173,8 @@ type ECloudService interface {
 	GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
 	AttachInstanceVolume(instanceID string, req AttachDetachInstanceVolumeRequest) (string, error)
 	DetachInstanceVolume(instanceID string, req AttachDetachInstanceVolumeRequest) (string, error)
+	GetInstanceFloatingIPs(instanceID string, parameters connection.APIRequestParameters) ([]FloatingIP, error)
+	GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error)
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)
