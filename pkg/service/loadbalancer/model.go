@@ -38,6 +38,7 @@ const (
 	TargetGroupBalanceURI        TargetGroupBalance = "uri"
 	TargetGroupBalanceHDR        TargetGroupBalance = "hdr"
 	TargetGroupBalanceURLParam   TargetGroupBalance = "url_param"
+	TargetGroupBalanceSource     TargetGroupBalance = "source"
 )
 
 var TargetGroupBalanceEnum connection.EnumSlice = []connection.Enum{
@@ -49,6 +50,7 @@ var TargetGroupBalanceEnum connection.EnumSlice = []connection.Enum{
 	TargetGroupBalanceURI,
 	TargetGroupBalanceHDR,
 	TargetGroupBalanceURLParam,
+	TargetGroupBalanceSource,
 }
 
 // ParseTargetGroupBalance attempts to parse a TargetGroupBalance from string
