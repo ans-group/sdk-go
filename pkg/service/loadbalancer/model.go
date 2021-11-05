@@ -267,6 +267,7 @@ type ACLArgument struct {
 // +genie:model_paginated
 type ACLCondition struct {
 	Name      string                 `json:"name"`
+	Inverted  bool                   `json:"inverted"`
 	Arguments map[string]ACLArgument `json:"arguments"`
 }
 
