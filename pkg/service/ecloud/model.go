@@ -679,6 +679,7 @@ type Volume struct {
 	Attached           bool                `json:"attached"`
 	Type               VolumeType          `json:"type"`
 	VolumeGroupID      string              `json:"volume_group_id"`
+	IsShared           bool                `json:"is_shared"`
 	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
