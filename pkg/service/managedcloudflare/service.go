@@ -15,6 +15,21 @@ type ManagedCloudflareService interface {
 
 	// Orchestration
 	CreateOrchestration(req CreateOrchestrationRequest) error
+
+	// Spend plan
+	GetSpendPlans(parameters connection.APIRequestParameters) ([]SpendPlan, error)
+	GetSpendPlansPaginated(parameters connection.APIRequestParameters) (*PaginatedSpendPlan, error)
+
+	// Subscription
+	GetSubscriptions(parameters connection.APIRequestParameters) ([]Subscription, error)
+	GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*PaginatedSubscription, error)
+
+	// Zone
+	GetZones(parameters connection.APIRequestParameters) ([]Zone, error)
+	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error)
+	GetZone(zoneID string) (Zone, error)
+	CreateZone(req CreateZoneRequest) error
+	DeleteZone(zoneID string) error
 }
 
 // Service implements ManagedCloudflareService for managing the Shared Exchange service
