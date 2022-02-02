@@ -14,7 +14,7 @@ func (s *Service) CreateOrchestration(req CreateOrchestrationRequest) error {
 func (s *Service) createOrchestrationResponseBody(req CreateOrchestrationRequest) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
-	response, err := s.connection.Post("/managed-cloudflare/v2/orchestrator", &req)
+	response, err := s.connection.Post("/managed-cloudflare/v1/orchestrator", &req)
 	if err != nil {
 		return body, err
 	}

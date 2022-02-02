@@ -9,7 +9,7 @@ type ManagedCloudflareService interface {
 	// Account
 	GetAccounts(parameters connection.APIRequestParameters) ([]Account, error)
 	GetAccountsPaginated(parameters connection.APIRequestParameters) (*PaginatedAccount, error)
-	GetAccount(accountID int) (Account, error)
+	GetAccount(accountID string) (Account, error)
 	CreateAccount(req CreateAccountRequest) error
 	CreateAccountMember(accountID string, req CreateAccountMemberRequest) error
 

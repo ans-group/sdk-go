@@ -24,7 +24,7 @@ func TestGetSpendPlans(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/spend-plans", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/spend-plans", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
@@ -47,7 +47,7 @@ func TestGetSpendPlans(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/spend-plans", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/managed-cloudflare/v1/spend-plans", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetSpendPlans(connection.APIRequestParameters{})
 

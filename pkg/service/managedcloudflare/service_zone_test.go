@@ -24,7 +24,7 @@ func TestGetZones(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/zones", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
@@ -48,7 +48,7 @@ func TestGetZones(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetZones(connection.APIRequestParameters{})
 
@@ -68,7 +68,7 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
@@ -91,7 +91,7 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.GetZone("00000000-0000-0000-0000-000000000000")
 
@@ -125,7 +125,7 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
@@ -154,7 +154,7 @@ func TestCreateZone(t *testing.T) {
 			Name: "testzone1.co.uk",
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/zones", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
@@ -176,7 +176,7 @@ func TestCreateZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.CreateZone(CreateZoneRequest{})
 
@@ -196,7 +196,7 @@ func TestDeleteZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
@@ -218,7 +218,7 @@ func TestDeleteZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.DeleteZone("00000000-0000-0000-0000-000000000000")
 
@@ -252,7 +252,7 @@ func TestDeleteZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/managed-cloudflare/v2/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,

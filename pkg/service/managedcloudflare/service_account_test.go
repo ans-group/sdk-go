@@ -24,7 +24,7 @@ func TestGetAccounts(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/accounts", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
@@ -48,7 +48,7 @@ func TestGetAccounts(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/managed-cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetAccounts(connection.APIRequestParameters{})
 
@@ -68,7 +68,7 @@ func TestGetAccount(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
@@ -91,7 +91,7 @@ func TestGetAccount(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/managed-cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.GetAccount("00000000-0000-0000-0000-000000000000")
 
@@ -125,7 +125,7 @@ func TestGetAccount(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v2/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/managed-cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
@@ -154,7 +154,7 @@ func TestCreateAccount(t *testing.T) {
 			Name: "testaccount1.co.uk",
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/accounts", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Post("/managed-cloudflare/v1/accounts", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
@@ -176,7 +176,7 @@ func TestCreateAccount(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/managed-cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.CreateAccount(CreateAccountRequest{})
 
@@ -200,7 +200,7 @@ func TestCreateAccountMember(t *testing.T) {
 			EmailAddress: "test@test.co.uk",
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Post("/managed-cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
@@ -238,7 +238,7 @@ func TestCreateAccountMember(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/managed-cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.CreateAccountMember("00000000-0000-0000-0000-000000000000", CreateAccountMemberRequest{})
 

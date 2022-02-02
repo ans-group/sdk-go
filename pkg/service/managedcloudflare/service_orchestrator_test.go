@@ -26,7 +26,7 @@ func TestCreateOrchestration(t *testing.T) {
 
 		createRequest := CreateOrchestrationRequest{}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/orchestrator", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Post("/managed-cloudflare/v1/orchestrator", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
@@ -48,7 +48,7 @@ func TestCreateOrchestration(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v2/orchestrator", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/managed-cloudflare/v1/orchestrator", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.CreateOrchestration(CreateOrchestrationRequest{})
 

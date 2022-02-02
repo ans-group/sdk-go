@@ -10,6 +10,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/service/ecloudflex"
 	"github.com/ukfast/sdk-go/pkg/service/loadbalancer"
 	"github.com/ukfast/sdk-go/pkg/service/ltaas"
+	"github.com/ukfast/sdk-go/pkg/service/managedcloudflare"
 	"github.com/ukfast/sdk-go/pkg/service/pss"
 	"github.com/ukfast/sdk-go/pkg/service/registrar"
 	"github.com/ukfast/sdk-go/pkg/service/safedns"
@@ -27,6 +28,7 @@ type Client interface {
 	ECloudFlexService() ecloudflex.ECloudFlexService
 	LoadBalancerService() loadbalancer.LoadBalancerService
 	LTaaSService() ltaas.LTaaSService
+	ManagedCloudflareService() managedcloudflare.ManagedCloudflareService
 	PSSService() pss.PSSService
 	RegistrarService() registrar.RegistrarService
 	SafeDNSService() safedns.SafeDNSService
@@ -75,6 +77,10 @@ func (c *UKFastClient) LoadBalancerService() loadbalancer.LoadBalancerService {
 
 func (c *UKFastClient) LTaaSService() ltaas.LTaaSService {
 	return ltaas.NewService(c.connection)
+}
+
+func (c *UKFastClient) ManagedCloudflareService() managedcloudflare.ManagedCloudflareService {
+	return managedcloudflare.NewService(c.connection)
 }
 
 func (c *UKFastClient) PSSService() pss.PSSService {
