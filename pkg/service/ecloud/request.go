@@ -547,3 +547,15 @@ type CreateLoadBalancerRequest struct {
 type PatchLoadBalancerRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// CreateLoadBalancerNetworkRequest represents a request to create a load balancer network
+type CreateLoadBalancerNetworkRequest struct {
+	Name           string `json:"name,omitempty"`
+	LoadBalancerID string `json:"load_balancer_id"`
+	NetworkID      string `json:"network_id"`
+}
+
+// PatchLoadBalancerNetworkRequest represents a request to patch a load balancer network
+type PatchLoadBalancerNetworkRequest struct {
+	Name string `json:"name,omitempty"`
+}

@@ -143,12 +143,12 @@ func (s *Service) deleteLoadBalancerResponseBody(loadbalancerID string) (*connec
 	})
 }
 
-// GetLoadBalancerNetworks retrieves a list of lb networks
-func (s *Service) GetLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]Network, error) {
+// GetLoadBalancerLoadBalancerNetworks retrieves a list of lb networks
+func (s *Service) GetLoadBalancerLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]Network, error) {
 	var lbs []Network
 
 	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancerNetworksPaginated(loadbalancerID, p)
+		return s.GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID, p)
 	}
 
 	responseFunc := func(response connection.Paginated) {
@@ -158,16 +158,16 @@ func (s *Service) GetLoadBalancerNetworks(loadbalancerID string, parameters conn
 	return lbs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
 }
 
-// GetLoadBalancerNetworksPaginated retrieves a paginated list of lb networks
-func (s *Service) GetLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
-	body, err := s.getLoadBalancerNetworksPaginatedResponseBody(loadbalancerID, parameters)
+// GetLoadBalancerLoadBalancerNetworksPaginated retrieves a paginated list of lb networks
+func (s *Service) GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+	body, err := s.getLoadBalancerLoadBalancerNetworksPaginatedResponseBody(loadbalancerID, parameters)
 
 	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancerNetworksPaginated(loadbalancerID, p)
+		return s.GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID, p)
 	}, parameters, body.Metadata.Pagination, body.Data), err
 }
 
-func (s *Service) getLoadBalancerNetworksPaginatedResponseBody(loadbalancerID string, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
+func (s *Service) getLoadBalancerLoadBalancerNetworksPaginatedResponseBody(loadbalancerID string, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
 	body := &GetNetworkSliceResponseBody{}
 
 	if loadbalancerID == "" {

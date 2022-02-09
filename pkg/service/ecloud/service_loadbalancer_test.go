@@ -352,7 +352,7 @@ func TestDeleteLoadBalancer(t *testing.T) {
 	})
 }
 
-func TestGetLoadBalancerNetworks(t *testing.T) {
+func TestGetLoadBalancerLoadBalancerNetworks(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -370,7 +370,7 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		policies, err := s.GetLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+		policies, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, policies, 1)
@@ -389,7 +389,7 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/load-balancers/lb-abcdef12/networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -405,7 +405,7 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetLoadBalancerNetworks("", connection.APIRequestParameters{})
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid load balancer id", err.Error())
@@ -428,7 +428,7 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &LoadBalancerNotFoundError{}, err)

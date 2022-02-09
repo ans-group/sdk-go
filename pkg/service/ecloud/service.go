@@ -393,8 +393,8 @@ type ECloudService interface {
 	CreateLoadBalancer(req CreateLoadBalancerRequest) (string, error)
 	PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) error
 	DeleteLoadBalancer(loadbalancerID string) error
-	GetLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]Network, error)
-	GetLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+	GetLoadBalancerLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]Network, error)
+	GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
 }
 
 // Service implements ECloudService for managing

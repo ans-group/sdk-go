@@ -397,3 +397,12 @@ type LoadBalancerNotFoundError struct {
 func (e *LoadBalancerNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer not found with ID [%s]", e.ID)
 }
+
+// LoadBalancerNetworkNotFoundError indicates a load balancer network was not found
+type LoadBalancerNetworkNotFoundError struct {
+	ID string
+}
+
+func (e *LoadBalancerNetworkNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer network not found with ID [%s]", e.ID)
+}
