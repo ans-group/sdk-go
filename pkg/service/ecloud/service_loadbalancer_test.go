@@ -355,3 +355,86 @@ func TestDeleteLoadBalancer(t *testing.T) {
 		assert.IsType(t, &LoadBalancerNotFoundError{}, err)
 	})
 }
+
+func TestGetLoadBalancerLoadBalancerNetworks(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/load-balancers/lb-abcdef12/networks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"lbn-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		networks, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, networks, 1)
+		assert.Equal(t, "lbn-abcdef12", networks[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/load-balancers/lb-abcdef12/networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidLoadBalancerID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid load balancer id", err.Error())
+	})
+
+	t.Run("404_ReturnsLoadBalancerNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/load-balancers/lb-abcdef12/networks", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetLoadBalancerLoadBalancerNetworks("lb-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &LoadBalancerNotFoundError{}, err)
+	})
+}
