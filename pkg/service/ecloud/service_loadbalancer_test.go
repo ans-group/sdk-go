@@ -156,15 +156,16 @@ func TestCreateLoadBalancer(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/load-balancers", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lb-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lb-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		lb, err := s.CreateLoadBalancer(req)
+		taskRef, err := s.CreateLoadBalancer(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "lb-abcdef12", lb)
+		assert.Equal(t, "lb-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,16 @@ func TestPatchLoadBalancer(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/load-balancers/lb-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lb-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchLoadBalancer("lb-abcdef12", req)
+		taskRef, err := s.PatchLoadBalancer("lb-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "lb-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +228,7 @@ func TestPatchLoadBalancer(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/load-balancers/lb-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchLoadBalancer("lb-abcdef12", PatchLoadBalancerRequest{})
+		_, err := s.PatchLoadBalancer("lb-abcdef12", PatchLoadBalancerRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +244,7 @@ func TestPatchLoadBalancer(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchLoadBalancer("", PatchLoadBalancerRequest{})
+		_, err := s.PatchLoadBalancer("", PatchLoadBalancerRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid load balancer id", err.Error())
@@ -264,7 +267,7 @@ func TestPatchLoadBalancer(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchLoadBalancer("lb-abcdef12", PatchLoadBalancerRequest{})
+		_, err := s.PatchLoadBalancer("lb-abcdef12", PatchLoadBalancerRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &LoadBalancerNotFoundError{}, err)
@@ -284,14 +287,15 @@ func TestDeleteLoadBalancer(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/load-balancers/lb-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lb-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteLoadBalancer("lb-abcdef12")
+		taskID, err := s.DeleteLoadBalancer("lb-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +310,7 @@ func TestDeleteLoadBalancer(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/load-balancers/lb-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteLoadBalancer("lb-abcdef12")
+		_, err := s.DeleteLoadBalancer("lb-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +326,7 @@ func TestDeleteLoadBalancer(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteLoadBalancer("")
+		_, err := s.DeleteLoadBalancer("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid load balancer id", err.Error())
@@ -345,7 +349,7 @@ func TestDeleteLoadBalancer(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteLoadBalancer("lb-abcdef12")
+		_, err := s.DeleteLoadBalancer("lb-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &LoadBalancerNotFoundError{}, err)
