@@ -70,14 +70,14 @@ func (s *Service) getLoadBalancerResponseBody(loadbalancerID string) (*GetLoadBa
 }
 
 // CreateLoadBalancer creates a new LoadBalancer
-func (s *Service) CreateLoadBalancer(req CreateLoadBalancerRequest) (string, error) {
+func (s *Service) CreateLoadBalancer(req CreateLoadBalancerRequest) (TaskReference, error) {
 	body, err := s.createLoadBalancerResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createLoadBalancerResponseBody(req CreateLoadBalancerRequest) (*GetLoadBalancerResponseBody, error) {
-	body := &GetLoadBalancerResponseBody{}
+func (s *Service) createLoadBalancerResponseBody(req CreateLoadBalancerRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/load-balancers", &req)
 	if err != nil {
@@ -88,14 +88,14 @@ func (s *Service) createLoadBalancerResponseBody(req CreateLoadBalancerRequest) 
 }
 
 // PatchLoadBalancer patches a LoadBalancer
-func (s *Service) PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) error {
-	_, err := s.patchLoadBalancerResponseBody(loadbalancerID, req)
+func (s *Service) PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) (TaskReference, error) {
+	body, err := s.patchLoadBalancerResponseBody(loadbalancerID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchLoadBalancerResponseBody(loadbalancerID string, req PatchLoadBalancerRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchLoadBalancerResponseBody(loadbalancerID string, req PatchLoadBalancerRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if loadbalancerID == "" {
 		return body, fmt.Errorf("invalid load balancer id")
@@ -116,14 +116,14 @@ func (s *Service) patchLoadBalancerResponseBody(loadbalancerID string, req Patch
 }
 
 // DeleteLoadBalancer deletes a LoadBalancer
-func (s *Service) DeleteLoadBalancer(loadbalancerID string) error {
-	_, err := s.deleteLoadBalancerResponseBody(loadbalancerID)
+func (s *Service) DeleteLoadBalancer(loadbalancerID string) (string, error) {
+	body, err := s.deleteLoadBalancerResponseBody(loadbalancerID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteLoadBalancerResponseBody(loadbalancerID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteLoadBalancerResponseBody(loadbalancerID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if loadbalancerID == "" {
 		return body, fmt.Errorf("invalid load balancer id")

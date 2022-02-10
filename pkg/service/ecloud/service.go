@@ -390,11 +390,18 @@ type ECloudService interface {
 	GetLoadBalancers(parameters connection.APIRequestParameters) ([]LoadBalancer, error)
 	GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancer, error)
 	GetLoadBalancer(loadbalancerID string) (LoadBalancer, error)
-	CreateLoadBalancer(req CreateLoadBalancerRequest) (string, error)
-	PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) error
-	DeleteLoadBalancer(loadbalancerID string) error
+	CreateLoadBalancer(req CreateLoadBalancerRequest) (TaskReference, error)
+	PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) (TaskReference, error)
+	DeleteLoadBalancer(loadbalancerID string) (string, error)
 	GetLoadBalancerLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]Network, error)
 	GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error)
+
+	GetLoadBalancerNetworks(parameters connection.APIRequestParameters) ([]LoadBalancerNetwork, error)
+	GetLoadBalancerNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerNetwork, error)
+	GetLoadBalancerNetwork(lbNetworkID string) (LoadBalancerNetwork, error)
+	CreateLoadBalancerNetwork(req CreateLoadBalancerNetworkRequest) (TaskReference, error)
+	PatchLoadBalancerNetwork(lbNetworkID string, req PatchLoadBalancerNetworkRequest) (TaskReference, error)
+	DeleteLoadBalancerNetwork(lbNetworkID string) (string, error)
 }
 
 // Service implements ECloudService for managing
