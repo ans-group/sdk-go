@@ -70,14 +70,14 @@ func (s *Service) getAccountResponseBody(accountID string) (*GetAccountResponseB
 }
 
 // CreateAccount creates a new account
-func (s *Service) CreateAccount(req CreateAccountRequest) error {
-	_, err := s.createAccountResponseBody(req)
+func (s *Service) CreateAccount(req CreateAccountRequest) (string, error) {
+	body, err := s.createAccountResponseBody(req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*GetAccountResponseBody, error) {
+	body := &GetAccountResponseBody{}
 
 	response, err := s.connection.Post("/managed-cloudflare/v1/accounts", &req)
 	if err != nil {

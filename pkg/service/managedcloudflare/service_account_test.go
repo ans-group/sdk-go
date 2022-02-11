@@ -156,14 +156,15 @@ func TestCreateAccount(t *testing.T) {
 
 		c.EXPECT().Post("/managed-cloudflare/v1/accounts", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateAccount(createRequest)
+		id, err := s.CreateAccount(createRequest)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", id)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -178,7 +179,7 @@ func TestCreateAccount(t *testing.T) {
 
 		c.EXPECT().Post("/managed-cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateAccount(CreateAccountRequest{})
+		_, err := s.CreateAccount(CreateAccountRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
