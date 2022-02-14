@@ -156,14 +156,15 @@ func TestCreateZone(t *testing.T) {
 
 		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateZone(createRequest)
+		zoneID, err := s.CreateZone(createRequest)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", zoneID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -178,7 +179,7 @@ func TestCreateZone(t *testing.T) {
 
 		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateZone(CreateZoneRequest{})
+		_, err := s.CreateZone(CreateZoneRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
