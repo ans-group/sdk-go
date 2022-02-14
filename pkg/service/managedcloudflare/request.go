@@ -21,7 +21,7 @@ type CreateOrchestrationRequest struct {
 
 // CreateRecordRequest represents a request to create an zone
 type CreateZoneRequest struct {
-	AccountID            string `json:"account_id"`
-	Name                 string `json:"name"`
-	ZoneSubscriptionType string `json:"zone_subscription_type"`
+	AccountID        string `json:"account_id"`
+	Name             string `json:"name"`
+	SubscriptionType string `json:"subscription_type"`
 }
