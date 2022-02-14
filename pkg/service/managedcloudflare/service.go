@@ -28,7 +28,7 @@ type ManagedCloudflareService interface {
 	GetZones(parameters connection.APIRequestParameters) ([]Zone, error)
 	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error)
 	GetZone(zoneID string) (Zone, error)
-	CreateZone(req CreateZoneRequest) error
+	CreateZone(req CreateZoneRequest) (string, error)
 	DeleteZone(zoneID string) error
 }
 

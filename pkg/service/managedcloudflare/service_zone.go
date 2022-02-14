@@ -70,14 +70,14 @@ func (s *Service) getZoneResponseBody(zoneID string) (*GetZoneResponseBody, erro
 }
 
 // CreateZone creates a new zone
-func (s *Service) CreateZone(req CreateZoneRequest) error {
-	_, err := s.createZoneResponseBody(req)
+func (s *Service) CreateZone(req CreateZoneRequest) (string, error) {
+	body, err := s.createZoneResponseBody(req)
 
-	return err
+	return body.Data.ID, err
 }
 
-func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*GetZoneResponseBody, error) {
+	body := &GetZoneResponseBody{}
 
 	response, err := s.connection.Post("/managed-cloudflare/v1/zones", &req)
 	if err != nil {
