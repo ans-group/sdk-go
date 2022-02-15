@@ -385,6 +385,29 @@ type ECloudService interface {
 	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
 	GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error)
 	GetVPNProfileGroup(groupID string) (VPNProfileGroup, error)
+
+	// Load Balancer
+	GetLoadBalancers(parameters connection.APIRequestParameters) ([]LoadBalancer, error)
+	GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancer, error)
+	GetLoadBalancer(loadbalancerID string) (LoadBalancer, error)
+	CreateLoadBalancer(req CreateLoadBalancerRequest) (TaskReference, error)
+	PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) (TaskReference, error)
+	DeleteLoadBalancer(loadbalancerID string) (string, error)
+	GetLoadBalancerLoadBalancerNetworks(loadbalancerID string, parameters connection.APIRequestParameters) ([]LoadBalancerNetwork, error)
+	GetLoadBalancerLoadBalancerNetworksPaginated(loadbalancerID string, parameters connection.APIRequestParameters) (*PaginatedLoadBalancerNetwork, error)
+
+	// Load Balancer Network
+	GetLoadBalancerNetworks(parameters connection.APIRequestParameters) ([]LoadBalancerNetwork, error)
+	GetLoadBalancerNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerNetwork, error)
+	GetLoadBalancerNetwork(lbNetworkID string) (LoadBalancerNetwork, error)
+	CreateLoadBalancerNetwork(req CreateLoadBalancerNetworkRequest) (TaskReference, error)
+	PatchLoadBalancerNetwork(lbNetworkID string, req PatchLoadBalancerNetworkRequest) (TaskReference, error)
+	DeleteLoadBalancerNetwork(lbNetworkID string) (string, error)
+
+	// Load Balancer Spec
+	GetLoadBalancerSpecs(parameters connection.APIRequestParameters) ([]LoadBalancerSpec, error)
+	GetLoadBalancerSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerSpec, error)
+	GetLoadBalancerSpec(lbSpecID string) (LoadBalancerSpec, error)
 }
 
 // Service implements ECloudService for managing

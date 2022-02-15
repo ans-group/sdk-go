@@ -659,3 +659,45 @@ func NewPaginatedVPNSession(getFunc connection.PaginatedGetFunc, parameters conn
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedLoadBalancer represents a paginated collection of LoadBalancer
+type PaginatedLoadBalancer struct {
+	*connection.PaginatedBase
+	Items []LoadBalancer
+}
+
+// NewPaginatedLoadBalancer returns a pointer to an initialized PaginatedLoadBalancer struct
+func NewPaginatedLoadBalancer(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancer) *PaginatedLoadBalancer {
+	return &PaginatedLoadBalancer{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedLoadBalancerNetwork represents a paginated collection of LoadBalancerNetwork
+type PaginatedLoadBalancerNetwork struct {
+	*connection.PaginatedBase
+	Items []LoadBalancerNetwork
+}
+
+// NewPaginatedLoadBalancerNetwork returns a pointer to an initialized PaginatedLoadBalancerNetwork struct
+func NewPaginatedLoadBalancerNetwork(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerNetwork) *PaginatedLoadBalancerNetwork {
+	return &PaginatedLoadBalancerNetwork{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedLoadBalancerSpec represents a paginated collection of LoadBalancerSpec
+type PaginatedLoadBalancerSpec struct {
+	*connection.PaginatedBase
+	Items []LoadBalancerSpec
+}
+
+// NewPaginatedLoadBalancerSpec returns a pointer to an initialized PaginatedLoadBalancerSpec struct
+func NewPaginatedLoadBalancerSpec(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerSpec) *PaginatedLoadBalancerSpec {
+	return &PaginatedLoadBalancerSpec{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
