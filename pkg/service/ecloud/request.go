@@ -540,7 +540,7 @@ type CreateLoadBalancerRequest struct {
 	AvailabilityZoneID string   `json:"availability_zone_id"`
 	VPCID              string   `json:"vpc_id"`
 	LoadBalancerSpecID string   `json:"load_balancer_spec_id"`
-	NetworkIDs         []string `json:"network_ids"`
+	NetworkIDs         []string `json:"network_ids,omitempty"`
 }
 
 // CreateLoadBalancerRequest represents a request to patch a load balancer
