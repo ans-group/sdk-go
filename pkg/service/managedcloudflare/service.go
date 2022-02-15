@@ -30,6 +30,9 @@ type ManagedCloudflareService interface {
 	GetZone(zoneID string) (Zone, error)
 	CreateZone(req CreateZoneRequest) (string, error)
 	DeleteZone(zoneID string) error
+
+	// Spend
+	GetTotalSpendMonthToDate() (TotalSpend, error)
 }
 
 // Service implements ManagedCloudflareService for managing the Shared Exchange service

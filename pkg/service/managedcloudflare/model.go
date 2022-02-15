@@ -62,3 +62,10 @@ type Zone struct {
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
+
+// TotalSpend represents total spend
+// +genie:model_response
+type TotalSpend struct {
+	SpendPlanAmount float32 `json:"spend_plan_amount"`
+	TotalSpend      float32 `json:"total_spend"`
+}

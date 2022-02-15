@@ -61,3 +61,15 @@ type GetZoneResponseBody struct {
 	connection.APIResponseBody
 	Data Zone `json:"data"`
 }
+
+// GetTotalSpendSliceResponseBody represents an API response body containing []TotalSpend data
+type GetTotalSpendSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []TotalSpend `json:"data"`
+}
+
+// GetTotalSpendResponseBody represents an API response body containing TotalSpend data
+type GetTotalSpendResponseBody struct {
+	connection.APIResponseBody
+	Data TotalSpend `json:"data"`
+}
