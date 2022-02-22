@@ -547,3 +547,15 @@ type CreateLoadBalancerRequest struct {
 type PatchLoadBalancerRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// CreateVIPRequest represents a request to create a load balancer VIP
+type CreateVIPRequest struct {
+	Name               string `json:"name,omitempty"`
+	LoadBalancerID     string `json:"load_balancer_id"`
+	AllocateFloatingIP bool   `json:"allocate_floating_ip"`
+}
+
+// PatchVIPRequest represents a request to patch a load balancer VIP
+type PatchVIPRequest struct {
+	Name string `json:"name,omitempty"`
+}

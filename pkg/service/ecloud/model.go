@@ -1100,3 +1100,17 @@ type LoadBalancerSpec struct {
 	CreatedAt   connection.DateTime `json:"created_at"`
 	UpdatedAt   connection.DateTime `json:"updated_at"`
 }
+
+// VIP represents an eCloud load balancer VIP
+// +genie:model_response
+// +genie:model_paginated
+type VIP struct {
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	LoadBalancerID string              `json:"load_balancer_id"`
+	IPAddressID    string              `json:"ip_address_id"`
+	ConfigID       int                 `json:"config_id"`
+	Sync           ResourceSync        `json:"sync"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
+}

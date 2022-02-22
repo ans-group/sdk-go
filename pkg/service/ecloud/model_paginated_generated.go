@@ -687,3 +687,17 @@ func NewPaginatedLoadBalancerSpec(getFunc connection.PaginatedGetFunc, parameter
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedVIP represents a paginated collection of VIP
+type PaginatedVIP struct {
+	*connection.PaginatedBase
+	Items []VIP
+}
+
+// NewPaginatedVIP returns a pointer to an initialized PaginatedVIP struct
+func NewPaginatedVIP(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VIP) *PaginatedVIP {
+	return &PaginatedVIP{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

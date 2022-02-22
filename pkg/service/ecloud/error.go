@@ -415,3 +415,12 @@ type LoadBalancerSpecNotFoundError struct {
 func (e *LoadBalancerSpecNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer spec not found with ID [%s]", e.ID)
 }
+
+// VIPNotFoundError indicates a load balancer VIP was not found
+type VIPNotFoundError struct {
+	ID string
+}
+
+func (e *VIPNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer VIP  not found with ID [%s]", e.ID)
+}

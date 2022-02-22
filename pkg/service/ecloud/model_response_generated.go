@@ -637,3 +637,15 @@ type GetLoadBalancerSpecResponseBody struct {
 	connection.APIResponseBody
 	Data LoadBalancerSpec `json:"data"`
 }
+
+// GetVIPSliceResponseBody represents an API response body containing []VIP data
+type GetVIPSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VIP `json:"data"`
+}
+
+// GetVIPResponseBody represents an API response body containing VIP data
+type GetVIPResponseBody struct {
+	connection.APIResponseBody
+	Data VIP `json:"data"`
+}
