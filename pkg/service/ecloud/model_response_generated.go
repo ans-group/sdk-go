@@ -626,18 +626,6 @@ type GetLoadBalancerResponseBody struct {
 	Data LoadBalancer `json:"data"`
 }
 
-// GetLoadBalancerNetworkSliceResponseBody represents an API response body containing []LoadBalancerNetwork data
-type GetLoadBalancerNetworkSliceResponseBody struct {
-	connection.APIResponseBody
-	Data []LoadBalancerNetwork `json:"data"`
-}
-
-// GetLoadBalancerNetworkResponseBody represents an API response body containing LoadBalancerNetwork data
-type GetLoadBalancerNetworkResponseBody struct {
-	connection.APIResponseBody
-	Data LoadBalancerNetwork `json:"data"`
-}
-
 // GetLoadBalancerSpecSliceResponseBody represents an API response body containing []LoadBalancerSpec data
 type GetLoadBalancerSpecSliceResponseBody struct {
 	connection.APIResponseBody

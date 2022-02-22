@@ -674,20 +674,6 @@ func NewPaginatedLoadBalancer(getFunc connection.PaginatedGetFunc, parameters co
 	}
 }
 
-// PaginatedLoadBalancerNetwork represents a paginated collection of LoadBalancerNetwork
-type PaginatedLoadBalancerNetwork struct {
-	*connection.PaginatedBase
-	Items []LoadBalancerNetwork
-}
-
-// NewPaginatedLoadBalancerNetwork returns a pointer to an initialized PaginatedLoadBalancerNetwork struct
-func NewPaginatedLoadBalancerNetwork(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerNetwork) *PaginatedLoadBalancerNetwork {
-	return &PaginatedLoadBalancerNetwork{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // PaginatedLoadBalancerSpec represents a paginated collection of LoadBalancerSpec
 type PaginatedLoadBalancerSpec struct {
 	*connection.PaginatedBase
