@@ -398,6 +398,14 @@ type ECloudService interface {
 	GetLoadBalancerSpecs(parameters connection.APIRequestParameters) ([]LoadBalancerSpec, error)
 	GetLoadBalancerSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerSpec, error)
 	GetLoadBalancerSpec(lbSpecID string) (LoadBalancerSpec, error)
+
+	// VIP
+	GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error)
+	GetVIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedVIP, error)
+	GetVIP(vipID string) (VIP, error)
+	CreateVIP(req CreateVIPRequest) (string, error)
+	PatchVIP(vipID string, patch PatchVIPRequest) error
+	DeleteVIP(vipID string) error
 }
 
 // Service implements ECloudService for managing
