@@ -72,14 +72,14 @@ func (s *Service) getVIPResponseBody(vipID string) (*GetVIPResponseBody, error) 
 }
 
 // CreateVIP creates a new VIP
-func (s *Service) CreateVIP(req CreateVIPRequest) (string, error) {
+func (s *Service) CreateVIP(req CreateVIPRequest) (TaskReference, error) {
 	body, err := s.createVIPResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createVIPResponseBody(req CreateVIPRequest) (*GetVIPResponseBody, error) {
-	body := &GetVIPResponseBody{}
+func (s *Service) createVIPResponseBody(req CreateVIPRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	response, err := s.connection.Post("/ecloud/v2/vips", &req)
 	if err != nil {
@@ -90,14 +90,14 @@ func (s *Service) createVIPResponseBody(req CreateVIPRequest) (*GetVIPResponseBo
 }
 
 // PatchVIP patches a VIP
-func (s *Service) PatchVIP(vipID string, req PatchVIPRequest) error {
-	_, err := s.patchVIPResponseBody(vipID, req)
+func (s *Service) PatchVIP(vipID string, req PatchVIPRequest) (TaskReference, error) {
+	body, err := s.patchVIPResponseBody(vipID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchVIPResponseBody(vipID string, req PatchVIPRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchVIPResponseBody(vipID string, req PatchVIPRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if vipID == "" {
 		return body, fmt.Errorf("invalid vip id")
@@ -118,14 +118,14 @@ func (s *Service) patchVIPResponseBody(vipID string, req PatchVIPRequest) (*conn
 }
 
 // DeleteVIP deletes a VIP
-func (s *Service) DeleteVIP(vipID string) error {
-	_, err := s.deleteVIPResponseBody(vipID)
+func (s *Service) DeleteVIP(vipID string) (string, error) {
+	body, err := s.deleteVIPResponseBody(vipID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVIPResponseBody(vipID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteVIPResponseBody(vipID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
 
 	if vipID == "" {
 		return body, fmt.Errorf("invalid vip id")

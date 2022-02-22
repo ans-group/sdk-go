@@ -156,15 +156,16 @@ func TestCreateVIP(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/vips", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		vip, err := s.CreateVIP(req)
+		taskRef, err := s.CreateVIP(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "vip-abcdef12", vip)
+		assert.Equal(t, "vip-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -203,14 +204,16 @@ func TestPatchVIP(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/vips/vip-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVIP("vip-abcdef12", req)
+		taskRef, err := s.PatchVIP("vip-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "vip-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -225,7 +228,7 @@ func TestPatchVIP(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
+		_, err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -241,7 +244,7 @@ func TestPatchVIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchVIP("", PatchVIPRequest{})
+		_, err := s.PatchVIP("", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid vip id", err.Error())
@@ -264,7 +267,7 @@ func TestPatchVIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
+		_, err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VIPNotFoundError{}, err)
@@ -284,14 +287,15 @@ func TestDeleteVIP(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/vips/vip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVIP("vip-abcdef12")
+		taskID, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -306,7 +310,7 @@ func TestDeleteVIP(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/vips/vip-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteVIP("vip-abcdef12")
+		_, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -322,7 +326,7 @@ func TestDeleteVIP(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteVIP("")
+		_, err := s.DeleteVIP("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid vip id", err.Error())
@@ -345,7 +349,7 @@ func TestDeleteVIP(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVIP("vip-abcdef12")
+		_, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VIPNotFoundError{}, err)

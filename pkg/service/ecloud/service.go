@@ -403,9 +403,9 @@ type ECloudService interface {
 	GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error)
 	GetVIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedVIP, error)
 	GetVIP(vipID string) (VIP, error)
-	CreateVIP(req CreateVIPRequest) (string, error)
-	PatchVIP(vipID string, patch PatchVIPRequest) error
-	DeleteVIP(vipID string) error
+	CreateVIP(req CreateVIPRequest) (TaskReference, error)
+	PatchVIP(vipID string, patch PatchVIPRequest) (TaskReference, error)
+	DeleteVIP(vipID string) (string, error)
 }
 
 // Service implements ECloudService for managing
