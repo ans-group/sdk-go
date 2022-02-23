@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetLoadBalancerNetworks(t *testing.T) {
+func TestGetVIPs(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/load-balancer-networks", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/vips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"lbn-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vip-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		networks, err := s.GetLoadBalancerNetworks(connection.APIRequestParameters{})
+		vips, err := s.GetVIPs(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, networks, 1)
-		assert.Equal(t, "lbn-abcdef12", networks[0].ID)
+		assert.Len(t, vips, 1)
+		assert.Equal(t, "vip-abcdef12", vips[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetLoadBalancerNetworks(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/load-balancer-networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/ecloud/v2/vips", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetLoadBalancerNetworks(connection.APIRequestParameters{})
+		_, err := s.GetVIPs(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetLoadBalancerNetwork(t *testing.T) {
+func TestGetVIP(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/load-balancer-networks/lbn-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lbn-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		network, err := s.GetLoadBalancerNetwork("lbn-abcdef12")
+		vip, err := s.GetVIP("vip-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "lbn-abcdef12", network.ID)
+		assert.Equal(t, "vip-abcdef12", vip.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/load-balancer-networks/lbn-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetLoadBalancerNetwork("lbn-abcdef12")
+		_, err := s.GetVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidLoadBalancerNetworkID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidVIPID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetLoadBalancerNetwork("")
+		_, err := s.GetVIP("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid load balancer network id", err.Error())
+		assert.Equal(t, "invalid vip id", err.Error())
 	})
 
-	t.Run("404_ReturnsLoadBalancerNetworkNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsVIPNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,21 +125,21 @@ func TestGetLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/ecloud/v2/load-balancer-networks/lbn-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetLoadBalancerNetwork("lbn-abcdef12")
+		_, err := s.GetVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &LoadBalancerNetworkNotFoundError{}, err)
+		assert.IsType(t, &VIPNotFoundError{}, err)
 	})
 }
 
-func TestCreateLoadBalancerNetwork(t *testing.T) {
+func TestCreateVIP(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -150,21 +150,21 @@ func TestCreateLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		req := CreateLoadBalancerNetworkRequest{
+		req := CreateVIPRequest{
 			Name: "test",
 		}
 
-		c.EXPECT().Post("/ecloud/v2/load-balancer-networks", &req).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/vips", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lbn-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		taskRef, err := s.CreateLoadBalancerNetwork(req)
+		taskRef, err := s.CreateVIP(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "lbn-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "vip-abcdef12", taskRef.ResourceID)
 		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
@@ -178,16 +178,16 @@ func TestCreateLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/load-balancer-networks", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/ecloud/v2/vips", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateLoadBalancerNetwork(CreateLoadBalancerNetworkRequest{})
+		_, err := s.CreateVIP(CreateVIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestPatchLoadBalancerNetwork(t *testing.T) {
+func TestPatchVIP(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -198,22 +198,22 @@ func TestPatchLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchLoadBalancerNetworkRequest{
-			Name: "somenetwork",
+		req := PatchVIPRequest{
+			Name: "somevip",
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/load-balancer-networks/lbn-abcdef12", &req).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/ecloud/v2/vips/vip-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"lbn-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		task, err := s.PatchLoadBalancerNetwork("lbn-abcdef12", req)
+		taskRef, err := s.PatchVIP("vip-abcdef12", req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "lbn-abcdef12", task.ResourceID)
-		assert.Equal(t, "task-abcdef12", task.TaskID)
+		assert.Equal(t, "vip-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -226,15 +226,15 @@ func TestPatchLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/load-balancer-networks/lbn-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Patch("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.PatchLoadBalancerNetwork("lbn-abcdef12", PatchLoadBalancerNetworkRequest{})
+		_, err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidLoadBalancerNetworkID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidVIPID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -244,13 +244,13 @@ func TestPatchLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.PatchLoadBalancerNetwork("", PatchLoadBalancerNetworkRequest{})
+		_, err := s.PatchVIP("", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid load balancer network id", err.Error())
+		assert.Equal(t, "invalid vip id", err.Error())
 	})
 
-	t.Run("404_ReturnsLoadBalancerNetworkNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsVIPNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -260,21 +260,21 @@ func TestPatchLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Patch("/ecloud/v2/load-balancer-networks/lbn-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Patch("/ecloud/v2/vips/vip-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.PatchLoadBalancerNetwork("lbn-abcdef12", PatchLoadBalancerNetworkRequest{})
+		_, err := s.PatchVIP("vip-abcdef12", PatchVIPRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &LoadBalancerNetworkNotFoundError{}, err)
+		assert.IsType(t, &VIPNotFoundError{}, err)
 	})
 }
 
-func TestDeleteLoadBalancerNetwork(t *testing.T) {
+func TestDeleteVIP(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -285,14 +285,14 @@ func TestDeleteLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/load-balancer-networks/lbn-abcdef12", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ecloud/v2/vips/vip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vip-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		taskID, err := s.DeleteLoadBalancerNetwork("lbn-abcdef12")
+		taskID, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "task-abcdef12", taskID)
@@ -308,15 +308,15 @@ func TestDeleteLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/load-balancer-networks/lbn-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/ecloud/v2/vips/vip-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.DeleteLoadBalancerNetwork("lbn-abcdef12")
+		_, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidLoadBalancerNetworkID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidVIPID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -326,13 +326,13 @@ func TestDeleteLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.DeleteLoadBalancerNetwork("")
+		_, err := s.DeleteVIP("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid load balancer network id", err.Error())
+		assert.Equal(t, "invalid vip id", err.Error())
 	})
 
-	t.Run("404_ReturnsLoadBalancerNetworkNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsVIPNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -342,16 +342,16 @@ func TestDeleteLoadBalancerNetwork(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ecloud/v2/load-balancer-networks/lbn-abcdef12", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ecloud/v2/vips/vip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.DeleteLoadBalancerNetwork("lbn-abcdef12")
+		_, err := s.DeleteVIP("vip-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &LoadBalancerNetworkNotFoundError{}, err)
+		assert.IsType(t, &VIPNotFoundError{}, err)
 	})
 }

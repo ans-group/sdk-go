@@ -536,11 +536,11 @@ type PatchVolumeGroupRequest struct {
 
 // CreateLoadBalancerRequest represents a request to create a load balancer
 type CreateLoadBalancerRequest struct {
-	Name               string   `json:"name,omitempty"`
-	AvailabilityZoneID string   `json:"availability_zone_id"`
-	VPCID              string   `json:"vpc_id"`
-	LoadBalancerSpecID string   `json:"load_balancer_spec_id"`
-	NetworkIDs         []string `json:"network_ids,omitempty"`
+	Name               string `json:"name,omitempty"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+	VPCID              string `json:"vpc_id"`
+	LoadBalancerSpecID string `json:"load_balancer_spec_id"`
+	NetworkID          string `json:"network_id"`
 }
 
 // CreateLoadBalancerRequest represents a request to patch a load balancer
@@ -548,14 +548,14 @@ type PatchLoadBalancerRequest struct {
 	Name string `json:"name,omitempty"`
 }
 
-// CreateLoadBalancerNetworkRequest represents a request to create a load balancer network
-type CreateLoadBalancerNetworkRequest struct {
-	Name           string `json:"name,omitempty"`
-	LoadBalancerID string `json:"load_balancer_id"`
-	NetworkID      string `json:"network_id"`
+// CreateVIPRequest represents a request to create a load balancer VIP
+type CreateVIPRequest struct {
+	Name               string `json:"name,omitempty"`
+	LoadBalancerID     string `json:"load_balancer_id"`
+	AllocateFloatingIP bool   `json:"allocate_floating_ip"`
 }
 
-// PatchLoadBalancerNetworkRequest represents a request to patch a load balancer network
-type PatchLoadBalancerNetworkRequest struct {
+// PatchVIPRequest represents a request to patch a load balancer VIP
+type PatchVIPRequest struct {
 	Name string `json:"name,omitempty"`
 }
