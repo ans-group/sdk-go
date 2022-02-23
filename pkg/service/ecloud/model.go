@@ -1085,21 +1085,9 @@ type LoadBalancer struct {
 	Sync               ResourceSync        `json:"sync"`
 	ConfigID           int                 `json:"config_id"`
 	Nodes              int                 `json:"nodes"`
+	NetworkID          string              `json:"network_id"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
-}
-
-// LoadBalancerNetwork represents an eCloud loadbalancer network
-// +genie:model_response
-// +genie:model_paginated
-type LoadBalancerNetwork struct {
-	ID             string              `json:"id"`
-	Name           string              `json:"name"`
-	LoadBalancerID string              `json:"load_balancer_id"`
-	NetworkID      string              `json:"network_id"`
-	Sync           ResourceSync        `json:"sync"`
-	CreatedAt      connection.DateTime `json:"created_at"`
-	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
 
 // LoadBalancerSpec represents an eCloud loadbalancer specification
@@ -1111,4 +1099,18 @@ type LoadBalancerSpec struct {
 	Description string              `json:"description"`
 	CreatedAt   connection.DateTime `json:"created_at"`
 	UpdatedAt   connection.DateTime `json:"updated_at"`
+}
+
+// VIP represents an eCloud load balancer VIP
+// +genie:model_response
+// +genie:model_paginated
+type VIP struct {
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	LoadBalancerID string              `json:"load_balancer_id"`
+	IPAddressID    string              `json:"ip_address_id"`
+	ConfigID       int                 `json:"config_id"`
+	Sync           ResourceSync        `json:"sync"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
 }

@@ -674,20 +674,6 @@ func NewPaginatedLoadBalancer(getFunc connection.PaginatedGetFunc, parameters co
 	}
 }
 
-// PaginatedLoadBalancerNetwork represents a paginated collection of LoadBalancerNetwork
-type PaginatedLoadBalancerNetwork struct {
-	*connection.PaginatedBase
-	Items []LoadBalancerNetwork
-}
-
-// NewPaginatedLoadBalancerNetwork returns a pointer to an initialized PaginatedLoadBalancerNetwork struct
-func NewPaginatedLoadBalancerNetwork(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerNetwork) *PaginatedLoadBalancerNetwork {
-	return &PaginatedLoadBalancerNetwork{
-		Items:         items,
-		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
-	}
-}
-
 // PaginatedLoadBalancerSpec represents a paginated collection of LoadBalancerSpec
 type PaginatedLoadBalancerSpec struct {
 	*connection.PaginatedBase
@@ -697,6 +683,20 @@ type PaginatedLoadBalancerSpec struct {
 // NewPaginatedLoadBalancerSpec returns a pointer to an initialized PaginatedLoadBalancerSpec struct
 func NewPaginatedLoadBalancerSpec(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []LoadBalancerSpec) *PaginatedLoadBalancerSpec {
 	return &PaginatedLoadBalancerSpec{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}
+
+// PaginatedVIP represents a paginated collection of VIP
+type PaginatedVIP struct {
+	*connection.PaginatedBase
+	Items []VIP
+}
+
+// NewPaginatedVIP returns a pointer to an initialized PaginatedVIP struct
+func NewPaginatedVIP(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []VIP) *PaginatedVIP {
+	return &PaginatedVIP{
 		Items:         items,
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}

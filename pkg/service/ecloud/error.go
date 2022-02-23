@@ -398,15 +398,6 @@ func (e *LoadBalancerNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer not found with ID [%s]", e.ID)
 }
 
-// LoadBalancerNetworkNotFoundError indicates a load balancer network was not found
-type LoadBalancerNetworkNotFoundError struct {
-	ID string
-}
-
-func (e *LoadBalancerNetworkNotFoundError) Error() string {
-	return fmt.Sprintf("Load balancer network not found with ID [%s]", e.ID)
-}
-
 // LoadBalancerNetworkNotFoundError indicates a load balancer spec was not found
 type LoadBalancerSpecNotFoundError struct {
 	ID string
@@ -414,4 +405,13 @@ type LoadBalancerSpecNotFoundError struct {
 
 func (e *LoadBalancerSpecNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer spec not found with ID [%s]", e.ID)
+}
+
+// VIPNotFoundError indicates a load balancer VIP was not found
+type VIPNotFoundError struct {
+	ID string
+}
+
+func (e *VIPNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer VIP not found with ID [%s]", e.ID)
 }
