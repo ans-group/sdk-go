@@ -320,8 +320,8 @@ type CreateFirewallRulePortRequest struct {
 	Name           string                   `json:"name,omitempty"`
 	FirewallRuleID string                   `json:"firewall_rule_id"`
 	Protocol       FirewallRulePortProtocol `json:"protocol"`
-	Source         string                   `json:"source"`
-	Destination    string                   `json:"destination"`
+	Source         string                   `json:"source,omitempty"`
+	Destination    string                   `json:"destination,omitempty"`
 }
 
 // PatchFirewallRulePortRequest represents a request to patch a firewall rule port
@@ -462,8 +462,8 @@ type CreateNetworkRulePortRequest struct {
 	Name          string                  `json:"name,omitempty"`
 	NetworkRuleID string                  `json:"network_rule_id"`
 	Protocol      NetworkRulePortProtocol `json:"protocol"`
-	Source        string                  `json:"source"`
-	Destination   string                  `json:"destination"`
+	Source        string                  `json:"source,omitempty"`
+	Destination   string                  `json:"destination,omitempty"`
 }
 
 // PatchNetworkRulePortRequest represents a request to patch a network rule port
