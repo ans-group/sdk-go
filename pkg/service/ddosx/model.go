@@ -493,23 +493,23 @@ func (d *CDNRuleCacheControlDuration) Duration() time.Duration {
 }
 
 func (d *CDNRuleCacheControlDuration) String() string {
-	return durationstring.String(d.Years, d.Months, d.Days, d.Hours, d.Minutes, 0, 0, 0, 0)
+	return durationstring.NewDuration(d.Years, d.Months, d.Days, d.Hours, d.Minutes, 0, 0, 0, 0).String()
 }
 
 // ParseCDNRuleCacheControlDuration parses string s and returns a pointer to an
 // initialised CDNRuleCacheControlDuration
 func ParseCDNRuleCacheControlDuration(s string) (*CDNRuleCacheControlDuration, error) {
-	years, months, days, hours, minutes, _, _, _, _, err := durationstring.Parse(s)
+	d, err := durationstring.Parse(s)
 	if err != nil {
 		return nil, err
 	}
 
 	return &CDNRuleCacheControlDuration{
-		Years:   years,
-		Months:  months,
-		Days:    days,
-		Hours:   hours,
-		Minutes: minutes,
+		Years:   d.Years,
+		Months:  d.Months,
+		Days:    d.Days,
+		Hours:   d.Hours,
+		Minutes: d.Minutes,
 	}, nil
 }
 
