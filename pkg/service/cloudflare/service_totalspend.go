@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"github.com/ukfast/sdk-go/pkg/connection"
@@ -13,7 +13,7 @@ func (s *Service) GetTotalSpendMonthToDate() (TotalSpend, error) {
 
 func (s *Service) getTotalSpendMonthToDateResponseBody() (*GetTotalSpendResponseBody, error) {
 	body := &GetTotalSpendResponseBody{}
-	response, err := s.connection.Get("/managed-cloudflare/v1/total-spend/month-to-date", connection.APIRequestParameters{})
+	response, err := s.connection.Get("/cloudflare/v1/total-spend/month-to-date", connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

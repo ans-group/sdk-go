@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ func (s *Service) GetAccountsPaginated(parameters connection.APIRequestParameter
 func (s *Service) getAccountsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetAccountSliceResponseBody, error) {
 	body := &GetAccountSliceResponseBody{}
 
-	response, err := s.connection.Get("/managed-cloudflare/v1/accounts", parameters)
+	response, err := s.connection.Get("/cloudflare/v1/accounts", parameters)
 	if err != nil {
 		return body, err
 	}
@@ -55,7 +55,7 @@ func (s *Service) getAccountResponseBody(accountID string) (*GetAccountResponseB
 		return body, fmt.Errorf("invalid account id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/managed-cloudflare/v1/accounts/%s", accountID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
@@ -79,7 +79,7 @@ func (s *Service) CreateAccount(req CreateAccountRequest) (string, error) {
 func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*GetAccountResponseBody, error) {
 	body := &GetAccountResponseBody{}
 
-	response, err := s.connection.Post("/managed-cloudflare/v1/accounts", &req)
+	response, err := s.connection.Post("/cloudflare/v1/accounts", &req)
 	if err != nil {
 		return body, err
 	}
@@ -101,7 +101,7 @@ func (s *Service) createAccountMemberResponseBody(accountID string, req CreateAc
 		return body, fmt.Errorf("invalid account id")
 	}
 
-	response, err := s.connection.Post(fmt.Sprintf("/managed-cloudflare/v1/accounts/%s/members", accountID), &req)
+	response, err := s.connection.Post(fmt.Sprintf("/cloudflare/v1/accounts/%s/members", accountID), &req)
 	if err != nil {
 		return body, err
 	}

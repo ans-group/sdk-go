@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"github.com/ukfast/sdk-go/pkg/connection"
@@ -31,7 +31,7 @@ func (s *Service) GetSpendPlansPaginated(parameters connection.APIRequestParamet
 func (s *Service) getSpendPlansPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSpendPlanSliceResponseBody, error) {
 	body := &GetSpendPlanSliceResponseBody{}
 
-	response, err := s.connection.Get("/managed-cloudflare/v1/spend-plans", parameters)
+	response, err := s.connection.Get("/cloudflare/v1/spend-plans", parameters)
 	if err != nil {
 		return body, err
 	}

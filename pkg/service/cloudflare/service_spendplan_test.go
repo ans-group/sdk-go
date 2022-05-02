@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"bytes"
@@ -13,8 +13,8 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetTotalSpendMonthToDate(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
+func TestGetSpendPlans(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -24,20 +24,19 @@ func TestGetTotalSpendMonthToDate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/total-spend/month-to-date", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/cloudflare/v1/spend-plans", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"spend_plan_amount\":1.23, \"total_spend\": 2.34}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		spend, err := s.GetTotalSpendMonthToDate()
+		plans, err := s.GetSpendPlans(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Equal(t, float32(1.23), spend.SpendPlanAmount)
-		assert.Equal(t, float32(2.34), spend.TotalSpend)
+		assert.Len(t, plans, 1)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", plans[0].ID)
 	})
-
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -48,9 +47,9 @@ func TestGetTotalSpendMonthToDate(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/total-spend/month-to-date", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/cloudflare/v1/spend-plans", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetTotalSpendMonthToDate()
+		_, err := s.GetSpendPlans(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())

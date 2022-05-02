@@ -1,11 +1,11 @@
-//go:generate go run ../../gen/model_response/main.go -package managedcloudflare -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package managedcloudflare -source model.go -destination model_paginated_generated.go
+//go:generate go run ../../gen/model_response/main.go -package cloudflare -source model.go -destination model_response_generated.go
+//go:generate go run ../../gen/model_paginated/main.go -package cloudflare -source model.go -destination model_paginated_generated.go
 
-package managedcloudflare
+package cloudflare
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
-// Account represents a Managed Cloudflare account
+// Account represents a Cloudflare account
 // +genie:model_response
 // +genie:model_paginated
 type Account struct {
@@ -17,14 +17,14 @@ type Account struct {
 	UpdatedAt           connection.DateTime `json:"updated_at"`
 }
 
-// AccountMember represents a Managed Cloudflare account member
+// AccountMember represents a Cloudflare account member
 // +genie:model_response
 // +genie:model_paginated
 type AccountMember struct {
 	EmailAddress string `json:"email_address"`
 }
 
-// SpendPlan represents a Managed Cloudflare spend plan
+// SpendPlan represents a Cloudflare spend plan
 // +genie:model_response
 // +genie:model_paginated
 type SpendPlan struct {
@@ -36,7 +36,7 @@ type SpendPlan struct {
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
 
-// Subscription represents a Managed Cloudflare subscription
+// Subscription represents a Cloudflare subscription
 // +genie:model_response
 // +genie:model_paginated
 type Subscription struct {
@@ -50,7 +50,7 @@ type Subscription struct {
 	UpdatedAt            connection.DateTime `json:"updated_at"`
 }
 
-// Zone represents a Managed Cloudflare zone
+// Zone represents a Cloudflare zone
 // +genie:model_response
 // +genie:model_paginated
 type Zone struct {

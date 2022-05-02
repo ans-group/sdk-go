@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) 
 func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetZoneSliceResponseBody, error) {
 	body := &GetZoneSliceResponseBody{}
 
-	response, err := s.connection.Get("/managed-cloudflare/v1/zones", parameters)
+	response, err := s.connection.Get("/cloudflare/v1/zones", parameters)
 	if err != nil {
 		return body, err
 	}
@@ -55,7 +55,7 @@ func (s *Service) getZoneResponseBody(zoneID string) (*GetZoneResponseBody, erro
 		return body, fmt.Errorf("invalid zone id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/managed-cloudflare/v1/zones/%s", zoneID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/cloudflare/v1/zones/%s", zoneID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
@@ -79,7 +79,7 @@ func (s *Service) CreateZone(req CreateZoneRequest) (string, error) {
 func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*GetZoneResponseBody, error) {
 	body := &GetZoneResponseBody{}
 
-	response, err := s.connection.Post("/managed-cloudflare/v1/zones", &req)
+	response, err := s.connection.Post("/cloudflare/v1/zones", &req)
 	if err != nil {
 		return body, err
 	}
@@ -101,7 +101,7 @@ func (s *Service) deleteZoneResponseBody(zoneID string) (*connection.APIResponse
 		return body, fmt.Errorf("invalid zone id")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/managed-cloudflare/v1/zones/%s", zoneID), connection.APIRequestParameters{})
+	response, err := s.connection.Delete(fmt.Sprintf("/cloudflare/v1/zones/%s", zoneID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

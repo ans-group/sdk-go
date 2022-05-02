@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 // CreateAccountRequest represents a request to create an account
 type CreateAccountRequest struct {

@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 

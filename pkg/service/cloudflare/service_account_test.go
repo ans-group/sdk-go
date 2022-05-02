@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"github.com/ukfast/sdk-go/test/mocks"
 )
 
-func TestGetZones(t *testing.T) {
+func TestGetAccounts(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -24,18 +24,18 @@ func TestGetZones(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		zones, err := s.GetZones(connection.APIRequestParameters{})
+		accounts, err := s.GetAccounts(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, zones, 1)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", zones[0].ID)
+		assert.Len(t, accounts, 1)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", accounts[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGetZones(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetZones(connection.APIRequestParameters{})
+		_, err := s.GetAccounts(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetZone(t *testing.T) {
+func TestGetAccount(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -68,17 +68,17 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		zone, err := s.GetZone("00000000-0000-0000-0000-000000000000")
+		account, err := s.GetAccount("00000000-0000-0000-0000-000000000000")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", zone.ID)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", account.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -91,15 +91,15 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Get("/cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetZone("00000000-0000-0000-0000-000000000000")
+		_, err := s.GetAccount("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 
-	t.Run("InvalidZoneID_ReturnsError", func(t *testing.T) {
+	t.Run("InvalidAccountID_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -109,13 +109,13 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetZone("")
+		_, err := s.GetAccount("")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, "invalid zone id", err.Error())
+		assert.Equal(t, "invalid account id", err.Error())
 	})
 
-	t.Run("404_ReturnsZoneNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsAccountNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -125,21 +125,21 @@ func TestGetZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetZone("00000000-0000-0000-0000-000000000000")
+		_, err := s.GetAccount("00000000-0000-0000-0000-000000000000")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &ZoneNotFoundError{}, err)
+		assert.IsType(t, &AccountNotFoundError{}, err)
 	})
 }
 
-func TestCreateZone(t *testing.T) {
+func TestCreateAccount(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -150,21 +150,21 @@ func TestCreateZone(t *testing.T) {
 			connection: c,
 		}
 
-		createRequest := CreateZoneRequest{
-			Name: "testzone1.co.uk",
+		createRequest := CreateAccountRequest{
+			Name: "testaccount1.co.uk",
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Post("/cloudflare/v1/accounts", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		zoneID, err := s.CreateZone(createRequest)
+		id, err := s.CreateAccount(createRequest)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "00000000-0000-0000-0000-000000000000", zoneID)
+		assert.Equal(t, "00000000-0000-0000-0000-000000000000", id)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -177,16 +177,16 @@ func TestCreateZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/managed-cloudflare/v1/zones", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/cloudflare/v1/accounts", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateZone(CreateZoneRequest{})
+		_, err := s.CreateAccount(CreateAccountRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestDeleteZone(t *testing.T) {
+func TestCreateAccountMember(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -197,16 +197,36 @@ func TestDeleteZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
+		createRequest := CreateAccountMemberRequest{
+			EmailAddress: "test@test.co.uk",
+		}
+
+		c.EXPECT().Post("/cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteZone("00000000-0000-0000-0000-000000000000")
+		err := s.CreateAccountMember("00000000-0000-0000-0000-000000000000", createRequest)
 
 		assert.Nil(t, err)
+	})
+
+	t.Run("InvalidAccountID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.CreateAccountMember("", CreateAccountMemberRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid account id", err.Error())
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -219,50 +239,11 @@ func TestDeleteZone(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/cloudflare/v1/accounts/00000000-0000-0000-0000-000000000000/members", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteZone("00000000-0000-0000-0000-000000000000")
+		err := s.CreateAccountMember("00000000-0000-0000-0000-000000000000", CreateAccountMemberRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
-	})
-
-	t.Run("InvalidZoneID_ReturnsError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		err := s.DeleteZone("")
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid zone id", err.Error())
-	})
-
-	t.Run("404_ReturnsZoneNotFoundError", func(t *testing.T) {
-		mockCtrl := gomock.NewController(t)
-		defer mockCtrl.Finish()
-
-		c := mocks.NewMockConnection(mockCtrl)
-
-		s := Service{
-			connection: c,
-		}
-
-		c.EXPECT().Delete("/managed-cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
-			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
-				StatusCode: 404,
-			},
-		}, nil).Times(1)
-
-		err := s.DeleteZone("00000000-0000-0000-0000-000000000000")
-
-		assert.NotNil(t, err)
-		assert.IsType(t, &ZoneNotFoundError{}, err)
 	})
 }

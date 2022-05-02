@@ -1,4 +1,4 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"github.com/ukfast/sdk-go/pkg/connection"
@@ -31,7 +31,7 @@ func (s *Service) GetSubscriptionsPaginated(parameters connection.APIRequestPara
 func (s *Service) getSubscriptionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSubscriptionSliceResponseBody, error) {
 	body := &GetSubscriptionSliceResponseBody{}
 
-	response, err := s.connection.Get("/managed-cloudflare/v1/subscriptions", parameters)
+	response, err := s.connection.Get("/cloudflare/v1/subscriptions", parameters)
 	if err != nil {
 		return body, err
 	}

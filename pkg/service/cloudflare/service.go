@@ -1,11 +1,11 @@
-package managedcloudflare
+package cloudflare
 
 import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// ManagedCloudflareService is an interface for managing Shared Exchange
-type ManagedCloudflareService interface {
+// CloudflareService is an interface for managing Cloudflare services
+type CloudflareService interface {
 	// Account
 	GetAccounts(parameters connection.APIRequestParameters) ([]Account, error)
 	GetAccountsPaginated(parameters connection.APIRequestParameters) (*PaginatedAccount, error)
@@ -35,12 +35,12 @@ type ManagedCloudflareService interface {
 	GetTotalSpendMonthToDate() (TotalSpend, error)
 }
 
-// Service implements ManagedCloudflareService for managing the Shared Exchange service
+// Service implements CloudflareService for managing the Shared Exchange service
 type Service struct {
 	connection connection.Connection
 }
 
-// NewService returns a new instance of ManagedCloudflareService
+// NewService returns a new instance of CloudflareService
 func NewService(connection connection.Connection) *Service {
 	return &Service{
 		connection: connection,
