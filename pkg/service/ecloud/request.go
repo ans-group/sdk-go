@@ -320,8 +320,8 @@ type CreateFirewallRulePortRequest struct {
 	Name           string                   `json:"name,omitempty"`
 	FirewallRuleID string                   `json:"firewall_rule_id"`
 	Protocol       FirewallRulePortProtocol `json:"protocol"`
-	Source         string                   `json:"source"`
-	Destination    string                   `json:"destination"`
+	Source         string                   `json:"source,omitempty"`
+	Destination    string                   `json:"destination,omitempty"`
 }
 
 // PatchFirewallRulePortRequest represents a request to patch a firewall rule port
@@ -462,8 +462,8 @@ type CreateNetworkRulePortRequest struct {
 	Name          string                  `json:"name,omitempty"`
 	NetworkRuleID string                  `json:"network_rule_id"`
 	Protocol      NetworkRulePortProtocol `json:"protocol"`
-	Source        string                  `json:"source"`
-	Destination   string                  `json:"destination"`
+	Source        string                  `json:"source,omitempty"`
+	Destination   string                  `json:"destination,omitempty"`
 }
 
 // PatchNetworkRulePortRequest represents a request to patch a network rule port
@@ -531,5 +531,31 @@ type CreateVolumeGroupRequest struct {
 
 // PatchVolumeGroupRequest represents a request to patch a volume group
 type PatchVolumeGroupRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// CreateLoadBalancerRequest represents a request to create a load balancer
+type CreateLoadBalancerRequest struct {
+	Name               string `json:"name,omitempty"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+	VPCID              string `json:"vpc_id"`
+	LoadBalancerSpecID string `json:"load_balancer_spec_id"`
+	NetworkID          string `json:"network_id"`
+}
+
+// CreateLoadBalancerRequest represents a request to patch a load balancer
+type PatchLoadBalancerRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// CreateVIPRequest represents a request to create a load balancer VIP
+type CreateVIPRequest struct {
+	Name               string `json:"name,omitempty"`
+	LoadBalancerID     string `json:"load_balancer_id"`
+	AllocateFloatingIP bool   `json:"allocate_floating_ip"`
+}
+
+// PatchVIPRequest represents a request to patch a load balancer VIP
+type PatchVIPRequest struct {
 	Name string `json:"name,omitempty"`
 }

@@ -1072,3 +1072,45 @@ type VPNSessionTunnelStatistics struct {
 type VPNSessionPreSharedKey struct {
 	PSK string `json:"psk"`
 }
+
+// LoadBalancer represents an eCloud loadbalancer
+// +genie:model_response
+// +genie:model_paginated
+type LoadBalancer struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	VPCID              string              `json:"vpc_id"`
+	LoadBalancerSpecID string              `json:"load_balancer_spec_id"`
+	Sync               ResourceSync        `json:"sync"`
+	ConfigID           int                 `json:"config_id"`
+	Nodes              int                 `json:"nodes"`
+	NetworkID          string              `json:"network_id"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// LoadBalancerSpec represents an eCloud loadbalancer specification
+// +genie:model_response
+// +genie:model_paginated
+type LoadBalancerSpec struct {
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	UpdatedAt   connection.DateTime `json:"updated_at"`
+}
+
+// VIP represents an eCloud load balancer VIP
+// +genie:model_response
+// +genie:model_paginated
+type VIP struct {
+	ID             string              `json:"id"`
+	Name           string              `json:"name"`
+	LoadBalancerID string              `json:"load_balancer_id"`
+	IPAddressID    string              `json:"ip_address_id"`
+	ConfigID       int                 `json:"config_id"`
+	Sync           ResourceSync        `json:"sync"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
+}

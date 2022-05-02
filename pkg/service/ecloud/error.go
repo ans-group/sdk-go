@@ -388,3 +388,30 @@ type VPNProfileGroupNotFoundError struct {
 func (e *VPNProfileGroupNotFoundError) Error() string {
 	return fmt.Sprintf("VPN profile group not found with ID [%s]", e.ID)
 }
+
+// LoadBalancerNotFoundError indicates a load balancer was not found
+type LoadBalancerNotFoundError struct {
+	ID string
+}
+
+func (e *LoadBalancerNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer not found with ID [%s]", e.ID)
+}
+
+// LoadBalancerNetworkNotFoundError indicates a load balancer spec was not found
+type LoadBalancerSpecNotFoundError struct {
+	ID string
+}
+
+func (e *LoadBalancerSpecNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer spec not found with ID [%s]", e.ID)
+}
+
+// VIPNotFoundError indicates a load balancer VIP was not found
+type VIPNotFoundError struct {
+	ID string
+}
+
+func (e *VIPNotFoundError) Error() string {
+	return fmt.Sprintf("Load balancer VIP not found with ID [%s]", e.ID)
+}

@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ukfast/sdk-go/pkg/logging"
 )
@@ -18,6 +19,7 @@ import (
 const apiURI = "api.ukfast.io"
 const apiScheme = "https"
 const userAgent = "ukfast-sdk-go"
+const httpTimeoutSeconds = 120
 
 type Connection interface {
 	Get(resource string, parameters APIRequestParameters) (*APIResponse, error)
@@ -45,10 +47,12 @@ func NewAPIKeyCredentialsAPIConnection(apiKey string) *APIConnection {
 func NewAPIConnection(credentials Credentials) *APIConnection {
 	return &APIConnection{
 		Credentials: credentials,
-		HTTPClient:  &http.Client{},
-		APIURI:      apiURI,
-		APIScheme:   apiScheme,
-		UserAgent:   userAgent,
+		HTTPClient: &http.Client{
+			Timeout: httpTimeoutSeconds * time.Second,
+		},
+		APIURI:    apiURI,
+		APIScheme: apiScheme,
+		UserAgent: userAgent,
 	}
 }
 

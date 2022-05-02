@@ -613,3 +613,39 @@ type GetVPNSessionPreSharedKeyResponseBody struct {
 	connection.APIResponseBody
 	Data VPNSessionPreSharedKey `json:"data"`
 }
+
+// GetLoadBalancerSliceResponseBody represents an API response body containing []LoadBalancer data
+type GetLoadBalancerSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []LoadBalancer `json:"data"`
+}
+
+// GetLoadBalancerResponseBody represents an API response body containing LoadBalancer data
+type GetLoadBalancerResponseBody struct {
+	connection.APIResponseBody
+	Data LoadBalancer `json:"data"`
+}
+
+// GetLoadBalancerSpecSliceResponseBody represents an API response body containing []LoadBalancerSpec data
+type GetLoadBalancerSpecSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []LoadBalancerSpec `json:"data"`
+}
+
+// GetLoadBalancerSpecResponseBody represents an API response body containing LoadBalancerSpec data
+type GetLoadBalancerSpecResponseBody struct {
+	connection.APIResponseBody
+	Data LoadBalancerSpec `json:"data"`
+}
+
+// GetVIPSliceResponseBody represents an API response body containing []VIP data
+type GetVIPSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []VIP `json:"data"`
+}
+
+// GetVIPResponseBody represents an API response body containing VIP data
+type GetVIPResponseBody struct {
+	connection.APIResponseBody
+	Data VIP `json:"data"`
+}

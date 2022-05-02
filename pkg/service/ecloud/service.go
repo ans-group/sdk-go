@@ -385,6 +385,27 @@ type ECloudService interface {
 	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
 	GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error)
 	GetVPNProfileGroup(groupID string) (VPNProfileGroup, error)
+
+	// Load Balancer
+	GetLoadBalancers(parameters connection.APIRequestParameters) ([]LoadBalancer, error)
+	GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancer, error)
+	GetLoadBalancer(loadbalancerID string) (LoadBalancer, error)
+	CreateLoadBalancer(req CreateLoadBalancerRequest) (TaskReference, error)
+	PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancerRequest) (TaskReference, error)
+	DeleteLoadBalancer(loadbalancerID string) (string, error)
+
+	// Load Balancer Spec
+	GetLoadBalancerSpecs(parameters connection.APIRequestParameters) ([]LoadBalancerSpec, error)
+	GetLoadBalancerSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerSpec, error)
+	GetLoadBalancerSpec(lbSpecID string) (LoadBalancerSpec, error)
+
+	// VIP
+	GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error)
+	GetVIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedVIP, error)
+	GetVIP(vipID string) (VIP, error)
+	CreateVIP(req CreateVIPRequest) (TaskReference, error)
+	PatchVIP(vipID string, patch PatchVIPRequest) (TaskReference, error)
+	DeleteVIP(vipID string) (string, error)
 }
 
 // Service implements ECloudService for managing
