@@ -87,6 +87,28 @@ func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*GetZoneRespons
 	return body, response.HandleResponse(body, nil)
 }
 
+// PatchZone updates a zone
+func (s *Service) PatchZone(zoneID string, req PatchZoneRequest) error {
+	_, err := s.patchZoneResponseBody(zoneID, req)
+
+	return err
+}
+
+func (s *Service) patchZoneResponseBody(zoneID string, req PatchZoneRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if zoneID == "" {
+		return body, fmt.Errorf("invalid zone id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/cloudflare/v1/zones/%s", zoneID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // DeleteZone removes a single zone by id
 func (s *Service) DeleteZone(zoneID string) error {
 	_, err := s.deleteZoneResponseBody(zoneID)

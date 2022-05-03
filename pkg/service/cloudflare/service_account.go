@@ -87,6 +87,28 @@ func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*GetAccou
 	return body, response.HandleResponse(body, nil)
 }
 
+// PatchAccount updates an account
+func (s *Service) PatchAccount(accountID string, req PatchAccountRequest) error {
+	_, err := s.patchAccountResponseBody(accountID, req)
+
+	return err
+}
+
+func (s *Service) patchAccountResponseBody(accountID string, req PatchAccountRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if accountID == "" {
+		return body, fmt.Errorf("invalid account id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
 // CreateAccount creates a new account member
 func (s *Service) CreateAccountMember(accountID string, req CreateAccountMemberRequest) error {
 	_, err := s.createAccountMemberResponseBody(accountID, req)

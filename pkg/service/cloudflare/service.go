@@ -11,6 +11,7 @@ type CloudflareService interface {
 	GetAccountsPaginated(parameters connection.APIRequestParameters) (*PaginatedAccount, error)
 	GetAccount(accountID string) (Account, error)
 	CreateAccount(req CreateAccountRequest) (string, error)
+	PatchAccount(accountID string, req PatchAccountRequest) error
 	CreateAccountMember(accountID string, req CreateAccountMemberRequest) error
 
 	// Orchestration
@@ -29,6 +30,7 @@ type CloudflareService interface {
 	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error)
 	GetZone(zoneID string) (Zone, error)
 	CreateZone(req CreateZoneRequest) (string, error)
+	PatchZone(zoneID string, req PatchZoneRequest) error
 	DeleteZone(zoneID string) error
 
 	// Spend

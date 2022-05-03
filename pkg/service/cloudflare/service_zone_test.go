@@ -186,6 +186,68 @@ func TestCreateZone(t *testing.T) {
 	})
 }
 
+func TestPatchZone(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		patchRequest := PatchZoneRequest{
+			PlanSubscriptionID: "e69a8445-b224-4555-9785-8de9238f7eaf",
+		}
+
+		c.EXPECT().Post("/cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchZone("00000000-0000-0000-0000-000000000000", patchRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("InvalidZoneID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchZone("", PatchZoneRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid zone id", err.Error())
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchZone("00000000-0000-0000-0000-000000000000", PatchZoneRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
 func TestDeleteZone(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

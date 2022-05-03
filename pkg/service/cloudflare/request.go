@@ -5,6 +5,11 @@ type CreateAccountRequest struct {
 	Name string `json:"name"`
 }
 
+// PatchAccountRequest represents a request to patch an account
+type PatchAccountRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
 // CreateAccountMemberRequest represents a request to create an account member
 type CreateAccountMemberRequest struct {
 	EmailAddress string `json:"email_address"`
@@ -19,9 +24,14 @@ type CreateOrchestrationRequest struct {
 	AdministratorEmailAddress string `json:"administrator_email_address"`
 }
 
-// CreateRecordRequest represents a request to create an zone
+// CreateRecordRequest represents a request to create a zone
 type CreateZoneRequest struct {
 	AccountID        string `json:"account_id"`
 	Name             string `json:"name"`
 	SubscriptionType string `json:"subscription_type"`
+}
+
+// PatchZoneRequest represents a request to patch a zone
+type PatchZoneRequest struct {
+	PlanSubscriptionID string `json:"plan_subscription_id,omitempty"`
 }
