@@ -18,7 +18,7 @@ type CreateAccountMemberRequest struct {
 // CreateOrchestrationRequest represents a request to create new orchestration
 type CreateOrchestrationRequest struct {
 	ZoneName                  string `json:"zone_name"`
-	ZoneSubscriptionType      string `json:"zone_subscription_type"`
+	ZoneSubscriptionID        string `json:"zone_subscription_id"`
 	AccountID                 string `json:"account_id"`
 	AccountName               string `json:"account_name"`
 	AdministratorEmailAddress string `json:"administrator_email_address"`
@@ -26,12 +26,12 @@ type CreateOrchestrationRequest struct {
 
 // CreateRecordRequest represents a request to create a zone
 type CreateZoneRequest struct {
-	AccountID        string `json:"account_id"`
-	Name             string `json:"name"`
-	SubscriptionType string `json:"subscription_type"`
+	AccountID      string `json:"account_id"`
+	Name           string `json:"name"`
+	SubscriptionID string `json:"subscription_id"`
 }
 
 // PatchZoneRequest represents a request to patch a zone
 type PatchZoneRequest struct {
-	PlanSubscriptionID string `json:"plan_subscription_id,omitempty"`
+	SubscriptionID string `json:"subscription_id,omitempty"`
 }

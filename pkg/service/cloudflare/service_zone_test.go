@@ -198,7 +198,7 @@ func TestPatchZone(t *testing.T) {
 		}
 
 		patchRequest := PatchZoneRequest{
-			PlanSubscriptionID: "e69a8445-b224-4555-9785-8de9238f7eaf",
+			SubscriptionID: "e69a8445-b224-4555-9785-8de9238f7eaf",
 		}
 
 		c.EXPECT().Post("/cloudflare/v1/zones/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
