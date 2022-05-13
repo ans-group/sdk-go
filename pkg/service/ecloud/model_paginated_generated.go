@@ -701,3 +701,17 @@ func NewPaginatedVIP(getFunc connection.PaginatedGetFunc, parameters connection.
 		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
 	}
 }
+
+// PaginatedIPAddress represents a paginated collection of IPAddress
+type PaginatedIPAddress struct {
+	*connection.PaginatedBase
+	Items []IPAddress
+}
+
+// NewPaginatedIPAddress returns a pointer to an initialized PaginatedIPAddress struct
+func NewPaginatedIPAddress(getFunc connection.PaginatedGetFunc, parameters connection.APIRequestParameters, pagination connection.APIResponseMetadataPagination, items []IPAddress) *PaginatedIPAddress {
+	return &PaginatedIPAddress{
+		Items:         items,
+		PaginatedBase: connection.NewPaginatedBase(parameters, pagination, getFunc),
+	}
+}

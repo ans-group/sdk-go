@@ -649,3 +649,15 @@ type GetVIPResponseBody struct {
 	connection.APIResponseBody
 	Data VIP `json:"data"`
 }
+
+// GetIPAddressSliceResponseBody represents an API response body containing []IPAddress data
+type GetIPAddressSliceResponseBody struct {
+	connection.APIResponseBody
+	Data []IPAddress `json:"data"`
+}
+
+// GetIPAddressResponseBody represents an API response body containing IPAddress data
+type GetIPAddressResponseBody struct {
+	connection.APIResponseBody
+	Data IPAddress `json:"data"`
+}

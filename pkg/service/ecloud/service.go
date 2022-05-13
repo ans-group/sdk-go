@@ -406,6 +406,14 @@ type ECloudService interface {
 	CreateVIP(req CreateVIPRequest) (TaskReference, error)
 	PatchVIP(vipID string, patch PatchVIPRequest) (TaskReference, error)
 	DeleteVIP(vipID string) (string, error)
+
+	//IP Addresses
+	GetIPAddresses(parameters connection.APIRequestParameters) ([]IPAddress, error)
+	GetIPAddressesPaginated(parameters connection.APIRequestParameters) (*PaginatedIPAddress, error)
+	GetIPAddress(ipID string) (IPAddress, error)
+	CreateIPAddress(req CreateIPAddressRequest) (TaskReference, error)
+	PatchIPAddress(ipID string, patch PatchIPAddressRequest) (TaskReference, error)
+	DeleteIPAddress(ipID string) (string, error)
 }
 
 // Service implements ECloudService for managing
