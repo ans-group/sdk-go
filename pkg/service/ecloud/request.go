@@ -571,3 +571,8 @@ type CreateIPAddressRequest struct {
 type PatchIPAddressRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// AssignIPAddressRequest represents a request to assign an IP Address to a NIC
+type AssignIPAddressRequest struct {
+	IPAddressID  string    `json:"ip_address_id"`
+}

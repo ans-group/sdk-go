@@ -117,3 +117,62 @@ func (s *Service) getNICTasksPaginatedResponseBody(nicID string, parameters conn
 		return nil
 	})
 }
+
+func (s *Service) AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (string, error) {
+	body, err := s.assignNICIPAddressResponseBody(nicID, req)
+
+	return body.Data.TaskID, err
+}
+
+func (s *Service) assignNICIPAddressResponseBody(nicID string, req AssignIPAddressRequest) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
+
+	if nicID == "" {
+		return body, fmt.Errorf("invalid nic id")
+	}
+
+	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/nics/%s/ip-addresses", nicID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NICNotFoundError{ID: nicID}
+		}
+
+		return nil
+	})
+}
+
+// UnassignNICIPAddress unassigns an IP Address from a resource
+func (s *Service) UnassignNICIPAddress(nicID string, ipID string) (string, error) {
+	body, err := s.unassignNICIPAddressResponseBody(nicID, ipID)
+
+	return body.Data.TaskID, err
+}
+
+func (s *Service) unassignNICIPAddressResponseBody(nicID string, ipID string) (*GetTaskReferenceResponseBody, error) {
+	body := &GetTaskReferenceResponseBody{}
+
+	if nicID == "" {
+		return body, fmt.Errorf("invalid nic id")
+	}
+
+	if ipID == "" {
+		return body, fmt.Errorf("invalid ip address id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/nics/%s/ip-addresses/%s", nicID, ipID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NICNotFoundError{ID: nicID}
+		}
+
+		return nil
+	})
+}
