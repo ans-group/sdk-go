@@ -559,3 +559,20 @@ type CreateVIPRequest struct {
 type PatchVIPRequest struct {
 	Name string `json:"name,omitempty"`
 }
+
+// CreateIPAddressRequest represents a request to create a network IP Address
+type CreateIPAddressRequest struct {
+	Name      string               `json:"name,omitempty"`
+	IPAddress connection.IPAddress `json:"ip_address,omitempty"`
+	NetworkID string               `json:"network_id"`
+}
+
+// PatchIPAddressRequest represents a request to patch a network IP Address
+type PatchIPAddressRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// AssignIPAddressRequest represents a request to assign an IP Address to a NIC
+type AssignIPAddressRequest struct {
+	IPAddressID  string    `json:"ip_address_id"`
+}

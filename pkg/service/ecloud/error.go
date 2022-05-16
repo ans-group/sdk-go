@@ -415,3 +415,12 @@ type VIPNotFoundError struct {
 func (e *VIPNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer VIP not found with ID [%s]", e.ID)
 }
+
+// IPAddressNotFoundError indicates a load balancer VIP was not found
+type IPAddressNotFoundError struct {
+	ID string
+}
+
+func (e *IPAddressNotFoundError) Error() string {
+	return fmt.Sprintf("IP Address not found with ID [%s]", e.ID)
+}

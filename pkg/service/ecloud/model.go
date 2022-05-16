@@ -1114,3 +1114,17 @@ type VIP struct {
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
+
+// IP Address represents an eCloud VPC Network IP Address
+// +genie:model_response
+// +genie:model_paginated
+type IPAddress struct {
+	ID             string               `json:"id"`
+	Name           string               `json:"name"`
+	IPAddress      connection.IPAddress `json:"ip_address"`
+	NetworkID      string               `json:"network_id"`
+	Type           string               `json:"config_id"`
+	Sync           ResourceSync         `json:"sync"`
+	CreatedAt      connection.DateTime  `json:"created_at"`
+	UpdatedAt      connection.DateTime  `json:"updated_at"`
+}
