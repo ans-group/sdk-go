@@ -21,6 +21,7 @@ type Account struct {
 // +genie:model_response
 // +genie:model_paginated
 type AccountMember struct {
+	AccountID    string `json:"account_id"`
 	EmailAddress string `json:"email_address"`
 }
 
@@ -54,13 +55,13 @@ type Subscription struct {
 // +genie:model_response
 // +genie:model_paginated
 type Zone struct {
-	ID                 string              `json:"id"`
-	AccountID          string              `json:"account_id"`
-	Name               string              `json:"name"`
-	PlanSubscriptionID string              `json:"plan_subscription_id"`
-	CloudflareZoneID   string              `json:"cloudflare_zone_id"`
-	CreatedAt          connection.DateTime `json:"created_at"`
-	UpdatedAt          connection.DateTime `json:"updated_at"`
+	ID               string              `json:"id"`
+	AccountID        string              `json:"account_id"`
+	Name             string              `json:"name"`
+	SubscriptionID   string              `json:"subscription_id"`
+	CloudflareZoneID string              `json:"cloudflare_zone_id"`
+	CreatedAt        connection.DateTime `json:"created_at"`
+	UpdatedAt        connection.DateTime `json:"updated_at"`
 }
 
 // TotalSpend represents total spend

@@ -17,6 +17,7 @@ type CreateAccountMemberRequest struct {
 
 // CreateOrchestrationRequest represents a request to create new orchestration
 type CreateOrchestrationRequest struct {
+	AccountMemberDeploymentID string `json:"account_member_deployment_id"`
 	ZoneName                  string `json:"zone_name"`
 	ZoneSubscriptionID        string `json:"zone_subscription_id"`
 	AccountID                 string `json:"account_id"`
