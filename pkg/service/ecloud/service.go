@@ -258,6 +258,8 @@ type ECloudService interface {
 	GetNIC(nicID string) (NIC, error)
 	GetNICTasks(nicID string, parameters connection.APIRequestParameters) ([]Task, error)
 	GetNICTasksPaginated(nicID string, parameters connection.APIRequestParameters) (*PaginatedTask, error)
+	GetNICIPAddresses(nicID string, parameters connection.APIRequestParameters) ([]IPAddress, error)
+	GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*PaginatedIPAddress, error)
 	AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (string, error)
 	UnassignNICIPAddress(nicID string, ipID string) (string, error)
 
