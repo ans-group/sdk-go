@@ -8,32 +8,17 @@ import (
 
 // GetNetworks retrieves a list of networks
 func (s *Service) GetNetworks(parameters connection.APIRequestParameters) ([]Network, error) {
-	var networks []Network
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworksPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, network := range response.(*PaginatedNetwork).Items {
-			networks = append(networks, network)
-		}
-	}
-
-	return networks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetNetworksPaginated, parameters)
 }
 
 // GetNetworksPaginated retrieves a paginated list of networks
-func (s *Service) GetNetworksPaginated(parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+func (s *Service) GetNetworksPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Network], error) {
 	body, err := s.getNetworksPaginatedResponseBody(parameters)
-
-	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworksPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetNetworksPaginated), err
 }
 
-func (s *Service) getNetworksPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
-	body := &GetNetworkSliceResponseBody{}
+func (s *Service) getNetworksPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Network], error) {
+	body := &connection.APIResponseBodyData[[]Network]{}
 
 	response, err := s.connection.Get("/ecloud/v2/networks", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetNetwork(networkID string) (Network, error) {
 	return body.Data, err
 }
 
-func (s *Service) getNetworkResponseBody(networkID string) (*GetNetworkResponseBody, error) {
-	body := &GetNetworkResponseBody{}
+func (s *Service) getNetworkResponseBody(networkID string) (*connection.APIResponseBodyData[Network], error) {
+	body := &connection.APIResponseBodyData[Network]{}
 
 	if networkID == "" {
 		return body, fmt.Errorf("invalid network id")
@@ -78,8 +63,8 @@ func (s *Service) CreateNetwork(req CreateNetworkRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createNetworkResponseBody(req CreateNetworkRequest) (*GetNetworkResponseBody, error) {
-	body := &GetNetworkResponseBody{}
+func (s *Service) createNetworkResponseBody(req CreateNetworkRequest) (*connection.APIResponseBodyData[Network], error) {
+	body := &connection.APIResponseBodyData[Network]{}
 
 	response, err := s.connection.Post("/ecloud/v2/networks", &req)
 	if err != nil {
@@ -147,32 +132,22 @@ func (s *Service) deleteNetworkResponseBody(networkID string) (*connection.APIRe
 
 // GetNetworkNICs retrieves a list of firewall rule nics
 func (s *Service) GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error) {
-	var nics []NIC
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 		return s.GetNetworkNICsPaginated(networkID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, nic := range response.(*PaginatedNIC).Items {
-			nics = append(nics, nic)
-		}
-	}
-
-	return nics, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNetworkNICsPaginated retrieves a paginated list of firewall rule nics
-func (s *Service) GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+func (s *Service) GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 	body, err := s.getNetworkNICsPaginatedResponseBody(networkID, parameters)
 
-	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 		return s.GetNetworkNICsPaginated(networkID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNetworkNICsPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
-	body := &GetNICSliceResponseBody{}
+func (s *Service) getNetworkNICsPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NIC], error) {
+	body := &connection.APIResponseBodyData[[]NIC]{}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/networks/%s/nics", networkID), parameters)
 	if err != nil {
@@ -184,32 +159,22 @@ func (s *Service) getNetworkNICsPaginatedResponseBody(networkID string, paramete
 
 // GetNetworkTasks retrieves a list of Network tasks
 func (s *Service) GetNetworkTasks(networkID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNetworkTasksPaginated(networkID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNetworkTasksPaginated retrieves a paginated list of Network tasks
-func (s *Service) GetNetworkTasksPaginated(networkID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetNetworkTasksPaginated(networkID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getNetworkTasksPaginatedResponseBody(networkID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNetworkTasksPaginated(networkID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNetworkTasksPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getNetworkTasksPaginatedResponseBody(networkID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if networkID == "" {
 		return body, fmt.Errorf("invalid network id")

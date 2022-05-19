@@ -8,32 +8,17 @@ import (
 
 // GetTemplates retrieves a list of templates
 func (s *Service) GetTemplates(parameters connection.APIRequestParameters) ([]Template, error) {
-	var templates []Template
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTemplatesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, template := range response.(*PaginatedTemplate).Items {
-			templates = append(templates, template)
-		}
-	}
-
-	return templates, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetTemplatesPaginated, parameters)
 }
 
 // GetTemplatesPaginated retrieves a paginated list of templates
-func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParameters) (*PaginatedTemplate, error) {
+func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Template], error) {
 	body, err := s.getTemplatesPaginatedResponseBody(parameters)
-
-	return NewPaginatedTemplate(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTemplatesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetTemplatesPaginated), err
 }
 
-func (s *Service) getTemplatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTemplateSliceResponseBody, error) {
-	body := &GetTemplateSliceResponseBody{}
+func (s *Service) getTemplatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Template], error) {
+	body := &connection.APIResponseBodyData[[]Template]{}
 
 	response, err := s.connection.Get("/safedns/v1/templates", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetTemplate(templateID int) (Template, error) {
 	return body.Data, err
 }
 
-func (s *Service) getTemplateResponseBody(templateID int) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
+func (s *Service) getTemplateResponseBody(templateID int) (*connection.APIResponseBodyData[Template], error) {
+	body := &connection.APIResponseBodyData[Template]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")
@@ -78,8 +63,8 @@ func (s *Service) CreateTemplate(req CreateTemplateRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createTemplateResponseBody(req CreateTemplateRequest) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
+func (s *Service) createTemplateResponseBody(req CreateTemplateRequest) (*connection.APIResponseBodyData[Template], error) {
+	body := &connection.APIResponseBodyData[Template]{}
 
 	response, err := s.connection.Post("/safedns/v1/templates", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchTemplate(templateID int, patch PatchTemplateRequest) (int
 	return body.Data.ID, err
 }
 
-func (s *Service) patchTemplateResponseBody(templateID int, patch PatchTemplateRequest) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
+func (s *Service) patchTemplateResponseBody(templateID int, patch PatchTemplateRequest) (*connection.APIResponseBodyData[Template], error) {
+	body := &connection.APIResponseBodyData[Template]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")
@@ -147,32 +132,22 @@ func (s *Service) deleteTemplateResponseBody(templateID int) (*connection.APIRes
 
 // GetTemplateRecords retrieves a list of records
 func (s *Service) GetTemplateRecords(templateID int, parameters connection.APIRequestParameters) ([]Record, error) {
-	var records []Record
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 		return s.GetTemplateRecordsPaginated(templateID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, record := range response.(*PaginatedRecord).Items {
-			records = append(records, record)
-		}
-	}
-
-	return records, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetTemplateRecordsPaginated retrieves a paginated list of templates
-func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*PaginatedRecord, error) {
+func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 	body, err := s.getTemplateRecordsPaginatedResponseBody(templateID, parameters)
 
-	return NewPaginatedRecord(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 		return s.GetTemplateRecordsPaginated(templateID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getTemplateRecordsPaginatedResponseBody(templateID int, parameters connection.APIRequestParameters) (*GetRecordSliceResponseBody, error) {
-	body := &GetRecordSliceResponseBody{}
+func (s *Service) getTemplateRecordsPaginatedResponseBody(templateID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Record], error) {
+	body := &connection.APIResponseBodyData[[]Record]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")
@@ -199,8 +174,8 @@ func (s *Service) GetTemplateRecord(templateID int, recordID int) (Record, error
 	return body.Data, err
 }
 
-func (s *Service) getTemplateRecordResponseBody(templateID int, recordID int) (*GetRecordResponseBody, error) {
-	body := &GetRecordResponseBody{}
+func (s *Service) getTemplateRecordResponseBody(templateID int, recordID int) (*connection.APIResponseBodyData[Record], error) {
+	body := &connection.APIResponseBodyData[Record]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")
@@ -230,8 +205,8 @@ func (s *Service) CreateTemplateRecord(templateID int, req CreateRecordRequest) 
 	return body.Data.ID, err
 }
 
-func (s *Service) createTemplateRecordResponseBody(templateID int, req CreateRecordRequest) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
+func (s *Service) createTemplateRecordResponseBody(templateID int, req CreateRecordRequest) (*connection.APIResponseBodyData[Template], error) {
+	body := &connection.APIResponseBodyData[Template]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")
@@ -258,8 +233,8 @@ func (s *Service) PatchTemplateRecord(templateID int, recordID int, patch PatchR
 	return body.Data.ID, err
 }
 
-func (s *Service) patchTemplateRecordResponseBody(templateID int, recordID int, patch PatchRecordRequest) (*GetTemplateResponseBody, error) {
-	body := &GetTemplateResponseBody{}
+func (s *Service) patchTemplateRecordResponseBody(templateID int, recordID int, patch PatchRecordRequest) (*connection.APIResponseBodyData[Template], error) {
+	body := &connection.APIResponseBodyData[Template]{}
 
 	if templateID < 1 {
 		return body, fmt.Errorf("invalid template id")

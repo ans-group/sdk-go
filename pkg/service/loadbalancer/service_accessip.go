@@ -13,8 +13,8 @@ func (s *Service) GetAccessIP(accessID int) (AccessIP, error) {
 	return body.Data, err
 }
 
-func (s *Service) getAccessIPResponseBody(accessID int) (*GetAccessIPResponseBody, error) {
-	body := &GetAccessIPResponseBody{}
+func (s *Service) getAccessIPResponseBody(accessID int) (*connection.APIResponseBodyData[AccessIP], error) {
+	body := &connection.APIResponseBodyData[AccessIP]{}
 
 	if accessID < 1 {
 		return body, fmt.Errorf("invalid access id")

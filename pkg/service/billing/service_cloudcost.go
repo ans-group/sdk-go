@@ -8,32 +8,17 @@ import (
 
 // GetCloudCosts retrieves a list of costs
 func (s *Service) GetCloudCosts(parameters connection.APIRequestParameters) ([]CloudCost, error) {
-	var costs []CloudCost
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCloudCostsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, cost := range response.(*PaginatedCloudCost).Items {
-			costs = append(costs, cost)
-		}
-	}
-
-	return costs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetCloudCostsPaginated, parameters)
 }
 
 // GetCloudCostsPaginated retrieves a paginated list of costs
-func (s *Service) GetCloudCostsPaginated(parameters connection.APIRequestParameters) (*PaginatedCloudCost, error) {
+func (s *Service) GetCloudCostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CloudCost], error) {
 	body, err := s.getCloudCostsPaginatedResponseBody(parameters)
-
-	return NewPaginatedCloudCost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCloudCostsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetCloudCostsPaginated), err
 }
 
-func (s *Service) getCloudCostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetCloudCostSliceResponseBody, error) {
-	body := &GetCloudCostSliceResponseBody{}
+func (s *Service) getCloudCostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]CloudCost], error) {
+	body := &connection.APIResponseBodyData[[]CloudCost]{}
 
 	response, err := s.connection.Get("/billing/v1/cloud-costs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetCloudCost(costID int) (CloudCost, error) {
 	return body.Data, err
 }
 
-func (s *Service) getCloudCostResponseBody(costID int) (*GetCloudCostResponseBody, error) {
-	body := &GetCloudCostResponseBody{}
+func (s *Service) getCloudCostResponseBody(costID int) (*connection.APIResponseBodyData[CloudCost], error) {
+	body := &connection.APIResponseBodyData[CloudCost]{}
 
 	if costID < 1 {
 		return body, fmt.Errorf("invalid cost id")

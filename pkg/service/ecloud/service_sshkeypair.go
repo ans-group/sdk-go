@@ -8,32 +8,17 @@ import (
 
 // GetSSHKeyPairs retrieves a list of keypairs
 func (s *Service) GetSSHKeyPairs(parameters connection.APIRequestParameters) ([]SSHKeyPair, error) {
-	var keypairs []SSHKeyPair
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSSHKeyPairsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, keypair := range response.(*PaginatedSSHKeyPair).Items {
-			keypairs = append(keypairs, keypair)
-		}
-	}
-
-	return keypairs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSSHKeyPairsPaginated, parameters)
 }
 
 // GetSSHKeyPairsPaginated retrieves a paginated list of keypairs
-func (s *Service) GetSSHKeyPairsPaginated(parameters connection.APIRequestParameters) (*PaginatedSSHKeyPair, error) {
+func (s *Service) GetSSHKeyPairsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SSHKeyPair], error) {
 	body, err := s.getSSHKeyPairsPaginatedResponseBody(parameters)
-
-	return NewPaginatedSSHKeyPair(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSSHKeyPairsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSSHKeyPairsPaginated), err
 }
 
-func (s *Service) getSSHKeyPairsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSSHKeyPairSliceResponseBody, error) {
-	body := &GetSSHKeyPairSliceResponseBody{}
+func (s *Service) getSSHKeyPairsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]SSHKeyPair], error) {
+	body := &connection.APIResponseBodyData[[]SSHKeyPair]{}
 
 	response, err := s.connection.Get("/ecloud/v2/ssh-key-pairs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetSSHKeyPair(keypairID string) (SSHKeyPair, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSSHKeyPairResponseBody(keypairID string) (*GetSSHKeyPairResponseBody, error) {
-	body := &GetSSHKeyPairResponseBody{}
+func (s *Service) getSSHKeyPairResponseBody(keypairID string) (*connection.APIResponseBodyData[SSHKeyPair], error) {
+	body := &connection.APIResponseBodyData[SSHKeyPair]{}
 
 	if keypairID == "" {
 		return body, fmt.Errorf("invalid SSH key pair id")
@@ -78,8 +63,8 @@ func (s *Service) CreateSSHKeyPair(req CreateSSHKeyPairRequest) (string, error) 
 	return body.Data.ID, err
 }
 
-func (s *Service) createSSHKeyPairResponseBody(req CreateSSHKeyPairRequest) (*GetSSHKeyPairResponseBody, error) {
-	body := &GetSSHKeyPairResponseBody{}
+func (s *Service) createSSHKeyPairResponseBody(req CreateSSHKeyPairRequest) (*connection.APIResponseBodyData[SSHKeyPair], error) {
+	body := &connection.APIResponseBodyData[SSHKeyPair]{}
 
 	response, err := s.connection.Post("/ecloud/v2/ssh-key-pairs", &req)
 	if err != nil {

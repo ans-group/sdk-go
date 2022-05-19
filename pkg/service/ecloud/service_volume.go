@@ -8,32 +8,17 @@ import (
 
 // GetVolumes retrieves a list of volumes
 func (s *Service) GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error) {
-	var volumes []Volume
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, volume := range response.(*PaginatedVolume).Items {
-			volumes = append(volumes, volume)
-		}
-	}
-
-	return volumes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVolumesPaginated, parameters)
 }
 
 // GetVolumesPaginated retrieves a paginated list of volumes
-func (s *Service) GetVolumesPaginated(parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+func (s *Service) GetVolumesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 	body, err := s.getVolumesPaginatedResponseBody(parameters)
-
-	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVolumesPaginated), err
 }
 
-func (s *Service) getVolumesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
-	body := &GetVolumeSliceResponseBody{}
+func (s *Service) getVolumesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Volume], error) {
+	body := &connection.APIResponseBodyData[[]Volume]{}
 
 	response, err := s.connection.Get("/ecloud/v2/volumes", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVolume(volumeID string) (Volume, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVolumeResponseBody(volumeID string) (*GetVolumeResponseBody, error) {
-	body := &GetVolumeResponseBody{}
+func (s *Service) getVolumeResponseBody(volumeID string) (*connection.APIResponseBodyData[Volume], error) {
+	body := &connection.APIResponseBodyData[Volume]{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVolume(req CreateVolumeRequest) (TaskReference, error) {
 	return body.Data, err
 }
 
-func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVolumeResponseBody(req CreateVolumeRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/volumes", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVolume(volumeID string, req PatchVolumeRequest) (TaskRefe
 	return body.Data, err
 }
 
-func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVolumeResponseBody(volumeID string, req PatchVolumeRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVolume(volumeID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVolumeResponseBody(volumeID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVolumeResponseBody(volumeID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -147,32 +132,22 @@ func (s *Service) deleteVolumeResponseBody(volumeID string) (*GetTaskReferenceRe
 
 // GetVolumeInstances retrieves a list of volume instances
 func (s *Service) GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error) {
-	var instances []Instance
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 		return s.GetVolumeInstancesPaginated(volumeID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, instance := range response.(*PaginatedInstance).Items {
-			instances = append(instances, instance)
-		}
-	}
-
-	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVolumeInstancesPaginated retrieves a paginated list of volume instances
-func (s *Service) GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error) {
+func (s *Service) GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 	body, err := s.getVolumeInstancesPaginatedResponseBody(volumeID, parameters)
 
-	return NewPaginatedInstance(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 		return s.GetVolumeInstancesPaginated(volumeID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVolumeInstancesPaginatedResponseBody(volumeID string, parameters connection.APIRequestParameters) (*GetInstanceSliceResponseBody, error) {
-	body := &GetInstanceSliceResponseBody{}
+func (s *Service) getVolumeInstancesPaginatedResponseBody(volumeID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Instance], error) {
+	body := &connection.APIResponseBodyData[[]Instance]{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")
@@ -194,32 +169,22 @@ func (s *Service) getVolumeInstancesPaginatedResponseBody(volumeID string, param
 
 // GetVolumeTasks retrieves a list of Volume tasks
 func (s *Service) GetVolumeTasks(volumeID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVolumeTasksPaginated(volumeID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVolumeTasksPaginated retrieves a paginated list of Volume tasks
-func (s *Service) GetVolumeTasksPaginated(volumeID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetVolumeTasksPaginated(volumeID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getVolumeTasksPaginatedResponseBody(volumeID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVolumeTasksPaginated(volumeID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVolumeTasksPaginatedResponseBody(volumeID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVolumeTasksPaginatedResponseBody(volumeID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if volumeID == "" {
 		return body, fmt.Errorf("invalid volume id")

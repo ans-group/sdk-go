@@ -8,32 +8,17 @@ import (
 
 // GetDiscountPlans retrieves a list of discount plans
 func (s *Service) GetDiscountPlans(parameters connection.APIRequestParameters) ([]DiscountPlan, error) {
-	var discs []DiscountPlan
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDiscountPlansPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, disc := range response.(*PaginatedDiscountPlan).Items {
-			discs = append(discs, disc)
-		}
-	}
-
-	return discs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetDiscountPlansPaginated, parameters)
 }
 
 // GetDiscountPlansPaginated retrieves a paginated list of discount plans
-func (s *Service) GetDiscountPlansPaginated(parameters connection.APIRequestParameters) (*PaginatedDiscountPlan, error) {
+func (s *Service) GetDiscountPlansPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[DiscountPlan], error) {
 	body, err := s.getDiscountPlansPaginatedResponseBody(parameters)
-
-	return NewPaginatedDiscountPlan(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDiscountPlansPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetDiscountPlansPaginated), err
 }
 
-func (s *Service) getDiscountPlansPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDiscountPlanSliceResponseBody, error) {
-	body := &GetDiscountPlanSliceResponseBody{}
+func (s *Service) getDiscountPlansPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]DiscountPlan], error) {
+	body := &connection.APIResponseBodyData[[]DiscountPlan]{}
 
 	response, err := s.connection.Get("/ecloud/v2/discount-plans", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetDiscountPlan(discID string) (DiscountPlan, error) {
 	return body.Data, err
 }
 
-func (s *Service) getDiscountPlanResponseBody(discID string) (*GetDiscountPlanResponseBody, error) {
-	body := &GetDiscountPlanResponseBody{}
+func (s *Service) getDiscountPlanResponseBody(discID string) (*connection.APIResponseBodyData[DiscountPlan], error) {
+	body := &connection.APIResponseBodyData[DiscountPlan]{}
 
 	if discID == "" {
 		return body, fmt.Errorf("invalid discount plan id")

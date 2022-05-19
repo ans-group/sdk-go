@@ -8,32 +8,17 @@ import (
 
 // GetHostGroups retrieves a list of host groups
 func (s *Service) GetHostGroups(parameters connection.APIRequestParameters) ([]HostGroup, error) {
-	var hostGroups []HostGroup
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostGroupsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, hostGroup := range response.(*PaginatedHostGroup).Items {
-			hostGroups = append(hostGroups, hostGroup)
-		}
-	}
-
-	return hostGroups, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetHostGroupsPaginated, parameters)
 }
 
 // GetHostGroupsPaginated retrieves a paginated list of host groups
-func (s *Service) GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostGroup, error) {
+func (s *Service) GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[HostGroup], error) {
 	body, err := s.getHostGroupsPaginatedResponseBody(parameters)
-
-	return NewPaginatedHostGroup(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostGroupsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetHostGroupsPaginated), err
 }
 
-func (s *Service) getHostGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostGroupSliceResponseBody, error) {
-	body := &GetHostGroupSliceResponseBody{}
+func (s *Service) getHostGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]HostGroup], error) {
+	body := &connection.APIResponseBodyData[[]HostGroup]{}
 
 	response, err := s.connection.Get("/ecloud/v2/host-groups", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetHostGroup(hostGroupID string) (HostGroup, error) {
 	return body.Data, err
 }
 
-func (s *Service) getHostGroupResponseBody(hostGroupID string) (*GetHostGroupResponseBody, error) {
-	body := &GetHostGroupResponseBody{}
+func (s *Service) getHostGroupResponseBody(hostGroupID string) (*connection.APIResponseBodyData[HostGroup], error) {
+	body := &connection.APIResponseBodyData[HostGroup]{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")
@@ -78,8 +63,8 @@ func (s *Service) CreateHostGroup(req CreateHostGroupRequest) (TaskReference, er
 	return body.Data, err
 }
 
-func (s *Service) createHostGroupResponseBody(req CreateHostGroupRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createHostGroupResponseBody(req CreateHostGroupRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/host-groups", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchHostGroup(hostGroupID string, req PatchHostGroupRequest) 
 	return body.Data, err
 }
 
-func (s *Service) patchHostGroupResponseBody(hostGroupID string, req PatchHostGroupRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchHostGroupResponseBody(hostGroupID string, req PatchHostGroupRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteHostGroup(hostGroupID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")
@@ -147,32 +132,22 @@ func (s *Service) deleteHostGroupResponseBody(hostGroupID string) (*GetTaskRefer
 
 // GetHostGroupTasks retrieves a list of HostGroup tasks
 func (s *Service) GetHostGroupTasks(hostGroupID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetHostGroupTasksPaginated(hostGroupID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetHostGroupTasksPaginated retrieves a paginated list of HostGroup tasks
-func (s *Service) GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetHostGroupTasksPaginated(hostGroupID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getHostGroupTasksPaginatedResponseBody(hostGroupID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetHostGroupTasksPaginated(hostGroupID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getHostGroupTasksPaginatedResponseBody(hostGroupID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getHostGroupTasksPaginatedResponseBody(hostGroupID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if hostGroupID == "" {
 		return body, fmt.Errorf("invalid host group id")

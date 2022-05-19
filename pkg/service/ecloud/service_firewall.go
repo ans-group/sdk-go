@@ -8,32 +8,17 @@ import (
 
 // GetFirewalls retrieves a list of firewalls
 func (s *Service) GetFirewalls(parameters connection.APIRequestParameters) ([]Firewall, error) {
-	var firewalls []Firewall
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, firewall := range response.(*PaginatedFirewall).Items {
-			firewalls = append(firewalls, firewall)
-		}
-	}
-
-	return firewalls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetFirewallsPaginated, parameters)
 }
 
 // GetFirewallsPaginated retrieves a paginated list of firewalls
-func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewall, error) {
+func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Firewall], error) {
 	body, err := s.getFirewallsPaginatedResponseBody(parameters)
-
-	return NewPaginatedFirewall(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetFirewallsPaginated), err
 }
 
-func (s *Service) getFirewallsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFirewallSliceResponseBody, error) {
-	body := &GetFirewallSliceResponseBody{}
+func (s *Service) getFirewallsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Firewall], error) {
+	body := &connection.APIResponseBodyData[[]Firewall]{}
 
 	response, err := s.connection.Get("/ecloud/v1/firewalls", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetFirewall(firewallID int) (Firewall, error) {
 	return body.Data, err
 }
 
-func (s *Service) getFirewallResponseBody(firewallID int) (*GetFirewallResponseBody, error) {
-	body := &GetFirewallResponseBody{}
+func (s *Service) getFirewallResponseBody(firewallID int) (*connection.APIResponseBodyData[Firewall], error) {
+	body := &connection.APIResponseBodyData[Firewall]{}
 
 	if firewallID < 1 {
 		return body, fmt.Errorf("invalid firewall id")
@@ -78,8 +63,8 @@ func (s *Service) GetFirewallConfig(firewallID int) (FirewallConfig, error) {
 	return body.Data, err
 }
 
-func (s *Service) getFirewallConfigResponseBody(firewallID int) (*GetFirewallConfigResponseBody, error) {
-	body := &GetFirewallConfigResponseBody{}
+func (s *Service) getFirewallConfigResponseBody(firewallID int) (*connection.APIResponseBodyData[FirewallConfig], error) {
+	body := &connection.APIResponseBodyData[FirewallConfig]{}
 
 	if firewallID < 1 {
 		return body, fmt.Errorf("invalid firewall id")

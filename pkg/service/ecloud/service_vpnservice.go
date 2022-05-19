@@ -8,32 +8,17 @@ import (
 
 // GetVPNServices retrieves a list of VPN services
 func (s *Service) GetVPNServices(parameters connection.APIRequestParameters) ([]VPNService, error) {
-	var services []VPNService
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNServicesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, service := range response.(*PaginatedVPNService).Items {
-			services = append(services, service)
-		}
-	}
-
-	return services, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVPNServicesPaginated, parameters)
 }
 
 // GetVPNServicesPaginated retrieves a paginated list of VPN services
-func (s *Service) GetVPNServicesPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNService, error) {
+func (s *Service) GetVPNServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNService], error) {
 	body, err := s.getVPNServicesPaginatedResponseBody(parameters)
-
-	return NewPaginatedVPNService(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNServicesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVPNServicesPaginated), err
 }
 
-func (s *Service) getVPNServicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVPNServiceSliceResponseBody, error) {
-	body := &GetVPNServiceSliceResponseBody{}
+func (s *Service) getVPNServicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPNService], error) {
+	body := &connection.APIResponseBodyData[[]VPNService]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vpn-services", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVPNService(serviceID string) (VPNService, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVPNServiceResponseBody(serviceID string) (*GetVPNServiceResponseBody, error) {
-	body := &GetVPNServiceResponseBody{}
+func (s *Service) getVPNServiceResponseBody(serviceID string) (*connection.APIResponseBodyData[VPNService], error) {
+	body := &connection.APIResponseBodyData[VPNService]{}
 
 	if serviceID == "" {
 		return body, fmt.Errorf("invalid vpn service id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVPNService(req CreateVPNServiceRequest) (TaskReference, 
 	return body.Data, err
 }
 
-func (s *Service) createVPNServiceResponseBody(req CreateVPNServiceRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVPNServiceResponseBody(req CreateVPNServiceRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/vpn-services", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVPNService(serviceID string, req PatchVPNServiceRequest) 
 	return body.Data, err
 }
 
-func (s *Service) patchVPNServiceResponseBody(serviceID string, req PatchVPNServiceRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVPNServiceResponseBody(serviceID string, req PatchVPNServiceRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if serviceID == "" {
 		return body, fmt.Errorf("invalid service id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVPNService(serviceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVPNServiceResponseBody(serviceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVPNServiceResponseBody(serviceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if serviceID == "" {
 		return body, fmt.Errorf("invalid service id")
@@ -147,32 +132,22 @@ func (s *Service) deleteVPNServiceResponseBody(serviceID string) (*GetTaskRefere
 
 // GetVPNServiceTasks retrieves a list of VPN service tasks
 func (s *Service) GetVPNServiceTasks(serviceID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNServiceTasksPaginated(serviceID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPNServiceTasksPaginated retrieves a paginated list of VPN service tasks
-func (s *Service) GetVPNServiceTasksPaginated(serviceID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetVPNServiceTasksPaginated(serviceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getVPNServiceTasksPaginatedResponseBody(serviceID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNServiceTasksPaginated(serviceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPNServiceTasksPaginatedResponseBody(serviceID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVPNServiceTasksPaginatedResponseBody(serviceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if serviceID == "" {
 		return body, fmt.Errorf("invalid vpn service id")

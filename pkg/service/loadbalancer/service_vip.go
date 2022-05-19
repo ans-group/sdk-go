@@ -8,32 +8,17 @@ import (
 
 // GetVIPs retrieves a list of VIPs
 func (s *Service) GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error) {
-	var vips []VIP
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVIPsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, vip := range response.(*PaginatedVIP).Items {
-			vips = append(vips, vip)
-		}
-	}
-
-	return vips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVIPsPaginated, parameters)
 }
 
 // GetVIPsPaginated retrieves a paginated list of VIPs
-func (s *Service) GetVIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedVIP, error) {
+func (s *Service) GetVIPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VIP], error) {
 	body, err := s.getVIPsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVIPsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVIPsPaginated), err
 }
 
-func (s *Service) getVIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVIPSliceResponseBody, error) {
-	body := &GetVIPSliceResponseBody{}
+func (s *Service) getVIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VIP], error) {
+	body := &connection.APIResponseBodyData[[]VIP]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/vips", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVIP(vipID int) (VIP, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVIPResponseBody(vipID int) (*GetVIPResponseBody, error) {
-	body := &GetVIPResponseBody{}
+func (s *Service) getVIPResponseBody(vipID int) (*connection.APIResponseBodyData[VIP], error) {
+	body := &connection.APIResponseBodyData[VIP]{}
 
 	if vipID < 1 {
 		return body, fmt.Errorf("invalid vip id")

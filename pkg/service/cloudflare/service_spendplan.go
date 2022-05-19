@@ -6,30 +6,17 @@ import (
 
 // GetSpendPlans retrieves a list of spend plans
 func (s *Service) GetSpendPlans(parameters connection.APIRequestParameters) ([]SpendPlan, error) {
-	var plans []SpendPlan
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSpendPlansPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		plans = append(plans, response.(*PaginatedSpendPlan).Items...)
-	}
-
-	return plans, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSpendPlansPaginated, parameters)
 }
 
 // GetSpendPlansPaginated retrieves a paginated list of spend plans
-func (s *Service) GetSpendPlansPaginated(parameters connection.APIRequestParameters) (*PaginatedSpendPlan, error) {
+func (s *Service) GetSpendPlansPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SpendPlan], error) {
 	body, err := s.getSpendPlansPaginatedResponseBody(parameters)
-
-	return NewPaginatedSpendPlan(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSpendPlansPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSpendPlansPaginated), err
 }
 
-func (s *Service) getSpendPlansPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSpendPlanSliceResponseBody, error) {
-	body := &GetSpendPlanSliceResponseBody{}
+func (s *Service) getSpendPlansPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]SpendPlan], error) {
+	body := &connection.APIResponseBodyData[[]SpendPlan]{}
 
 	response, err := s.connection.Get("/cloudflare/v1/spend-plans", parameters)
 	if err != nil {

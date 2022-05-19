@@ -8,32 +8,17 @@ import (
 
 // GetInvoices retrieves a list of invoices
 func (s *Service) GetInvoices(parameters connection.APIRequestParameters) ([]Invoice, error) {
-	var invoices []Invoice
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInvoicesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, invoice := range response.(*PaginatedInvoice).Items {
-			invoices = append(invoices, invoice)
-		}
-	}
-
-	return invoices, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetInvoicesPaginated, parameters)
 }
 
 // GetInvoicesPaginated retrieves a paginated list of invoices
-func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameters) (*PaginatedInvoice, error) {
+func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error) {
 	body, err := s.getInvoicesPaginatedResponseBody(parameters)
-
-	return NewPaginatedInvoice(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInvoicesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetInvoicesPaginated), err
 }
 
-func (s *Service) getInvoicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceSliceResponseBody, error) {
-	body := &GetInvoiceSliceResponseBody{}
+func (s *Service) getInvoicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Invoice], error) {
+	body := &connection.APIResponseBodyData[[]Invoice]{}
 
 	response, err := s.connection.Get("/billing/v1/invoices", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetInvoice(invoiceID int) (Invoice, error) {
 	return body.Data, err
 }
 
-func (s *Service) getInvoiceResponseBody(invoiceID int) (*GetInvoiceResponseBody, error) {
-	body := &GetInvoiceResponseBody{}
+func (s *Service) getInvoiceResponseBody(invoiceID int) (*connection.APIResponseBodyData[Invoice], error) {
+	body := &connection.APIResponseBodyData[Invoice]{}
 
 	if invoiceID < 1 {
 		return body, fmt.Errorf("invalid invoice id")

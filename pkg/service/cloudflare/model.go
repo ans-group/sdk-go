@@ -1,13 +1,8 @@
-//go:generate go run ../../gen/model_response/main.go -package cloudflare -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package cloudflare -source model.go -destination model_paginated_generated.go
-
 package cloudflare
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
 // Account represents a Cloudflare account
-// +genie:model_response
-// +genie:model_paginated
 type Account struct {
 	ID                  string              `json:"id"`
 	Status              string              `json:"status"`
@@ -18,16 +13,12 @@ type Account struct {
 }
 
 // AccountMember represents a Cloudflare account member
-// +genie:model_response
-// +genie:model_paginated
 type AccountMember struct {
 	AccountID    string `json:"account_id"`
 	EmailAddress string `json:"email_address"`
 }
 
 // SpendPlan represents a Cloudflare spend plan
-// +genie:model_response
-// +genie:model_paginated
 type SpendPlan struct {
 	ID        string              `json:"id"`
 	Amount    float32             `json:"amount"`
@@ -38,8 +29,6 @@ type SpendPlan struct {
 }
 
 // Subscription represents a Cloudflare subscription
-// +genie:model_response
-// +genie:model_paginated
 type Subscription struct {
 	ID                   string              `json:"id"`
 	Name                 string              `json:"name"`
@@ -52,8 +41,6 @@ type Subscription struct {
 }
 
 // Zone represents a Cloudflare zone
-// +genie:model_response
-// +genie:model_paginated
 type Zone struct {
 	ID               string              `json:"id"`
 	AccountID        string              `json:"account_id"`
@@ -65,7 +52,6 @@ type Zone struct {
 }
 
 // TotalSpend represents total spend
-// +genie:model_response
 type TotalSpend struct {
 	SpendPlanAmount float32 `json:"spend_plan_amount"`
 	TotalSpend      float32 `json:"total_spend"`

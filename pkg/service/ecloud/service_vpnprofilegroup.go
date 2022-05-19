@@ -8,32 +8,17 @@ import (
 
 // GetVPNProfileGroups retrieves a list of VPN profile groups
 func (s *Service) GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error) {
-	var profileGroups []VPNProfileGroup
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNProfileGroupsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, group := range response.(*PaginatedVPNProfileGroup).Items {
-			profileGroups = append(profileGroups, group)
-		}
-	}
-
-	return profileGroups, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVPNProfileGroupsPaginated, parameters)
 }
 
 // GetVPNProfileGroupsPaginated retrieves a paginated list of VPN profile groups
-func (s *Service) GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNProfileGroup, error) {
+func (s *Service) GetVPNProfileGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNProfileGroup], error) {
 	body, err := s.getVPNProfileGroupsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVPNProfileGroup(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNProfileGroupsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVPNProfileGroupsPaginated), err
 }
 
-func (s *Service) getVPNProfileGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVPNProfileGroupSliceResponseBody, error) {
-	body := &GetVPNProfileGroupSliceResponseBody{}
+func (s *Service) getVPNProfileGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPNProfileGroup], error) {
+	body := &connection.APIResponseBodyData[[]VPNProfileGroup]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vpn-profile-groups", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVPNProfileGroup(profileGroupID string) (VPNProfileGroup, er
 	return body.Data, err
 }
 
-func (s *Service) getVPNProfileGroupResponseBody(profileGroupID string) (*GetVPNProfileGroupResponseBody, error) {
-	body := &GetVPNProfileGroupResponseBody{}
+func (s *Service) getVPNProfileGroupResponseBody(profileGroupID string) (*connection.APIResponseBodyData[VPNProfileGroup], error) {
+	body := &connection.APIResponseBodyData[VPNProfileGroup]{}
 
 	if profileGroupID == "" {
 		return body, fmt.Errorf("invalid vpn profile group id")

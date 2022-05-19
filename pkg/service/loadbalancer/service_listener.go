@@ -8,32 +8,17 @@ import (
 
 // GetListeners retrieves a list of listeners
 func (s *Service) GetListeners(parameters connection.APIRequestParameters) ([]Listener, error) {
-	var listeners []Listener
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetListenersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, listener := range response.(*PaginatedListener).Items {
-			listeners = append(listeners, listener)
-		}
-	}
-
-	return listeners, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetListenersPaginated, parameters)
 }
 
 // GetListenersPaginated retrieves a paginated list of listeners
-func (s *Service) GetListenersPaginated(parameters connection.APIRequestParameters) (*PaginatedListener, error) {
+func (s *Service) GetListenersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Listener], error) {
 	body, err := s.getListenersPaginatedResponseBody(parameters)
-
-	return NewPaginatedListener(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetListenersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetListenersPaginated), err
 }
 
-func (s *Service) getListenersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetListenerSliceResponseBody, error) {
-	body := &GetListenerSliceResponseBody{}
+func (s *Service) getListenersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Listener], error) {
+	body := &connection.APIResponseBodyData[[]Listener]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/listeners", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetListener(listenerID int) (Listener, error) {
 	return body.Data, err
 }
 
-func (s *Service) getListenerResponseBody(listenerID int) (*GetListenerResponseBody, error) {
-	body := &GetListenerResponseBody{}
+func (s *Service) getListenerResponseBody(listenerID int) (*connection.APIResponseBodyData[Listener], error) {
+	body := &connection.APIResponseBodyData[Listener]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -78,8 +63,8 @@ func (s *Service) CreateListener(req CreateListenerRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createListenerResponseBody(req CreateListenerRequest) (*GetListenerResponseBody, error) {
-	body := &GetListenerResponseBody{}
+func (s *Service) createListenerResponseBody(req CreateListenerRequest) (*connection.APIResponseBodyData[Listener], error) {
+	body := &connection.APIResponseBodyData[Listener]{}
 
 	response, err := s.connection.Post("/loadbalancers/v2/listeners", &req)
 	if err != nil {

@@ -8,32 +8,17 @@ import (
 
 // GetTargetGroups retrieves a list of target groups
 func (s *Service) GetTargetGroups(parameters connection.APIRequestParameters) ([]TargetGroup, error) {
-	var groups []TargetGroup
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTargetGroupsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, group := range response.(*PaginatedTargetGroup).Items {
-			groups = append(groups, group)
-		}
-	}
-
-	return groups, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetTargetGroupsPaginated, parameters)
 }
 
 // GetTargetGroupsPaginated retrieves a paginated list of target groups
-func (s *Service) GetTargetGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedTargetGroup, error) {
+func (s *Service) GetTargetGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[TargetGroup], error) {
 	body, err := s.getTargetGroupsPaginatedResponseBody(parameters)
-
-	return NewPaginatedTargetGroup(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTargetGroupsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetTargetGroupsPaginated), err
 }
 
-func (s *Service) getTargetGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTargetGroupSliceResponseBody, error) {
-	body := &GetTargetGroupSliceResponseBody{}
+func (s *Service) getTargetGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]TargetGroup], error) {
+	body := &connection.APIResponseBodyData[[]TargetGroup]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/target-groups", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetTargetGroup(groupID int) (TargetGroup, error) {
 	return body.Data, err
 }
 
-func (s *Service) getTargetGroupResponseBody(groupID int) (*GetTargetGroupResponseBody, error) {
-	body := &GetTargetGroupResponseBody{}
+func (s *Service) getTargetGroupResponseBody(groupID int) (*connection.APIResponseBodyData[TargetGroup], error) {
+	body := &connection.APIResponseBodyData[TargetGroup]{}
 
 	if groupID < 1 {
 		return body, fmt.Errorf("invalid target group id")
@@ -78,8 +63,8 @@ func (s *Service) CreateTargetGroup(req CreateTargetGroupRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*GetTargetGroupResponseBody, error) {
-	body := &GetTargetGroupResponseBody{}
+func (s *Service) createTargetGroupResponseBody(req CreateTargetGroupRequest) (*connection.APIResponseBodyData[TargetGroup], error) {
+	body := &connection.APIResponseBodyData[TargetGroup]{}
 
 	response, err := s.connection.Post("/loadbalancers/v2/target-groups", &req)
 	if err != nil {

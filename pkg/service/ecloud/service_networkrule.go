@@ -8,32 +8,17 @@ import (
 
 // GetNetworkRules retrieves a list of network rules
 func (s *Service) GetNetworkRules(parameters connection.APIRequestParameters) ([]NetworkRule, error) {
-	var rules []NetworkRule
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkRulesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedNetworkRule).Items {
-			rules = append(rules, rule)
-		}
-	}
-
-	return rules, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetNetworkRulesPaginated, parameters)
 }
 
 // GetNetworkRulesPaginated retrieves a paginated list of network rules
-func (s *Service) GetNetworkRulesPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkRule, error) {
+func (s *Service) GetNetworkRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
 	body, err := s.getNetworkRulesPaginatedResponseBody(parameters)
-
-	return NewPaginatedNetworkRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkRulesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetNetworkRulesPaginated), err
 }
 
-func (s *Service) getNetworkRulesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetNetworkRuleSliceResponseBody, error) {
-	body := &GetNetworkRuleSliceResponseBody{}
+func (s *Service) getNetworkRulesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NetworkRule], error) {
+	body := &connection.APIResponseBodyData[[]NetworkRule]{}
 
 	response, err := s.connection.Get("/ecloud/v2/network-rules", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetNetworkRule(ruleID string) (NetworkRule, error) {
 	return body.Data, err
 }
 
-func (s *Service) getNetworkRuleResponseBody(ruleID string) (*GetNetworkRuleResponseBody, error) {
-	body := &GetNetworkRuleResponseBody{}
+func (s *Service) getNetworkRuleResponseBody(ruleID string) (*connection.APIResponseBodyData[NetworkRule], error) {
+	body := &connection.APIResponseBodyData[NetworkRule]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
@@ -78,8 +63,8 @@ func (s *Service) CreateNetworkRule(req CreateNetworkRuleRequest) (TaskReference
 	return body.Data, err
 }
 
-func (s *Service) createNetworkRuleResponseBody(req CreateNetworkRuleRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createNetworkRuleResponseBody(req CreateNetworkRuleRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/network-rules", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchNetworkRule(ruleID string, req PatchNetworkRuleRequest) (
 	return body.Data, err
 }
 
-func (s *Service) patchNetworkRuleResponseBody(ruleID string, req PatchNetworkRuleRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchNetworkRuleResponseBody(ruleID string, req PatchNetworkRuleRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteNetworkRule(ruleID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteNetworkRuleResponseBody(ruleID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteNetworkRuleResponseBody(ruleID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
@@ -147,32 +132,22 @@ func (s *Service) deleteNetworkRuleResponseBody(ruleID string) (*GetTaskReferenc
 
 // GetNetworkRuleNetworkRulePorts retrieves a list of network rule ports
 func (s *Service) GetNetworkRuleNetworkRulePorts(networkRuleID string, parameters connection.APIRequestParameters) ([]NetworkRulePort, error) {
-	var ports []NetworkRulePort
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
 		return s.GetNetworkRuleNetworkRulePortsPaginated(networkRuleID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, port := range response.(*PaginatedNetworkRulePort).Items {
-			ports = append(ports, port)
-		}
-	}
-
-	return ports, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNetworkRuleNetworkRulePortsPaginated retrieves a paginated list of network rule ports
-func (s *Service) GetNetworkRuleNetworkRulePortsPaginated(networkRuleID string, parameters connection.APIRequestParameters) (*PaginatedNetworkRulePort, error) {
+func (s *Service) GetNetworkRuleNetworkRulePortsPaginated(networkRuleID string, parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
 	body, err := s.getNetworkRuleNetworkRulePortsPaginatedResponseBody(networkRuleID, parameters)
 
-	return NewPaginatedNetworkRulePort(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
 		return s.GetNetworkRuleNetworkRulePortsPaginated(networkRuleID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNetworkRuleNetworkRulePortsPaginatedResponseBody(networkRuleID string, parameters connection.APIRequestParameters) (*GetNetworkRulePortSliceResponseBody, error) {
-	body := &GetNetworkRulePortSliceResponseBody{}
+func (s *Service) getNetworkRuleNetworkRulePortsPaginatedResponseBody(networkRuleID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NetworkRulePort], error) {
+	body := &connection.APIResponseBodyData[[]NetworkRulePort]{}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/network-rules/%s/ports", networkRuleID), parameters)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 type PSSService interface {
 	CreateRequest(req CreateRequestRequest) (int, error)
 	GetRequests(parameters connection.APIRequestParameters) ([]Request, error)
-	GetRequestsPaginated(parameters connection.APIRequestParameters) (*PaginatedRequest, error)
+	GetRequestsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Request], error)
 	GetRequest(requestID int) (Request, error)
 	PatchRequest(requestID int, req PatchRequestRequest) error
 
@@ -19,9 +19,9 @@ type PSSService interface {
 
 	CreateRequestReply(requestID int, req CreateReplyRequest) (string, error)
 	GetRequestReplies(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error)
-	GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
+	GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error)
 	GetRequestConversation(requestID int, parameters connection.APIRequestParameters) ([]Reply, error)
-	GetRequestConversationPaginated(requestID int, parameters connection.APIRequestParameters) (*PaginatedReply, error)
+	GetRequestConversationPaginated(requestID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error)
 
 	GetReply(replyID string) (Reply, error)
 

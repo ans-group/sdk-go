@@ -9,33 +9,18 @@ import (
 // GetACLs retrieves a list of ACLs
 // Currently, a target_group_id or listener_id filter must be provided for this to return data
 func (s *Service) GetACLs(parameters connection.APIRequestParameters) ([]ACL, error) {
-	var acls []ACL
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetACLsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, acl := range response.(*PaginatedACL).Items {
-			acls = append(acls, acl)
-		}
-	}
-
-	return acls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetACLsPaginated, parameters)
 }
 
 // GetACLsPaginated retrieves a paginated list of ACLs
 // Currently, a target_group_id or listener_id filter must be provided for this to return data
-func (s *Service) GetACLsPaginated(parameters connection.APIRequestParameters) (*PaginatedACL, error) {
+func (s *Service) GetACLsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
 	body, err := s.getACLsPaginatedResponseBody(parameters)
-
-	return NewPaginatedACL(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetACLsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetACLsPaginated), err
 }
 
-func (s *Service) getACLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetACLSliceResponseBody, error) {
-	body := &GetACLSliceResponseBody{}
+func (s *Service) getACLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ACL], error) {
+	body := &connection.APIResponseBodyData[[]ACL]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/acls", parameters)
 	if err != nil {
@@ -52,8 +37,8 @@ func (s *Service) GetACL(aclID int) (ACL, error) {
 	return body.Data, err
 }
 
-func (s *Service) getACLResponseBody(aclID int) (*GetACLResponseBody, error) {
-	body := &GetACLResponseBody{}
+func (s *Service) getACLResponseBody(aclID int) (*connection.APIResponseBodyData[ACL], error) {
+	body := &connection.APIResponseBodyData[ACL]{}
 
 	if aclID < 1 {
 		return body, fmt.Errorf("invalid acl id")
@@ -80,8 +65,8 @@ func (s *Service) CreateACL(req CreateACLRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createACLResponseBody(req CreateACLRequest) (*GetACLResponseBody, error) {
-	body := &GetACLResponseBody{}
+func (s *Service) createACLResponseBody(req CreateACLRequest) (*connection.APIResponseBodyData[ACL], error) {
+	body := &connection.APIResponseBodyData[ACL]{}
 
 	response, err := s.connection.Post("/loadbalancers/v2/acls", &req)
 	if err != nil {

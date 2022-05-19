@@ -8,32 +8,17 @@ import (
 
 // GetVIPs retrieves a list of vips
 func (s *Service) GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error) {
-	var vips []VIP
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVIPsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, vip := range response.(*PaginatedVIP).Items {
-			vips = append(vips, vip)
-		}
-	}
-
-	return vips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVIPsPaginated, parameters)
 }
 
 // GetVIPsPaginated retrieves a paginated list of vips
-func (s *Service) GetVIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedVIP, error) {
+func (s *Service) GetVIPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VIP], error) {
 	body, err := s.getVIPsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVIPsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVIPsPaginated), err
 }
 
-func (s *Service) getVIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVIPSliceResponseBody, error) {
-	body := &GetVIPSliceResponseBody{}
+func (s *Service) getVIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VIP], error) {
+	body := &connection.APIResponseBodyData[[]VIP]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vips", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVIP(vipID string) (VIP, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVIPResponseBody(vipID string) (*GetVIPResponseBody, error) {
-	body := &GetVIPResponseBody{}
+func (s *Service) getVIPResponseBody(vipID string) (*connection.APIResponseBodyData[VIP], error) {
+	body := &connection.APIResponseBodyData[VIP]{}
 
 	if vipID == "" {
 		return body, fmt.Errorf("invalid vip id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVIP(req CreateVIPRequest) (TaskReference, error) {
 	return body.Data, err
 }
 
-func (s *Service) createVIPResponseBody(req CreateVIPRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVIPResponseBody(req CreateVIPRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/vips", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVIP(vipID string, req PatchVIPRequest) (TaskReference, er
 	return body.Data, err
 }
 
-func (s *Service) patchVIPResponseBody(vipID string, req PatchVIPRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVIPResponseBody(vipID string, req PatchVIPRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if vipID == "" {
 		return body, fmt.Errorf("invalid vip id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVIP(vipID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVIPResponseBody(vipID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVIPResponseBody(vipID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if vipID == "" {
 		return body, fmt.Errorf("invalid vip id")

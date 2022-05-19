@@ -8,32 +8,17 @@ import (
 
 // GetVPNSessions retrieves a list of VPN sessions
 func (s *Service) GetVPNSessions(parameters connection.APIRequestParameters) ([]VPNSession, error) {
-	var sessions []VPNSession
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, session := range response.(*PaginatedVPNSession).Items {
-			sessions = append(sessions, session)
-		}
-	}
-
-	return sessions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVPNSessionsPaginated, parameters)
 }
 
 // GetVPNSessionsPaginated retrieves a paginated list of VPN sessions
-func (s *Service) GetVPNSessionsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNSession, error) {
+func (s *Service) GetVPNSessionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNSession], error) {
 	body, err := s.getVPNSessionsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVPNSession(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNSessionsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVPNSessionsPaginated), err
 }
 
-func (s *Service) getVPNSessionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVPNSessionSliceResponseBody, error) {
-	body := &GetVPNSessionSliceResponseBody{}
+func (s *Service) getVPNSessionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPNSession], error) {
+	body := &connection.APIResponseBodyData[[]VPNSession]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vpn-sessions", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVPNSession(sessionID string) (VPNSession, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVPNSessionResponseBody(sessionID string) (*GetVPNSessionResponseBody, error) {
-	body := &GetVPNSessionResponseBody{}
+func (s *Service) getVPNSessionResponseBody(sessionID string) (*connection.APIResponseBodyData[VPNSession], error) {
+	body := &connection.APIResponseBodyData[VPNSession]{}
 
 	if sessionID == "" {
 		return body, fmt.Errorf("invalid vpn session id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVPNSession(req CreateVPNSessionRequest) (TaskReference, 
 	return body.Data, err
 }
 
-func (s *Service) createVPNSessionResponseBody(req CreateVPNSessionRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVPNSessionResponseBody(req CreateVPNSessionRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/vpn-sessions", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVPNSession(sessionID string, req PatchVPNSessionRequest) 
 	return body.Data, err
 }
 
-func (s *Service) patchVPNSessionResponseBody(sessionID string, req PatchVPNSessionRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVPNSessionResponseBody(sessionID string, req PatchVPNSessionRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if sessionID == "" {
 		return body, fmt.Errorf("invalid session id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVPNSession(sessionID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVPNSessionResponseBody(sessionID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVPNSessionResponseBody(sessionID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if sessionID == "" {
 		return body, fmt.Errorf("invalid session id")
@@ -147,32 +132,22 @@ func (s *Service) deleteVPNSessionResponseBody(sessionID string) (*GetTaskRefere
 
 // GetVPNSessionTasks retrieves a list of VPN session tasks
 func (s *Service) GetVPNSessionTasks(sessionID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNSessionTasksPaginated(sessionID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPNSessionTasksPaginated retrieves a paginated list of VPN session tasks
-func (s *Service) GetVPNSessionTasksPaginated(sessionID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetVPNSessionTasksPaginated(sessionID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getVPNSessionTasksPaginatedResponseBody(sessionID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNSessionTasksPaginated(sessionID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPNSessionTasksPaginatedResponseBody(sessionID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVPNSessionTasksPaginatedResponseBody(sessionID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if sessionID == "" {
 		return body, fmt.Errorf("invalid vpn session id")
@@ -199,8 +174,8 @@ func (s *Service) GetVPNSessionPreSharedKey(sessionID string) (VPNSessionPreShar
 	return body.Data, err
 }
 
-func (s *Service) getVPNSessionPreSharedKeyResponseBody(sessionID string) (*GetVPNSessionPreSharedKeyResponseBody, error) {
-	body := &GetVPNSessionPreSharedKeyResponseBody{}
+func (s *Service) getVPNSessionPreSharedKeyResponseBody(sessionID string) (*connection.APIResponseBodyData[VPNSessionPreSharedKey], error) {
+	body := &connection.APIResponseBodyData[VPNSessionPreSharedKey]{}
 
 	if sessionID == "" {
 		return body, fmt.Errorf("invalid vpn session id")

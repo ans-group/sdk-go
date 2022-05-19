@@ -8,7 +8,7 @@ import (
 type CloudflareService interface {
 	// Account
 	GetAccounts(parameters connection.APIRequestParameters) ([]Account, error)
-	GetAccountsPaginated(parameters connection.APIRequestParameters) (*PaginatedAccount, error)
+	GetAccountsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Account], error)
 	GetAccount(accountID string) (Account, error)
 	CreateAccount(req CreateAccountRequest) (string, error)
 	PatchAccount(accountID string, req PatchAccountRequest) error
@@ -19,15 +19,15 @@ type CloudflareService interface {
 
 	// Spend plan
 	GetSpendPlans(parameters connection.APIRequestParameters) ([]SpendPlan, error)
-	GetSpendPlansPaginated(parameters connection.APIRequestParameters) (*PaginatedSpendPlan, error)
+	GetSpendPlansPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SpendPlan], error)
 
 	// Subscription
 	GetSubscriptions(parameters connection.APIRequestParameters) ([]Subscription, error)
-	GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*PaginatedSubscription, error)
+	GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Subscription], error)
 
 	// Zone
 	GetZones(parameters connection.APIRequestParameters) ([]Zone, error)
-	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error)
+	GetZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Zone], error)
 	GetZone(zoneID string) (Zone, error)
 	CreateZone(req CreateZoneRequest) (string, error)
 	PatchZone(zoneID string, req PatchZoneRequest) error

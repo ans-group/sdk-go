@@ -8,30 +8,17 @@ import (
 
 // GetAccounts retrieves a list of accounts
 func (s *Service) GetAccounts(parameters connection.APIRequestParameters) ([]Account, error) {
-	var accounts []Account
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAccountsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		accounts = append(accounts, response.(*PaginatedAccount).Items...)
-	}
-
-	return accounts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetAccountsPaginated, parameters)
 }
 
 // GetAccountsPaginated retrieves a paginated list of accounts
-func (s *Service) GetAccountsPaginated(parameters connection.APIRequestParameters) (*PaginatedAccount, error) {
+func (s *Service) GetAccountsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Account], error) {
 	body, err := s.getAccountsPaginatedResponseBody(parameters)
-
-	return NewPaginatedAccount(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAccountsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetAccountsPaginated), err
 }
 
-func (s *Service) getAccountsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetAccountSliceResponseBody, error) {
-	body := &GetAccountSliceResponseBody{}
+func (s *Service) getAccountsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Account], error) {
+	body := &connection.APIResponseBodyData[[]Account]{}
 
 	response, err := s.connection.Get("/cloudflare/v1/accounts", parameters)
 	if err != nil {
@@ -48,8 +35,8 @@ func (s *Service) GetAccount(accountID string) (Account, error) {
 	return body.Data, err
 }
 
-func (s *Service) getAccountResponseBody(accountID string) (*GetAccountResponseBody, error) {
-	body := &GetAccountResponseBody{}
+func (s *Service) getAccountResponseBody(accountID string) (*connection.APIResponseBodyData[Account], error) {
+	body := &connection.APIResponseBodyData[Account]{}
 
 	if accountID == "" {
 		return body, fmt.Errorf("invalid account id")
@@ -76,8 +63,8 @@ func (s *Service) CreateAccount(req CreateAccountRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*GetAccountResponseBody, error) {
-	body := &GetAccountResponseBody{}
+func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*connection.APIResponseBodyData[Account], error) {
+	body := &connection.APIResponseBodyData[Account]{}
 
 	response, err := s.connection.Post("/cloudflare/v1/accounts", &req)
 	if err != nil {

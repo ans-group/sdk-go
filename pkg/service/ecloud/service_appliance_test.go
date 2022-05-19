@@ -230,7 +230,7 @@ func TestGetApplianceParameters(t *testing.T) {
 		assert.Equal(t, "testkey2", parameters[1].Key)
 	})
 
-	t.Run("GetAppliancesPaginatedResponseBodyError_ReturnsError", func(t *testing.T) {
+	t.Run("connection.APIResponseBodyData[AppliancesPaginated]Error_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 

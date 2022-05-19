@@ -8,32 +8,17 @@ import (
 
 // GetVolumeGroups retrieves a list of volume groups
 func (s *Service) GetVolumeGroups(parameters connection.APIRequestParameters) ([]VolumeGroup, error) {
-	var volGroups []VolumeGroup
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumeGroupsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, volumeGroup := range response.(*PaginatedVolumeGroup).Items {
-			volGroups = append(volGroups, volumeGroup)
-		}
-	}
-
-	return volGroups, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVolumeGroupsPaginated, parameters)
 }
 
 // GetVolumeGroupsPaginated retrieves a paginated list of volume groups
-func (s *Service) GetVolumeGroupsPaginated(parameters connection.APIRequestParameters) (*PaginatedVolumeGroup, error) {
+func (s *Service) GetVolumeGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VolumeGroup], error) {
 	body, err := s.getVolumeGroupsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVolumeGroup(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVolumeGroupsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVolumeGroupsPaginated), err
 }
 
-func (s *Service) getVolumeGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVolumeGroupSliceResponseBody, error) {
-	body := &GetVolumeGroupSliceResponseBody{}
+func (s *Service) getVolumeGroupsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VolumeGroup], error) {
+	body := &connection.APIResponseBodyData[[]VolumeGroup]{}
 
 	response, err := s.connection.Get("/ecloud/v2/volume-groups", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVolumeGroup(volumeGroupID string) (VolumeGroup, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVolumeGroupResponseBody(volumeGroupID string) (*GetVolumeGroupResponseBody, error) {
-	body := &GetVolumeGroupResponseBody{}
+func (s *Service) getVolumeGroupResponseBody(volumeGroupID string) (*connection.APIResponseBodyData[VolumeGroup], error) {
+	body := &connection.APIResponseBodyData[VolumeGroup]{}
 
 	if volumeGroupID == "" {
 		return body, fmt.Errorf("invalid volume group id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVolumeGroup(req CreateVolumeGroupRequest) (TaskReference
 	return body.Data, err
 }
 
-func (s *Service) createVolumeGroupResponseBody(req CreateVolumeGroupRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVolumeGroupResponseBody(req CreateVolumeGroupRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/volume-groups", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVolumeGroup(volumeGroupID string, req PatchVolumeGroupReq
 	return body.Data, err
 }
 
-func (s *Service) patchVolumeGroupResponseBody(volumeGroupID string, req PatchVolumeGroupRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVolumeGroupResponseBody(volumeGroupID string, req PatchVolumeGroupRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if volumeGroupID == "" {
 		return body, fmt.Errorf("invalid volume group id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVolumeGroup(volumeGroupID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVolumeGroupResponseBody(volumeGroupID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVolumeGroupResponseBody(volumeGroupID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if volumeGroupID == "" {
 		return body, fmt.Errorf("invalid volume group id")
@@ -147,32 +132,22 @@ func (s *Service) deleteVolumeGroupResponseBody(volumeGroupID string) (*GetTaskR
 
 // GetVolumeGroupVolumes retrieves a list of VolumeGroup volumes
 func (s *Service) GetVolumeGroupVolumes(volumeGroupID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	var volumes []Volume
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, volume := range response.(*PaginatedVolume).Items {
-			volumes = append(volumes, volume)
-		}
-	}
-
-	return volumes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVolumeGroupVolumesPaginated retrieves a paginated list of VolumeGroup volumes
-func (s *Service) GetVolumeGroupVolumesPaginated(volumeGroupID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+func (s *Service) GetVolumeGroupVolumesPaginated(volumeGroupID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 	body, err := s.getVolumeGroupVolumesPaginatedResponseBody(volumeGroupID, parameters)
 
-	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVolumeGroupVolumesPaginatedResponseBody(volumeGroupID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
-	body := &GetVolumeSliceResponseBody{}
+func (s *Service) getVolumeGroupVolumesPaginatedResponseBody(volumeGroupID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Volume], error) {
+	body := &connection.APIResponseBodyData[[]Volume]{}
 
 	if volumeGroupID == "" {
 		return body, fmt.Errorf("invalid volume group id")

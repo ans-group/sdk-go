@@ -8,32 +8,17 @@ import (
 
 // GetContacts retrieves a list of contacts
 func (s *Service) GetContacts(parameters connection.APIRequestParameters) ([]Contact, error) {
-	var contacts []Contact
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetContactsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, contact := range response.(*PaginatedContact).Items {
-			contacts = append(contacts, contact)
-		}
-	}
-
-	return contacts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetContactsPaginated, parameters)
 }
 
 // GetContactsPaginated retrieves a paginated list of contacts
-func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameters) (*PaginatedContact, error) {
+func (s *Service) GetContactsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Contact], error) {
 	body, err := s.getContactsPaginatedResponseBody(parameters)
-
-	return NewPaginatedContact(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetContactsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetContactsPaginated), err
 }
 
-func (s *Service) getContactsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetContactSliceResponseBody, error) {
-	body := &GetContactSliceResponseBody{}
+func (s *Service) getContactsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Contact], error) {
+	body := &connection.APIResponseBodyData[[]Contact]{}
 
 	response, err := s.connection.Get("/account/v1/contacts", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetContact(contactID int) (Contact, error) {
 	return body.Data, err
 }
 
-func (s *Service) getContactResponseBody(contactID int) (*GetContactResponseBody, error) {
-	body := &GetContactResponseBody{}
+func (s *Service) getContactResponseBody(contactID int) (*connection.APIResponseBodyData[Contact], error) {
+	body := &connection.APIResponseBodyData[Contact]{}
 
 	if contactID < 1 {
 		return body, fmt.Errorf("invalid contact id")

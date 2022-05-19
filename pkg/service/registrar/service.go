@@ -7,7 +7,7 @@ type RegistrarService interface {
 	// Domains
 	//
 	GetDomains(parameters connection.APIRequestParameters) ([]Domain, error)
-	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
+	GetDomainsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Domain], error)
 	GetDomain(domainName string) (Domain, error)
 	GetDomainNameservers(domainName string) ([]Nameserver, error)
 

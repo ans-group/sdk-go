@@ -8,32 +8,17 @@ import (
 
 // GetVPNEndpoints retrieves a list of VPN endpoints
 func (s *Service) GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error) {
-	var endpoints []VPNEndpoint
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNEndpointsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, endpoint := range response.(*PaginatedVPNEndpoint).Items {
-			endpoints = append(endpoints, endpoint)
-		}
-	}
-
-	return endpoints, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVPNEndpointsPaginated, parameters)
 }
 
 // GetVPNEndpointsPaginated retrieves a paginated list of VPN endpoints
-func (s *Service) GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPNEndpoint, error) {
+func (s *Service) GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNEndpoint], error) {
 	body, err := s.getVPNEndpointsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVPNEndpoint(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPNEndpointsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVPNEndpointsPaginated), err
 }
 
-func (s *Service) getVPNEndpointsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVPNEndpointSliceResponseBody, error) {
-	body := &GetVPNEndpointSliceResponseBody{}
+func (s *Service) getVPNEndpointsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPNEndpoint], error) {
+	body := &connection.APIResponseBodyData[[]VPNEndpoint]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vpn-endpoints", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVPNEndpoint(endpointID string) (VPNEndpoint, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVPNEndpointResponseBody(endpointID string) (*GetVPNEndpointResponseBody, error) {
-	body := &GetVPNEndpointResponseBody{}
+func (s *Service) getVPNEndpointResponseBody(endpointID string) (*connection.APIResponseBodyData[VPNEndpoint], error) {
+	body := &connection.APIResponseBodyData[VPNEndpoint]{}
 
 	if endpointID == "" {
 		return body, fmt.Errorf("invalid vpn endpoint id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVPNEndpoint(req CreateVPNEndpointRequest) (TaskReference
 	return body.Data, err
 }
 
-func (s *Service) createVPNEndpointResponseBody(req CreateVPNEndpointRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createVPNEndpointResponseBody(req CreateVPNEndpointRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/vpn-endpoints", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchVPNEndpoint(endpointID string, req PatchVPNEndpointReques
 	return body.Data, err
 }
 
-func (s *Service) patchVPNEndpointResponseBody(endpointID string, req PatchVPNEndpointRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchVPNEndpointResponseBody(endpointID string, req PatchVPNEndpointRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if endpointID == "" {
 		return body, fmt.Errorf("invalid endpoint id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteVPNEndpoint(endpointID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteVPNEndpointResponseBody(endpointID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteVPNEndpointResponseBody(endpointID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if endpointID == "" {
 		return body, fmt.Errorf("invalid endpoint id")
@@ -147,32 +132,22 @@ func (s *Service) deleteVPNEndpointResponseBody(endpointID string) (*GetTaskRefe
 
 // GetVPNEndpointTasks retrieves a list of VPN endpoint tasks
 func (s *Service) GetVPNEndpointTasks(endpointID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNEndpointTasksPaginated(endpointID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPNEndpointTasksPaginated retrieves a paginated list of VPN endpoint tasks
-func (s *Service) GetVPNEndpointTasksPaginated(endpointID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetVPNEndpointTasksPaginated(endpointID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getVPNEndpointTasksPaginatedResponseBody(endpointID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPNEndpointTasksPaginated(endpointID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPNEndpointTasksPaginatedResponseBody(endpointID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVPNEndpointTasksPaginatedResponseBody(endpointID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if endpointID == "" {
 		return body, fmt.Errorf("invalid vpn endpoint id")

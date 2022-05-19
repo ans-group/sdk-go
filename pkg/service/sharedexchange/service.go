@@ -7,7 +7,7 @@ import (
 // SharedExchangeService is an interface for managing Shared Exchange
 type SharedExchangeService interface {
 	GetDomains(parameters connection.APIRequestParameters) ([]Domain, error)
-	GetDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedDomain, error)
+	GetDomainsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Domain], error)
 	GetDomain(domainID int) (Domain, error)
 }
 

@@ -8,32 +8,17 @@ import (
 
 // GetNetworkPolicies retrieves a list of network policies
 func (s *Service) GetNetworkPolicies(parameters connection.APIRequestParameters) ([]NetworkPolicy, error) {
-	var policys []NetworkPolicy
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkPoliciesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, policy := range response.(*PaginatedNetworkPolicy).Items {
-			policys = append(policys, policy)
-		}
-	}
-
-	return policys, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetNetworkPoliciesPaginated, parameters)
 }
 
 // GetNetworkPoliciesPaginated retrieves a paginated list of network policies
-func (s *Service) GetNetworkPoliciesPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkPolicy, error) {
+func (s *Service) GetNetworkPoliciesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkPolicy], error) {
 	body, err := s.getNetworkPoliciesPaginatedResponseBody(parameters)
-
-	return NewPaginatedNetworkPolicy(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkPoliciesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetNetworkPoliciesPaginated), err
 }
 
-func (s *Service) getNetworkPoliciesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetNetworkPolicySliceResponseBody, error) {
-	body := &GetNetworkPolicySliceResponseBody{}
+func (s *Service) getNetworkPoliciesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NetworkPolicy], error) {
+	body := &connection.APIResponseBodyData[[]NetworkPolicy]{}
 
 	response, err := s.connection.Get("/ecloud/v2/network-policies", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetNetworkPolicy(policyID string) (NetworkPolicy, error) {
 	return body.Data, err
 }
 
-func (s *Service) getNetworkPolicyResponseBody(policyID string) (*GetNetworkPolicyResponseBody, error) {
-	body := &GetNetworkPolicyResponseBody{}
+func (s *Service) getNetworkPolicyResponseBody(policyID string) (*connection.APIResponseBodyData[NetworkPolicy], error) {
+	body := &connection.APIResponseBodyData[NetworkPolicy]{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid network policy id")
@@ -78,8 +63,8 @@ func (s *Service) CreateNetworkPolicy(req CreateNetworkPolicyRequest) (TaskRefer
 	return body.Data, err
 }
 
-func (s *Service) createNetworkPolicyResponseBody(req CreateNetworkPolicyRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createNetworkPolicyResponseBody(req CreateNetworkPolicyRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/network-policies", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchNetworkPolicy(policyID string, req PatchNetworkPolicyRequ
 	return body.Data, err
 }
 
-func (s *Service) patchNetworkPolicyResponseBody(policyID string, req PatchNetworkPolicyRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchNetworkPolicyResponseBody(policyID string, req PatchNetworkPolicyRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid policy id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteNetworkPolicy(policyID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteNetworkPolicyResponseBody(policyID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteNetworkPolicyResponseBody(policyID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid policy id")
@@ -147,32 +132,22 @@ func (s *Service) deleteNetworkPolicyResponseBody(policyID string) (*GetTaskRefe
 
 // GetNetworkPolicyNetworkRules retrieves a list of network policy rules
 func (s *Service) GetNetworkPolicyNetworkRules(policyID string, parameters connection.APIRequestParameters) ([]NetworkRule, error) {
-	var networkRules []NetworkRule
-
-	return networkRules, connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (connection.Paginated, error) {
-			return s.GetNetworkPolicyNetworkRulesPaginated(policyID, p)
-		},
-		func(response connection.Paginated) {
-			for _, networkRule := range response.(*PaginatedNetworkRule).Items {
-				networkRules = append(networkRules, networkRule)
-			}
-		},
-		parameters,
-	)
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
+		return s.GetNetworkPolicyNetworkRulesPaginated(policyID, p)
+	}, parameters)
 }
 
 // GetNetworkPolicyNetworkRulesPaginated retrieves a paginated list of network policy NetworkRules
-func (s *Service) GetNetworkPolicyNetworkRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedNetworkRule, error) {
+func (s *Service) GetNetworkPolicyNetworkRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
 	body, err := s.getNetworkPolicyNetworkRulesPaginatedResponseBody(policyID, parameters)
 
-	return NewPaginatedNetworkRule(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
 		return s.GetNetworkPolicyNetworkRulesPaginated(policyID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNetworkPolicyNetworkRulesPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*GetNetworkRuleSliceResponseBody, error) {
-	body := &GetNetworkRuleSliceResponseBody{}
+func (s *Service) getNetworkPolicyNetworkRulesPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NetworkRule], error) {
+	body := &connection.APIResponseBodyData[[]NetworkRule]{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid network policy id")
@@ -194,32 +169,22 @@ func (s *Service) getNetworkPolicyNetworkRulesPaginatedResponseBody(policyID str
 
 // GetNetworkPolicyTasks retrieves a list of NetworkPolicy tasks
 func (s *Service) GetNetworkPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNetworkPolicyTasksPaginated(policyID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNetworkPolicyTasksPaginated retrieves a paginated list of NetworkPolicy tasks
-func (s *Service) GetNetworkPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetNetworkPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getNetworkPolicyTasksPaginatedResponseBody(policyID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNetworkPolicyTasksPaginated(policyID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNetworkPolicyTasksPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getNetworkPolicyTasksPaginatedResponseBody(policyID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if policyID == "" {
 		return body, fmt.Errorf("invalid network policy id")

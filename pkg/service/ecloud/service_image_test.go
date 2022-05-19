@@ -230,7 +230,7 @@ func TestGetImageParameters(t *testing.T) {
 		assert.Equal(t, "testkey2", parameters[1].Key)
 	})
 
-	t.Run("GetImagesPaginatedResponseBodyError_ReturnsError", func(t *testing.T) {
+	t.Run("connection.APIResponseBodyData[ImagesPaginated]Error_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 

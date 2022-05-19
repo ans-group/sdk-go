@@ -8,32 +8,17 @@ import (
 
 // GetInstances retrieves a list of instances
 func (s *Service) GetInstances(parameters connection.APIRequestParameters) ([]Instance, error) {
-	var instances []Instance
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInstancesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, instance := range response.(*PaginatedInstance).Items {
-			instances = append(instances, instance)
-		}
-	}
-
-	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetInstancesPaginated, parameters)
 }
 
 // GetInstancesPaginated retrieves a paginated list of instances
-func (s *Service) GetInstancesPaginated(parameters connection.APIRequestParameters) (*PaginatedInstance, error) {
+func (s *Service) GetInstancesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 	body, err := s.getInstancesPaginatedResponseBody(parameters)
-
-	return NewPaginatedInstance(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInstancesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetInstancesPaginated), err
 }
 
-func (s *Service) getInstancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInstanceSliceResponseBody, error) {
-	body := &GetInstanceSliceResponseBody{}
+func (s *Service) getInstancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Instance], error) {
+	body := &connection.APIResponseBodyData[[]Instance]{}
 
 	response, err := s.connection.Get("/ecloud/v2/instances", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetInstance(instanceID string) (Instance, error) {
 	return body.Data, err
 }
 
-func (s *Service) getInstanceResponseBody(instanceID string) (*GetInstanceResponseBody, error) {
-	body := &GetInstanceResponseBody{}
+func (s *Service) getInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[Instance], error) {
+	body := &connection.APIResponseBodyData[Instance]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -78,8 +63,8 @@ func (s *Service) CreateInstance(req CreateInstanceRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createInstanceResponseBody(req CreateInstanceRequest) (*GetInstanceResponseBody, error) {
-	body := &GetInstanceResponseBody{}
+func (s *Service) createInstanceResponseBody(req CreateInstanceRequest) (*connection.APIResponseBodyData[Instance], error) {
+	body := &connection.APIResponseBodyData[Instance]{}
 
 	response, err := s.connection.Post("/ecloud/v2/instances", &req)
 	if err != nil {
@@ -208,8 +193,8 @@ func (s *Service) PowerOnInstance(instanceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) powerOnInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) powerOnInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -236,8 +221,8 @@ func (s *Service) PowerOffInstance(instanceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) powerOffInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) powerOffInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -264,8 +249,8 @@ func (s *Service) PowerResetInstance(instanceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) powerResetInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) powerResetInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -292,8 +277,8 @@ func (s *Service) PowerShutdownInstance(instanceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) powerShutdownInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -320,8 +305,8 @@ func (s *Service) PowerRestartInstance(instanceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) powerRestartInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -348,8 +333,8 @@ func (s *Service) MigrateInstance(instanceID string, req MigrateInstanceRequest)
 	return body.Data.TaskID, err
 }
 
-func (s *Service) migrateInstanceResponseBody(instanceID string, req MigrateInstanceRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) migrateInstanceResponseBody(instanceID string, req MigrateInstanceRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -371,32 +356,22 @@ func (s *Service) migrateInstanceResponseBody(instanceID string, req MigrateInst
 
 // GetInstanceVolumes retrieves a list of instance volumes
 func (s *Service) GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	var volumes []Volume
-
-	return volumes, connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (connection.Paginated, error) {
-			return s.GetInstanceVolumesPaginated(instanceID, p)
-		},
-		func(response connection.Paginated) {
-			for _, volume := range response.(*PaginatedVolume).Items {
-				volumes = append(volumes, volume)
-			}
-		},
-		parameters,
-	)
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
+		return s.GetInstanceVolumesPaginated(instanceID, p)
+	}, parameters)
 }
 
 // GetInstanceVolumesPaginated retrieves a paginated list of instance volumes
-func (s *Service) GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+func (s *Service) GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 	body, err := s.getInstanceVolumesPaginatedResponseBody(instanceID, parameters)
 
-	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 		return s.GetInstanceVolumesPaginated(instanceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
-	body := &GetVolumeSliceResponseBody{}
+func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Volume], error) {
+	body := &connection.APIResponseBodyData[[]Volume]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -418,32 +393,22 @@ func (s *Service) getInstanceVolumesPaginatedResponseBody(instanceID string, par
 
 // GetInstanceCredentials retrieves a list of instance credentials
 func (s *Service) GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error) {
-	var credentials []Credential
-
-	return credentials, connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (connection.Paginated, error) {
-			return s.GetInstanceCredentialsPaginated(instanceID, p)
-		},
-		func(response connection.Paginated) {
-			for _, credential := range response.(*PaginatedCredential).Items {
-				credentials = append(credentials, credential)
-			}
-		},
-		parameters,
-	)
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
+		return s.GetInstanceCredentialsPaginated(instanceID, p)
+	}, parameters)
 }
 
 // GetInstanceCredentialsPaginated retrieves a paginated list of instance credentials
-func (s *Service) GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedCredential, error) {
+func (s *Service) GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
 	body, err := s.getInstanceCredentialsPaginatedResponseBody(instanceID, parameters)
 
-	return NewPaginatedCredential(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
 		return s.GetInstanceCredentialsPaginated(instanceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getInstanceCredentialsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetCredentialSliceResponseBody, error) {
-	body := &GetCredentialSliceResponseBody{}
+func (s *Service) getInstanceCredentialsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Credential], error) {
+	body := &connection.APIResponseBodyData[[]Credential]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -465,32 +430,22 @@ func (s *Service) getInstanceCredentialsPaginatedResponseBody(instanceID string,
 
 // GetInstanceNICs retrieves a list of instance NICs
 func (s *Service) GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error) {
-	var nics []NIC
-
-	return nics, connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (connection.Paginated, error) {
-			return s.GetInstanceNICsPaginated(instanceID, p)
-		},
-		func(response connection.Paginated) {
-			for _, nic := range response.(*PaginatedNIC).Items {
-				nics = append(nics, nic)
-			}
-		},
-		parameters,
-	)
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
+		return s.GetInstanceNICsPaginated(instanceID, p)
+	}, parameters)
 }
 
 // GetInstanceNICsPaginated retrieves a paginated list of instance NICs
-func (s *Service) GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+func (s *Service) GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 	body, err := s.getInstanceNICsPaginatedResponseBody(instanceID, parameters)
 
-	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 		return s.GetInstanceNICsPaginated(instanceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
-	body := &GetNICSliceResponseBody{}
+func (s *Service) getInstanceNICsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NIC], error) {
+	body := &connection.APIResponseBodyData[[]NIC]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -517,8 +472,8 @@ func (s *Service) CreateInstanceConsoleSession(instanceID string) (ConsoleSessio
 	return body.Data, err
 }
 
-func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*GetConsoleSessionResponseBody, error) {
-	body := &GetConsoleSessionResponseBody{}
+func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*connection.APIResponseBodyData[ConsoleSession], error) {
+	body := &connection.APIResponseBodyData[ConsoleSession]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -540,32 +495,22 @@ func (s *Service) createInstanceConsoleSessionResponseBody(instanceID string) (*
 
 // GetInstanceTasks retrieves a list of Instance tasks
 func (s *Service) GetInstanceTasks(instanceID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetInstanceTasksPaginated(instanceID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetInstanceTasksPaginated retrieves a paginated list of Instance tasks
-func (s *Service) GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getInstanceTasksPaginatedResponseBody(instanceID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetInstanceTasksPaginated(instanceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getInstanceTasksPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getInstanceTasksPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -592,8 +537,8 @@ func (s *Service) AttachInstanceVolume(instanceID string, req AttachDetachInstan
 	return body.Data.TaskID, err
 }
 
-func (s *Service) attachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) attachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -620,8 +565,8 @@ func (s *Service) DetachInstanceVolume(instanceID string, req AttachDetachInstan
 	return body.Data.TaskID, err
 }
 
-func (s *Service) detachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) detachInstanceVolumeResponseBody(instanceID string, req AttachDetachInstanceVolumeRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")
@@ -643,32 +588,22 @@ func (s *Service) detachInstanceVolumeResponseBody(instanceID string, req Attach
 
 // GetInstanceFloatingIPs retrieves a list of instance fips
 func (s *Service) GetInstanceFloatingIPs(instanceID string, parameters connection.APIRequestParameters) ([]FloatingIP, error) {
-	var fips []FloatingIP
-
-	return fips, connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (connection.Paginated, error) {
-			return s.GetInstanceFloatingIPsPaginated(instanceID, p)
-		},
-		func(response connection.Paginated) {
-			for _, fip := range response.(*PaginatedFloatingIP).Items {
-				fips = append(fips, fip)
-			}
-		},
-		parameters,
-	)
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
+		return s.GetInstanceFloatingIPsPaginated(instanceID, p)
+	}, parameters)
 }
 
 // GetInstanceFloatingIPsPaginated retrieves a paginated list of instance floating IPs
-func (s *Service) GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error) {
+func (s *Service) GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
 	body, err := s.getInstanceFloatingIPsPaginatedResponseBody(instanceID, parameters)
 
-	return NewPaginatedFloatingIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
 		return s.GetInstanceFloatingIPsPaginated(instanceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getInstanceFloatingIPsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*GetFloatingIPSliceResponseBody, error) {
-	body := &GetFloatingIPSliceResponseBody{}
+func (s *Service) getInstanceFloatingIPsPaginatedResponseBody(instanceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]FloatingIP], error) {
+	body := &connection.APIResponseBodyData[[]FloatingIP]{}
 
 	if instanceID == "" {
 		return body, fmt.Errorf("invalid instance id")

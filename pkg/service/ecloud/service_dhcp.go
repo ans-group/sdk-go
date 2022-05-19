@@ -8,32 +8,17 @@ import (
 
 // GetDHCPs retrieves a list of dhcps
 func (s *Service) GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error) {
-	var dhcps []DHCP
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDHCPsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, dhcp := range response.(*PaginatedDHCP).Items {
-			dhcps = append(dhcps, dhcp)
-		}
-	}
-
-	return dhcps, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetDHCPsPaginated, parameters)
 }
 
 // GetDHCPsPaginated retrieves a paginated list of dhcps
-func (s *Service) GetDHCPsPaginated(parameters connection.APIRequestParameters) (*PaginatedDHCP, error) {
+func (s *Service) GetDHCPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[DHCP], error) {
 	body, err := s.getDHCPsPaginatedResponseBody(parameters)
-
-	return NewPaginatedDHCP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDHCPsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetDHCPsPaginated), err
 }
 
-func (s *Service) getDHCPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDHCPSliceResponseBody, error) {
-	body := &GetDHCPSliceResponseBody{}
+func (s *Service) getDHCPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]DHCP], error) {
+	body := &connection.APIResponseBodyData[[]DHCP]{}
 
 	response, err := s.connection.Get("/ecloud/v2/dhcps", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetDHCP(dhcpID string) (DHCP, error) {
 	return body.Data, err
 }
 
-func (s *Service) getDHCPResponseBody(dhcpID string) (*GetDHCPResponseBody, error) {
-	body := &GetDHCPResponseBody{}
+func (s *Service) getDHCPResponseBody(dhcpID string) (*connection.APIResponseBodyData[DHCP], error) {
+	body := &connection.APIResponseBodyData[DHCP]{}
 
 	if dhcpID == "" {
 		return body, fmt.Errorf("invalid dhcp id")
@@ -73,32 +58,21 @@ func (s *Service) getDHCPResponseBody(dhcpID string) (*GetDHCPResponseBody, erro
 
 // GetDHCPTasks retrieves a list of DHCP tasks
 func (s *Service) GetDHCPTasks(dhcpID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetDHCPTasksPaginated(dhcpID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetDHCPTasksPaginated retrieves a paginated list of DHCP tasks
-func (s *Service) GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getDHCPTasksPaginatedResponseBody(dhcpID, parameters)
-
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetDHCPTasksPaginated(dhcpID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getDHCPTasksPaginatedResponseBody(dhcpID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getDHCPTasksPaginatedResponseBody(dhcpID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if dhcpID == "" {
 		return body, fmt.Errorf("invalid dhcp id")

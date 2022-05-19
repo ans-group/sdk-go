@@ -8,32 +8,17 @@ import (
 
 // GetAppliances retrieves a list of appliances
 func (s *Service) GetAppliances(parameters connection.APIRequestParameters) ([]Appliance, error) {
-	var appliances []Appliance
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAppliancesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, appliance := range response.(*PaginatedAppliance).Items {
-			appliances = append(appliances, appliance)
-		}
-	}
-
-	return appliances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetAppliancesPaginated, parameters)
 }
 
 // GetAppliancesPaginated retrieves a paginated list of appliances
-func (s *Service) GetAppliancesPaginated(parameters connection.APIRequestParameters) (*PaginatedAppliance, error) {
+func (s *Service) GetAppliancesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Appliance], error) {
 	body, err := s.getAppliancesPaginatedResponseBody(parameters)
-
-	return NewPaginatedAppliance(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAppliancesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetAppliancesPaginated), err
 }
 
-func (s *Service) getAppliancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetApplianceSliceResponseBody, error) {
-	body := &GetApplianceSliceResponseBody{}
+func (s *Service) getAppliancesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Appliance], error) {
+	body := &connection.APIResponseBodyData[[]Appliance]{}
 
 	response, err := s.connection.Get("/ecloud/v1/appliances", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetAppliance(applianceID string) (Appliance, error) {
 	return body.Data, err
 }
 
-func (s *Service) getApplianceResponseBody(applianceID string) (*GetApplianceResponseBody, error) {
-	body := &GetApplianceResponseBody{}
+func (s *Service) getApplianceResponseBody(applianceID string) (*connection.APIResponseBodyData[Appliance], error) {
+	body := &connection.APIResponseBodyData[Appliance]{}
 
 	if applianceID == "" {
 		return body, fmt.Errorf("invalid appliance id")
@@ -73,32 +58,22 @@ func (s *Service) getApplianceResponseBody(applianceID string) (*GetApplianceRes
 
 // GetApplianceParameters retrieves a list of parameters
 func (s *Service) GetApplianceParameters(applianceID string, parameters connection.APIRequestParameters) ([]ApplianceParameter, error) {
-	var appParameters []ApplianceParameter
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ApplianceParameter], error) {
 		return s.GetApplianceParametersPaginated(applianceID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, parameter := range response.(*PaginatedApplianceParameter).Items {
-			appParameters = append(appParameters, parameter)
-		}
-	}
-
-	return appParameters, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetApplianceParametersPaginated retrieves a paginated list of domains
-func (s *Service) GetApplianceParametersPaginated(applianceID string, parameters connection.APIRequestParameters) (*PaginatedApplianceParameter, error) {
+func (s *Service) GetApplianceParametersPaginated(applianceID string, parameters connection.APIRequestParameters) (*connection.Paginated[ApplianceParameter], error) {
 	body, err := s.getApplianceParametersPaginatedResponseBody(applianceID, parameters)
 
-	return NewPaginatedApplianceParameter(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ApplianceParameter], error) {
 		return s.GetApplianceParametersPaginated(applianceID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getApplianceParametersPaginatedResponseBody(applianceID string, parameters connection.APIRequestParameters) (*GetApplianceParameterSliceResponseBody, error) {
-	body := &GetApplianceParameterSliceResponseBody{}
+func (s *Service) getApplianceParametersPaginatedResponseBody(applianceID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ApplianceParameter], error) {
+	body := &connection.APIResponseBodyData[[]ApplianceParameter]{}
 
 	if applianceID == "" {
 		return body, fmt.Errorf("invalid appliance id")

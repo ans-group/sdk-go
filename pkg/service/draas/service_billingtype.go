@@ -8,32 +8,17 @@ import (
 
 // GetBillingTypes retrieves a list of solutions
 func (s *Service) GetBillingTypes(parameters connection.APIRequestParameters) ([]BillingType, error) {
-	var billingTypes []BillingType
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetBillingTypesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, billingType := range response.(*PaginatedBillingType).Items {
-			billingTypes = append(billingTypes, billingType)
-		}
-	}
-
-	return billingTypes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetBillingTypesPaginated, parameters)
 }
 
 // GetBillingTypesPaginated retrieves a paginated list of solutions
-func (s *Service) GetBillingTypesPaginated(parameters connection.APIRequestParameters) (*PaginatedBillingType, error) {
+func (s *Service) GetBillingTypesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BillingType], error) {
 	body, err := s.getBillingTypesPaginatedResponseBody(parameters)
-
-	return NewPaginatedBillingType(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetBillingTypesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetBillingTypesPaginated), err
 }
 
-func (s *Service) getBillingTypesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetBillingTypeSliceResponseBody, error) {
-	body := &GetBillingTypeSliceResponseBody{}
+func (s *Service) getBillingTypesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]BillingType], error) {
+	body := &connection.APIResponseBodyData[[]BillingType]{}
 
 	response, err := s.connection.Get("/draas/v1/billing-types", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetBillingType(billingTypeID string) (BillingType, error) {
 	return body.Data, err
 }
 
-func (s *Service) getBillingTypeResponseBody(billingTypeID string) (*GetBillingTypeResponseBody, error) {
-	body := &GetBillingTypeResponseBody{}
+func (s *Service) getBillingTypeResponseBody(billingTypeID string) (*connection.APIResponseBodyData[BillingType], error) {
+	body := &connection.APIResponseBodyData[BillingType]{}
 
 	if billingTypeID == "" {
 		return body, fmt.Errorf("invalid billing type id")

@@ -233,7 +233,7 @@ func TestDeleteDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", &DeleteDomainRequest{}).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 204,
@@ -255,7 +255,7 @@ func TestDeleteDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", &DeleteDomainRequest{}).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		err := s.DeleteDomain("testdomain1.co.uk", DeleteDomainRequest{})
 
@@ -289,7 +289,7 @@ func TestDeleteDomain(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", nil).Return(&connection.APIResponse{
+		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", &DeleteDomainRequest{}).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,

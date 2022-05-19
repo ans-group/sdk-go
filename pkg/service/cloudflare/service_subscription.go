@@ -6,30 +6,17 @@ import (
 
 // GetSubscriptions retrieves a list of subscriptions
 func (s *Service) GetSubscriptions(parameters connection.APIRequestParameters) ([]Subscription, error) {
-	var subscriptions []Subscription
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSubscriptionsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		subscriptions = append(subscriptions, response.(*PaginatedSubscription).Items...)
-	}
-
-	return subscriptions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSubscriptionsPaginated, parameters)
 }
 
 // GetSubscriptionsPaginated retrieves a paginated list of subscriptions
-func (s *Service) GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*PaginatedSubscription, error) {
+func (s *Service) GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Subscription], error) {
 	body, err := s.getSubscriptionsPaginatedResponseBody(parameters)
-
-	return NewPaginatedSubscription(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSubscriptionsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSubscriptionsPaginated), err
 }
 
-func (s *Service) getSubscriptionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSubscriptionSliceResponseBody, error) {
-	body := &GetSubscriptionSliceResponseBody{}
+func (s *Service) getSubscriptionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Subscription], error) {
+	body := &connection.APIResponseBodyData[[]Subscription]{}
 
 	response, err := s.connection.Get("/cloudflare/v1/subscriptions", parameters)
 	if err != nil {

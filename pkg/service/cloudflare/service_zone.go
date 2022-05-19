@@ -8,30 +8,17 @@ import (
 
 // GetZones retrieves a list of zones
 func (s *Service) GetZones(parameters connection.APIRequestParameters) ([]Zone, error) {
-	var zones []Zone
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetZonesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		zones = append(zones, response.(*PaginatedZone).Items...)
-	}
-
-	return zones, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetZonesPaginated, parameters)
 }
 
 // GetZonesPaginated retrieves a paginated list of zones
-func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error) {
+func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Zone], error) {
 	body, err := s.getZonesPaginatedResponseBody(parameters)
-
-	return NewPaginatedZone(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetZonesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetZonesPaginated), err
 }
 
-func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetZoneSliceResponseBody, error) {
-	body := &GetZoneSliceResponseBody{}
+func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Zone], error) {
+	body := &connection.APIResponseBodyData[[]Zone]{}
 
 	response, err := s.connection.Get("/cloudflare/v1/zones", parameters)
 	if err != nil {
@@ -48,8 +35,8 @@ func (s *Service) GetZone(zoneID string) (Zone, error) {
 	return body.Data, err
 }
 
-func (s *Service) getZoneResponseBody(zoneID string) (*GetZoneResponseBody, error) {
-	body := &GetZoneResponseBody{}
+func (s *Service) getZoneResponseBody(zoneID string) (*connection.APIResponseBodyData[Zone], error) {
+	body := &connection.APIResponseBodyData[Zone]{}
 
 	if zoneID == "" {
 		return body, fmt.Errorf("invalid zone id")
@@ -76,8 +63,8 @@ func (s *Service) CreateZone(req CreateZoneRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*GetZoneResponseBody, error) {
-	body := &GetZoneResponseBody{}
+func (s *Service) createZoneResponseBody(req CreateZoneRequest) (*connection.APIResponseBodyData[Zone], error) {
+	body := &connection.APIResponseBodyData[Zone]{}
 
 	response, err := s.connection.Post("/cloudflare/v1/zones", &req)
 	if err != nil {

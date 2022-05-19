@@ -8,32 +8,17 @@ import (
 
 // GetVPCs retrieves a list of vpcs
 func (s *Service) GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error) {
-	var vpcs []VPC
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPCsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, vpc := range response.(*PaginatedVPC).Items {
-			vpcs = append(vpcs, vpc)
-		}
-	}
-
-	return vpcs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetVPCsPaginated, parameters)
 }
 
 // GetVPCsPaginated retrieves a paginated list of vpcs
-func (s *Service) GetVPCsPaginated(parameters connection.APIRequestParameters) (*PaginatedVPC, error) {
+func (s *Service) GetVPCsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPC], error) {
 	body, err := s.getVPCsPaginatedResponseBody(parameters)
-
-	return NewPaginatedVPC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetVPCsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetVPCsPaginated), err
 }
 
-func (s *Service) getVPCsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetVPCSliceResponseBody, error) {
-	body := &GetVPCSliceResponseBody{}
+func (s *Service) getVPCsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPC], error) {
+	body := &connection.APIResponseBodyData[[]VPC]{}
 
 	response, err := s.connection.Get("/ecloud/v2/vpcs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetVPC(vpcID string) (VPC, error) {
 	return body.Data, err
 }
 
-func (s *Service) getVPCResponseBody(vpcID string) (*GetVPCResponseBody, error) {
-	body := &GetVPCResponseBody{}
+func (s *Service) getVPCResponseBody(vpcID string) (*connection.APIResponseBodyData[VPC], error) {
+	body := &connection.APIResponseBodyData[VPC]{}
 
 	if vpcID == "" {
 		return body, fmt.Errorf("invalid vpc id")
@@ -78,8 +63,8 @@ func (s *Service) CreateVPC(req CreateVPCRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createVPCResponseBody(req CreateVPCRequest) (*GetVPCResponseBody, error) {
-	body := &GetVPCResponseBody{}
+func (s *Service) createVPCResponseBody(req CreateVPCRequest) (*connection.APIResponseBodyData[VPC], error) {
+	body := &connection.APIResponseBodyData[VPC]{}
 
 	response, err := s.connection.Post("/ecloud/v2/vpcs", &req)
 	if err != nil {
@@ -175,32 +160,22 @@ func (s *Service) deployVPCDefaultsResponseBody(vpcID string) (*connection.APIRe
 
 // GetVPCVolumes retrieves a list of firewall rule volumes
 func (s *Service) GetVPCVolumes(vpcID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	var volumes []Volume
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 		return s.GetVPCVolumesPaginated(vpcID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, volume := range response.(*PaginatedVolume).Items {
-			volumes = append(volumes, volume)
-		}
-	}
-
-	return volumes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPCVolumesPaginated retrieves a paginated list of firewall rule volumes
-func (s *Service) GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedVolume, error) {
+func (s *Service) GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 	body, err := s.getVPCVolumesPaginatedResponseBody(vpcID, parameters)
 
-	return NewPaginatedVolume(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
 		return s.GetVPCVolumesPaginated(vpcID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPCVolumesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetVolumeSliceResponseBody, error) {
-	body := &GetVolumeSliceResponseBody{}
+func (s *Service) getVPCVolumesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Volume], error) {
+	body := &connection.APIResponseBodyData[[]Volume]{}
 
 	if vpcID == "" {
 		return body, fmt.Errorf("invalid vpc id")
@@ -222,32 +197,22 @@ func (s *Service) getVPCVolumesPaginatedResponseBody(vpcID string, parameters co
 
 // GetVPCInstances retrieves a list of firewall rule instances
 func (s *Service) GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error) {
-	var instances []Instance
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 		return s.GetVPCInstancesPaginated(vpcID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, instance := range response.(*PaginatedInstance).Items {
-			instances = append(instances, instance)
-		}
-	}
-
-	return instances, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPCInstancesPaginated retrieves a paginated list of firewall rule instances
-func (s *Service) GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedInstance, error) {
+func (s *Service) GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 	body, err := s.getVPCInstancesPaginatedResponseBody(vpcID, parameters)
 
-	return NewPaginatedInstance(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
 		return s.GetVPCInstancesPaginated(vpcID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPCInstancesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetInstanceSliceResponseBody, error) {
-	body := &GetInstanceSliceResponseBody{}
+func (s *Service) getVPCInstancesPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Instance], error) {
+	body := &connection.APIResponseBodyData[[]Instance]{}
 
 	if vpcID == "" {
 		return body, fmt.Errorf("invalid vpc id")
@@ -269,32 +234,22 @@ func (s *Service) getVPCInstancesPaginatedResponseBody(vpcID string, parameters 
 
 // GetVPCTasks retrieves a list of VPC tasks
 func (s *Service) GetVPCTasks(vpcID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPCTasksPaginated(vpcID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetVPCTasksPaginated retrieves a paginated list of VPC tasks
-func (s *Service) GetVPCTasksPaginated(vpcID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetVPCTasksPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getVPCTasksPaginatedResponseBody(vpcID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetVPCTasksPaginated(vpcID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getVPCTasksPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getVPCTasksPaginatedResponseBody(vpcID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if vpcID == "" {
 		return body, fmt.Errorf("invalid vpc id")

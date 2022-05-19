@@ -13,8 +13,8 @@ func (s *Service) CreateRequest(req CreateRequestRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createRequestResponseBody(req CreateRequestRequest) (*GetRequestResponseBody, error) {
-	body := &GetRequestResponseBody{}
+func (s *Service) createRequestResponseBody(req CreateRequestRequest) (*connection.APIResponseBodyData[Request], error) {
+	body := &connection.APIResponseBodyData[Request]{}
 
 	response, err := s.connection.Post("/pss/v1/requests", &req)
 	if err != nil {
@@ -26,32 +26,17 @@ func (s *Service) createRequestResponseBody(req CreateRequestRequest) (*GetReque
 
 // GetRequests retrieves a list of requests
 func (s *Service) GetRequests(parameters connection.APIRequestParameters) ([]Request, error) {
-	var requests []Request
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRequestsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, request := range response.(*PaginatedRequest).Items {
-			requests = append(requests, request)
-		}
-	}
-
-	return requests, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetRequestsPaginated, parameters)
 }
 
 // GetRequestsPaginated retrieves a paginated list of requests
-func (s *Service) GetRequestsPaginated(parameters connection.APIRequestParameters) (*PaginatedRequest, error) {
+func (s *Service) GetRequestsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Request], error) {
 	body, err := s.getRequestsPaginatedResponseBody(parameters)
-
-	return NewPaginatedRequest(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRequestsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetRequestsPaginated), err
 }
 
-func (s *Service) getRequestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRequestSliceResponseBody, error) {
-	body := &GetRequestSliceResponseBody{}
+func (s *Service) getRequestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Request], error) {
+	body := &connection.APIResponseBodyData[[]Request]{}
 
 	response, err := s.connection.Get("/pss/v1/requests", parameters)
 	if err != nil {
@@ -68,8 +53,8 @@ func (s *Service) GetRequest(requestID int) (Request, error) {
 	return body.Data, err
 }
 
-func (s *Service) getRequestResponseBody(requestID int) (*GetRequestResponseBody, error) {
-	body := &GetRequestResponseBody{}
+func (s *Service) getRequestResponseBody(requestID int) (*connection.APIResponseBodyData[Request], error) {
+	body := &connection.APIResponseBodyData[Request]{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")
@@ -124,8 +109,8 @@ func (s *Service) CreateRequestReply(requestID int, req CreateReplyRequest) (str
 	return body.Data.ID, err
 }
 
-func (s *Service) createRequestReplyResponseBody(requestID int, req CreateReplyRequest) (*GetReplyResponseBody, error) {
-	body := &GetReplyResponseBody{}
+func (s *Service) createRequestReplyResponseBody(requestID int, req CreateReplyRequest) (*connection.APIResponseBodyData[Reply], error) {
+	body := &connection.APIResponseBodyData[Reply]{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")
@@ -151,38 +136,28 @@ func (s *Service) GetRequestReplies(solutionID int, parameters connection.APIReq
 }
 
 // GetRequestRepliesPaginated is an alias for GetRequestConversationPaginated
-func (s *Service) GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error) {
+func (s *Service) GetRequestRepliesPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
 	return s.GetRequestConversationPaginated(solutionID, parameters)
 }
 
 // GetRequestConversation retrieves a list of replies
 func (s *Service) GetRequestConversation(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error) {
-	var replies []Reply
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
 		return s.GetRequestConversationPaginated(solutionID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, reply := range response.(*PaginatedReply).Items {
-			replies = append(replies, reply)
-		}
-	}
-
-	return replies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetRequestConversationPaginated retrieves a paginated list of domains
-func (s *Service) GetRequestConversationPaginated(solutionID int, parameters connection.APIRequestParameters) (*PaginatedReply, error) {
+func (s *Service) GetRequestConversationPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
 	body, err := s.getRequestConversationPaginatedResponseBody(solutionID, parameters)
 
-	return NewPaginatedReply(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
 		return s.GetRequestConversationPaginated(solutionID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, parameters connection.APIRequestParameters) (*GetReplySliceResponseBody, error) {
-	body := &GetReplySliceResponseBody{}
+func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Reply], error) {
+	body := &connection.APIResponseBodyData[[]Reply]{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")
@@ -209,8 +184,8 @@ func (s *Service) GetRequestFeedback(requestID int) (Feedback, error) {
 	return body.Data, err
 }
 
-func (s *Service) getRequestFeedbackResponseBody(requestID int) (*GetFeedbackResponseBody, error) {
-	body := &GetFeedbackResponseBody{}
+func (s *Service) getRequestFeedbackResponseBody(requestID int) (*connection.APIResponseBodyData[Feedback], error) {
+	body := &connection.APIResponseBodyData[Feedback]{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")
@@ -237,8 +212,8 @@ func (s *Service) CreateRequestFeedback(requestID int, req CreateFeedbackRequest
 	return body.Data.ID, err
 }
 
-func (s *Service) createRequestFeedbackResponseBody(requestID int, req CreateFeedbackRequest) (*GetFeedbackResponseBody, error) {
-	body := &GetFeedbackResponseBody{}
+func (s *Service) createRequestFeedbackResponseBody(requestID int, req CreateFeedbackRequest) (*connection.APIResponseBodyData[Feedback], error) {
+	body := &connection.APIResponseBodyData[Feedback]{}
 
 	if requestID < 1 {
 		return body, fmt.Errorf("invalid request id")

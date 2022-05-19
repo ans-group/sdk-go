@@ -1,11 +1,6 @@
-//go:generate go run ../../gen/model_response/main.go -package draas -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package draas -source model.go -destination model_paginated_generated.go
-
 package draas
 
 // Solution represents a solution
-// +genie:model_response
-// +genie:model_paginated
 type Solution struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
@@ -14,8 +9,6 @@ type Solution struct {
 }
 
 // BackupResource represents backup resources for a solution
-// +genie:model_response
-// +genie:model_paginated
 type BackupResource struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -26,15 +19,12 @@ type BackupResource struct {
 }
 
 // IOPSTier represents an IOPS tier
-// +genie:model_response
-// +genie:model_paginated
 type IOPSTier struct {
 	ID        string `json:"id"`
 	IOPSLimit int    `json:"iops_limit"`
 }
 
 // BackupService represents the backup service for a solution
-// +genie:model_response
 type BackupService struct {
 	Service     string `json:"service"`
 	AccountName string `json:"account_name"`
@@ -43,8 +33,6 @@ type BackupService struct {
 }
 
 // FailoverPlan represents a failover plan
-// +genie:model_response
-// +genie:model_paginated
 type FailoverPlan struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -56,8 +44,6 @@ type FailoverPlan struct {
 }
 
 // ComputeResource represents compute resources for a solution
-// +genie:model_response
-// +genie:model_paginated
 type ComputeResource struct {
 	ID             string `json:"id"`
 	HardwarePlanID string `json:"hardware_plan_id"`
@@ -80,8 +66,6 @@ type ComputeResource struct {
 }
 
 // HardwarePlan represents a hardware plan
-// +genie:model_response
-// +genie:model_paginated
 type HardwarePlan struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -103,8 +87,6 @@ type HardwarePlan struct {
 }
 
 // Replica represents a replica
-// +genie:model_response
-// +genie:model_paginated
 type Replica struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -117,8 +99,6 @@ type Replica struct {
 }
 
 // BillingType represents a billing type
-// +genie:model_response
-// +genie:model_paginated
 type BillingType struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`

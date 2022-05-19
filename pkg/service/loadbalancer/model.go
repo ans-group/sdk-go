@@ -1,13 +1,8 @@
-//go:generate go run ../../gen/model_response/main.go -package loadbalancer -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package loadbalancer -source model.go -destination model_paginated_generated.go
-
 package loadbalancer
 
 import "github.com/ukfast/sdk-go/pkg/connection"
 
 // Target represents a target
-// +genie:model_response
-// +genie:model_paginated
 type Target struct {
 	ID            int                  `json:"id"`
 	TargetGroupID int                  `json:"target_group_id"`
@@ -96,8 +91,6 @@ func (s TargetGroupMonitorMethod) String() string {
 }
 
 // TargetGroup represents a target group
-// +genie:model_response
-// +genie:model_paginated
 type TargetGroup struct {
 	ID                   int                      `json:"id"`
 	ClusterID            int                      `json:"cluster_id"`
@@ -128,8 +121,6 @@ type TargetGroup struct {
 }
 
 // Cluster represents a cluster
-// +genie:model_response
-// +genie:model_paginated
 type Cluster struct {
 	ID         int                 `json:"id"`
 	Name       string              `json:"name"`
@@ -140,8 +131,6 @@ type Cluster struct {
 }
 
 // VIP represents a target virtual IP address
-// +genie:model_response
-// +genie:model_paginated
 type VIP struct {
 	ID           int                 `json:"id"`
 	ClusterID    int                 `json:"cluster_id"`
@@ -179,8 +168,6 @@ func (s Mode) String() string {
 }
 
 // Listener represents a listener / frontend
-// +genie:model_response
-// +genie:model_paginated
 type Listener struct {
 	ID                   int                 `json:"id"`
 	Name                 string              `json:"name"`
@@ -203,8 +190,6 @@ type Listener struct {
 }
 
 // AccessIP represents an access IP
-// +genie:model_response
-// +genie:model_paginated
 type AccessIP struct {
 	ID        int                  `json:"id"`
 	IP        connection.IPAddress `json:"ip"`
@@ -213,8 +198,6 @@ type AccessIP struct {
 }
 
 // Bind represents a bind
-// +genie:model_response
-// +genie:model_paginated
 type Bind struct {
 	ID         int                 `json:"id"`
 	ListenerID int                 `json:"listener_id"`
@@ -225,8 +208,6 @@ type Bind struct {
 }
 
 // Certificate represents a certificate
-// +genie:model_response
-// +genie:model_paginated
 type Certificate struct {
 	ID         int                 `json:"id"`
 	ListenerID int                 `json:"listener_id"`
@@ -236,15 +217,11 @@ type Certificate struct {
 }
 
 // Header represents a header
-// +genie:model_response
-// +genie:model_paginated
 type Header struct {
 	Header string `json:"header"`
 }
 
 // ACL represents an ACL
-// +genie:model_response
-// +genie:model_paginated
 type ACL struct {
 	ID            int            `json:"id"`
 	Name          string         `json:"name"`
@@ -255,16 +232,12 @@ type ACL struct {
 }
 
 // ACLArgument represents an ACL condition/action argument
-// +genie:model_response
-// +genie:model_paginated
 type ACLArgument struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
 
 // ACLCondition represents an ACL condition
-// +genie:model_response
-// +genie:model_paginated
 type ACLCondition struct {
 	Name      string                 `json:"name"`
 	Inverted  bool                   `json:"inverted"`
@@ -272,15 +245,12 @@ type ACLCondition struct {
 }
 
 // ACLAction represents an ACL action
-// +genie:model_response
-// +genie:model_paginated
 type ACLAction struct {
 	Name      string                 `json:"name"`
 	Arguments map[string]ACLArgument `json:"arguments"`
 }
 
 // ACLTemplates represents a collection of ACL condition/action templates
-// +genie:model_response
 type ACLTemplates struct {
 	Conditions []ACLTemplateCondition `json:"conditions"`
 	Actions    []ACLTemplateAction    `json:"actions"`

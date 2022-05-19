@@ -8,32 +8,17 @@ import (
 
 // GetHostSpecs retrieves a list of host specs
 func (s *Service) GetHostSpecs(parameters connection.APIRequestParameters) ([]HostSpec, error) {
-	var specs []HostSpec
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostSpecsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, spec := range response.(*PaginatedHostSpec).Items {
-			specs = append(specs, spec)
-		}
-	}
-
-	return specs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetHostSpecsPaginated, parameters)
 }
 
 // GetHostSpecsPaginated retrieves a paginated list of host specs
-func (s *Service) GetHostSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedHostSpec, error) {
+func (s *Service) GetHostSpecsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[HostSpec], error) {
 	body, err := s.getHostSpecsPaginatedResponseBody(parameters)
-
-	return NewPaginatedHostSpec(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostSpecsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetHostSpecsPaginated), err
 }
 
-func (s *Service) getHostSpecsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostSpecSliceResponseBody, error) {
-	body := &GetHostSpecSliceResponseBody{}
+func (s *Service) getHostSpecsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]HostSpec], error) {
+	body := &connection.APIResponseBodyData[[]HostSpec]{}
 
 	response, err := s.connection.Get("/ecloud/v2/host-specs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetHostSpec(specID string) (HostSpec, error) {
 	return body.Data, err
 }
 
-func (s *Service) getHostSpecResponseBody(specID string) (*GetHostSpecResponseBody, error) {
-	body := &GetHostSpecResponseBody{}
+func (s *Service) getHostSpecResponseBody(specID string) (*connection.APIResponseBodyData[HostSpec], error) {
+	body := &connection.APIResponseBodyData[HostSpec]{}
 
 	if specID == "" {
 		return body, fmt.Errorf("invalid spec id")
