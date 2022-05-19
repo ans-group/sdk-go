@@ -11,8 +11,8 @@ func (s *Service) GetSettings() (Settings, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSettingsResponseBody() (*GetSettingsResponseBody, error) {
-	body := &GetSettingsResponseBody{}
+func (s *Service) getSettingsResponseBody() (*connection.APIResponseBodyData[Settings], error) {
+	body := &connection.APIResponseBodyData[Settings]{}
 
 	response, err := s.connection.Get("/safedns/v1/settings", connection.APIRequestParameters{})
 	if err != nil {

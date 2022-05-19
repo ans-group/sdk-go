@@ -1,6 +1,3 @@
-//go:generate go run ../../gen/model_response/main.go -package ddosx -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package ddosx -source model.go -destination model_paginated_generated.go
-
 package ddosx
 
 import (
@@ -341,8 +338,6 @@ func ParseHSTSRuleType(s string) (HSTSRuleType, error) {
 }
 
 // Domain represents a DDoSX domain
-// +genie:model_response
-// +genie:model_paginated
 type Domain struct {
 	SafeDNSZoneID *int               `json:"safedns_zone_id"`
 	Name          string             `json:"name"`
@@ -361,8 +356,6 @@ type DomainExternalDNS struct {
 }
 
 // DomainProperty represents a DDoSX domain property
-// +genie:model_response
-// +genie:model_paginated
 type DomainProperty struct {
 	ID    string             `json:"id"`
 	Name  DomainPropertyName `json:"name"`
@@ -370,8 +363,6 @@ type DomainProperty struct {
 }
 
 // Record represents a DDoSX record
-// +genie:model_response
-// +genie:model_paginated
 type Record struct {
 	ID              string     `json:"id"`
 	DomainName      string     `json:"domain_name"`
@@ -383,15 +374,12 @@ type Record struct {
 }
 
 // WAF represents a DDoSX WAF configuration
-// +genie:model_response
 type WAF struct {
 	Mode          WAFMode          `json:"mode"`
 	ParanoiaLevel WAFParanoiaLevel `json:"paranoia_level"`
 }
 
 // WAFRuleSet represents a DDoSX WAF rule set
-// +genie:model_response
-// +genie:model_paginated
 type WAFRuleSet struct {
 	ID     string         `json:"id"`
 	Name   WAFRuleSetName `json:"name"`
@@ -399,8 +387,6 @@ type WAFRuleSet struct {
 }
 
 // WAFRule represents a DDoSX WAF rule
-// +genie:model_response
-// +genie:model_paginated
 type WAFRule struct {
 	ID  string               `json:"id"`
 	URI string               `json:"uri"`
@@ -408,8 +394,6 @@ type WAFRule struct {
 }
 
 // WAFAdvancedRule represents a DDoSX WAF advanced rule
-// +genie:model_response
-// +genie:model_paginated
 type WAFAdvancedRule struct {
 	ID       string                  `json:"id"`
 	Section  WAFAdvancedRuleSection  `json:"section"`
@@ -419,8 +403,6 @@ type WAFAdvancedRule struct {
 }
 
 // SSL represents a DDoSX SSL
-// +genie:model_response
-// +genie:model_paginated
 type SSL struct {
 	ID           string   `json:"id"`
 	UKFastSSLID  *int     `json:"ukfast_ssl_id"`
@@ -429,21 +411,17 @@ type SSL struct {
 }
 
 // SSLContent represents a DDoSX SSL content
-// +genie:model_response
 type SSLContent struct {
 	Certificate string `json:"certificate"`
 	CABundle    string `json:"ca_bundle"`
 }
 
 // SSLPrivateKey represents a DDoSX SSL private key
-// +genie:model_response
 type SSLPrivateKey struct {
 	Key string `json:"key"`
 }
 
 // ACLGeoIPRule represents a DDoSX ACL GeoIP rule
-// +genie:model_response
-// +genie:model_paginated
 type ACLGeoIPRule struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -451,8 +429,6 @@ type ACLGeoIPRule struct {
 }
 
 // ACLIPRule represents a DDoSX ACL IP rule
-// +genie:model_response
-// +genie:model_paginated
 type ACLIPRule struct {
 	ID   string               `json:"id"`
 	IP   connection.IPAddress `json:"ip"`
@@ -461,8 +437,6 @@ type ACLIPRule struct {
 }
 
 // CDNRule represents a DDoSX CDN rule
-// +genie:model_response
-// +genie:model_paginated
 type CDNRule struct {
 	ID           string              `json:"id"`
 	URI          string              `json:"uri"`
@@ -514,14 +488,11 @@ func ParseCDNRuleCacheControlDuration(s string) (*CDNRuleCacheControlDuration, e
 }
 
 // HSTSConfiguration represents HSTS configuration for a DDoSX domain
-// +genie:model_response
 type HSTSConfiguration struct {
 	Enabled bool `json:"enabled"`
 }
 
 // HSTSRule represents HSTS rule for a DDoSX domain
-// +genie:model_response
-// +genie:model_paginated
 type HSTSRule struct {
 	ID                string       `json:"id"`
 	MaxAge            int          `json:"max_age"`
@@ -532,8 +503,6 @@ type HSTSRule struct {
 }
 
 // WAFLog represents a WAF log entry
-// +genie:model_response
-// +genie:model_paginated
 type WAFLog struct {
 	ID        string               `json:"id"`
 	Host      string               `json:"host"`
@@ -543,8 +512,6 @@ type WAFLog struct {
 }
 
 // WAFLogMatch represents a WAF log match
-// +genie:model_response
-// +genie:model_paginated
 type WAFLogMatch struct {
 	ID          string               `json:"id"`
 	LogID       string               `json:"log_id"`

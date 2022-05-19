@@ -8,32 +8,17 @@ import (
 
 // GetHosts retrieves a list of hosts
 func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, error) {
-	var hosts []Host
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedHost).Items {
-			hosts = append(hosts, host)
-		}
-	}
-
-	return hosts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetHostsPaginated, parameters)
 }
 
 // GetHostsPaginated retrieves a paginated list of hosts
-func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error) {
+func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Host], error) {
 	body, err := s.getHostsPaginatedResponseBody(parameters)
-
-	return NewPaginatedHost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetHostsPaginated), err
 }
 
-func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
-	body := &GetHostSliceResponseBody{}
+func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Host], error) {
+	body := &connection.APIResponseBodyData[[]Host]{}
 
 	response, err := s.connection.Get("/ukfast-storage/v1/hosts", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetHost(hostID int) (Host, error) {
 	return body.Data, err
 }
 
-func (s *Service) getHostResponseBody(hostID int) (*GetHostResponseBody, error) {
-	body := &GetHostResponseBody{}
+func (s *Service) getHostResponseBody(hostID int) (*connection.APIResponseBodyData[Host], error) {
+	body := &connection.APIResponseBodyData[Host]{}
 
 	if hostID < 1 {
 		return body, fmt.Errorf("invalid host id")

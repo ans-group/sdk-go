@@ -9,32 +9,17 @@ import (
 
 // GetClusters retrieves a list of clusters
 func (s *Service) GetClusters(parameters connection.APIRequestParameters) ([]Cluster, error) {
-	var clusters []Cluster
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetClustersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, cluster := range response.(*PaginatedCluster).Items {
-			clusters = append(clusters, cluster)
-		}
-	}
-
-	return clusters, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetClustersPaginated, parameters)
 }
 
 // GetClustersPaginated retrieves a paginated list of clusters
-func (s *Service) GetClustersPaginated(parameters connection.APIRequestParameters) (*PaginatedCluster, error) {
+func (s *Service) GetClustersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Cluster], error) {
 	body, err := s.getClustersPaginatedResponseBody(parameters)
-
-	return NewPaginatedCluster(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetClustersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetClustersPaginated), err
 }
 
-func (s *Service) getClustersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetClusterSliceResponseBody, error) {
-	body := &GetClusterSliceResponseBody{}
+func (s *Service) getClustersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Cluster], error) {
+	body := &connection.APIResponseBodyData[[]Cluster]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/clusters", parameters)
 	if err != nil {
@@ -51,8 +36,8 @@ func (s *Service) GetCluster(clusterID int) (Cluster, error) {
 	return body.Data, err
 }
 
-func (s *Service) getClusterResponseBody(clusterID int) (*GetClusterResponseBody, error) {
-	body := &GetClusterResponseBody{}
+func (s *Service) getClusterResponseBody(clusterID int) (*connection.APIResponseBodyData[Cluster], error) {
+	body := &connection.APIResponseBodyData[Cluster]{}
 
 	if clusterID < 1 {
 		return body, fmt.Errorf("invalid cluster id")
@@ -178,8 +163,8 @@ func (s *Service) GetClusterACLTemplates(clusterID int) (ACLTemplates, error) {
 	return body.Data, err
 }
 
-func (s *Service) getClusterACLTemplatesResponseBody(clusterID int) (*GetACLTemplatesResponseBody, error) {
-	body := &GetACLTemplatesResponseBody{}
+func (s *Service) getClusterACLTemplatesResponseBody(clusterID int) (*connection.APIResponseBodyData[ACLTemplates], error) {
+	body := &connection.APIResponseBodyData[ACLTemplates]{}
 
 	if clusterID < 1 {
 		return body, fmt.Errorf("invalid cluster id")

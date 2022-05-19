@@ -8,32 +8,17 @@ import (
 
 // GetInvoiceQueries retrieves a list of invoice queries
 func (s *Service) GetInvoiceQueries(parameters connection.APIRequestParameters) ([]InvoiceQuery, error) {
-	var queries []InvoiceQuery
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInvoiceQueriesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, query := range response.(*PaginatedInvoiceQuery).Items {
-			queries = append(queries, query)
-		}
-	}
-
-	return queries, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetInvoiceQueriesPaginated, parameters)
 }
 
 // GetInvoiceQueriesPaginated retrieves a paginated list of invoice queries
-func (s *Service) GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*PaginatedInvoiceQuery, error) {
+func (s *Service) GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[InvoiceQuery], error) {
 	body, err := s.getInvoiceQueriesPaginatedResponseBody(parameters)
-
-	return NewPaginatedInvoiceQuery(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetInvoiceQueriesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetInvoiceQueriesPaginated), err
 }
 
-func (s *Service) getInvoiceQueriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetInvoiceQuerySliceResponseBody, error) {
-	body := &GetInvoiceQuerySliceResponseBody{}
+func (s *Service) getInvoiceQueriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]InvoiceQuery], error) {
+	body := &connection.APIResponseBodyData[[]InvoiceQuery]{}
 
 	response, err := s.connection.Get("/billing/v1/invoice-queries", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetInvoiceQuery(queryID int) (InvoiceQuery, error) {
 	return body.Data, err
 }
 
-func (s *Service) getInvoiceQueryResponseBody(queryID int) (*GetInvoiceQueryResponseBody, error) {
-	body := &GetInvoiceQueryResponseBody{}
+func (s *Service) getInvoiceQueryResponseBody(queryID int) (*connection.APIResponseBodyData[InvoiceQuery], error) {
+	body := &connection.APIResponseBodyData[InvoiceQuery]{}
 
 	if queryID < 1 {
 		return body, fmt.Errorf("invalid invoice query id")
@@ -78,8 +63,8 @@ func (s *Service) CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error)
 	return body.Data.ID, err
 }
 
-func (s *Service) createInvoiceQueryResponseBody(req CreateInvoiceQueryRequest) (*GetInvoiceQueryResponseBody, error) {
-	body := &GetInvoiceQueryResponseBody{}
+func (s *Service) createInvoiceQueryResponseBody(req CreateInvoiceQueryRequest) (*connection.APIResponseBodyData[InvoiceQuery], error) {
+	body := &connection.APIResponseBodyData[InvoiceQuery]{}
 
 	response, err := s.connection.Post("/billing/v1/invoice-queries", &req)
 	if err != nil {

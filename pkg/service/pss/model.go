@@ -1,6 +1,3 @@
-//go:generate go run ../../gen/model_response/main.go -package pss -source model.go -destination model_response_generated.go
-//go:generate go run ../../gen/model_paginated/main.go -package pss -source model.go -destination model_paginated_generated.go
-
 package pss
 
 import "github.com/ukfast/sdk-go/pkg/connection"
@@ -84,8 +81,6 @@ func ParseRequestStatus(s string) (RequestStatus, error) {
 }
 
 // Request represents a PSS request
-// +genie:model_response
-// +genie:model_paginated
 type Request struct {
 	ID                int                 `json:"id"`
 	Author            Author              `json:"author"`
@@ -114,8 +109,6 @@ type Author struct {
 }
 
 // Reply represents a PSS reply
-// +genie:model_response
-// +genie:model_paginated
 type Reply struct {
 	ID          string              `json:"id"`
 	RequestID   int                 `json:"request_id"`
@@ -139,7 +132,6 @@ type Product struct {
 }
 
 // Feedback represents PSS feedback
-// +genie:model_response
 type Feedback struct {
 	ID               int                 `json:"id"`
 	ContactID        int                 `json:"contact_id"`

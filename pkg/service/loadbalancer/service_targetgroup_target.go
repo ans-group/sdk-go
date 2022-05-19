@@ -8,32 +8,22 @@ import (
 
 // GetTargetGroupTargets retrieves a list of targets
 func (s *Service) GetTargetGroupTargets(groupID int, parameters connection.APIRequestParameters) ([]Target, error) {
-	var targets []Target
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Target], error) {
 		return s.GetTargetGroupTargetsPaginated(groupID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, target := range response.(*PaginatedTarget).Items {
-			targets = append(targets, target)
-		}
-	}
-
-	return targets, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetTargetGroupTargetsPaginated retrieves a paginated list of targets
-func (s *Service) GetTargetGroupTargetsPaginated(groupID int, parameters connection.APIRequestParameters) (*PaginatedTarget, error) {
+func (s *Service) GetTargetGroupTargetsPaginated(groupID int, parameters connection.APIRequestParameters) (*connection.Paginated[Target], error) {
 	body, err := s.getTargetGroupTargetsPaginatedResponseBody(groupID, parameters)
 
-	return NewPaginatedTarget(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Target], error) {
 		return s.GetTargetGroupTargetsPaginated(groupID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getTargetGroupTargetsPaginatedResponseBody(groupID int, parameters connection.APIRequestParameters) (*GetTargetSliceResponseBody, error) {
-	body := &GetTargetSliceResponseBody{}
+func (s *Service) getTargetGroupTargetsPaginatedResponseBody(groupID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Target], error) {
+	body := &connection.APIResponseBodyData[[]Target]{}
 
 	if groupID < 1 {
 		return body, fmt.Errorf("invalid target group id")
@@ -54,8 +44,8 @@ func (s *Service) GetTargetGroupTarget(groupID int, targetID int) (Target, error
 	return body.Data, err
 }
 
-func (s *Service) getTargetGroupTargetResponseBody(groupID int, targetID int) (*GetTargetResponseBody, error) {
-	body := &GetTargetResponseBody{}
+func (s *Service) getTargetGroupTargetResponseBody(groupID int, targetID int) (*connection.APIResponseBodyData[Target], error) {
+	body := &connection.APIResponseBodyData[Target]{}
 
 	if groupID < 1 {
 		return body, fmt.Errorf("invalid target group id")
@@ -86,8 +76,8 @@ func (s *Service) CreateTargetGroupTarget(groupID int, req CreateTargetRequest) 
 	return body.Data.ID, err
 }
 
-func (s *Service) createTargetGroupTargetResponseBody(groupID int, req CreateTargetRequest) (*GetTargetResponseBody, error) {
-	body := &GetTargetResponseBody{}
+func (s *Service) createTargetGroupTargetResponseBody(groupID int, req CreateTargetRequest) (*connection.APIResponseBodyData[Target], error) {
+	body := &connection.APIResponseBodyData[Target]{}
 
 	if groupID < 1 {
 		return body, fmt.Errorf("invalid target group id")

@@ -8,32 +8,17 @@ import (
 
 // GetDatastores retrieves a list of datastores
 func (s *Service) GetDatastores(parameters connection.APIRequestParameters) ([]Datastore, error) {
-	var datastores []Datastore
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDatastoresPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, datastore := range response.(*PaginatedDatastore).Items {
-			datastores = append(datastores, datastore)
-		}
-	}
-
-	return datastores, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetDatastoresPaginated, parameters)
 }
 
 // GetDatastoresPaginated retrieves a paginated list of datastores
-func (s *Service) GetDatastoresPaginated(parameters connection.APIRequestParameters) (*PaginatedDatastore, error) {
+func (s *Service) GetDatastoresPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Datastore], error) {
 	body, err := s.getDatastoresPaginatedResponseBody(parameters)
-
-	return NewPaginatedDatastore(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetDatastoresPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetDatastoresPaginated), err
 }
 
-func (s *Service) getDatastoresPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetDatastoreSliceResponseBody, error) {
-	body := &GetDatastoreSliceResponseBody{}
+func (s *Service) getDatastoresPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Datastore], error) {
+	body := &connection.APIResponseBodyData[[]Datastore]{}
 
 	response, err := s.connection.Get("/ecloud/v1/datastores", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetDatastore(datastoreID int) (Datastore, error) {
 	return body.Data, err
 }
 
-func (s *Service) getDatastoreResponseBody(datastoreID int) (*GetDatastoreResponseBody, error) {
-	body := &GetDatastoreResponseBody{}
+func (s *Service) getDatastoreResponseBody(datastoreID int) (*connection.APIResponseBodyData[Datastore], error) {
+	body := &connection.APIResponseBodyData[Datastore]{}
 
 	if datastoreID < 1 {
 		return body, fmt.Errorf("invalid datastore id")

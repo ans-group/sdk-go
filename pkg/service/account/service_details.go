@@ -9,8 +9,8 @@ func (s *Service) GetDetails() (Details, error) {
 	return body.Data, err
 }
 
-func (s *Service) getDetailsResponseBody() (*GetDetailsResponseBody, error) {
-	body := &GetDetailsResponseBody{}
+func (s *Service) getDetailsResponseBody() (*connection.APIResponseBodyData[Details], error) {
+	body := &connection.APIResponseBodyData[Details]{}
 
 	response, err := s.connection.Get("/account/v1/details", connection.APIRequestParameters{})
 	if err != nil {

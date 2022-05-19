@@ -11,8 +11,8 @@ func (s *Service) GetTotalSpendMonthToDate() (TotalSpend, error) {
 	return body.Data, err
 }
 
-func (s *Service) getTotalSpendMonthToDateResponseBody() (*GetTotalSpendResponseBody, error) {
-	body := &GetTotalSpendResponseBody{}
+func (s *Service) getTotalSpendMonthToDateResponseBody() (*connection.APIResponseBodyData[TotalSpend], error) {
+	body := &connection.APIResponseBodyData[TotalSpend]{}
 	response, err := s.connection.Get("/cloudflare/v1/total-spend/month-to-date", connection.APIRequestParameters{})
 	if err != nil {
 		return body, err

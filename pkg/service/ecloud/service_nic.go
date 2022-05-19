@@ -8,32 +8,17 @@ import (
 
 // GetNICs retrieves a list of nics
 func (s *Service) GetNICs(parameters connection.APIRequestParameters) ([]NIC, error) {
-	var nics []NIC
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNICsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, nic := range response.(*PaginatedNIC).Items {
-			nics = append(nics, nic)
-		}
-	}
-
-	return nics, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetNICsPaginated, parameters)
 }
 
 // GetNICsPaginated retrieves a paginated list of nics
-func (s *Service) GetNICsPaginated(parameters connection.APIRequestParameters) (*PaginatedNIC, error) {
+func (s *Service) GetNICsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
 	body, err := s.getNICsPaginatedResponseBody(parameters)
-
-	return NewPaginatedNIC(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNICsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetNICsPaginated), err
 }
 
-func (s *Service) getNICsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetNICSliceResponseBody, error) {
-	body := &GetNICSliceResponseBody{}
+func (s *Service) getNICsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NIC], error) {
+	body := &connection.APIResponseBodyData[[]NIC]{}
 
 	response, err := s.connection.Get("/ecloud/v2/nics", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetNIC(nicID string) (NIC, error) {
 	return body.Data, err
 }
 
-func (s *Service) getNICResponseBody(nicID string) (*GetNICResponseBody, error) {
-	body := &GetNICResponseBody{}
+func (s *Service) getNICResponseBody(nicID string) (*connection.APIResponseBodyData[NIC], error) {
+	body := &connection.APIResponseBodyData[NIC]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")
@@ -73,32 +58,22 @@ func (s *Service) getNICResponseBody(nicID string) (*GetNICResponseBody, error) 
 
 // GetNICTasks retrieves a list of NIC tasks
 func (s *Service) GetNICTasks(nicID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNICTasksPaginated(nicID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNICTasksPaginated retrieves a paginated list of NIC tasks
-func (s *Service) GetNICTasksPaginated(nicID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetNICTasksPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getNICTasksPaginatedResponseBody(nicID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetNICTasksPaginated(nicID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNICTasksPaginatedResponseBody(nicID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getNICTasksPaginatedResponseBody(nicID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")
@@ -120,32 +95,22 @@ func (s *Service) getNICTasksPaginatedResponseBody(nicID string, parameters conn
 
 // GetNICIPAddress retrieves a list of NIC IP addresses
 func (s *Service) GetNICIPAddresses(nicID string, parameters connection.APIRequestParameters) ([]IPAddress, error) {
-	var ips []IPAddress
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
 		return s.GetNICIPAddressesPaginated(nicID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, ip := range response.(*PaginatedIPAddress).Items {
-			ips = append(ips, ip)
-		}
-	}
-
-	return ips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetNICIPAddressPaginated retrieves a paginated list of NIC IP addresses
-func (s *Service) GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*PaginatedIPAddress, error) {
+func (s *Service) GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
 	body, err := s.getNICIPAddressesPaginatedResponseBody(nicID, parameters)
 
-	return NewPaginatedIPAddress(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
 		return s.GetNICIPAddressesPaginated(nicID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getNICIPAddressesPaginatedResponseBody(nicID string, parameters connection.APIRequestParameters) (*GetIPAddressSliceResponseBody, error) {
-	body := &GetIPAddressSliceResponseBody{}
+func (s *Service) getNICIPAddressesPaginatedResponseBody(nicID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]IPAddress], error) {
+	body := &connection.APIResponseBodyData[[]IPAddress]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")
@@ -171,8 +136,8 @@ func (s *Service) AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (
 	return body.Data.TaskID, err
 }
 
-func (s *Service) assignNICIPAddressResponseBody(nicID string, req AssignIPAddressRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) assignNICIPAddressResponseBody(nicID string, req AssignIPAddressRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")
@@ -199,8 +164,8 @@ func (s *Service) UnassignNICIPAddress(nicID string, ipID string) (string, error
 	return body.Data.TaskID, err
 }
 
-func (s *Service) unassignNICIPAddressResponseBody(nicID string, ipID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) unassignNICIPAddressResponseBody(nicID string, ipID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")

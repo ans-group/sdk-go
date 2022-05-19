@@ -13,8 +13,8 @@ func (s *Service) GetWhois(domainName string) (Whois, error) {
 	return body.Data, err
 }
 
-func (s *Service) getWhoisResponseBody(domainName string) (*GetWhoisResponseBody, error) {
-	body := &GetWhoisResponseBody{}
+func (s *Service) getWhoisResponseBody(domainName string) (*connection.APIResponseBodyData[Whois], error) {
+	body := &connection.APIResponseBodyData[Whois]{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

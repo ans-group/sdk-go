@@ -8,32 +8,17 @@ import (
 
 // GetBillingMetrics retrieves a list of billing metrics
 func (s *Service) GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error) {
-	var metrics []BillingMetric
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetBillingMetricsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, metric := range response.(*PaginatedBillingMetric).Items {
-			metrics = append(metrics, metric)
-		}
-	}
-
-	return metrics, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetBillingMetricsPaginated, parameters)
 }
 
 // GetBillingMetricsPaginated retrieves a paginated list of billing metrics
-func (s *Service) GetBillingMetricsPaginated(parameters connection.APIRequestParameters) (*PaginatedBillingMetric, error) {
+func (s *Service) GetBillingMetricsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BillingMetric], error) {
 	body, err := s.getBillingMetricsPaginatedResponseBody(parameters)
-
-	return NewPaginatedBillingMetric(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetBillingMetricsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetBillingMetricsPaginated), err
 }
 
-func (s *Service) getBillingMetricsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetBillingMetricSliceResponseBody, error) {
-	body := &GetBillingMetricSliceResponseBody{}
+func (s *Service) getBillingMetricsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]BillingMetric], error) {
+	body := &connection.APIResponseBodyData[[]BillingMetric]{}
 
 	response, err := s.connection.Get("/ecloud/v2/billing-metrics", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetBillingMetric(metricID string) (BillingMetric, error) {
 	return body.Data, err
 }
 
-func (s *Service) getBillingMetricResponseBody(metricID string) (*GetBillingMetricResponseBody, error) {
-	body := &GetBillingMetricResponseBody{}
+func (s *Service) getBillingMetricResponseBody(metricID string) (*connection.APIResponseBodyData[BillingMetric], error) {
+	body := &connection.APIResponseBodyData[BillingMetric]{}
 
 	if metricID == "" {
 		return body, fmt.Errorf("invalid metric id")

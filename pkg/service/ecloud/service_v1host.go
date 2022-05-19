@@ -8,32 +8,17 @@ import (
 
 // GetV1Hosts retrieves a list of v1 hosts
 func (s *Service) GetV1Hosts(parameters connection.APIRequestParameters) ([]V1Host, error) {
-	var hosts []V1Host
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetV1HostsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedV1Host).Items {
-			hosts = append(hosts, host)
-		}
-	}
-
-	return hosts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetV1HostsPaginated, parameters)
 }
 
 // GetV1HostsPaginated retrieves a paginated list of v1 hosts
-func (s *Service) GetV1HostsPaginated(parameters connection.APIRequestParameters) (*PaginatedV1Host, error) {
+func (s *Service) GetV1HostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[V1Host], error) {
 	body, err := s.getV1HostsPaginatedResponseBody(parameters)
-
-	return NewPaginatedV1Host(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetV1HostsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetV1HostsPaginated), err
 }
 
-func (s *Service) getV1HostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetV1HostSliceResponseBody, error) {
-	body := &GetV1HostSliceResponseBody{}
+func (s *Service) getV1HostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]V1Host], error) {
+	body := &connection.APIResponseBodyData[[]V1Host]{}
 
 	response, err := s.connection.Get("/ecloud/v1/hosts", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetV1Host(hostID int) (V1Host, error) {
 	return body.Data, err
 }
 
-func (s *Service) getV1HostResponseBody(hostID int) (*GetV1HostResponseBody, error) {
-	body := &GetV1HostResponseBody{}
+func (s *Service) getV1HostResponseBody(hostID int) (*connection.APIResponseBodyData[V1Host], error) {
+	body := &connection.APIResponseBodyData[V1Host]{}
 
 	if hostID < 1 {
 		return body, fmt.Errorf("invalid host id")

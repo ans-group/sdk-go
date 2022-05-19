@@ -8,32 +8,17 @@ import (
 
 // GetPayments retrieves a list of payments
 func (s *Service) GetPayments(parameters connection.APIRequestParameters) ([]Payment, error) {
-	var payments []Payment
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetPaymentsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, payment := range response.(*PaginatedPayment).Items {
-			payments = append(payments, payment)
-		}
-	}
-
-	return payments, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetPaymentsPaginated, parameters)
 }
 
 // GetPaymentsPaginated retrieves a paginated list of payments
-func (s *Service) GetPaymentsPaginated(parameters connection.APIRequestParameters) (*PaginatedPayment, error) {
+func (s *Service) GetPaymentsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Payment], error) {
 	body, err := s.getPaymentsPaginatedResponseBody(parameters)
-
-	return NewPaginatedPayment(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetPaymentsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetPaymentsPaginated), err
 }
 
-func (s *Service) getPaymentsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetPaymentSliceResponseBody, error) {
-	body := &GetPaymentSliceResponseBody{}
+func (s *Service) getPaymentsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Payment], error) {
+	body := &connection.APIResponseBodyData[[]Payment]{}
 
 	response, err := s.connection.Get("/billing/v1/payments", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetPayment(paymentID int) (Payment, error) {
 	return body.Data, err
 }
 
-func (s *Service) getPaymentResponseBody(paymentID int) (*GetPaymentResponseBody, error) {
-	body := &GetPaymentResponseBody{}
+func (s *Service) getPaymentResponseBody(paymentID int) (*connection.APIResponseBodyData[Payment], error) {
+	body := &connection.APIResponseBodyData[Payment]{}
 
 	if paymentID < 1 {
 		return body, fmt.Errorf("invalid payment id")

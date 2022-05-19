@@ -8,32 +8,22 @@ import (
 
 // GetListenerAccessIPs retrieves a list of access IPs
 func (s *Service) GetListenerAccessIPs(listenerID int, parameters connection.APIRequestParameters) ([]AccessIP, error) {
-	var accesss []AccessIP
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[AccessIP], error) {
 		return s.GetListenerAccessIPsPaginated(listenerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, access := range response.(*PaginatedAccessIP).Items {
-			accesss = append(accesss, access)
-		}
-	}
-
-	return accesss, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetListenerAccessIPsPaginated retrieves a paginated list of access IPs
-func (s *Service) GetListenerAccessIPsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedAccessIP, error) {
+func (s *Service) GetListenerAccessIPsPaginated(listenerID int, parameters connection.APIRequestParameters) (*connection.Paginated[AccessIP], error) {
 	body, err := s.getListenerAccessIPsPaginatedResponseBody(listenerID, parameters)
 
-	return NewPaginatedAccessIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[AccessIP], error) {
 		return s.GetListenerAccessIPsPaginated(listenerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getListenerAccessIPsPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*GetAccessIPSliceResponseBody, error) {
-	body := &GetAccessIPSliceResponseBody{}
+func (s *Service) getListenerAccessIPsPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]AccessIP], error) {
+	body := &connection.APIResponseBodyData[[]AccessIP]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -54,8 +44,8 @@ func (s *Service) GetListenerAccessIP(listenerID int, accessID int) (AccessIP, e
 	return body.Data, err
 }
 
-func (s *Service) getListenerAccessIPResponseBody(listenerID int, accessID int) (*GetAccessIPResponseBody, error) {
-	body := &GetAccessIPResponseBody{}
+func (s *Service) getListenerAccessIPResponseBody(listenerID int, accessID int) (*connection.APIResponseBodyData[AccessIP], error) {
+	body := &connection.APIResponseBodyData[AccessIP]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -86,8 +76,8 @@ func (s *Service) CreateListenerAccessIP(listenerID int, req CreateAccessIPReque
 	return body.Data.ID, err
 }
 
-func (s *Service) createListenerAccessIPResponseBody(listenerID int, req CreateAccessIPRequest) (*GetAccessIPResponseBody, error) {
-	body := &GetAccessIPResponseBody{}
+func (s *Service) createListenerAccessIPResponseBody(listenerID int, req CreateAccessIPRequest) (*connection.APIResponseBodyData[AccessIP], error) {
+	body := &connection.APIResponseBodyData[AccessIP]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")

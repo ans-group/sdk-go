@@ -8,32 +8,17 @@ import (
 
 // GetAvailabilityZones retrieves a list of azs
 func (s *Service) GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error) {
-	var azs []AvailabilityZone
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAvailabilityZonesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, az := range response.(*PaginatedAvailabilityZone).Items {
-			azs = append(azs, az)
-		}
-	}
-
-	return azs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetAvailabilityZonesPaginated, parameters)
 }
 
 // GetAvailabilityZonesPaginated retrieves a paginated list of azs
-func (s *Service) GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedAvailabilityZone, error) {
+func (s *Service) GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error) {
 	body, err := s.getAvailabilityZonesPaginatedResponseBody(parameters)
-
-	return NewPaginatedAvailabilityZone(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetAvailabilityZonesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetAvailabilityZonesPaginated), err
 }
 
-func (s *Service) getAvailabilityZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetAvailabilityZoneSliceResponseBody, error) {
-	body := &GetAvailabilityZoneSliceResponseBody{}
+func (s *Service) getAvailabilityZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]AvailabilityZone], error) {
+	body := &connection.APIResponseBodyData[[]AvailabilityZone]{}
 
 	response, err := s.connection.Get("/ecloud/v2/availability-zones", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetAvailabilityZone(azID string) (AvailabilityZone, error) {
 	return body.Data, err
 }
 
-func (s *Service) getAvailabilityZoneResponseBody(azID string) (*GetAvailabilityZoneResponseBody, error) {
-	body := &GetAvailabilityZoneResponseBody{}
+func (s *Service) getAvailabilityZoneResponseBody(azID string) (*connection.APIResponseBodyData[AvailabilityZone], error) {
+	body := &connection.APIResponseBodyData[AvailabilityZone]{}
 
 	if azID == "" {
 		return body, fmt.Errorf("invalid az id")

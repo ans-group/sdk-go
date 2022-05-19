@@ -8,32 +8,17 @@ import (
 
 // GetTasks retrieves a list of tasks
 func (s *Service) GetTasks(parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTasksPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetTasksPaginated, parameters)
 }
 
 // GetTasksPaginated retrieves a paginated list of tasks
-func (s *Service) GetTasksPaginated(parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetTasksPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getTasksPaginatedResponseBody(parameters)
-
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetTasksPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetTasksPaginated), err
 }
 
-func (s *Service) getTasksPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getTasksPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	response, err := s.connection.Get("/ecloud/v2/tasks", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetTask(taskID string) (Task, error) {
 	return body.Data, err
 }
 
-func (s *Service) getTaskResponseBody(taskID string) (*GetTaskResponseBody, error) {
-	body := &GetTaskResponseBody{}
+func (s *Service) getTaskResponseBody(taskID string) (*connection.APIResponseBodyData[Task], error) {
+	body := &connection.APIResponseBodyData[Task]{}
 
 	if taskID == "" {
 		return body, fmt.Errorf("invalid task id")

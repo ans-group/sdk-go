@@ -8,32 +8,17 @@ import (
 
 // GetFloatingIPs retrieves a list of floating ips
 func (s *Service) GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error) {
-	var fips []FloatingIP
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFloatingIPsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, fip := range response.(*PaginatedFloatingIP).Items {
-			fips = append(fips, fip)
-		}
-	}
-
-	return fips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetFloatingIPsPaginated, parameters)
 }
 
 // GetFloatingIPsPaginated retrieves a paginated list of floating ips
-func (s *Service) GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*PaginatedFloatingIP, error) {
+func (s *Service) GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
 	body, err := s.getFloatingIPsPaginatedResponseBody(parameters)
-
-	return NewPaginatedFloatingIP(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFloatingIPsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetFloatingIPsPaginated), err
 }
 
-func (s *Service) getFloatingIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFloatingIPSliceResponseBody, error) {
-	body := &GetFloatingIPSliceResponseBody{}
+func (s *Service) getFloatingIPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]FloatingIP], error) {
+	body := &connection.APIResponseBodyData[[]FloatingIP]{}
 
 	response, err := s.connection.Get("/ecloud/v2/floating-ips", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetFloatingIP(fipID string) (FloatingIP, error) {
 	return body.Data, err
 }
 
-func (s *Service) getFloatingIPResponseBody(fipID string) (*GetFloatingIPResponseBody, error) {
-	body := &GetFloatingIPResponseBody{}
+func (s *Service) getFloatingIPResponseBody(fipID string) (*connection.APIResponseBodyData[FloatingIP], error) {
+	body := &connection.APIResponseBodyData[FloatingIP]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating ip id")
@@ -78,8 +63,8 @@ func (s *Service) CreateFloatingIP(req CreateFloatingIPRequest) (TaskReference, 
 	return body.Data, err
 }
 
-func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createFloatingIPResponseBody(req CreateFloatingIPRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/floating-ips", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchFloatingIP(fipID string, req PatchFloatingIPRequest) (Tas
 	return body.Data, err
 }
 
-func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchFloatingIPResponseBody(fipID string, req PatchFloatingIPRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteFloatingIP(fipID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFloatingIPResponseBody(fipID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteFloatingIPResponseBody(fipID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -152,8 +137,8 @@ func (s *Service) AssignFloatingIP(fipID string, req AssignFloatingIPRequest) (s
 	return body.Data.TaskID, err
 }
 
-func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingIPRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) assignFloatingIPResponseBody(fipID string, req AssignFloatingIPRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -180,8 +165,8 @@ func (s *Service) UnassignFloatingIP(fipID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) unassignFloatingIPResponseBody(fipID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) unassignFloatingIPResponseBody(fipID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating IP id")
@@ -203,32 +188,22 @@ func (s *Service) unassignFloatingIPResponseBody(fipID string) (*GetTaskReferenc
 
 // GetFloatingIPTasks retrieves a list of FloatingIP tasks
 func (s *Service) GetFloatingIPTasks(fipID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetFloatingIPTasksPaginated(fipID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetFloatingIPTasksPaginated retrieves a paginated list of FloatingIP tasks
-func (s *Service) GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getFloatingIPTasksPaginatedResponseBody(fipID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetFloatingIPTasksPaginated(fipID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getFloatingIPTasksPaginatedResponseBody(fipID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getFloatingIPTasksPaginatedResponseBody(fipID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if fipID == "" {
 		return body, fmt.Errorf("invalid floating ip id")

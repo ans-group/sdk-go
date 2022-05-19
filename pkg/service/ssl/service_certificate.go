@@ -8,32 +8,17 @@ import (
 
 // GetCertificates retrieves a list of certificates
 func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([]Certificate, error) {
-	var certificates []Certificate
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCertificatesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, certificate := range response.(*PaginatedCertificate).Items {
-			certificates = append(certificates, certificate)
-		}
-	}
-
-	return certificates, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetCertificatesPaginated, parameters)
 }
 
 // GetCertificatesPaginated retrieves a paginated list of certificates
-func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParameters) (*PaginatedCertificate, error) {
+func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
 	body, err := s.getCertificatesPaginatedResponseBody(parameters)
-
-	return NewPaginatedCertificate(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCertificatesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetCertificatesPaginated), err
 }
 
-func (s *Service) getCertificatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetCertificateSliceResponseBody, error) {
-	body := &GetCertificateSliceResponseBody{}
+func (s *Service) getCertificatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Certificate], error) {
+	body := &connection.APIResponseBodyData[[]Certificate]{}
 
 	response, err := s.connection.Get("/ssl/v1/certificates", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetCertificate(certificateID int) (Certificate, error) {
 	return body.Data, err
 }
 
-func (s *Service) getCertificateResponseBody(certificateID int) (*GetCertificateResponseBody, error) {
-	body := &GetCertificateResponseBody{}
+func (s *Service) getCertificateResponseBody(certificateID int) (*connection.APIResponseBodyData[Certificate], error) {
+	body := &connection.APIResponseBodyData[Certificate]{}
 
 	if certificateID < 1 {
 		return body, fmt.Errorf("invalid certificate id")
@@ -78,8 +63,8 @@ func (s *Service) GetCertificateContent(certificateID int) (CertificateContent, 
 	return body.Data, err
 }
 
-func (s *Service) getCertificateContentResponseBody(certificateID int) (*GetCertificateContentResponseBody, error) {
-	body := &GetCertificateContentResponseBody{}
+func (s *Service) getCertificateContentResponseBody(certificateID int) (*connection.APIResponseBodyData[CertificateContent], error) {
+	body := &connection.APIResponseBodyData[CertificateContent]{}
 
 	if certificateID < 1 {
 		return body, fmt.Errorf("invalid certificate id")
@@ -106,8 +91,8 @@ func (s *Service) GetCertificatePrivateKey(certificateID int) (CertificatePrivat
 	return body.Data, err
 }
 
-func (s *Service) getCertificatePrivateKeyResponseBody(certificateID int) (*GetCertificatePrivateKeyResponseBody, error) {
-	body := &GetCertificatePrivateKeyResponseBody{}
+func (s *Service) getCertificatePrivateKeyResponseBody(certificateID int) (*connection.APIResponseBodyData[CertificatePrivateKey], error) {
+	body := &connection.APIResponseBodyData[CertificatePrivateKey]{}
 
 	if certificateID < 1 {
 		return body, fmt.Errorf("invalid certificate id")

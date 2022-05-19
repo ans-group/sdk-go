@@ -8,32 +8,17 @@ import (
 
 // GetHosts retrieves a list of hosts
 func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, error) {
-	var hosts []Host
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, host := range response.(*PaginatedHost).Items {
-			hosts = append(hosts, host)
-		}
-	}
-
-	return hosts, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetHostsPaginated, parameters)
 }
 
 // GetHostsPaginated retrieves a paginated list of hosts
-func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*PaginatedHost, error) {
+func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Host], error) {
 	body, err := s.getHostsPaginatedResponseBody(parameters)
-
-	return NewPaginatedHost(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHostsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetHostsPaginated), err
 }
 
-func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHostSliceResponseBody, error) {
-	body := &GetHostSliceResponseBody{}
+func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Host], error) {
+	body := &connection.APIResponseBodyData[[]Host]{}
 
 	response, err := s.connection.Get("/ecloud/v2/hosts", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetHost(hostID string) (Host, error) {
 	return body.Data, err
 }
 
-func (s *Service) getHostResponseBody(hostID string) (*GetHostResponseBody, error) {
-	body := &GetHostResponseBody{}
+func (s *Service) getHostResponseBody(hostID string) (*connection.APIResponseBodyData[Host], error) {
+	body := &connection.APIResponseBodyData[Host]{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")
@@ -78,8 +63,8 @@ func (s *Service) CreateHost(req CreateHostRequest) (TaskReference, error) {
 	return body.Data, err
 }
 
-func (s *Service) createHostResponseBody(req CreateHostRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createHostResponseBody(req CreateHostRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/hosts", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchHost(hostID string, req PatchHostRequest) (TaskReference,
 	return body.Data, err
 }
 
-func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteHost(hostID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteHostResponseBody(hostID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteHostResponseBody(hostID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")
@@ -147,32 +132,22 @@ func (s *Service) deleteHostResponseBody(hostID string) (*GetTaskReferenceRespon
 
 // GetHostTasks retrieves a list of Host tasks
 func (s *Service) GetHostTasks(hostID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetHostTasksPaginated(hostID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetHostTasksPaginated retrieves a paginated list of Host tasks
-func (s *Service) GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getHostTasksPaginatedResponseBody(hostID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetHostTasksPaginated(hostID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getHostTasksPaginatedResponseBody(hostID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getHostTasksPaginatedResponseBody(hostID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if hostID == "" {
 		return body, fmt.Errorf("invalid host id")

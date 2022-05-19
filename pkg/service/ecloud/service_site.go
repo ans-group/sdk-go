@@ -8,32 +8,17 @@ import (
 
 // GetSites retrieves a list of sites
 func (s *Service) GetSites(parameters connection.APIRequestParameters) ([]Site, error) {
-	var sites []Site
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSitesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, site := range response.(*PaginatedSite).Items {
-			sites = append(sites, site)
-		}
-	}
-
-	return sites, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSitesPaginated, parameters)
 }
 
 // GetSitesPaginated retrieves a paginated list of sites
-func (s *Service) GetSitesPaginated(parameters connection.APIRequestParameters) (*PaginatedSite, error) {
+func (s *Service) GetSitesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Site], error) {
 	body, err := s.getSitesPaginatedResponseBody(parameters)
-
-	return NewPaginatedSite(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSitesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSitesPaginated), err
 }
 
-func (s *Service) getSitesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSiteSliceResponseBody, error) {
-	body := &GetSiteSliceResponseBody{}
+func (s *Service) getSitesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Site], error) {
+	body := &connection.APIResponseBodyData[[]Site]{}
 
 	response, err := s.connection.Get("/ecloud/v1/sites", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetSite(siteID int) (Site, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSiteResponseBody(siteID int) (*GetSiteResponseBody, error) {
-	body := &GetSiteResponseBody{}
+func (s *Service) getSiteResponseBody(siteID int) (*connection.APIResponseBodyData[Site], error) {
+	body := &connection.APIResponseBodyData[Site]{}
 
 	if siteID < 1 {
 		return body, fmt.Errorf("invalid site id")

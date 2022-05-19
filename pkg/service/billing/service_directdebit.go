@@ -13,8 +13,8 @@ func (s *Service) GetDirectDebit() (DirectDebit, error) {
 	return body.Data, err
 }
 
-func (s *Service) getDirectDebitResponseBody() (*GetDirectDebitResponseBody, error) {
-	body := &GetDirectDebitResponseBody{}
+func (s *Service) getDirectDebitResponseBody() (*connection.APIResponseBodyData[DirectDebit], error) {
+	body := &connection.APIResponseBodyData[DirectDebit]{}
 
 	response, err := s.connection.Get(fmt.Sprintf("/billing/v1/direct-debit"), connection.APIRequestParameters{})
 	if err != nil {

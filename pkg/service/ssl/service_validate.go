@@ -1,5 +1,7 @@
 package ssl
 
+import "github.com/ukfast/sdk-go/pkg/connection"
+
 // ValidateCertificate validates a certificate
 func (s *Service) ValidateCertificate(req ValidateRequest) (CertificateValidation, error) {
 	body, err := s.validateCertificateResponseBody(req)
@@ -7,8 +9,8 @@ func (s *Service) ValidateCertificate(req ValidateRequest) (CertificateValidatio
 	return body.Data, err
 }
 
-func (s *Service) validateCertificateResponseBody(req ValidateRequest) (*GetCertificateValidationResponseBody, error) {
-	body := &GetCertificateValidationResponseBody{}
+func (s *Service) validateCertificateResponseBody(req ValidateRequest) (*connection.APIResponseBodyData[CertificateValidation], error) {
+	body := &connection.APIResponseBodyData[CertificateValidation]{}
 
 	response, err := s.connection.Post("/ssl/v1/validate", &req)
 	if err != nil {

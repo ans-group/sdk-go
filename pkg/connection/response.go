@@ -145,6 +145,13 @@ func (a *APIResponseBody) Pagination() APIResponseMetadataPagination {
 	return a.Metadata.Pagination
 }
 
+// APIResponseBodyStringData represents the API response body containing generic data
+type APIResponseBodyData[T any] struct {
+	APIResponseBody
+
+	Data T `json:"data"`
+}
+
 // APIResponseBodyStringData represents the API response body containing string data
 type APIResponseBodyStringData struct {
 	APIResponseBody

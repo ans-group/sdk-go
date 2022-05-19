@@ -7,7 +7,7 @@ import (
 // ECloudFlexService is an interface for managing eCloud Flex
 type ECloudFlexService interface {
 	GetProjects(parameters connection.APIRequestParameters) ([]Project, error)
-	GetProjectsPaginated(parameters connection.APIRequestParameters) (*PaginatedProject, error)
+	GetProjectsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Project], error)
 	GetProject(projectID int) (Project, error)
 }
 

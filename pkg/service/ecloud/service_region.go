@@ -8,32 +8,17 @@ import (
 
 // GetRegions retrieves a list of regions
 func (s *Service) GetRegions(parameters connection.APIRequestParameters) ([]Region, error) {
-	var regions []Region
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRegionsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, region := range response.(*PaginatedRegion).Items {
-			regions = append(regions, region)
-		}
-	}
-
-	return regions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetRegionsPaginated, parameters)
 }
 
 // GetRegionsPaginated retrieves a paginated list of regions
-func (s *Service) GetRegionsPaginated(parameters connection.APIRequestParameters) (*PaginatedRegion, error) {
+func (s *Service) GetRegionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Region], error) {
 	body, err := s.getRegionsPaginatedResponseBody(parameters)
-
-	return NewPaginatedRegion(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRegionsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetRegionsPaginated), err
 }
 
-func (s *Service) getRegionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRegionSliceResponseBody, error) {
-	body := &GetRegionSliceResponseBody{}
+func (s *Service) getRegionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Region], error) {
+	body := &connection.APIResponseBodyData[[]Region]{}
 
 	response, err := s.connection.Get("/ecloud/v2/regions", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetRegion(regionID string) (Region, error) {
 	return body.Data, err
 }
 
-func (s *Service) getRegionResponseBody(regionID string) (*GetRegionResponseBody, error) {
-	body := &GetRegionResponseBody{}
+func (s *Service) getRegionResponseBody(regionID string) (*connection.APIResponseBodyData[Region], error) {
+	body := &connection.APIResponseBodyData[Region]{}
 
 	if regionID == "" {
 		return body, fmt.Errorf("invalid region id")

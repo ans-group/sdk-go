@@ -8,32 +8,17 @@ import (
 
 // GetActiveDirectoryDomains retrieves a list of Active Directory Domains
 func (s *Service) GetActiveDirectoryDomains(parameters connection.APIRequestParameters) ([]ActiveDirectoryDomain, error) {
-	var domains []ActiveDirectoryDomain
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetActiveDirectoryDomainsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, domain := range response.(*PaginatedActiveDirectoryDomain).Items {
-			domains = append(domains, domain)
-		}
-	}
-
-	return domains, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetActiveDirectoryDomainsPaginated, parameters)
 }
 
 // GetActiveDirectoryDomainsPaginated retrieves a paginated list of Active Directory Domains
-func (s *Service) GetActiveDirectoryDomainsPaginated(parameters connection.APIRequestParameters) (*PaginatedActiveDirectoryDomain, error) {
+func (s *Service) GetActiveDirectoryDomainsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ActiveDirectoryDomain], error) {
 	body, err := s.getActiveDirectoryDomainsPaginatedResponseBody(parameters)
-
-	return NewPaginatedActiveDirectoryDomain(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetActiveDirectoryDomainsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetActiveDirectoryDomainsPaginated), err
 }
 
-func (s *Service) getActiveDirectoryDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetActiveDirectoryDomainSliceResponseBody, error) {
-	body := &GetActiveDirectoryDomainSliceResponseBody{}
+func (s *Service) getActiveDirectoryDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ActiveDirectoryDomain], error) {
+	body := &connection.APIResponseBodyData[[]ActiveDirectoryDomain]{}
 
 	response, err := s.connection.Get("/ecloud/v1/active-directory/domains", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetActiveDirectoryDomain(domainID int) (ActiveDirectoryDomain,
 	return body.Data, err
 }
 
-func (s *Service) getActiveDirectoryDomainResponseBody(domainID int) (*GetActiveDirectoryDomainResponseBody, error) {
-	body := &GetActiveDirectoryDomainResponseBody{}
+func (s *Service) getActiveDirectoryDomainResponseBody(domainID int) (*connection.APIResponseBodyData[ActiveDirectoryDomain], error) {
+	body := &connection.APIResponseBodyData[ActiveDirectoryDomain]{}
 
 	if domainID < 1 {
 		return body, fmt.Errorf("invalid domain id")

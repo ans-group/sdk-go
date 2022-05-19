@@ -9,8 +9,8 @@ func (s *Service) GetCredits(parameters connection.APIRequestParameters) ([]Cred
 	return body.Data, err
 }
 
-func (s *Service) getCreditsResponseBody(parameters connection.APIRequestParameters) (*GetCreditSliceResponseBody, error) {
-	body := &GetCreditSliceResponseBody{}
+func (s *Service) getCreditsResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Credit], error) {
+	body := &connection.APIResponseBodyData[[]Credit]{}
 
 	response, err := s.connection.Get("/account/v1/credits", parameters)
 	if err != nil {

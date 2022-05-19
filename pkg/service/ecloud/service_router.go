@@ -8,32 +8,17 @@ import (
 
 // GetRouters retrieves a list of routers
 func (s *Service) GetRouters(parameters connection.APIRequestParameters) ([]Router, error) {
-	var routers []Router
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRoutersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, router := range response.(*PaginatedRouter).Items {
-			routers = append(routers, router)
-		}
-	}
-
-	return routers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetRoutersPaginated, parameters)
 }
 
 // GetRoutersPaginated retrieves a paginated list of routers
-func (s *Service) GetRoutersPaginated(parameters connection.APIRequestParameters) (*PaginatedRouter, error) {
+func (s *Service) GetRoutersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Router], error) {
 	body, err := s.getRoutersPaginatedResponseBody(parameters)
-
-	return NewPaginatedRouter(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRoutersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetRoutersPaginated), err
 }
 
-func (s *Service) getRoutersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRouterSliceResponseBody, error) {
-	body := &GetRouterSliceResponseBody{}
+func (s *Service) getRoutersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Router], error) {
+	body := &connection.APIResponseBodyData[[]Router]{}
 
 	response, err := s.connection.Get("/ecloud/v2/routers", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetRouter(routerID string) (Router, error) {
 	return body.Data, err
 }
 
-func (s *Service) getRouterResponseBody(routerID string) (*GetRouterResponseBody, error) {
-	body := &GetRouterResponseBody{}
+func (s *Service) getRouterResponseBody(routerID string) (*connection.APIResponseBodyData[Router], error) {
+	body := &connection.APIResponseBodyData[Router]{}
 
 	if routerID == "" {
 		return body, fmt.Errorf("invalid router id")
@@ -78,8 +63,8 @@ func (s *Service) CreateRouter(req CreateRouterRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createRouterResponseBody(req CreateRouterRequest) (*GetRouterResponseBody, error) {
-	body := &GetRouterResponseBody{}
+func (s *Service) createRouterResponseBody(req CreateRouterRequest) (*connection.APIResponseBodyData[Router], error) {
+	body := &connection.APIResponseBodyData[Router]{}
 
 	response, err := s.connection.Post("/ecloud/v2/routers", &req)
 	if err != nil {
@@ -147,32 +132,22 @@ func (s *Service) deleteRouterResponseBody(routerID string) (*connection.APIResp
 
 // GetRouterFirewallPolicies retrieves a list of firewall rule policies
 func (s *Service) GetRouterFirewallPolicies(routerID string, parameters connection.APIRequestParameters) ([]FirewallPolicy, error) {
-	var policies []FirewallPolicy
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
 		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, policy := range response.(*PaginatedFirewallPolicy).Items {
-			policies = append(policies, policy)
-		}
-	}
-
-	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetRouterFirewallPoliciesPaginated retrieves a paginated list of firewall rule policies
-func (s *Service) GetRouterFirewallPoliciesPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedFirewallPolicy, error) {
+func (s *Service) GetRouterFirewallPoliciesPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
 	body, err := s.getRouterFirewallPoliciesPaginatedResponseBody(routerID, parameters)
 
-	return NewPaginatedFirewallPolicy(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
 		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getRouterFirewallPoliciesPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetFirewallPolicySliceResponseBody, error) {
-	body := &GetFirewallPolicySliceResponseBody{}
+func (s *Service) getRouterFirewallPoliciesPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]FirewallPolicy], error) {
+	body := &connection.APIResponseBodyData[[]FirewallPolicy]{}
 
 	if routerID == "" {
 		return body, fmt.Errorf("invalid router id")
@@ -194,32 +169,22 @@ func (s *Service) getRouterFirewallPoliciesPaginatedResponseBody(routerID string
 
 // GetRouterNetworks retrieves a list of router networks
 func (s *Service) GetRouterNetworks(routerID string, parameters connection.APIRequestParameters) ([]Network, error) {
-	var policies []Network
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Network], error) {
 		return s.GetRouterNetworksPaginated(routerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, policy := range response.(*PaginatedNetwork).Items {
-			policies = append(policies, policy)
-		}
-	}
-
-	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetRouterNetworksPaginated retrieves a paginated list of router networks
-func (s *Service) GetRouterNetworksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedNetwork, error) {
+func (s *Service) GetRouterNetworksPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[Network], error) {
 	body, err := s.getRouterNetworksPaginatedResponseBody(routerID, parameters)
 
-	return NewPaginatedNetwork(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Network], error) {
 		return s.GetRouterNetworksPaginated(routerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getRouterNetworksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetNetworkSliceResponseBody, error) {
-	body := &GetNetworkSliceResponseBody{}
+func (s *Service) getRouterNetworksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Network], error) {
+	body := &connection.APIResponseBodyData[[]Network]{}
 
 	if routerID == "" {
 		return body, fmt.Errorf("invalid router id")
@@ -241,32 +206,22 @@ func (s *Service) getRouterNetworksPaginatedResponseBody(routerID string, parame
 
 // GetRouterVPNs retrieves a list of router VPNs
 func (s *Service) GetRouterVPNs(routerID string, parameters connection.APIRequestParameters) ([]VPN, error) {
-	var policies []VPN
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
 		return s.GetRouterVPNsPaginated(routerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, policy := range response.(*PaginatedVPN).Items {
-			policies = append(policies, policy)
-		}
-	}
-
-	return policies, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetRouterVPNsPaginated retrieves a paginated list of router VPNs
-func (s *Service) GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedVPN, error) {
+func (s *Service) GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
 	body, err := s.getRouterVPNsPaginatedResponseBody(routerID, parameters)
 
-	return NewPaginatedVPN(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
 		return s.GetRouterVPNsPaginated(routerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getRouterVPNsPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetVPNSliceResponseBody, error) {
-	body := &GetVPNSliceResponseBody{}
+func (s *Service) getRouterVPNsPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VPN], error) {
+	body := &connection.APIResponseBodyData[[]VPN]{}
 
 	if routerID == "" {
 		return body, fmt.Errorf("invalid router id")
@@ -316,32 +271,22 @@ func (s *Service) deployRouterDefaultFirewallPolicies(routerID string) (*connect
 
 // GetRouterTasks retrieves a list of Router tasks
 func (s *Service) GetRouterTasks(routerID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	var tasks []Task
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetRouterTasksPaginated(routerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, task := range response.(*PaginatedTask).Items {
-			tasks = append(tasks, task)
-		}
-	}
-
-	return tasks, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetRouterTasksPaginated retrieves a paginated list of Router tasks
-func (s *Service) GetRouterTasksPaginated(routerID string, parameters connection.APIRequestParameters) (*PaginatedTask, error) {
+func (s *Service) GetRouterTasksPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 	body, err := s.getRouterTasksPaginatedResponseBody(routerID, parameters)
 
-	return NewPaginatedTask(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetRouterTasksPaginated(routerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getRouterTasksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*GetTaskSliceResponseBody, error) {
-	body := &GetTaskSliceResponseBody{}
+func (s *Service) getRouterTasksPaginatedResponseBody(routerID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
+	body := &connection.APIResponseBodyData[[]Task]{}
 
 	if routerID == "" {
 		return body, fmt.Errorf("invalid router id")

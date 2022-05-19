@@ -8,32 +8,17 @@ import (
 
 // GetSolutions retrieves a list of solutions
 func (s *Service) GetSolutions(parameters connection.APIRequestParameters) ([]Solution, error) {
-	var solutions []Solution
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, solution := range response.(*PaginatedSolution).Items {
-			solutions = append(solutions, solution)
-		}
-	}
-
-	return solutions, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSolutionsPaginated, parameters)
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solutions
-func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParameters) (*PaginatedSolution, error) {
+func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Solution], error) {
 	body, err := s.getSolutionsPaginatedResponseBody(parameters)
-
-	return NewPaginatedSolution(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSolutionsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSolutionsPaginated), err
 }
 
-func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSolutionSliceResponseBody, error) {
-	body := &GetSolutionSliceResponseBody{}
+func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Solution], error) {
+	body := &connection.APIResponseBodyData[[]Solution]{}
 
 	response, err := s.connection.Get("/ukfast-storage/v1/solutions", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetSolution(solutionID int) (Solution, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSolutionResponseBody(solutionID int) (*GetSolutionResponseBody, error) {
-	body := &GetSolutionResponseBody{}
+func (s *Service) getSolutionResponseBody(solutionID int) (*connection.APIResponseBodyData[Solution], error) {
+	body := &connection.APIResponseBodyData[Solution]{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")

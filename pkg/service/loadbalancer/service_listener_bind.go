@@ -8,32 +8,22 @@ import (
 
 // GetListenerBinds retrieves a list of binds
 func (s *Service) GetListenerBinds(listenerID int, parameters connection.APIRequestParameters) ([]Bind, error) {
-	var binds []Bind
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
 		return s.GetListenerBindsPaginated(listenerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, bind := range response.(*PaginatedBind).Items {
-			binds = append(binds, bind)
-		}
-	}
-
-	return binds, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetListenerBindsPaginated retrieves a paginated list of binds
-func (s *Service) GetListenerBindsPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedBind, error) {
+func (s *Service) GetListenerBindsPaginated(listenerID int, parameters connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
 	body, err := s.getListenerBindsPaginatedResponseBody(listenerID, parameters)
 
-	return NewPaginatedBind(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
 		return s.GetListenerBindsPaginated(listenerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getListenerBindsPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*GetBindSliceResponseBody, error) {
-	body := &GetBindSliceResponseBody{}
+func (s *Service) getListenerBindsPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Bind], error) {
+	body := &connection.APIResponseBodyData[[]Bind]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -54,8 +44,8 @@ func (s *Service) GetListenerBind(listenerID int, bindID int) (Bind, error) {
 	return body.Data, err
 }
 
-func (s *Service) getListenerBindResponseBody(listenerID int, bindID int) (*GetBindResponseBody, error) {
-	body := &GetBindResponseBody{}
+func (s *Service) getListenerBindResponseBody(listenerID int, bindID int) (*connection.APIResponseBodyData[Bind], error) {
+	body := &connection.APIResponseBodyData[Bind]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -86,8 +76,8 @@ func (s *Service) CreateListenerBind(listenerID int, req CreateBindRequest) (int
 	return body.Data.ID, err
 }
 
-func (s *Service) createListenerBindResponseBody(listenerID int, req CreateBindRequest) (*GetBindResponseBody, error) {
-	body := &GetBindResponseBody{}
+func (s *Service) createListenerBindResponseBody(listenerID int, req CreateBindRequest) (*connection.APIResponseBodyData[Bind], error) {
+	body := &connection.APIResponseBodyData[Bind]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")

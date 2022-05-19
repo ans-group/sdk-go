@@ -8,32 +8,17 @@ import (
 
 // GetImages retrieves a list of images
 func (s *Service) GetImages(parameters connection.APIRequestParameters) ([]Image, error) {
-	var images []Image
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetImagesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, image := range response.(*PaginatedImage).Items {
-			images = append(images, image)
-		}
-	}
-
-	return images, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetImagesPaginated, parameters)
 }
 
 // GetImagesPaginated retrieves a paginated list of images
-func (s *Service) GetImagesPaginated(parameters connection.APIRequestParameters) (*PaginatedImage, error) {
+func (s *Service) GetImagesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Image], error) {
 	body, err := s.getImagesPaginatedResponseBody(parameters)
-
-	return NewPaginatedImage(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetImagesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetImagesPaginated), err
 }
 
-func (s *Service) getImagesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetImageSliceResponseBody, error) {
-	body := &GetImageSliceResponseBody{}
+func (s *Service) getImagesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Image], error) {
+	body := &connection.APIResponseBodyData[[]Image]{}
 
 	response, err := s.connection.Get("/ecloud/v2/images", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetImage(imageID string) (Image, error) {
 	return body.Data, err
 }
 
-func (s *Service) getImageResponseBody(imageID string) (*GetImageResponseBody, error) {
-	body := &GetImageResponseBody{}
+func (s *Service) getImageResponseBody(imageID string) (*connection.APIResponseBodyData[Image], error) {
+	body := &connection.APIResponseBodyData[Image]{}
 
 	if imageID == "" {
 		return body, fmt.Errorf("invalid image id")
@@ -73,32 +58,22 @@ func (s *Service) getImageResponseBody(imageID string) (*GetImageResponseBody, e
 
 // GetImageParameters retrieves a list of parameters
 func (s *Service) GetImageParameters(imageID string, parameters connection.APIRequestParameters) ([]ImageParameter, error) {
-	var appParameters []ImageParameter
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
 		return s.GetImageParametersPaginated(imageID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, parameter := range response.(*PaginatedImageParameter).Items {
-			appParameters = append(appParameters, parameter)
-		}
-	}
-
-	return appParameters, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetImageParametersPaginated retrieves a paginated list of domains
-func (s *Service) GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageParameter, error) {
+func (s *Service) GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
 	body, err := s.getImageParametersPaginatedResponseBody(imageID, parameters)
 
-	return NewPaginatedImageParameter(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
 		return s.GetImageParametersPaginated(imageID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getImageParametersPaginatedResponseBody(imageID string, parameters connection.APIRequestParameters) (*GetImageParameterSliceResponseBody, error) {
-	body := &GetImageParameterSliceResponseBody{}
+func (s *Service) getImageParametersPaginatedResponseBody(imageID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ImageParameter], error) {
+	body := &connection.APIResponseBodyData[[]ImageParameter]{}
 
 	if imageID == "" {
 		return body, fmt.Errorf("invalid image id")
@@ -120,32 +95,22 @@ func (s *Service) getImageParametersPaginatedResponseBody(imageID string, parame
 
 // GetImageMetadata retrieves a list of metadata
 func (s *Service) GetImageMetadata(imageID string, parameters connection.APIRequestParameters) ([]ImageMetadata, error) {
-	var appMetadata []ImageMetadata
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
 		return s.GetImageMetadataPaginated(imageID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, parameter := range response.(*PaginatedImageMetadata).Items {
-			appMetadata = append(appMetadata, parameter)
-		}
-	}
-
-	return appMetadata, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetImageMetadataPaginated retrieves a paginated list of domains
-func (s *Service) GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*PaginatedImageMetadata, error) {
+func (s *Service) GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
 	body, err := s.getImageMetadataPaginatedResponseBody(imageID, parameters)
 
-	return NewPaginatedImageMetadata(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
 		return s.GetImageMetadataPaginated(imageID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getImageMetadataPaginatedResponseBody(imageID string, parameters connection.APIRequestParameters) (*GetImageMetadataSliceResponseBody, error) {
-	body := &GetImageMetadataSliceResponseBody{}
+func (s *Service) getImageMetadataPaginatedResponseBody(imageID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ImageMetadata], error) {
+	body := &connection.APIResponseBodyData[[]ImageMetadata]{}
 
 	if imageID == "" {
 		return body, fmt.Errorf("invalid image id")

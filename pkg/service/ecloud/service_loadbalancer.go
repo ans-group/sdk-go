@@ -8,30 +8,17 @@ import (
 
 // GetLoadBalancers retrieves a list of load balancers
 func (s *Service) GetLoadBalancers(parameters connection.APIRequestParameters) ([]LoadBalancer, error) {
-	var lbs []LoadBalancer
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		lbs = append(lbs, response.(*PaginatedLoadBalancer).Items...)
-	}
-
-	return lbs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetLoadBalancersPaginated, parameters)
 }
 
 // GetLoadBalancersPaginated retrieves a paginated list of lbs
-func (s *Service) GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancer, error) {
+func (s *Service) GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[LoadBalancer], error) {
 	body, err := s.getLoadBalancersPaginatedResponseBody(parameters)
-
-	return NewPaginatedLoadBalancer(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetLoadBalancersPaginated), err
 }
 
-func (s *Service) getLoadBalancersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetLoadBalancerSliceResponseBody, error) {
-	body := &GetLoadBalancerSliceResponseBody{}
+func (s *Service) getLoadBalancersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]LoadBalancer], error) {
+	body := &connection.APIResponseBodyData[[]LoadBalancer]{}
 
 	response, err := s.connection.Get("/ecloud/v2/load-balancers", parameters)
 	if err != nil {
@@ -48,8 +35,8 @@ func (s *Service) GetLoadBalancer(loadbalancerID string) (LoadBalancer, error) {
 	return body.Data, err
 }
 
-func (s *Service) getLoadBalancerResponseBody(loadbalancerID string) (*GetLoadBalancerResponseBody, error) {
-	body := &GetLoadBalancerResponseBody{}
+func (s *Service) getLoadBalancerResponseBody(loadbalancerID string) (*connection.APIResponseBodyData[LoadBalancer], error) {
+	body := &connection.APIResponseBodyData[LoadBalancer]{}
 
 	if loadbalancerID == "" {
 		return body, fmt.Errorf("invalid load balancer id")
@@ -76,8 +63,8 @@ func (s *Service) CreateLoadBalancer(req CreateLoadBalancerRequest) (TaskReferen
 	return body.Data, err
 }
 
-func (s *Service) createLoadBalancerResponseBody(req CreateLoadBalancerRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createLoadBalancerResponseBody(req CreateLoadBalancerRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/load-balancers", &req)
 	if err != nil {
@@ -94,8 +81,8 @@ func (s *Service) PatchLoadBalancer(loadbalancerID string, req PatchLoadBalancer
 	return body.Data, err
 }
 
-func (s *Service) patchLoadBalancerResponseBody(loadbalancerID string, req PatchLoadBalancerRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchLoadBalancerResponseBody(loadbalancerID string, req PatchLoadBalancerRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if loadbalancerID == "" {
 		return body, fmt.Errorf("invalid load balancer id")
@@ -122,8 +109,8 @@ func (s *Service) DeleteLoadBalancer(loadbalancerID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteLoadBalancerResponseBody(loadbalancerID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteLoadBalancerResponseBody(loadbalancerID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if loadbalancerID == "" {
 		return body, fmt.Errorf("invalid load balancer id")

@@ -8,32 +8,17 @@ import (
 
 // GetLoadBalancerSpecs retrieves a list of load balancer specs
 func (s *Service) GetLoadBalancerSpecs(parameters connection.APIRequestParameters) ([]LoadBalancerSpec, error) {
-	var specs []LoadBalancerSpec
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancerSpecsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, spec := range response.(*PaginatedLoadBalancerSpec).Items {
-			specs = append(specs, spec)
-		}
-	}
-
-	return specs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetLoadBalancerSpecsPaginated, parameters)
 }
 
 // GetLoadBalancerSpecsPaginated retrieves a paginated list of load balancer specs
-func (s *Service) GetLoadBalancerSpecsPaginated(parameters connection.APIRequestParameters) (*PaginatedLoadBalancerSpec, error) {
+func (s *Service) GetLoadBalancerSpecsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[LoadBalancerSpec], error) {
 	body, err := s.getLoadBalancerSpecsPaginatedResponseBody(parameters)
-
-	return NewPaginatedLoadBalancerSpec(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetLoadBalancerSpecsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetLoadBalancerSpecsPaginated), err
 }
 
-func (s *Service) getLoadBalancerSpecsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetLoadBalancerSpecSliceResponseBody, error) {
-	body := &GetLoadBalancerSpecSliceResponseBody{}
+func (s *Service) getLoadBalancerSpecsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]LoadBalancerSpec], error) {
+	body := &connection.APIResponseBodyData[[]LoadBalancerSpec]{}
 
 	response, err := s.connection.Get("/ecloud/v2/load-balancer-specs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetLoadBalancerSpec(lbSpecID string) (LoadBalancerSpec, error)
 	return body.Data, err
 }
 
-func (s *Service) getLoadBalancerSpecResponseBody(lbSpecID string) (*GetLoadBalancerSpecResponseBody, error) {
-	body := &GetLoadBalancerSpecResponseBody{}
+func (s *Service) getLoadBalancerSpecResponseBody(lbSpecID string) (*connection.APIResponseBodyData[LoadBalancerSpec], error) {
+	body := &connection.APIResponseBodyData[LoadBalancerSpec]{}
 
 	if lbSpecID == "" {
 		return body, fmt.Errorf("invalid load balancer spec id")

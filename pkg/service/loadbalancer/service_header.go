@@ -6,32 +6,17 @@ import (
 
 // GetHeaders retrieves a list of headers
 func (s *Service) GetHeaders(parameters connection.APIRequestParameters) ([]Header, error) {
-	var headers []Header
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHeadersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, header := range response.(*PaginatedHeader).Items {
-			headers = append(headers, header)
-		}
-	}
-
-	return headers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetHeadersPaginated, parameters)
 }
 
 // GetHeadersPaginated retrieves a paginated list of headers
-func (s *Service) GetHeadersPaginated(parameters connection.APIRequestParameters) (*PaginatedHeader, error) {
+func (s *Service) GetHeadersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Header], error) {
 	body, err := s.getHeadersPaginatedResponseBody(parameters)
-
-	return NewPaginatedHeader(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetHeadersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetHeadersPaginated), err
 }
 
-func (s *Service) getHeadersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetHeaderSliceResponseBody, error) {
-	body := &GetHeaderSliceResponseBody{}
+func (s *Service) getHeadersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Header], error) {
+	body := &connection.APIResponseBodyData[[]Header]{}
 
 	response, err := s.connection.Get("/loadbalancers/v2/headers", parameters)
 	if err != nil {

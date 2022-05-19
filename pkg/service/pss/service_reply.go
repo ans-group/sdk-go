@@ -14,8 +14,8 @@ func (s *Service) GetReply(replyID string) (Reply, error) {
 	return body.Data, err
 }
 
-func (s *Service) getReplyResponseBody(replyID string) (*GetReplyResponseBody, error) {
-	body := &GetReplyResponseBody{}
+func (s *Service) getReplyResponseBody(replyID string) (*connection.APIResponseBodyData[Reply], error) {
+	body := &connection.APIResponseBodyData[Reply]{}
 
 	if replyID == "" {
 		return body, fmt.Errorf("invalid reply id")

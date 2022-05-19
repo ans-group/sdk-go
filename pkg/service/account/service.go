@@ -7,7 +7,7 @@ import (
 // AccountService is an interface for managing account
 type AccountService interface {
 	GetContacts(parameters connection.APIRequestParameters) ([]Contact, error)
-	GetContactsPaginated(parameters connection.APIRequestParameters) (*PaginatedContact, error)
+	GetContactsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Contact], error)
 	GetContact(contactID int) (Contact, error)
 
 	GetDetails() (Details, error)
@@ -15,11 +15,11 @@ type AccountService interface {
 	GetCredits(parameters connection.APIRequestParameters) ([]Credit, error)
 
 	GetInvoices(parameters connection.APIRequestParameters) ([]Invoice, error)
-	GetInvoicesPaginated(parameters connection.APIRequestParameters) (*PaginatedInvoice, error)
+	GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error)
 	GetInvoice(invoiceID int) (Invoice, error)
 
 	GetInvoiceQueries(parameters connection.APIRequestParameters) ([]InvoiceQuery, error)
-	GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*PaginatedInvoiceQuery, error)
+	GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[InvoiceQuery], error)
 	GetInvoiceQuery(invoiceQueryID int) (InvoiceQuery, error)
 	CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error)
 }

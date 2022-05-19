@@ -8,32 +8,22 @@ import (
 
 // GetTargetGroupACLs retrieves a list of ACLs
 func (s *Service) GetTargetGroupACLs(targetGroupID int, parameters connection.APIRequestParameters) ([]ACL, error) {
-	var acls []ACL
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
 		return s.GetTargetGroupACLsPaginated(targetGroupID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, acl := range response.(*PaginatedACL).Items {
-			acls = append(acls, acl)
-		}
-	}
-
-	return acls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetTargetGroupACLsPaginated retrieves a paginated list of ACLs
-func (s *Service) GetTargetGroupACLsPaginated(targetGroupID int, parameters connection.APIRequestParameters) (*PaginatedACL, error) {
+func (s *Service) GetTargetGroupACLsPaginated(targetGroupID int, parameters connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
 	body, err := s.getTargetGroupACLsPaginatedResponseBody(targetGroupID, parameters)
 
-	return NewPaginatedACL(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
 		return s.GetTargetGroupACLsPaginated(targetGroupID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getTargetGroupACLsPaginatedResponseBody(targetGroupID int, parameters connection.APIRequestParameters) (*GetACLSliceResponseBody, error) {
-	body := &GetACLSliceResponseBody{}
+func (s *Service) getTargetGroupACLsPaginatedResponseBody(targetGroupID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ACL], error) {
+	body := &connection.APIResponseBodyData[[]ACL]{}
 
 	if targetGroupID < 1 {
 		return body, fmt.Errorf("invalid target group id")

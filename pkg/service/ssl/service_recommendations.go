@@ -13,8 +13,8 @@ func (s *Service) GetRecommendations(domainName string) (Recommendations, error)
 	return body.Data, err
 }
 
-func (s *Service) getRecommendationsResponseBody(domainName string) (*GetRecommendationsResponseBody, error) {
-	body := &GetRecommendationsResponseBody{}
+func (s *Service) getRecommendationsResponseBody(domainName string) (*connection.APIResponseBodyData[Recommendations], error) {
+	body := &connection.APIResponseBodyData[Recommendations]{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

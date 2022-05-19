@@ -8,32 +8,17 @@ import (
 
 // GetSSLs retrieves a list of ssls
 func (s *Service) GetSSLs(parameters connection.APIRequestParameters) ([]SSL, error) {
-	var ssls []SSL
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSSLsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, ssl := range response.(*PaginatedSSL).Items {
-			ssls = append(ssls, ssl)
-		}
-	}
-
-	return ssls, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetSSLsPaginated, parameters)
 }
 
 // GetSSLsPaginated retrieves a paginated list of ssls
-func (s *Service) GetSSLsPaginated(parameters connection.APIRequestParameters) (*PaginatedSSL, error) {
+func (s *Service) GetSSLsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SSL], error) {
 	body, err := s.getSSLsPaginatedResponseBody(parameters)
-
-	return NewPaginatedSSL(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetSSLsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetSSLsPaginated), err
 }
 
-func (s *Service) getSSLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetSSLSliceResponseBody, error) {
-	body := &GetSSLSliceResponseBody{}
+func (s *Service) getSSLsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]SSL], error) {
+	body := &connection.APIResponseBodyData[[]SSL]{}
 
 	response, err := s.connection.Get("/ddosx/v1/ssls", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetSSL(sslID string) (SSL, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSSLResponseBody(sslID string) (*GetSSLResponseBody, error) {
-	body := &GetSSLResponseBody{}
+func (s *Service) getSSLResponseBody(sslID string) (*connection.APIResponseBodyData[SSL], error) {
+	body := &connection.APIResponseBodyData[SSL]{}
 
 	if sslID == "" {
 		return body, fmt.Errorf("invalid ssl id")
@@ -78,8 +63,8 @@ func (s *Service) CreateSSL(req CreateSSLRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createSSLResponseBody(req CreateSSLRequest) (*GetSSLResponseBody, error) {
-	body := &GetSSLResponseBody{}
+func (s *Service) createSSLResponseBody(req CreateSSLRequest) (*connection.APIResponseBodyData[SSL], error) {
+	body := &connection.APIResponseBodyData[SSL]{}
 
 	response, err := s.connection.Post("/ddosx/v1/ssls", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchSSL(sslID string, req PatchSSLRequest) (string, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) patchSSLResponseBody(sslID string, req PatchSSLRequest) (*GetSSLResponseBody, error) {
-	body := &GetSSLResponseBody{}
+func (s *Service) patchSSLResponseBody(sslID string, req PatchSSLRequest) (*connection.APIResponseBodyData[SSL], error) {
+	body := &connection.APIResponseBodyData[SSL]{}
 
 	if sslID == "" {
 		return body, fmt.Errorf("invalid ssl id")
@@ -152,8 +137,8 @@ func (s *Service) GetSSLContent(sslID string) (SSLContent, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSSLContentResponseBody(sslID string) (*GetSSLContentResponseBody, error) {
-	body := &GetSSLContentResponseBody{}
+func (s *Service) getSSLContentResponseBody(sslID string) (*connection.APIResponseBodyData[SSLContent], error) {
+	body := &connection.APIResponseBodyData[SSLContent]{}
 
 	if sslID == "" {
 		return body, fmt.Errorf("invalid ssl id")
@@ -180,8 +165,8 @@ func (s *Service) GetSSLPrivateKey(sslID string) (SSLPrivateKey, error) {
 	return body.Data, err
 }
 
-func (s *Service) getSSLPrivateKeyResponseBody(sslID string) (*GetSSLPrivateKeyResponseBody, error) {
-	body := &GetSSLPrivateKeyResponseBody{}
+func (s *Service) getSSLPrivateKeyResponseBody(sslID string) (*connection.APIResponseBodyData[SSLPrivateKey], error) {
+	body := &connection.APIResponseBodyData[SSLPrivateKey]{}
 
 	if sslID == "" {
 		return body, fmt.Errorf("invalid ssl id")

@@ -7,30 +7,30 @@ import (
 // SafeDNSService is an interface for managing SafeDNS
 type SafeDNSService interface {
 	GetZones(parameters connection.APIRequestParameters) ([]Zone, error)
-	GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error)
+	GetZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Zone], error)
 	GetZone(zoneName string) (Zone, error)
 	CreateZone(req CreateZoneRequest) error
 	PatchZone(zoneName string, req PatchZoneRequest) error
 	DeleteZone(zoneName string) error
 	GetZoneRecords(zoneName string, parameters connection.APIRequestParameters) ([]Record, error)
-	GetZoneRecordsPaginated(zoneName string, parameters connection.APIRequestParameters) (*PaginatedRecord, error)
+	GetZoneRecordsPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error)
 	GetZoneRecord(zoneName string, recordID int) (Record, error)
 	CreateZoneRecord(zoneName string, req CreateRecordRequest) (int, error)
 	UpdateZoneRecord(zoneName string, record Record) (int, error)
 	PatchZoneRecord(zoneName string, recordID int, patch PatchRecordRequest) (int, error)
 	DeleteZoneRecord(zoneName string, recordID int) error
 	GetZoneNotes(zoneName string, parameters connection.APIRequestParameters) ([]Note, error)
-	GetZoneNotesPaginated(zoneName string, parameters connection.APIRequestParameters) (*PaginatedNote, error)
+	GetZoneNotesPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Note], error)
 	GetZoneNote(zoneName string, noteID int) (Note, error)
 	CreateZoneNote(zoneName string, req CreateNoteRequest) (int, error)
 	GetTemplates(parameters connection.APIRequestParameters) ([]Template, error)
-	GetTemplatesPaginated(parameters connection.APIRequestParameters) (*PaginatedTemplate, error)
+	GetTemplatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Template], error)
 	GetTemplate(templateID int) (Template, error)
 	CreateTemplate(req CreateTemplateRequest) (int, error)
 	PatchTemplate(templateID int, patch PatchTemplateRequest) (int, error)
 	DeleteTemplate(templateID int) error
 	GetTemplateRecords(templateID int, parameters connection.APIRequestParameters) ([]Record, error)
-	GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*PaginatedRecord, error)
+	GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error)
 	GetTemplateRecord(templateID int, recordID int) (Record, error)
 	CreateTemplateRecord(templateID int, req CreateRecordRequest) (int, error)
 	PatchTemplateRecord(templateID int, recordID int, patch PatchRecordRequest) (int, error)

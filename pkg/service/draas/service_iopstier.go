@@ -8,32 +8,17 @@ import (
 
 // GetIOPSTiers retrieves a list of solutions
 func (s *Service) GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error) {
-	var tiers []IOPSTier
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetIOPSTiersPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, tier := range response.(*PaginatedIOPSTier).Items {
-			tiers = append(tiers, tier)
-		}
-	}
-
-	return tiers, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetIOPSTiersPaginated, parameters)
 }
 
 // GetIOPSTiersPaginated retrieves a paginated list of solutions
-func (s *Service) GetIOPSTiersPaginated(parameters connection.APIRequestParameters) (*PaginatedIOPSTier, error) {
+func (s *Service) GetIOPSTiersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error) {
 	body, err := s.getIOPSTiersPaginatedResponseBody(parameters)
-
-	return NewPaginatedIOPSTier(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetIOPSTiersPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetIOPSTiersPaginated), err
 }
 
-func (s *Service) getIOPSTiersPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetIOPSTierSliceResponseBody, error) {
-	body := &GetIOPSTierSliceResponseBody{}
+func (s *Service) getIOPSTiersPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]IOPSTier], error) {
+	body := &connection.APIResponseBodyData[[]IOPSTier]{}
 
 	response, err := s.connection.Get("/draas/v1/iops-tiers", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetIOPSTier(iopsTierID string) (IOPSTier, error) {
 	return body.Data, err
 }
 
-func (s *Service) getIOPSTierResponseBody(iopsTierID string) (*GetIOPSTierResponseBody, error) {
-	body := &GetIOPSTierResponseBody{}
+func (s *Service) getIOPSTierResponseBody(iopsTierID string) (*connection.APIResponseBodyData[IOPSTier], error) {
+	body := &connection.APIResponseBodyData[IOPSTier]{}
 
 	if iopsTierID == "" {
 		return body, fmt.Errorf("invalid iops tier id")

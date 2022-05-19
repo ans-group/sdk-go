@@ -8,32 +8,22 @@ import (
 
 // GetListenerCertificates retrieves a list of certificates
 func (s *Service) GetListenerCertificates(listenerID int, parameters connection.APIRequestParameters) ([]Certificate, error) {
-	var certificates []Certificate
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
 		return s.GetListenerCertificatesPaginated(listenerID, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, certificate := range response.(*PaginatedCertificate).Items {
-			certificates = append(certificates, certificate)
-		}
-	}
-
-	return certificates, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetListenerCertificatesPaginated retrieves a paginated list of certificates
-func (s *Service) GetListenerCertificatesPaginated(listenerID int, parameters connection.APIRequestParameters) (*PaginatedCertificate, error) {
+func (s *Service) GetListenerCertificatesPaginated(listenerID int, parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
 	body, err := s.getListenerCertificatesPaginatedResponseBody(listenerID, parameters)
 
-	return NewPaginatedCertificate(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
 		return s.GetListenerCertificatesPaginated(listenerID, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getListenerCertificatesPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*GetCertificateSliceResponseBody, error) {
-	body := &GetCertificateSliceResponseBody{}
+func (s *Service) getListenerCertificatesPaginatedResponseBody(listenerID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Certificate], error) {
+	body := &connection.APIResponseBodyData[[]Certificate]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -54,8 +44,8 @@ func (s *Service) GetListenerCertificate(listenerID int, certificateID int) (Cer
 	return body.Data, err
 }
 
-func (s *Service) getListenerCertificateResponseBody(listenerID int, certificateID int) (*GetCertificateResponseBody, error) {
-	body := &GetCertificateResponseBody{}
+func (s *Service) getListenerCertificateResponseBody(listenerID int, certificateID int) (*connection.APIResponseBodyData[Certificate], error) {
+	body := &connection.APIResponseBodyData[Certificate]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")
@@ -86,8 +76,8 @@ func (s *Service) CreateListenerCertificate(listenerID int, req CreateCertificat
 	return body.Data.ID, err
 }
 
-func (s *Service) createListenerCertificateResponseBody(listenerID int, req CreateCertificateRequest) (*GetCertificateResponseBody, error) {
-	body := &GetCertificateResponseBody{}
+func (s *Service) createListenerCertificateResponseBody(listenerID int, req CreateCertificateRequest) (*connection.APIResponseBodyData[Certificate], error) {
+	body := &connection.APIResponseBodyData[Certificate]{}
 
 	if listenerID < 1 {
 		return body, fmt.Errorf("invalid listener id")

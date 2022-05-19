@@ -8,32 +8,17 @@ import (
 
 // GetRouterThroughputs retrieves a list of router throughputs
 func (s *Service) GetRouterThroughputs(parameters connection.APIRequestParameters) ([]RouterThroughput, error) {
-	var throughputs []RouterThroughput
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRouterThroughputsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, throughput := range response.(*PaginatedRouterThroughput).Items {
-			throughputs = append(throughputs, throughput)
-		}
-	}
-
-	return throughputs, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetRouterThroughputsPaginated, parameters)
 }
 
 // GetRouterThroughputsPaginated retrieves a paginated list of router throughputs
-func (s *Service) GetRouterThroughputsPaginated(parameters connection.APIRequestParameters) (*PaginatedRouterThroughput, error) {
+func (s *Service) GetRouterThroughputsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[RouterThroughput], error) {
 	body, err := s.getRouterThroughputsPaginatedResponseBody(parameters)
-
-	return NewPaginatedRouterThroughput(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetRouterThroughputsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetRouterThroughputsPaginated), err
 }
 
-func (s *Service) getRouterThroughputsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetRouterThroughputSliceResponseBody, error) {
-	body := &GetRouterThroughputSliceResponseBody{}
+func (s *Service) getRouterThroughputsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]RouterThroughput], error) {
+	body := &connection.APIResponseBodyData[[]RouterThroughput]{}
 
 	response, err := s.connection.Get("/ecloud/v2/router-throughputs", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetRouterThroughput(throughputID string) (RouterThroughput, er
 	return body.Data, err
 }
 
-func (s *Service) getRouterThroughputResponseBody(throughputID string) (*GetRouterThroughputResponseBody, error) {
-	body := &GetRouterThroughputResponseBody{}
+func (s *Service) getRouterThroughputResponseBody(throughputID string) (*connection.APIResponseBodyData[RouterThroughput], error) {
+	body := &connection.APIResponseBodyData[RouterThroughput]{}
 
 	if throughputID == "" {
 		return body, fmt.Errorf("invalid router throughput id")

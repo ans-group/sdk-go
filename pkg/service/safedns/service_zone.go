@@ -8,32 +8,17 @@ import (
 
 // GetZones retrieves a list of zones
 func (s *Service) GetZones(parameters connection.APIRequestParameters) ([]Zone, error) {
-	var zones []Zone
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetZonesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, zone := range response.(*PaginatedZone).Items {
-			zones = append(zones, zone)
-		}
-	}
-
-	return zones, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetZonesPaginated, parameters)
 }
 
 // GetZonesPaginated retrieves a paginated list of zones
-func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) (*PaginatedZone, error) {
+func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Zone], error) {
 	body, err := s.getZonesPaginatedResponseBody(parameters)
-
-	return NewPaginatedZone(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetZonesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetZonesPaginated), err
 }
 
-func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetZoneSliceResponseBody, error) {
-	body := &GetZoneSliceResponseBody{}
+func (s *Service) getZonesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Zone], error) {
+	body := &connection.APIResponseBodyData[[]Zone]{}
 
 	response, err := s.connection.Get("/safedns/v1/zones", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetZone(zoneName string) (Zone, error) {
 	return body.Data, err
 }
 
-func (s *Service) getZoneResponseBody(zoneName string) (*GetZoneResponseBody, error) {
-	body := &GetZoneResponseBody{}
+func (s *Service) getZoneResponseBody(zoneName string) (*connection.APIResponseBodyData[Zone], error) {
+	body := &connection.APIResponseBodyData[Zone]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -141,32 +126,22 @@ func (s *Service) deleteZoneResponseBody(zoneName string) (*connection.APIRespon
 
 // GetZoneRecords retrieves a list of records
 func (s *Service) GetZoneRecords(zoneName string, parameters connection.APIRequestParameters) ([]Record, error) {
-	var records []Record
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 		return s.GetZoneRecordsPaginated(zoneName, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, record := range response.(*PaginatedRecord).Items {
-			records = append(records, record)
-		}
-	}
-
-	return records, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetZoneRecordsPaginated retrieves a paginated list of zones
-func (s *Service) GetZoneRecordsPaginated(zoneName string, parameters connection.APIRequestParameters) (*PaginatedRecord, error) {
+func (s *Service) GetZoneRecordsPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 	body, err := s.getZoneRecordsPaginatedResponseBody(zoneName, parameters)
 
-	return NewPaginatedRecord(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
 		return s.GetZoneRecordsPaginated(zoneName, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getZoneRecordsPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetRecordSliceResponseBody, error) {
-	body := &GetRecordSliceResponseBody{}
+func (s *Service) getZoneRecordsPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Record], error) {
+	body := &connection.APIResponseBodyData[[]Record]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -193,8 +168,8 @@ func (s *Service) GetZoneRecord(zoneName string, recordID int) (Record, error) {
 	return body.Data, err
 }
 
-func (s *Service) getZoneRecordResponseBody(zoneName string, recordID int) (*GetRecordResponseBody, error) {
-	body := &GetRecordResponseBody{}
+func (s *Service) getZoneRecordResponseBody(zoneName string, recordID int) (*connection.APIResponseBodyData[Record], error) {
+	body := &connection.APIResponseBodyData[Record]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -224,8 +199,8 @@ func (s *Service) CreateZoneRecord(zoneName string, req CreateRecordRequest) (in
 	return body.Data.ID, err
 }
 
-func (s *Service) createZoneRecordResponseBody(zoneName string, req CreateRecordRequest) (*GetRecordResponseBody, error) {
-	body := &GetRecordResponseBody{}
+func (s *Service) createZoneRecordResponseBody(zoneName string, req CreateRecordRequest) (*connection.APIResponseBodyData[Record], error) {
+	body := &connection.APIResponseBodyData[Record]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -252,8 +227,8 @@ func (s *Service) UpdateZoneRecord(zoneName string, record Record) (int, error) 
 	return body.Data.ID, err
 }
 
-func (s *Service) updateZoneRecordResponseBody(zoneName string, record Record) (*GetRecordResponseBody, error) {
-	body := &GetRecordResponseBody{}
+func (s *Service) updateZoneRecordResponseBody(zoneName string, record Record) (*connection.APIResponseBodyData[Record], error) {
+	body := &connection.APIResponseBodyData[Record]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -283,8 +258,8 @@ func (s *Service) PatchZoneRecord(zoneName string, recordID int, patch PatchReco
 	return body.Data.ID, err
 }
 
-func (s *Service) patchZoneRecordResponseBody(zoneName string, recordID int, patch PatchRecordRequest) (*GetRecordResponseBody, error) {
-	body := &GetRecordResponseBody{}
+func (s *Service) patchZoneRecordResponseBody(zoneName string, recordID int, patch PatchRecordRequest) (*connection.APIResponseBodyData[Record], error) {
+	body := &connection.APIResponseBodyData[Record]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -340,32 +315,22 @@ func (s *Service) deleteZoneRecordResponseBody(zoneName string, recordID int) (*
 
 // GetZoneNotes retrieves a list of notes
 func (s *Service) GetZoneNotes(zoneName string, parameters connection.APIRequestParameters) ([]Note, error) {
-	var notes []Note
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Note], error) {
 		return s.GetZoneNotesPaginated(zoneName, p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, note := range response.(*PaginatedNote).Items {
-			notes = append(notes, note)
-		}
-	}
-
-	return notes, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	}, parameters)
 }
 
 // GetZoneNotesPaginated retrieves a paginated list of zones
-func (s *Service) GetZoneNotesPaginated(zoneName string, parameters connection.APIRequestParameters) (*PaginatedNote, error) {
+func (s *Service) GetZoneNotesPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Note], error) {
 	body, err := s.getZoneNotesPaginatedResponseBody(zoneName, parameters)
 
-	return NewPaginatedNote(func(p connection.APIRequestParameters) (connection.Paginated, error) {
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Note], error) {
 		return s.GetZoneNotesPaginated(zoneName, p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	}), err
 }
 
-func (s *Service) getZoneNotesPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*GetNoteSliceResponseBody, error) {
-	body := &GetNoteSliceResponseBody{}
+func (s *Service) getZoneNotesPaginatedResponseBody(zoneName string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Note], error) {
+	body := &connection.APIResponseBodyData[[]Note]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -392,8 +357,8 @@ func (s *Service) GetZoneNote(zoneName string, noteID int) (Note, error) {
 	return body.Data, err
 }
 
-func (s *Service) getZoneNoteResponseBody(zoneName string, noteID int) (*GetNoteResponseBody, error) {
-	body := &GetNoteResponseBody{}
+func (s *Service) getZoneNoteResponseBody(zoneName string, noteID int) (*connection.APIResponseBodyData[Note], error) {
+	body := &connection.APIResponseBodyData[Note]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")
@@ -423,8 +388,8 @@ func (s *Service) CreateZoneNote(zoneName string, req CreateNoteRequest) (int, e
 	return body.Data.ID, err
 }
 
-func (s *Service) createZoneNote(zoneName string, req CreateNoteRequest) (*GetNoteResponseBody, error) {
-	body := &GetNoteResponseBody{}
+func (s *Service) createZoneNote(zoneName string, req CreateNoteRequest) (*connection.APIResponseBodyData[Note], error) {
+	body := &connection.APIResponseBodyData[Note]{}
 
 	if zoneName == "" {
 		return body, fmt.Errorf("invalid zone name")

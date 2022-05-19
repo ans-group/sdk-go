@@ -8,32 +8,17 @@ import (
 
 // GetIPAddresses retrieves a list of ips
 func (s *Service) GetIPAddresses(parameters connection.APIRequestParameters) ([]IPAddress, error) {
-	var ips []IPAddress
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetIPAddressesPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, ip := range response.(*PaginatedIPAddress).Items {
-			ips = append(ips, ip)
-		}
-	}
-
-	return ips, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetIPAddressesPaginated, parameters)
 }
 
 // GetIPAddressesPaginated retrieves a paginated list of ips
-func (s *Service) GetIPAddressesPaginated(parameters connection.APIRequestParameters) (*PaginatedIPAddress, error) {
+func (s *Service) GetIPAddressesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
 	body, err := s.getIPAddressesPaginatedResponseBody(parameters)
-
-	return NewPaginatedIPAddress(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetIPAddressesPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetIPAddressesPaginated), err
 }
 
-func (s *Service) getIPAddressesPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetIPAddressSliceResponseBody, error) {
-	body := &GetIPAddressSliceResponseBody{}
+func (s *Service) getIPAddressesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]IPAddress], error) {
+	body := &connection.APIResponseBodyData[[]IPAddress]{}
 
 	response, err := s.connection.Get("/ecloud/v2/ip-addresses", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetIPAddress(ipID string) (IPAddress, error) {
 	return body.Data, err
 }
 
-func (s *Service) getIPAddressResponseBody(ipID string) (*GetIPAddressResponseBody, error) {
-	body := &GetIPAddressResponseBody{}
+func (s *Service) getIPAddressResponseBody(ipID string) (*connection.APIResponseBodyData[IPAddress], error) {
+	body := &connection.APIResponseBodyData[IPAddress]{}
 
 	if ipID == "" {
 		return body, fmt.Errorf("invalid ip address id")
@@ -78,8 +63,8 @@ func (s *Service) CreateIPAddress(req CreateIPAddressRequest) (TaskReference, er
 	return body.Data, err
 }
 
-func (s *Service) createIPAddressResponseBody(req CreateIPAddressRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createIPAddressResponseBody(req CreateIPAddressRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/ip-addresses", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchIPAddress(ipID string, req PatchIPAddressRequest) (TaskRe
 	return body.Data, err
 }
 
-func (s *Service) patchIPAddressResponseBody(ipID string, req PatchIPAddressRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchIPAddressResponseBody(ipID string, req PatchIPAddressRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ipID == "" {
 		return body, fmt.Errorf("invalid ip address id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteIPAddress(ipID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteIPAddressResponseBody(ipID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteIPAddressResponseBody(ipID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ipID == "" {
 		return body, fmt.Errorf("invalid ip address id")

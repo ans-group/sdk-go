@@ -8,32 +8,17 @@ import (
 
 // GetFirewallRulePorts retrieves a list of firewall rules
 func (s *Service) GetFirewallRulePorts(parameters connection.APIRequestParameters) ([]FirewallRulePort, error) {
-	var rules []FirewallRulePort
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallRulePortsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedFirewallRulePort).Items {
-			rules = append(rules, rule)
-		}
-	}
-
-	return rules, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetFirewallRulePortsPaginated, parameters)
 }
 
 // GetFirewallRulePortsPaginated retrieves a paginated list of firewall rules
-func (s *Service) GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedFirewallRulePort, error) {
+func (s *Service) GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FirewallRulePort], error) {
 	body, err := s.getFirewallRulePortsPaginatedResponseBody(parameters)
-
-	return NewPaginatedFirewallRulePort(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetFirewallRulePortsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetFirewallRulePortsPaginated), err
 }
 
-func (s *Service) getFirewallRulePortsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetFirewallRulePortSliceResponseBody, error) {
-	body := &GetFirewallRulePortSliceResponseBody{}
+func (s *Service) getFirewallRulePortsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]FirewallRulePort], error) {
+	body := &connection.APIResponseBodyData[[]FirewallRulePort]{}
 
 	response, err := s.connection.Get("/ecloud/v2/firewall-rule-ports", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetFirewallRulePort(ruleID string) (FirewallRulePort, error) {
 	return body.Data, err
 }
 
-func (s *Service) getFirewallRulePortResponseBody(ruleID string) (*GetFirewallRulePortResponseBody, error) {
-	body := &GetFirewallRulePortResponseBody{}
+func (s *Service) getFirewallRulePortResponseBody(ruleID string) (*connection.APIResponseBodyData[FirewallRulePort], error) {
+	body := &connection.APIResponseBodyData[FirewallRulePort]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")
@@ -78,8 +63,8 @@ func (s *Service) CreateFirewallRulePort(req CreateFirewallRulePortRequest) (Tas
 	return body.Data, err
 }
 
-func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createFirewallRulePortResponseBody(req CreateFirewallRulePortRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/firewall-rule-ports", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchFirewallRulePort(ruleID string, req PatchFirewallRulePort
 	return body.Data, err
 }
 
-func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFirewallRulePortRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchFirewallRulePortResponseBody(ruleID string, req PatchFirewallRulePortRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteFirewallRulePort(ruleID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteFirewallRulePortResponseBody(ruleID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteFirewallRulePortResponseBody(ruleID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid firewall rule id")

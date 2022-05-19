@@ -13,8 +13,8 @@ func (s *Service) GetReport(domainName string) (Report, error) {
 	return body.Data, err
 }
 
-func (s *Service) getReportResponseBody(domainName string) (*GetReportResponseBody, error) {
-	body := &GetReportResponseBody{}
+func (s *Service) getReportResponseBody(domainName string) (*connection.APIResponseBodyData[Report], error) {
+	body := &connection.APIResponseBodyData[Report]{}
 
 	if domainName == "" {
 		return body, fmt.Errorf("invalid domain name")

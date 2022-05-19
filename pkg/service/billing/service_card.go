@@ -8,32 +8,17 @@ import (
 
 // GetCards retrieves a list of cards
 func (s *Service) GetCards(parameters connection.APIRequestParameters) ([]Card, error) {
-	var cards []Card
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCardsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, card := range response.(*PaginatedCard).Items {
-			cards = append(cards, card)
-		}
-	}
-
-	return cards, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetCardsPaginated, parameters)
 }
 
 // GetCardsPaginated retrieves a paginated list of cards
-func (s *Service) GetCardsPaginated(parameters connection.APIRequestParameters) (*PaginatedCard, error) {
+func (s *Service) GetCardsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Card], error) {
 	body, err := s.getCardsPaginatedResponseBody(parameters)
-
-	return NewPaginatedCard(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetCardsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetCardsPaginated), err
 }
 
-func (s *Service) getCardsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetCardSliceResponseBody, error) {
-	body := &GetCardSliceResponseBody{}
+func (s *Service) getCardsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Card], error) {
+	body := &connection.APIResponseBodyData[[]Card]{}
 
 	response, err := s.connection.Get("/billing/v1/cards", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetCard(cardID int) (Card, error) {
 	return body.Data, err
 }
 
-func (s *Service) getCardResponseBody(cardID int) (*GetCardResponseBody, error) {
-	body := &GetCardResponseBody{}
+func (s *Service) getCardResponseBody(cardID int) (*connection.APIResponseBodyData[Card], error) {
+	body := &connection.APIResponseBodyData[Card]{}
 
 	if cardID < 1 {
 		return body, fmt.Errorf("invalid card id")
@@ -78,8 +63,8 @@ func (s *Service) CreateCard(req CreateCardRequest) (int, error) {
 	return body.Data.ID, err
 }
 
-func (s *Service) createCardResponseBody(req CreateCardRequest) (*GetCardResponseBody, error) {
-	body := &GetCardResponseBody{}
+func (s *Service) createCardResponseBody(req CreateCardRequest) (*connection.APIResponseBodyData[Card], error) {
+	body := &connection.APIResponseBodyData[Card]{}
 
 	response, err := s.connection.Post("/billing/v1/cards", &req)
 	if err != nil {

@@ -1,7 +1,6 @@
 package connection
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -230,16 +229,24 @@ func TestAPIRequestFilteringOperator_String(t *testing.T) {
 	})
 }
 
-func TestNewPaginatedBase_ReturnsPaginatedBase(t *testing.T) {
-	b := NewPaginatedBase(APIRequestParameters{}, APIResponseMetadataPagination{}, func(parameters APIRequestParameters) (Paginated, error) { return nil, nil })
+type GenericData struct{}
+
+func TestNewPaginated_ReturnsPaginated(t *testing.T) {
+	b := NewPaginated(&APIResponseBodyData[[]GenericData]{}, APIRequestParameters{}, func(parameters APIRequestParameters) (*Paginated[GenericData], error) { return nil, nil })
 
 	assert.NotNil(t, b)
 }
 
-func TestPaginatedBase_TotalPages_ReturnsTotalPages(t *testing.T) {
-	b := PaginatedBase{
-		pagination: APIResponseMetadataPagination{
-			TotalPages: 10,
+func TestPaginated_TotalPages_ReturnsTotalPages(t *testing.T) {
+	b := Paginated[GenericData]{
+		body: &APIResponseBodyData[[]GenericData]{
+			APIResponseBody: APIResponseBody{
+				Metadata: APIResponseMetadata{
+					Pagination: APIResponseMetadataPagination{
+						TotalPages: 10,
+					},
+				},
+			},
 		},
 	}
 
@@ -248,9 +255,9 @@ func TestPaginatedBase_TotalPages_ReturnsTotalPages(t *testing.T) {
 	assert.Equal(t, 10, totalPages)
 }
 
-func TestPaginatedBase_CurrentPage(t *testing.T) {
+func TestPaginated_CurrentPage(t *testing.T) {
 	t.Run("GreaterThan0_ReturnsCurrentPage", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 5,
@@ -264,7 +271,7 @@ func TestPaginatedBase_CurrentPage(t *testing.T) {
 	})
 
 	t.Run("LessThan1_Returns1", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 0,
@@ -278,10 +285,16 @@ func TestPaginatedBase_CurrentPage(t *testing.T) {
 	})
 }
 
-func TestPaginatedBase_Total_ReturnsTotal(t *testing.T) {
-	b := PaginatedBase{
-		pagination: APIResponseMetadataPagination{
-			Total: 10,
+func TestPaginated_Total_ReturnsTotal(t *testing.T) {
+	b := Paginated[GenericData]{
+		body: &APIResponseBodyData[[]GenericData]{
+			APIResponseBody: APIResponseBody{
+				Metadata: APIResponseMetadata{
+					Pagination: APIResponseMetadataPagination{
+						Total: 10,
+					},
+				},
+			},
 		},
 	}
 
@@ -290,12 +303,12 @@ func TestPaginatedBase_Total_ReturnsTotal(t *testing.T) {
 	assert.Equal(t, 10, total)
 }
 
-func TestPaginatedBase_First(t *testing.T) {
-	b := PaginatedBase{
-		getFunc: func(parameters APIRequestParameters) (Paginated, error) {
+func TestPaginated_First(t *testing.T) {
+	b := Paginated[GenericData]{
+		getFunc: func(parameters APIRequestParameters) (*Paginated[GenericData], error) {
 			assert.Equal(t, 1, parameters.Pagination.Page)
 
-			return &PaginatedBase{
+			return &Paginated[GenericData]{
 				parameters: parameters,
 			}, nil
 		},
@@ -307,18 +320,18 @@ func TestPaginatedBase_First(t *testing.T) {
 	assert.Equal(t, 1, firstPage.CurrentPage())
 }
 
-func TestPaginatedBase_Previous(t *testing.T) {
+func TestPaginated_Previous(t *testing.T) {
 	t.Run("NotFirstPage_GetsPreviousPage", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 5,
 				},
 			},
-			getFunc: func(parameters APIRequestParameters) (Paginated, error) {
+			getFunc: func(parameters APIRequestParameters) (*Paginated[GenericData], error) {
 				assert.Equal(t, 4, parameters.Pagination.Page)
 
-				return &PaginatedBase{
+				return &Paginated[GenericData]{
 					parameters: parameters,
 				}, nil
 			},
@@ -331,7 +344,7 @@ func TestPaginatedBase_Previous(t *testing.T) {
 	})
 
 	t.Run("FirstPage_ReturnsNil", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 1,
@@ -346,21 +359,27 @@ func TestPaginatedBase_Previous(t *testing.T) {
 	})
 }
 
-func TestPaginatedBase_Next(t *testing.T) {
+func TestPaginated_Next(t *testing.T) {
 	t.Run("NotLastPage_GetsNextPage", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 5,
 				},
 			},
-			pagination: APIResponseMetadataPagination{
-				TotalPages: 8,
+			body: &APIResponseBodyData[[]GenericData]{
+				APIResponseBody: APIResponseBody{
+					Metadata: APIResponseMetadata{
+						Pagination: APIResponseMetadataPagination{
+							TotalPages: 8,
+						},
+					},
+				},
 			},
-			getFunc: func(parameters APIRequestParameters) (Paginated, error) {
+			getFunc: func(parameters APIRequestParameters) (*Paginated[GenericData], error) {
 				assert.Equal(t, 6, parameters.Pagination.Page)
 
-				return &PaginatedBase{
+				return &Paginated[GenericData]{
 					parameters: parameters,
 				}, nil
 			},
@@ -373,14 +392,20 @@ func TestPaginatedBase_Next(t *testing.T) {
 	})
 
 	t.Run("LastPage_ReturnsNil", func(t *testing.T) {
-		b := PaginatedBase{
+		b := Paginated[GenericData]{
 			parameters: APIRequestParameters{
 				Pagination: APIRequestPagination{
 					Page: 5,
 				},
 			},
-			pagination: APIResponseMetadataPagination{
-				TotalPages: 5,
+			body: &APIResponseBodyData[[]GenericData]{
+				APIResponseBody: APIResponseBody{
+					Metadata: APIResponseMetadata{
+						Pagination: APIResponseMetadataPagination{
+							TotalPages: 5,
+						},
+					},
+				},
 			},
 		}
 
@@ -391,15 +416,21 @@ func TestPaginatedBase_Next(t *testing.T) {
 	})
 }
 
-func TestPaginatedBase_Last(t *testing.T) {
-	b := PaginatedBase{
-		pagination: APIResponseMetadataPagination{
-			TotalPages: 10,
+func TestPaginated_Last(t *testing.T) {
+	b := Paginated[GenericData]{
+		body: &APIResponseBodyData[[]GenericData]{
+			APIResponseBody: APIResponseBody{
+				Metadata: APIResponseMetadata{
+					Pagination: APIResponseMetadataPagination{
+						TotalPages: 10,
+					},
+				},
+			},
 		},
-		getFunc: func(parameters APIRequestParameters) (Paginated, error) {
+		getFunc: func(parameters APIRequestParameters) (*Paginated[GenericData], error) {
 			assert.Equal(t, 10, parameters.Pagination.Page)
 
-			return &PaginatedBase{
+			return &Paginated[GenericData]{
 				parameters: parameters,
 			}, nil
 		},
@@ -411,68 +442,30 @@ func TestPaginatedBase_Last(t *testing.T) {
 	assert.Equal(t, 10, lastPage.CurrentPage())
 }
 
-func TestNewRequestAll_ReturnsRequestAll(t *testing.T) {
-	b := NewRequestAll(func(parameters APIRequestParameters) (Paginated, error) { return nil, nil }, func(Paginated) {})
-
-	assert.NotNil(t, b)
-}
-
-func TestRequestAll_Invoke(t *testing.T) {
-	t.Run("MultiplePages_ExpectedCalls", func(t *testing.T) {
-		totalCalls := 0
-
-		r := RequestAll{
-			getFunc: func(parameters APIRequestParameters) (Paginated, error) {
-				totalCalls++
-
-				return &PaginatedBase{
-					parameters: parameters,
-					pagination: APIResponseMetadataPagination{
-						TotalPages: 10,
-					},
-				}, nil
-			},
-			responseFunc: func(Paginated) {},
-		}
-
-		err := r.Invoke(APIRequestParameters{})
-
-		assert.Nil(t, err)
-		assert.Equal(t, 10, totalCalls)
-	})
-
-	t.Run("Error", func(t *testing.T) {
-		totalCalls := 0
-		testErr := errors.New("test error")
-		r := RequestAll{
-			getFunc: func(parameters APIRequestParameters) (Paginated, error) {
-				totalCalls++
-
-				return &PaginatedBase{}, testErr
-			},
-		}
-
-		err := r.Invoke(APIRequestParameters{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, testErr, err)
-		assert.Equal(t, 1, totalCalls)
-	})
-}
-
 func TestInvokeRequestAll_CallsInvoke(t *testing.T) {
 	totalCalls := 0
-	result := InvokeRequestAll(func(parameters APIRequestParameters) (Paginated, error) {
+	result, err := InvokeRequestAll(func(parameters APIRequestParameters) (*Paginated[GenericData], error) {
 		totalCalls++
 
-		return &PaginatedBase{
+		return &Paginated[GenericData]{
 			parameters: parameters,
-			pagination: APIResponseMetadataPagination{
-				TotalPages: 5,
+			body: &APIResponseBodyData[[]GenericData]{
+				APIResponseBody: APIResponseBody{
+					Metadata: APIResponseMetadata{
+						Pagination: APIResponseMetadataPagination{
+							TotalPages: 5,
+						},
+					},
+				},
+				Data: []GenericData{
+					GenericData{},
+					GenericData{},
+				},
 			},
 		}, nil
-	}, func(Paginated) {}, APIRequestParameters{})
+	}, APIRequestParameters{})
 
-	assert.Nil(t, result)
+	assert.Nil(t, err)
 	assert.Equal(t, 5, totalCalls)
+	assert.Equal(t, 10, len(result))
 }

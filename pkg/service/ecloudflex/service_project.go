@@ -8,32 +8,17 @@ import (
 
 // GetProjects retrieves a list of projects
 func (s *Service) GetProjects(parameters connection.APIRequestParameters) ([]Project, error) {
-	var projects []Project
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetProjectsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, project := range response.(*PaginatedProject).Items {
-			projects = append(projects, project)
-		}
-	}
-
-	return projects, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetProjectsPaginated, parameters)
 }
 
 // GetProjectsPaginated retrieves a paginated list of projects
-func (s *Service) GetProjectsPaginated(parameters connection.APIRequestParameters) (*PaginatedProject, error) {
+func (s *Service) GetProjectsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Project], error) {
 	body, err := s.getProjectsPaginatedResponseBody(parameters)
-
-	return NewPaginatedProject(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetProjectsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetProjectsPaginated), err
 }
 
-func (s *Service) getProjectsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetProjectSliceResponseBody, error) {
-	body := &GetProjectSliceResponseBody{}
+func (s *Service) getProjectsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Project], error) {
+	body := &connection.APIResponseBodyData[[]Project]{}
 
 	response, err := s.connection.Get("/ecloud-flex/v1/projects", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetProject(projectID int) (Project, error) {
 	return body.Data, err
 }
 
-func (s *Service) getProjectResponseBody(projectID int) (*GetProjectResponseBody, error) {
-	body := &GetProjectResponseBody{}
+func (s *Service) getProjectResponseBody(projectID int) (*connection.APIResponseBodyData[Project], error) {
+	body := &connection.APIResponseBodyData[Project]{}
 
 	if projectID < 1 {
 		return body, fmt.Errorf("invalid project id")

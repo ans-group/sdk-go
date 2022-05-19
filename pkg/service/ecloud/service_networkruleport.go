@@ -8,32 +8,17 @@ import (
 
 // GetNetworkRulePorts retrieves a list of network rules
 func (s *Service) GetNetworkRulePorts(parameters connection.APIRequestParameters) ([]NetworkRulePort, error) {
-	var rules []NetworkRulePort
-
-	getFunc := func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkRulePortsPaginated(p)
-	}
-
-	responseFunc := func(response connection.Paginated) {
-		for _, rule := range response.(*PaginatedNetworkRulePort).Items {
-			rules = append(rules, rule)
-		}
-	}
-
-	return rules, connection.InvokeRequestAll(getFunc, responseFunc, parameters)
+	return connection.InvokeRequestAll(s.GetNetworkRulePortsPaginated, parameters)
 }
 
 // GetNetworkRulePortsPaginated retrieves a paginated list of network rules
-func (s *Service) GetNetworkRulePortsPaginated(parameters connection.APIRequestParameters) (*PaginatedNetworkRulePort, error) {
+func (s *Service) GetNetworkRulePortsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
 	body, err := s.getNetworkRulePortsPaginatedResponseBody(parameters)
-
-	return NewPaginatedNetworkRulePort(func(p connection.APIRequestParameters) (connection.Paginated, error) {
-		return s.GetNetworkRulePortsPaginated(p)
-	}, parameters, body.Metadata.Pagination, body.Data), err
+	return connection.NewPaginated(body, parameters, s.GetNetworkRulePortsPaginated), err
 }
 
-func (s *Service) getNetworkRulePortsPaginatedResponseBody(parameters connection.APIRequestParameters) (*GetNetworkRulePortSliceResponseBody, error) {
-	body := &GetNetworkRulePortSliceResponseBody{}
+func (s *Service) getNetworkRulePortsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]NetworkRulePort], error) {
+	body := &connection.APIResponseBodyData[[]NetworkRulePort]{}
 
 	response, err := s.connection.Get("/ecloud/v2/network-rule-ports", parameters)
 	if err != nil {
@@ -50,8 +35,8 @@ func (s *Service) GetNetworkRulePort(ruleID string) (NetworkRulePort, error) {
 	return body.Data, err
 }
 
-func (s *Service) getNetworkRulePortResponseBody(ruleID string) (*GetNetworkRulePortResponseBody, error) {
-	body := &GetNetworkRulePortResponseBody{}
+func (s *Service) getNetworkRulePortResponseBody(ruleID string) (*connection.APIResponseBodyData[NetworkRulePort], error) {
+	body := &connection.APIResponseBodyData[NetworkRulePort]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
@@ -78,8 +63,8 @@ func (s *Service) CreateNetworkRulePort(req CreateNetworkRulePortRequest) (TaskR
 	return body.Data, err
 }
 
-func (s *Service) createNetworkRulePortResponseBody(req CreateNetworkRulePortRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) createNetworkRulePortResponseBody(req CreateNetworkRulePortRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/network-rule-ports", &req)
 	if err != nil {
@@ -96,8 +81,8 @@ func (s *Service) PatchNetworkRulePort(ruleID string, req PatchNetworkRulePortRe
 	return body.Data, err
 }
 
-func (s *Service) patchNetworkRulePortResponseBody(ruleID string, req PatchNetworkRulePortRequest) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) patchNetworkRulePortResponseBody(ruleID string, req PatchNetworkRulePortRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
@@ -124,8 +109,8 @@ func (s *Service) DeleteNetworkRulePort(ruleID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteNetworkRulePortResponseBody(ruleID string) (*GetTaskReferenceResponseBody, error) {
-	body := &GetTaskReferenceResponseBody{}
+func (s *Service) deleteNetworkRulePortResponseBody(ruleID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if ruleID == "" {
 		return body, fmt.Errorf("invalid network rule id")
