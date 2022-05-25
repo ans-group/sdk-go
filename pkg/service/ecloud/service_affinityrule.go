@@ -11,7 +11,7 @@ func (s *Service) GetAffinityRules(parameters connection.APIRequestParameters) (
 	return connection.InvokeRequestAll(s.GetAffinityRulesPaginated, parameters)
 }
 
-// GetAffinityRulesPaginated retrieves a paginated list of lbs
+// GetAffinityRulesPaginated retrieves a paginated list of affinity rules
 func (s *Service) GetAffinityRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRule], error) {
 	body, err := s.getAffinityRulesPaginatedResponseBody(parameters)
 	return connection.NewPaginated(body, parameters, s.GetAffinityRulesPaginated), err
@@ -28,7 +28,7 @@ func (s *Service) getAffinityRulesPaginatedResponseBody(parameters connection.AP
 	return body, response.HandleResponse(body, nil)
 }
 
-// GetAffinityRule retrieves a single lb by id
+// GetAffinityRule retrieves a single AffinityRule by id
 func (s *Service) GetAffinityRule(affinityruleID string) (AffinityRule, error) {
 	body, err := s.getAffinityRuleResponseBody(affinityruleID)
 

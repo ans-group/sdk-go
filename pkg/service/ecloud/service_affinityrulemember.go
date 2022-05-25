@@ -6,7 +6,7 @@ import (
 	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
-// GetAffinityRuleMembers retrieves a list of affinity rules
+// GetAffinityRuleMembers retrieves a list of affinity rule members
 func (s *Service) GetAffinityRuleMembers(affinityRuleID string, parameters connection.APIRequestParameters) ([]AffinityRuleMember, error) {
 	return connection.InvokeRequestAll(
 		func(p connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error) {
@@ -14,7 +14,7 @@ func (s *Service) GetAffinityRuleMembers(affinityRuleID string, parameters conne
 		}, parameters)
 }
 
-// GetAffinityRuleMembersPaginated retrieves a paginated list of lbs
+// GetAffinityRuleMembersPaginated retrieves a paginated list of affinity rule members
 func (s *Service) GetAffinityRuleMembersPaginated(affinityRuleID string, parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error) {
 	body, err := s.getAffinityRuleMembersPaginatedResponseBody(affinityRuleID, parameters)
 	return connection.NewPaginated(
@@ -36,7 +36,7 @@ func (s *Service) getAffinityRuleMembersPaginatedResponseBody(affinityRuleID str
 	return body, response.HandleResponse(body, nil)
 }
 
-// GetAffinityRuleMember retrieves a single lb by id
+// GetAffinityRuleMember retrieves a single AffinityRuleMember by id
 func (s *Service) GetAffinityRuleMember(affinityRuleID string, memberID string) (AffinityRuleMember, error) {
 	body, err := s.getAffinityRuleMemberResponseBody(affinityRuleID, memberID)
 

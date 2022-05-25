@@ -31,11 +31,11 @@ func TestGetAffinityRules(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		lbs, err := s.GetAffinityRules(connection.APIRequestParameters{})
+		rules, err := s.GetAffinityRules(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
-		assert.Len(t, lbs, 1)
-		assert.Equal(t, "ar-abcdef12", lbs[0].ID)
+		assert.Len(t, rules, 1)
+		assert.Equal(t, "ar-abcdef12", rules[0].ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -75,10 +75,10 @@ func TestGetAffinityRule(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		lb, err := s.GetAffinityRule("ar-abcdef12")
+		rule, err := s.GetAffinityRule("ar-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "ar-abcdef12", lb.ID)
+		assert.Equal(t, "ar-abcdef12", rule.ID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -199,7 +199,7 @@ func TestPatchAffinityRule(t *testing.T) {
 		}
 
 		req := PatchAffinityRuleRequest{
-			Name: "somelb",
+			Name: "somerule",
 		}
 
 		c.EXPECT().Patch("/ecloud/v2/affinity-rules/ar-abcdef12", &req).Return(&connection.APIResponse{
