@@ -416,7 +416,7 @@ func (e *VIPNotFoundError) Error() string {
 	return fmt.Sprintf("Load balancer VIP not found with ID [%s]", e.ID)
 }
 
-// IPAddressNotFoundError indicates a load balancer VIP was not found
+// IPAddressNotFoundError indicates an IP address was not found
 type IPAddressNotFoundError struct {
 	ID string
 }
@@ -434,7 +434,7 @@ func (e *AffinityRuleNotFoundError) Error() string {
 	return fmt.Sprintf("Affinity Rule not found with ID [%s]", e.ID)
 }
 
-// AffinityRuleMemberNotFoundError indicates an affinity rule was not found
+// AffinityRuleMemberNotFoundError indicates an affinity rule member was not found
 type AffinityRuleMemberNotFoundError struct {
 	ID string
 }
