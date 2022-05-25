@@ -1019,3 +1019,51 @@ type IPAddress struct {
 	CreatedAt connection.DateTime  `json:"created_at"`
 	UpdatedAt connection.DateTime  `json:"updated_at"`
 }
+
+type AffinityRuleType string
+
+const (
+	Affinity     AffinityRuleType = "affinity"
+	AntiAffinity AffinityRuleType = "anti-affinity"
+)
+
+var AffinityRuleTypeEnum connection.EnumSlice = []connection.Enum{
+	Affinity,
+	AntiAffinity,
+}
+
+// ParseAffinityRuleType attempts to parse an AffinityRuleType from string
+func ParseAffinityRuleType(s string) (AffinityRuleType, error) {
+	e, err := connection.ParseEnum(s, AffinityRuleTypeEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(AffinityRuleType), err
+}
+
+func (s AffinityRuleType) String() string {
+	return string(s)
+}
+
+// AffinityRule represents an eCloud Affinity or Anti-Affinity Rule
+type AffinityRule struct {
+	ID                 string              `json:"id"`
+	Name               string              `json:"name"`
+	VPCID              string              `json:"vpc_id"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	Type               AffinityRuleType    `json:"type"`
+	Sync               ResourceSync        `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
+
+// AffinityRuleMember represents an eCloud Affinity or Anti-Affinity rule member
+type AffinityRuleMember struct {
+	ID             string              `json:"id"`
+	AffinityRuleID string              `json:"affinity_rule_id"`
+	InstanceID     string              `json:"instance_id"`
+	Sync           ResourceSync        `json:"sync"`
+	CreatedAt      connection.DateTime `json:"created_at"`
+	UpdatedAt      connection.DateTime `json:"updated_at"`
+}
