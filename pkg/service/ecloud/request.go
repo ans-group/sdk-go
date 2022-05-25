@@ -574,5 +574,23 @@ type PatchIPAddressRequest struct {
 
 // AssignIPAddressRequest represents a request to assign an IP Address to a NIC
 type AssignIPAddressRequest struct {
-	IPAddressID  string    `json:"ip_address_id"`
+	IPAddressID string `json:"ip_address_id"`
+}
+
+// CreateAffinityRuleRequest represents a request to create an Affinity Rule
+type CreateAffinityRuleRequest struct {
+	Name               string           `json:"name,omitempty"`
+	VPCID              string           `json:"vpc_id"`
+	AvailabilityZoneID string           `json:"availability_zone_id"`
+	Type               AffinityRuleType `json:"type"`
+}
+
+// PatchAffinityRuleRequest represents a request to patch an Affinity Rule
+type PatchAffinityRuleRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// CreateAffinityRuleMemberRequest represents a request to create an Affinity Rule Member
+type CreateAffinityRuleMemberRequest struct {
+	InstanceID     string `json:"instance_id"`
 }

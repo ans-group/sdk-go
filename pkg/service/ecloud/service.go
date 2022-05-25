@@ -418,6 +418,21 @@ type ECloudService interface {
 	CreateIPAddress(req CreateIPAddressRequest) (TaskReference, error)
 	PatchIPAddress(ipID string, patch PatchIPAddressRequest) (TaskReference, error)
 	DeleteIPAddress(ipID string) (string, error)
+
+	//Affinity Rules
+	GetAffinityRules(parameters connection.APIRequestParameters) ([]AffinityRule, error)
+	GetAffinityRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRule], error)
+	GetAffinityRule(ruleID string) (AffinityRule, error)
+	CreateAffinityRule(req CreateAffinityRuleRequest) (TaskReference, error)
+	PatchAffinityRule(ruleID string, patch PatchAffinityRuleRequest) (TaskReference, error)
+	DeleteAffinityRule(ruleID string) (string, error)
+
+	//Affinity Rule Members
+	GetAffinityRuleMembers(ruleID string, parameters connection.APIRequestParameters) ([]AffinityRuleMember, error)
+	GetAffinityRuleMembersPaginated(ruleID string, parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error)
+	GetAffinityRuleMember(ruleID string, memberID string) (AffinityRuleMember, error)
+	CreateAffinityRuleMember(ruleID string, req CreateAffinityRuleMemberRequest) (TaskReference, error)
+	DeleteAffinityRuleMember(ruleID string, memberID string) (string, error)
 }
 
 // Service implements ECloudService for managing
