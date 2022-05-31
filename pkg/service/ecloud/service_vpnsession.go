@@ -85,7 +85,7 @@ func (s *Service) patchVPNSessionResponseBody(sessionID string, req PatchVPNSess
 	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if sessionID == "" {
-		return body, fmt.Errorf("invalid session id")
+		return body, fmt.Errorf("invalid vpn session id")
 	}
 
 	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s", sessionID), &req)
@@ -113,7 +113,7 @@ func (s *Service) deleteVPNSessionResponseBody(sessionID string) (*connection.AP
 	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if sessionID == "" {
-		return body, fmt.Errorf("invalid session id")
+		return body, fmt.Errorf("invalid vpn session id")
 	}
 
 	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s", sessionID), nil)
@@ -182,6 +182,34 @@ func (s *Service) getVPNSessionPreSharedKeyResponseBody(sessionID string) (*conn
 	}
 
 	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s/pre-shared-key", sessionID), connection.APIRequestParameters{})
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &VPNSessionNotFoundError{ID: sessionID}
+		}
+
+		return nil
+	})
+}
+
+// UpdateVPNSession retrieves a single VPN session by id
+func (s *Service) UpdateVPNSessionPreSharedKey(sessionID string, req UpdateVPNSessionPreSharedKeyRequest) (TaskReference, error) {
+	body, err := s.updateVPNSessionPreSharedKeyResponseBody(sessionID, req)
+
+	return body.Data, err
+}
+
+func (s *Service) updateVPNSessionPreSharedKeyResponseBody(sessionID string, req UpdateVPNSessionPreSharedKeyRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
+
+	if sessionID == "" {
+		return body, fmt.Errorf("invalid vpn session id")
+	}
+
+	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v2/vpn-sessions/%s/pre-shared-key", sessionID), &req)
 	if err != nil {
 		return body, err
 	}

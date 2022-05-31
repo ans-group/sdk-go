@@ -384,6 +384,7 @@ type ECloudService interface {
 	PatchVPNSession(sessionID string, req PatchVPNSessionRequest) (TaskReference, error)
 	DeleteVPNSession(sessionID string) (string, error)
 	GetVPNSessionPreSharedKey(sessionID string) (VPNSessionPreSharedKey, error)
+	UpdateVPNSessionPreSharedKey(sessionID string, req UpdateVPNSessionPreSharedKeyRequest) (TaskReference, error)
 
 	// VPN Profile Group
 	GetVPNProfileGroups(parameters connection.APIRequestParameters) ([]VPNProfileGroup, error)
