@@ -592,5 +592,10 @@ type PatchAffinityRuleRequest struct {
 
 // CreateAffinityRuleMemberRequest represents a request to create an Affinity Rule Member
 type CreateAffinityRuleMemberRequest struct {
-	InstanceID     string `json:"instance_id"`
+	InstanceID string `json:"instance_id"`
+}
+
+// UpdateVPNSessionPreSharedKeyRequest represents a request to update a VPN session PSK
+type UpdateVPNSessionPreSharedKeyRequest struct {
+	PSK string `json:"psk"`
 }
