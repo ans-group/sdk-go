@@ -245,7 +245,7 @@ type CreateInstanceRequest struct {
 	BackupEnabled      bool                   `json:"backup_enabled"`
 	NetworkID          string                 `json:"network_id,omitempty"`
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
-	RequiresFloatingIP bool                   `json:"requires_floating_ip"`
+	RequiresFloatingIP *bool                  `json:"requires_floating_ip,omitempty"`
 	UserScript         string                 `json:"user_script,omitempty"`
 	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
 	HostGroupID        string                 `json:"host_group_id,omitempty"`
