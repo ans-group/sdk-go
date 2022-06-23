@@ -1,6 +1,6 @@
 package account
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // GetCredits retrieves a list of credits
 func (s *Service) GetCredits(parameters connection.APIRequestParameters) ([]Credit, error) {

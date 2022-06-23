@@ -3,8 +3,8 @@ package ddosx
 import (
 	"time"
 
-	"github.com/ukfast/go-durationstring"
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/go-durationstring"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 type DomainStatus string

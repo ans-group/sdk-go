@@ -1,7 +1,7 @@
 package loadbalancer
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetBinds retrieves a list of binds

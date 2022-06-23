@@ -3,7 +3,7 @@ package ecloud
 import (
 	"fmt"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetPods retrieves a list of pods

@@ -1,7 +1,7 @@
 package draas
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // DRaaSService is an interface for managing the DRaaS service

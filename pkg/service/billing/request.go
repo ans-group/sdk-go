@@ -1,6 +1,6 @@
 package billing
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // CreateCardRequest represents a request to create a card
 type CreateCardRequest struct {

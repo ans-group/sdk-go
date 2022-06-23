@@ -1,6 +1,6 @@
 package registrar
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Domain represents a UKFast domain
 type Domain struct {

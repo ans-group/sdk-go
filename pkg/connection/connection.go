@@ -1,6 +1,6 @@
 package connection
 
-//go:generate mockgen -package mocks -destination ../../test/mocks/mock_connection.go github.com/ukfast/sdk-go/pkg/connection Connection
+//go:generate mockgen -package mocks -destination ../../test/mocks/mock_connection.go github.com/ans-group/sdk-go/pkg/connection Connection
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ukfast/sdk-go/pkg/logging"
+	"github.com/ans-group/sdk-go/pkg/logging"
 )
 
 const apiURI = "api.ukfast.io"

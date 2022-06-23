@@ -1,7 +1,7 @@
 package cloudflare
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetSpendPlans retrieves a list of spend plans

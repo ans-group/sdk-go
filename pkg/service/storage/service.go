@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // StorageService is an interface for managing UKFast Storage

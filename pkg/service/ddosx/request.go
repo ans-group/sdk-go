@@ -1,8 +1,8 @@
 package ddosx
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/ptr"
+	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/ptr"
 )
 
 // CreateRecordRequest represents a request to create a DDoSX record

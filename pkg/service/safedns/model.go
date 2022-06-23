@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // RecordTTL represents the record TTL time in seconds

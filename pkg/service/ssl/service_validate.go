@@ -1,6 +1,6 @@
 package ssl
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // ValidateCertificate validates a certificate
 func (s *Service) ValidateCertificate(req ValidateRequest) (CertificateValidation, error) {

@@ -1,6 +1,6 @@
 package safedns
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // CreateZoneRequest represents a request to create a SafeDNS zone
 type CreateZoneRequest struct {

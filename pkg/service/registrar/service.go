@@ -1,6 +1,6 @@
 package registrar
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // RegistrarService is an interface for managing the registrar service
 type RegistrarService interface {

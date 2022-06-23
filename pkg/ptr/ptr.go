@@ -1,6 +1,6 @@
 package ptr
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Byte returns a pointer to a byte
 func Byte(v byte) *byte {

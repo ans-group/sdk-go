@@ -1,7 +1,7 @@
 package cloudflare
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // CloudflareService is an interface for managing Cloudflare services

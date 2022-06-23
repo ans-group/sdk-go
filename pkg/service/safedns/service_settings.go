@@ -1,7 +1,7 @@
 package safedns
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetSettings retrieves account settings

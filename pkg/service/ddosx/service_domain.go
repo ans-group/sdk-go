@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"mime"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetDomains retrieves a list of domains

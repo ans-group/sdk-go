@@ -3,7 +3,7 @@ package loadbalancer
 import (
 	"fmt"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetListeners retrieves a list of listeners

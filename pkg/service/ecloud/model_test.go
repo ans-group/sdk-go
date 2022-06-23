@@ -3,8 +3,8 @@ package ecloud
 import (
 	"testing"
 
+	"github.com/ans-group/sdk-go/pkg/connection"
 	"github.com/stretchr/testify/assert"
-	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
 func TestVirtualMachineStatus_String_Expected(t *testing.T) {

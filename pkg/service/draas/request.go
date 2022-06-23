@@ -1,6 +1,6 @@
 package draas
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // PatchSolutionRequest represents a request to patch a solution
 type PatchSolutionRequest struct {

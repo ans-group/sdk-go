@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/ans-group/sdk-go/test"
 	"github.com/stretchr/testify/assert"
-	"github.com/ukfast/sdk-go/test"
 )
 
 func TestAPIResponse_DeserializeResponseBody(t *testing.T) {

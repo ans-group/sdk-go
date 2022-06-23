@@ -3,8 +3,8 @@ package billing
 import (
 	"testing"
 
+	"github.com/ans-group/sdk-go/pkg/connection"
 	"github.com/stretchr/testify/assert"
-	"github.com/ukfast/sdk-go/pkg/connection"
 )
 
 func TestNewService_InjectsConnection(t *testing.T) {

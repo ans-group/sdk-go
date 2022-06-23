@@ -3,7 +3,7 @@ package pss
 import (
 	"io"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // PSSService is an interface for managing PSS

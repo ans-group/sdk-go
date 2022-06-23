@@ -1,7 +1,7 @@
 package ecloudflex
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // ECloudFlexService is an interface for managing eCloud Flex

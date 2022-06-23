@@ -1,21 +1,21 @@
 package client
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/service/account"
-	"github.com/ukfast/sdk-go/pkg/service/billing"
-	"github.com/ukfast/sdk-go/pkg/service/cloudflare"
-	"github.com/ukfast/sdk-go/pkg/service/ddosx"
-	"github.com/ukfast/sdk-go/pkg/service/draas"
-	"github.com/ukfast/sdk-go/pkg/service/ecloud"
-	"github.com/ukfast/sdk-go/pkg/service/ecloudflex"
-	"github.com/ukfast/sdk-go/pkg/service/loadbalancer"
-	"github.com/ukfast/sdk-go/pkg/service/pss"
-	"github.com/ukfast/sdk-go/pkg/service/registrar"
-	"github.com/ukfast/sdk-go/pkg/service/safedns"
-	"github.com/ukfast/sdk-go/pkg/service/sharedexchange"
-	"github.com/ukfast/sdk-go/pkg/service/ssl"
-	"github.com/ukfast/sdk-go/pkg/service/storage"
+	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/account"
+	"github.com/ans-group/sdk-go/pkg/service/billing"
+	"github.com/ans-group/sdk-go/pkg/service/cloudflare"
+	"github.com/ans-group/sdk-go/pkg/service/ddosx"
+	"github.com/ans-group/sdk-go/pkg/service/draas"
+	"github.com/ans-group/sdk-go/pkg/service/ecloud"
+	"github.com/ans-group/sdk-go/pkg/service/ecloudflex"
+	"github.com/ans-group/sdk-go/pkg/service/loadbalancer"
+	"github.com/ans-group/sdk-go/pkg/service/pss"
+	"github.com/ans-group/sdk-go/pkg/service/registrar"
+	"github.com/ans-group/sdk-go/pkg/service/safedns"
+	"github.com/ans-group/sdk-go/pkg/service/sharedexchange"
+	"github.com/ans-group/sdk-go/pkg/service/ssl"
+	"github.com/ans-group/sdk-go/pkg/service/storage"
 )
 
 type Client interface {

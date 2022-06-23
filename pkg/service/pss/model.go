@@ -1,6 +1,6 @@
 package pss
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 type AuthorType string
 

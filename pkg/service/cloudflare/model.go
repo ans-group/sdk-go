@@ -1,6 +1,6 @@
 package cloudflare
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Account represents a Cloudflare account
 type Account struct {

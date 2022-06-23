@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/ptr"
+	"github.com/ans-group/sdk-go/test/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/ptr"
-	"github.com/ukfast/sdk-go/test/mocks"
 )
 
 func TestGetVirtualMachines(t *testing.T) {

@@ -1,11 +1,11 @@
-module github.com/ukfast/sdk-go
+module github.com/ans-group/sdk-go
 
 go 1.18
 
 require (
+	github.com/ans-group/go-durationstring v1.2.0
 	github.com/golang/mock v1.2.0
 	github.com/stretchr/testify v1.6.1
-	github.com/ukfast/go-durationstring v1.1.0
 	gopkg.in/go-playground/validator.v9 v9.27.0
 )
 

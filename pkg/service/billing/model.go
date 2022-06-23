@@ -1,6 +1,6 @@
 package billing
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Card represents a credit/debit card
 type Card struct {

@@ -3,7 +3,7 @@ package billing
 import (
 	"fmt"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetDirectDebit retrieves direct debit details

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ans-group/sdk-go/test"
 	"github.com/stretchr/testify/assert"
-	"github.com/ukfast/sdk-go/test"
 )
 
 func TestAPIConnection_composeURI(t *testing.T) {

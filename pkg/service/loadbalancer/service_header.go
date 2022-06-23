@@ -1,7 +1,7 @@
 package loadbalancer
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetHeaders retrieves a list of headers

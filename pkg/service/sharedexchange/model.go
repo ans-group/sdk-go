@@ -1,6 +1,6 @@
 package sharedexchange
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Domain represents an Shared Exchange domain
 type Domain struct {

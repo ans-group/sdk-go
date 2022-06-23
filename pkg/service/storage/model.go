@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // Solution represents a solution

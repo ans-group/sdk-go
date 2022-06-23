@@ -3,7 +3,7 @@ package ecloud
 import (
 	"fmt"
 
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetVPNProfileGroups retrieves a list of VPN profile groups

@@ -1,6 +1,6 @@
 package pss
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // CreateRequestRequest represents a request to create a PSS request
 type CreateRequestRequest struct {

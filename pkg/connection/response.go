@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ukfast/sdk-go/pkg/logging"
+	"github.com/ans-group/sdk-go/pkg/logging"
 )
 
 type ResponseBody interface {

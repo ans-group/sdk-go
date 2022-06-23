@@ -1,8 +1,8 @@
 package ecloud
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
-	"github.com/ukfast/sdk-go/pkg/service/account"
+	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/account"
 )
 
 // ECloudService is an interface for managing eCloud

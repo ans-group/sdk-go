@@ -1,6 +1,6 @@
 package loadbalancer
 
-import "github.com/ukfast/sdk-go/pkg/connection"
+import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Target represents a target
 type Target struct {

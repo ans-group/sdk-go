@@ -1,7 +1,7 @@
 package ddosx
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // GetRecords retrieves a list of records

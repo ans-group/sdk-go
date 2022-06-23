@@ -1,7 +1,7 @@
 package account
 
 import (
-	"github.com/ukfast/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
 // AccountService is an interface for managing account
