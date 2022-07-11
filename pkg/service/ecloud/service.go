@@ -431,9 +431,9 @@ type ECloudService interface {
 	//Affinity Rule Members
 	GetAffinityRuleMembers(ruleID string, parameters connection.APIRequestParameters) ([]AffinityRuleMember, error)
 	GetAffinityRuleMembersPaginated(ruleID string, parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error)
-	GetAffinityRuleMember(ruleID string, memberID string) (AffinityRuleMember, error)
-	CreateAffinityRuleMember(ruleID string, req CreateAffinityRuleMemberRequest) (TaskReference, error)
-	DeleteAffinityRuleMember(ruleID string, memberID string) (string, error)
+	GetAffinityRuleMember(memberID string) (AffinityRuleMember, error)
+	CreateAffinityRuleMember(req CreateAffinityRuleMemberRequest) (TaskReference, error)
+	DeleteAffinityRuleMember(memberID string) (string, error)
 }
 
 // Service implements ECloudService for managing
