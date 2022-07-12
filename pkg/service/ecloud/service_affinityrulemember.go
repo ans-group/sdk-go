@@ -37,24 +37,20 @@ func (s *Service) getAffinityRuleMembersPaginatedResponseBody(affinityRuleID str
 }
 
 // GetAffinityRuleMember retrieves a single AffinityRuleMember by id
-func (s *Service) GetAffinityRuleMember(affinityRuleID string, memberID string) (AffinityRuleMember, error) {
-	body, err := s.getAffinityRuleMemberResponseBody(affinityRuleID, memberID)
+func (s *Service) GetAffinityRuleMember(memberID string) (AffinityRuleMember, error) {
+	body, err := s.getAffinityRuleMemberResponseBody(memberID)
 
 	return body.Data, err
 }
 
-func (s *Service) getAffinityRuleMemberResponseBody(affinityRuleID string, memberID string) (*connection.APIResponseBodyData[AffinityRuleMember], error) {
+func (s *Service) getAffinityRuleMemberResponseBody(memberID string) (*connection.APIResponseBodyData[AffinityRuleMember], error) {
 	body := &connection.APIResponseBodyData[AffinityRuleMember]{}
-
-	if affinityRuleID == "" {
-		return body, fmt.Errorf("invalid affinity rule id")
-	}
 
 	if memberID == "" {
 		return body, fmt.Errorf("invalid affinity rule member id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/affinity-rules/%s/members/%s", affinityRuleID, memberID), connection.APIRequestParameters{})
+	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/affinity-rule-members/%s", memberID), connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}
@@ -69,16 +65,16 @@ func (s *Service) getAffinityRuleMemberResponseBody(affinityRuleID string, membe
 }
 
 // CreateAffinityRuleMember creates a new AffinityRuleMember
-func (s *Service) CreateAffinityRuleMember(affinityRuleID string, req CreateAffinityRuleMemberRequest) (TaskReference, error) {
-	body, err := s.createAffinityRuleMemberResponseBody(affinityRuleID, req)
+func (s *Service) CreateAffinityRuleMember(req CreateAffinityRuleMemberRequest) (TaskReference, error) {
+	body, err := s.createAffinityRuleMemberResponseBody(req)
 
 	return body.Data, err
 }
 
-func (s *Service) createAffinityRuleMemberResponseBody(affinityRuleID string, req CreateAffinityRuleMemberRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+func (s *Service) createAffinityRuleMemberResponseBody(req CreateAffinityRuleMemberRequest) (*connection.APIResponseBodyData[TaskReference], error) {
 	body := &connection.APIResponseBodyData[TaskReference]{}
 
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v2/affinity-rules/%s/members", affinityRuleID), &req)
+	response, err := s.connection.Post("/ecloud/v2/affinity-rule-members", &req)
 	if err != nil {
 		return body, err
 	}
@@ -87,24 +83,20 @@ func (s *Service) createAffinityRuleMemberResponseBody(affinityRuleID string, re
 }
 
 // DeleteAffinityRuleMember deletes a AffinityRuleMember
-func (s *Service) DeleteAffinityRuleMember(affinityRuleID string, memberID string) (string, error) {
-	body, err := s.deleteAffinityRuleMemberResponseBody(affinityRuleID, memberID)
+func (s *Service) DeleteAffinityRuleMember(memberID string) (string, error) {
+	body, err := s.deleteAffinityRuleMemberResponseBody(memberID)
 
 	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteAffinityRuleMemberResponseBody(affinityRuleID string, memberID string) (*connection.APIResponseBodyData[TaskReference], error) {
+func (s *Service) deleteAffinityRuleMemberResponseBody(memberID string) (*connection.APIResponseBodyData[TaskReference], error) {
 	body := &connection.APIResponseBodyData[TaskReference]{}
-
-	if affinityRuleID == "" {
-		return body, fmt.Errorf("invalid affinity rule id")
-	}
 
 	if memberID == "" {
 		return body, fmt.Errorf("invalid affinity rule member id")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/affinity-rules/%s/members/%s", affinityRuleID, memberID), nil)
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/affinity-rule-members/%s", memberID), nil)
 	if err != nil {
 		return body, err
 	}
