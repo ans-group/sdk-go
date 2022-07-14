@@ -425,6 +425,7 @@ type Instance struct {
 	VolumeCapacity     int                 `json:"volume_capacity"`
 	VolumeGroupID      string              `json:"volume_group_id"`
 	HostGroupID        string              `json:"host_group_id"`
+	ResourceTierID     string              `json:"resource_tier_id"`
 	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`

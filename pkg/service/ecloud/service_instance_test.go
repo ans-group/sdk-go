@@ -956,6 +956,33 @@ func TestMigrateInstance(t *testing.T) {
 		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
+	t.Run("ValidResourceTier", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := MigrateInstanceRequest{
+			ResourceTierID: "rt-abcdef12",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		taskID, err := s.MigrateInstance("i-abcdef12", req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
+	})
+
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
