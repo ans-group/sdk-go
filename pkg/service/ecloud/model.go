@@ -1067,3 +1067,9 @@ type AffinityRuleMember struct {
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
+
+type ResourceTier struct {
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+}
