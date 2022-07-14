@@ -249,6 +249,7 @@ type CreateInstanceRequest struct {
 	UserScript         string                 `json:"user_script,omitempty"`
 	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
 	HostGroupID        string                 `json:"host_group_id,omitempty"`
+	ResourceTierID     string                 `json:"resource_tier_id,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
