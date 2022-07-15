@@ -425,6 +425,7 @@ type Instance struct {
 	VolumeCapacity     int                 `json:"volume_capacity"`
 	VolumeGroupID      string              `json:"volume_group_id"`
 	HostGroupID        string              `json:"host_group_id"`
+	ResourceTierID     string              `json:"resource_tier_id"`
 	Sync               ResourceSync        `json:"sync"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
@@ -1066,4 +1067,10 @@ type AffinityRuleMember struct {
 	Sync           ResourceSync        `json:"sync"`
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
+}
+
+type ResourceTier struct {
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
 }

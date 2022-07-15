@@ -442,3 +442,12 @@ type AffinityRuleMemberNotFoundError struct {
 func (e *AffinityRuleMemberNotFoundError) Error() string {
 	return fmt.Sprintf("Affinity Rule member not found with ID [%s]", e.ID)
 }
+
+// ResourceTierNotFoundError indicates a resource tier was not found
+type ResourceTierNotFoundError struct {
+	ID string
+}
+
+func (e *ResourceTierNotFoundError) Error() string {
+	return fmt.Sprintf("Resource tier not found with ID [%s]", e.ID)
+}
