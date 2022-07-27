@@ -1015,7 +1015,7 @@ type IPAddress struct {
 	Name      string               `json:"name"`
 	IPAddress connection.IPAddress `json:"ip_address"`
 	NetworkID string               `json:"network_id"`
-	Type      string               `json:"config_id"`
+	Type      string               `json:"type"`
 	Sync      ResourceSync         `json:"sync"`
 	CreatedAt connection.DateTime  `json:"created_at"`
 	UpdatedAt connection.DateTime  `json:"updated_at"`
