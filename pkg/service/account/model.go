@@ -1,7 +1,5 @@
 package account
 
-import "github.com/ans-group/sdk-go/pkg/connection"
-
 type ContactType string
 
 func (t ContactType) String() string {
@@ -36,25 +34,4 @@ type Credit struct {
 	Type      string `json:"type"`
 	Total     int    `json:"total"`
 	Remaining int    `json:"remaining"`
-}
-
-// Invoice represents a UKFast account invoice
-type Invoice struct {
-	ID    int             `json:"id"`
-	Date  connection.Date `json:"date"`
-	Paid  bool            `json:"paid"`
-	Net   float32         `json:"net"`
-	VAT   float32         `json:"vat"`
-	Gross float32         `json:"gross"`
-}
-
-// InvoiceQuery represents a UKFast account invoice query
-type InvoiceQuery struct {
-	ID               int     `json:"id"`
-	ContactID        int     `json:"contact_id"`
-	Amount           float32 `json:"amount"`
-	WhatWasExpected  string  `json:"what_was_expected"`
-	WhatWasReceived  string  `json:"what_was_received"`
-	ProposedSolution string  `json:"proposed_solution"`
-	InvoiceIDs       []int   `json:"invoice_ids"`
 }

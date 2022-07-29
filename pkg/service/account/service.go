@@ -13,15 +13,6 @@ type AccountService interface {
 	GetDetails() (Details, error)
 
 	GetCredits(parameters connection.APIRequestParameters) ([]Credit, error)
-
-	GetInvoices(parameters connection.APIRequestParameters) ([]Invoice, error)
-	GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error)
-	GetInvoice(invoiceID int) (Invoice, error)
-
-	GetInvoiceQueries(parameters connection.APIRequestParameters) ([]InvoiceQuery, error)
-	GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[InvoiceQuery], error)
-	GetInvoiceQuery(invoiceQueryID int) (InvoiceQuery, error)
-	CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error)
 }
 
 // Service implements AccountService for managing
