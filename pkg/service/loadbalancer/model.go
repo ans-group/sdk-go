@@ -233,8 +233,8 @@ type ACL struct {
 
 // ACLArgument represents an ACL condition/action argument
 type ACLArgument struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name  string      `json:"name"`
+	Value interface{} `json:"value"`
 }
 
 // ACLCondition represents an ACL condition
@@ -257,29 +257,22 @@ type ACLTemplates struct {
 }
 
 type ACLTemplateCondition struct {
-	Name         string                         `json:"name"`
-	FriendlyName string                         `json:"friendly_name"`
-	Description  string                         `json:"description"`
-	Arguments    []ACLTemplateConditionArgument `json:"arguments"`
-}
-
-type ACLTemplateConditionArgument struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Example     string   `json:"example"`
-	Values      []string `json:"values"`
+	Name         string                `json:"name"`
+	FriendlyName string                `json:"friendly_name"`
+	Description  string                `json:"description"`
+	Arguments    []ACLTemplateArgument `json:"arguments"`
 }
 
 type ACLTemplateAction struct {
-	Name         string                      `json:"name"`
-	FriendlyName string                      `json:"friendly_name"`
-	Description  string                      `json:"description"`
-	Arguments    []ACLTemplateActionArgument `json:"arguments"`
+	Name         string                `json:"name"`
+	FriendlyName string                `json:"friendly_name"`
+	Description  string                `json:"description"`
+	Arguments    []ACLTemplateArgument `json:"arguments"`
 }
 
-type ACLTemplateActionArgument struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Example     string   `json:"example"`
-	Values      []string `json:"values"`
+type ACLTemplateArgument struct {
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Example     interface{} `json:"example"`
+	Values      []string    `json:"values"`
 }

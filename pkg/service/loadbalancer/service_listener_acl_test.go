@@ -24,7 +24,7 @@ func TestGetListenerACLs(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/acls?listener_id=123", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/acls", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
@@ -64,7 +64,7 @@ func TestGetListenerACLs(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Get("/loadbalancers/v2/acls?listener_id=123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+		c.EXPECT().Get("/loadbalancers/v2/listeners/123/acls", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
 		_, err := s.GetListenerACLs(123, connection.APIRequestParameters{})
 
