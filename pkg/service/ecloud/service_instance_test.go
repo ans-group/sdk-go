@@ -1709,3 +1709,66 @@ func TestGetInstanceFloatingIPs(t *testing.T) {
 		assert.IsType(t, &InstanceNotFoundError{}, err)
 	})
 }
+
+func TestCreateInstanceImage(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := CreateInstanceImageRequest{
+			Name: "testimage",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/create-image", gomock.Eq(&req)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		taskID, err := s.CreateInstanceImage("i-abcdef12", req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/create-image", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateInstanceImage("i-abcdef12", CreateInstanceImageRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateInstanceImage("", CreateInstanceImageRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+}
