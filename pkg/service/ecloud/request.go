@@ -607,3 +607,11 @@ type UpdateVPNSessionPreSharedKeyRequest struct {
 type CreateInstanceImageRequest struct {
 	Name string `json:"name"`
 }
+
+// UpdateImageRequest represents a request to update an image
+type UpdateImageRequest struct {
+	Name             string `json:"name"`
+	LogoURI          string `json:"logo_uri"`
+	DocumentationURI string `json:"documentation_uri"`
+	Description      string `json:"description"`
+}
