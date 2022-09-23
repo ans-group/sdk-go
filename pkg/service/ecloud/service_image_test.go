@@ -172,6 +172,128 @@ func TestGetImage(t *testing.T) {
 	})
 }
 
+func TestUpdateImage(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := UpdateImageRequest{
+			Name: "testimage",
+		}
+
+		c.EXPECT().Patch("/ecloud/v2/images/img-abcdef12", gomock.Eq(&req)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		task, err := s.UpdateImage("img-abcdef12", req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v2/images/img-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.UpdateImage("img-abcdef12", UpdateImageRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.UpdateImage("", UpdateImageRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid image id", err.Error())
+	})
+}
+
+func TestDeleteImage(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v2/images/img-abcdef12", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		taskID, err := s.DeleteImage("img-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v2/images/img-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.DeleteImage("img-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.DeleteImage("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid image id", err.Error())
+	})
+}
+
 func TestGetImageParameters(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)

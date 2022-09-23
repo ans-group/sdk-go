@@ -95,6 +95,20 @@ func (r *APIResponse) ValidateStatusCode(codes []int, respBody ResponseBody) err
 
 type ResponseHandler func(resp *APIResponse) error
 
+func StatusCodeResponseHandler(code int, err error) ResponseHandler {
+	return func(resp *APIResponse) error {
+		if resp.StatusCode == code {
+			return err
+		}
+
+		return nil
+	}
+}
+
+func NotFoundResponseHandler(err error) ResponseHandler {
+	return StatusCodeResponseHandler(404, err)
+}
+
 // HandleResponse deserializes the response body into provided respBody, and validates
 // the response using the optionally provided ResponseHandler handler
 func (r *APIResponse) HandleResponse(respBody ResponseBody, handlers ...ResponseHandler) error {
