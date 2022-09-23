@@ -624,10 +624,10 @@ func (s *Service) getInstanceFloatingIPsPaginatedResponseBody(instanceID string,
 }
 
 // CreateInstanceImage attaches a volume to an instance
-func (s *Service) CreateInstanceImage(instanceID string, req CreateInstanceImageRequest) (string, error) {
+func (s *Service) CreateInstanceImage(instanceID string, req CreateInstanceImageRequest) (TaskReference, error) {
 	body, err := s.createInstanceImageResponseBody(instanceID, req)
 
-	return body.Data.TaskID, err
+	return body.Data, err
 }
 
 func (s *Service) createInstanceImageResponseBody(instanceID string, req CreateInstanceImageRequest) (*connection.APIResponseBodyData[TaskReference], error) {
