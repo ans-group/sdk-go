@@ -204,7 +204,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 }
 
 func TestAPIResponseError_String(t *testing.T) {
-	apiError := APIResponseError{
+	apiError := APIResponseBodyErrorItem{
 		Detail: "test detail 1",
 		Source: "test source 1",
 		Status: 500,
@@ -212,76 +212,76 @@ func TestAPIResponseError_String(t *testing.T) {
 	}
 	expected := "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\""
 
-	t.Run("String_Expected", func(t *testing.T) {
-		s := apiError.String()
-
-		assert.Equal(t, expected, s)
-	})
-
 	t.Run("Error_Expected", func(t *testing.T) {
 		s := apiError.Error()
 
-		assert.Equal(t, expected, s.Error())
+		assert.Equal(t, expected, s)
 	})
 }
 
 func TestAPIResponseBody_ErrorString(t *testing.T) {
 	t.Run("SingleError", func(t *testing.T) {
 		b := APIResponseBody{
-			Errors: []APIResponseError{
-				APIResponseError{
-					Detail: "test detail 1",
-					Source: "test source 1",
-					Status: 500,
-					Title:  "test title 1",
+			APIResponseBodyError: APIResponseBodyError{
+				Errors: []APIResponseBodyErrorItem{
+					APIResponseBodyErrorItem{
+						Detail: "test detail 1",
+						Source: "test source 1",
+						Status: 500,
+						Title:  "test title 1",
+					},
 				},
 			},
 		}
 
-		msg := b.ErrorString()
+		err := b.Error()
 
-		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", msg)
+		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err.Error())
 	})
 
 	t.Run("MultipleErrors", func(t *testing.T) {
 		b := APIResponseBody{
-			Errors: []APIResponseError{
-				APIResponseError{
-					Detail: "test detail 1",
-					Source: "test source 1",
-					Status: 500,
-					Title:  "test title 1",
-				},
-				APIResponseError{
-					Detail: "test detail 2",
-					Source: "test source 2",
-					Status: 501,
-					Title:  "test title 2",
+			APIResponseBodyError: APIResponseBodyError{
+				Errors: []APIResponseBodyErrorItem{
+					APIResponseBodyErrorItem{
+						Detail: "test detail 1",
+						Source: "test source 1",
+						Status: 500,
+						Title:  "test title 1",
+					},
+					APIResponseBodyErrorItem{
+						Detail: "test detail 2",
+						Source: "test source 2",
+						Status: 501,
+						Title:  "test title 2",
+					},
 				},
 			},
 		}
 
-		msg := b.ErrorString()
+		err := b.Error()
 
-		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"; title=\"test title 2\", detail=\"test detail 2\", status=\"501\", source=\"test source 2\"", msg)
+		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"; title=\"test title 2\", detail=\"test detail 2\", status=\"501\", source=\"test source 2\"", err.Error())
 	})
 
 	t.Run("WithMessage", func(t *testing.T) {
 		b := APIResponseBody{
-			Errors: []APIResponseError{
-				APIResponseError{
-					Detail: "test detail 1",
-					Source: "test source 1",
-					Status: 500,
-					Title:  "test title 1",
+			APIResponseBodyError: APIResponseBodyError{
+				Errors: []APIResponseBodyErrorItem{
+					APIResponseBodyErrorItem{
+						Detail: "test detail 1",
+						Source: "test source 1",
+						Status: 500,
+						Title:  "test title 1",
+					},
 				},
+				Message: "test message 1",
 			},
-			Message: "test message 1",
 		}
 
-		msg := b.ErrorString()
+		err := b.Error()
 
-		assert.Equal(t, "message=\"test message 1\"; title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", msg)
+		assert.Equal(t, "message=\"test message 1\"; title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err.Error())
 	})
 }
 
