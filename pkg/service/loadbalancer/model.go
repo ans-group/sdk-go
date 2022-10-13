@@ -239,15 +239,15 @@ type ACLArgument struct {
 
 // ACLCondition represents an ACL condition
 type ACLCondition struct {
-	Name      string                 `json:"name"`
-	Inverted  bool                   `json:"inverted"`
-	Arguments map[string]ACLArgument `json:"arguments"`
+	Name      string        `json:"name"`
+	Inverted  bool          `json:"inverted"`
+	Arguments []ACLArgument `json:"arguments"`
 }
 
 // ACLAction represents an ACL action
 type ACLAction struct {
-	Name      string                 `json:"name"`
-	Arguments map[string]ACLArgument `json:"arguments"`
+	Name      string        `json:"name"`
+	Arguments []ACLArgument `json:"arguments"`
 }
 
 // ACLTemplates represents a collection of ACL condition/action templates
