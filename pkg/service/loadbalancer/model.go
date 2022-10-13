@@ -4,22 +4,23 @@ import "github.com/ans-group/sdk-go/pkg/connection"
 
 // Target represents a target
 type Target struct {
-	ID            int                  `json:"id"`
-	TargetGroupID int                  `json:"target_group_id"`
-	Name          string               `json:"name"`
-	IP            connection.IPAddress `json:"ip"`
-	Port          int                  `json:"port"`
-	Weight        int                  `json:"weight"`
-	Backup        bool                 `json:"backup"`
-	CheckInterval int                  `json:"check_interval"`
-	CheckSSL      bool                 `json:"check_ssl"`
-	CheckRise     int                  `json:"check_rise"`
-	CheckFall     int                  `json:"check_fall"`
-	DisableHTTP2  bool                 `json:"disable_http2"`
-	HTTP2Only     bool                 `json:"http2_only"`
-	Active        bool                 `json:"active"`
-	CreatedAt     connection.DateTime  `json:"created_at"`
-	UpdatedAt     connection.DateTime  `json:"updated_at"`
+	ID                 int                  `json:"id"`
+	TargetGroupID      int                  `json:"target_group_id"`
+	Name               string               `json:"name"`
+	IP                 connection.IPAddress `json:"ip"`
+	Port               int                  `json:"port"`
+	Weight             int                  `json:"weight"`
+	Backup             bool                 `json:"backup"`
+	CheckInterval      int                  `json:"check_interval"`
+	CheckSSL           bool                 `json:"check_ssl"`
+	CheckRise          int                  `json:"check_rise"`
+	CheckFall          int                  `json:"check_fall"`
+	DisableHTTP2       bool                 `json:"disable_http2"`
+	HTTP2Only          bool                 `json:"http2_only"`
+	Active             bool                 `json:"active"`
+	SessionCookieValue string               `json:"session_cookie_value"`
+	CreatedAt          connection.DateTime  `json:"created_at"`
+	UpdatedAt          connection.DateTime  `json:"updated_at"`
 }
 
 type TargetGroupBalance string

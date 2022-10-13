@@ -9,34 +9,36 @@ type PatchClusterRequest struct {
 
 // CreateTargetRequest represents a request to create a target
 type CreateTargetRequest struct {
-	Name          string               `json:"name,omitempty"`
-	IP            connection.IPAddress `json:"ip"`
-	Port          int                  `json:"port,omitempty"`
-	Weight        int                  `json:"weight,omitempty"`
-	Backup        bool                 `json:"backup"`
-	CheckInterval int                  `json:"check_interval,omitempty"`
-	CheckSSL      bool                 `json:"check_ssl"`
-	CheckRise     int                  `json:"check_rise,omitempty"`
-	CheckFall     int                  `json:"check_fall,omitempty"`
-	DisableHTTP2  bool                 `json:"disable_http2"`
-	HTTP2Only     bool                 `json:"http2_only"`
-	Active        bool                 `json:"active"`
+	Name               string               `json:"name,omitempty"`
+	IP                 connection.IPAddress `json:"ip"`
+	Port               int                  `json:"port,omitempty"`
+	Weight             int                  `json:"weight,omitempty"`
+	Backup             bool                 `json:"backup"`
+	CheckInterval      int                  `json:"check_interval,omitempty"`
+	CheckSSL           bool                 `json:"check_ssl"`
+	CheckRise          int                  `json:"check_rise,omitempty"`
+	CheckFall          int                  `json:"check_fall,omitempty"`
+	DisableHTTP2       bool                 `json:"disable_http2"`
+	HTTP2Only          bool                 `json:"http2_only"`
+	Active             bool                 `json:"active"`
+	SessionCookieValue string               `json:"session_cookie_value,omitempty"`
 }
 
 // PatchTargetRequest represents a request to patch a target
 type PatchTargetRequest struct {
-	Name          string               `json:"name,omitempty"`
-	IP            connection.IPAddress `json:"ip,omitempty"`
-	Port          int                  `json:"port,omitempty"`
-	Weight        int                  `json:"weight,omitempty"`
-	Backup        *bool                `json:"backup,omitempty"`
-	CheckInterval int                  `json:"check_interval,omitempty"`
-	CheckSSL      *bool                `json:"check_ssl,omitempty"`
-	CheckRise     int                  `json:"check_rise,omitempty"`
-	CheckFall     int                  `json:"check_fall,omitempty"`
-	DisableHTTP2  *bool                `json:"disable_http2,omitempty"`
-	HTTP2Only     *bool                `json:"http2_only,omitempty"`
-	Active        *bool                `json:"active,omitempty"`
+	Name               string               `json:"name,omitempty"`
+	IP                 connection.IPAddress `json:"ip,omitempty"`
+	Port               int                  `json:"port,omitempty"`
+	Weight             int                  `json:"weight,omitempty"`
+	Backup             *bool                `json:"backup,omitempty"`
+	CheckInterval      int                  `json:"check_interval,omitempty"`
+	CheckSSL           *bool                `json:"check_ssl,omitempty"`
+	CheckRise          int                  `json:"check_rise,omitempty"`
+	CheckFall          int                  `json:"check_fall,omitempty"`
+	DisableHTTP2       *bool                `json:"disable_http2,omitempty"`
+	HTTP2Only          *bool                `json:"http2_only,omitempty"`
+	Active             *bool                `json:"active,omitempty"`
+	SessionCookieValue string               `json:"session_cookie_value,omitempty"`
 }
 
 // CreateTargetGroupRequest represents a request to create a target group
