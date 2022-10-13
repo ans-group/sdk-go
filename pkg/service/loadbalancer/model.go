@@ -92,32 +92,34 @@ func (s TargetGroupMonitorMethod) String() string {
 
 // TargetGroup represents a target group
 type TargetGroup struct {
-	ID                   int                      `json:"id"`
-	ClusterID            int                      `json:"cluster_id"`
-	Name                 string                   `json:"name"`
-	Balance              TargetGroupBalance       `json:"balance"`
-	Mode                 Mode                     `json:"mode"`
-	Close                bool                     `json:"close"`
-	Sticky               bool                     `json:"sticky"`
-	CookieOpts           string                   `json:"cookie_opts"`
-	Source               string                   `json:"source"`
-	TimeoutsConnect      int                      `json:"timeouts_connect"`
-	TimeoutsServer       int                      `json:"timeouts_server"`
-	CustomOptions        string                   `json:"custom_options"`
-	MonitorURL           string                   `json:"monitor_url"`
-	MonitorMethod        TargetGroupMonitorMethod `json:"monitor_method"`
-	MonitorHost          string                   `json:"monitor_host"`
-	MonitorHTTPVersion   string                   `json:"monitor_http_version"`
-	MonitorExpect        string                   `json:"monitor_expect"`
-	MonitorTCPMonitoring bool                     `json:"monitor_tcp_monitoring"`
-	CheckPort            int                      `json:"check_port"`
-	SendProxy            bool                     `json:"send_proxy"`
-	SendProxyV2          bool                     `json:"send_proxy_v2"`
-	SSL                  bool                     `json:"ssl"`
-	SSLVerify            bool                     `json:"ssl_verify"`
-	SNI                  bool                     `json:"sni"`
-	CreatedAt            connection.DateTime      `json:"created_at"`
-	UpdatedAt            connection.DateTime      `json:"updated_at"`
+	ID                       int                      `json:"id"`
+	ClusterID                int                      `json:"cluster_id"`
+	Name                     string                   `json:"name"`
+	Balance                  TargetGroupBalance       `json:"balance"`
+	Mode                     Mode                     `json:"mode"`
+	Close                    bool                     `json:"close"`
+	Sticky                   bool                     `json:"sticky"`
+	CookieOpts               string                   `json:"cookie_opts"`
+	Source                   string                   `json:"source"`
+	TimeoutsConnect          int                      `json:"timeouts_connect"`
+	TimeoutsServer           int                      `json:"timeouts_server"`
+	CustomOptions            string                   `json:"custom_options"`
+	MonitorURL               string                   `json:"monitor_url"`
+	MonitorMethod            TargetGroupMonitorMethod `json:"monitor_method"`
+	MonitorHost              string                   `json:"monitor_host"`
+	MonitorHTTPVersion       string                   `json:"monitor_http_version"`
+	MonitorExpect            string                   `json:"monitor_expect"`
+	MonitorExpectString      string                   `json:"monitor_expect_string"`
+	MonitorExpectStringRegex bool                     `json:"monitor_expect_string_regex"`
+	MonitorTCPMonitoring     bool                     `json:"monitor_tcp_monitoring"`
+	CheckPort                int                      `json:"check_port"`
+	SendProxy                bool                     `json:"send_proxy"`
+	SendProxyV2              bool                     `json:"send_proxy_v2"`
+	SSL                      bool                     `json:"ssl"`
+	SSLVerify                bool                     `json:"ssl_verify"`
+	SNI                      bool                     `json:"sni"`
+	CreatedAt                connection.DateTime      `json:"created_at"`
+	UpdatedAt                connection.DateTime      `json:"updated_at"`
 }
 
 // Cluster represents a cluster

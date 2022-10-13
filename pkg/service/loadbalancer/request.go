@@ -57,9 +57,9 @@ type CreateTargetGroupRequest struct {
 	MonitorHost              string                   `json:"monitor_host,omitempty"`
 	MonitorHTTPVersion       string                   `json:"monitor_http_version,omitempty"`
 	MonitorExpect            string                   `json:"monitor_expect,omitempty"`
-	MonitorTCPMonitoring     bool                     `json:"monitor_tcp_monitoring"`
 	MonitorExpectString      string                   `json:"monitor_expect_string,omitempty"`
 	MonitorExpectStringRegex bool                     `json:"monitor_expect_string_regex"`
+	MonitorTCPMonitoring     bool                     `json:"monitor_tcp_monitoring"`
 	CheckPort                int                      `json:"check_port,omitempty"`
 	SendProxy                bool                     `json:"send_proxy"`
 	SendProxyV2              bool                     `json:"send_proxy_v2"`
@@ -85,9 +85,9 @@ type PatchTargetGroupRequest struct {
 	MonitorHost              string                   `json:"monitor_host,omitempty"`
 	MonitorHTTPVersion       string                   `json:"monitor_http_version,omitempty"`
 	MonitorExpect            string                   `json:"monitor_expect,omitempty"`
-	MonitorTCPMonitoring     *bool                    `json:"monitor_tcp_monitoring,omitempty"`
 	MonitorExpectString      string                   `json:"monitor_expect_string,omitempty"`
 	MonitorExpectStringRegex *bool                    `json:"monitor_expect_string_regex,omitempty"`
+	MonitorTCPMonitoring     *bool                    `json:"monitor_tcp_monitoring,omitempty"`
 	CheckPort                int                      `json:"check_port,omitempty"`
 	SendProxy                *bool                    `json:"send_proxy,omitempty"`
 	SendProxyV2              *bool                    `json:"send_proxy_v2,omitempty"`
