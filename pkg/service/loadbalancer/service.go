@@ -84,10 +84,6 @@ type LoadBalancerService interface {
 	GetBinds(parameters connection.APIRequestParameters) ([]Bind, error)
 	GetBindsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Bind], error)
 
-	// Header
-	GetHeaders(parameters connection.APIRequestParameters) ([]Header, error)
-	GetHeadersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Header], error)
-
 	// ACL
 	GetACLs(parameters connection.APIRequestParameters) ([]ACL, error)
 	GetACLsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ACL], error)

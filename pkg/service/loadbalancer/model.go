@@ -219,11 +219,6 @@ type Certificate struct {
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 }
 
-// Header represents a header
-type Header struct {
-	Header string `json:"header"`
-}
-
 // ACL represents an ACL
 type ACL struct {
 	ID            int            `json:"id"`
