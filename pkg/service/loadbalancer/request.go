@@ -189,6 +189,7 @@ type PatchCertificateRequest struct {
 // CreateACLRequest represents a request to create a ACL
 type CreateACLRequest struct {
 	Name          string         `json:"name"`
+	Priority      int            `json:"priority,omitempty"`
 	ListenerID    int            `json:"listener_id,omitempty"`
 	TargetGroupID int            `json:"target_group_id,omitempty"`
 	Conditions    []ACLCondition `json:"conditions,omitempty"`
@@ -198,6 +199,7 @@ type CreateACLRequest struct {
 // PatchListenerACLRequest represents a request to patch a ACL
 type PatchACLRequest struct {
 	Name       string         `json:"name,omitempty"`
+	Priority   int            `json:"priority,omitempty"`
 	Conditions []ACLCondition `json:"conditions,omitempty"`
 	Actions    []ACLAction    `json:"actions,omitempty"`
 }
