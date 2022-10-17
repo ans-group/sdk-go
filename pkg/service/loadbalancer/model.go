@@ -280,9 +280,9 @@ type ACLTemplateArgument struct {
 type Deployment struct {
 	ID              int                 `json:"id"`
 	ClusterID       int                 `json:"cluster_id"`
-	Successful      int                 `json:"successful"`
+	Successful      bool                `json:"successful"`
 	RequestedByType string              `json:"requested_by_type"`
-	RequestedByID   int                 `json:"requested_by_type"`
+	RequestedByID   string              `json:"requested_by_type"`
 	PSSID           int                 `json:"pss_id"`
 	CreatedAt       connection.DateTime `json:"created_at"`
 	UpdatedAt       connection.DateTime `json:"updated_at"`
