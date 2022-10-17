@@ -275,3 +275,15 @@ type ACLTemplateArgument struct {
 	Example     interface{} `json:"example"`
 	Values      []string    `json:"values"`
 }
+
+// Deployment represents a load balancer deployment
+type Deployment struct {
+	ID              int                 `json:"id"`
+	ClusterID       int                 `json:"cluster_id"`
+	Successful      bool                `json:"successful"`
+	RequestedByType string              `json:"requested_by_type"`
+	RequestedByID   string              `json:"requested_by_id"`
+	PSSID           int                 `json:"pss_id"`
+	CreatedAt       connection.DateTime `json:"created_at"`
+	UpdatedAt       connection.DateTime `json:"updated_at"`
+}
