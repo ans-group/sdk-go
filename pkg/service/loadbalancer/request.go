@@ -132,20 +132,21 @@ type CreateListenerRequest struct {
 
 // PatchListenerRequest represents a request to patch a listener
 type PatchListenerRequest struct {
-	Name                 string `json:"name,omitempty"`
-	HSTSEnabled          *bool  `json:"hsts_enabled,omitempty"`
-	Mode                 Mode   `json:"mode,omitempty"`
-	HSTSMaxAge           int    `json:"hsts_maxage,omitempty"`
-	Close                *bool  `json:"close,omitempty"`
-	RedirectHTTPS        *bool  `json:"redirect_https,omitempty"`
-	DefaultTargetGroupID int    `json:"default_target_group_id,omitempty"`
-	AccessIsAllowList    *bool  `json:"access_is_allow_list,omitempty"`
-	AllowTLSV1           *bool  `json:"allow_tlsv1,omitempty"`
-	AllowTLSV11          *bool  `json:"allow_tlsv11,omitempty"`
-	DisableTLSV12        *bool  `json:"disable_tlsv12,omitempty"`
-	DisableHTTP2         *bool  `json:"disable_http2,omitempty"`
-	HTTP2Only            *bool  `json:"http2_only,omitempty"`
-	CustomCiphers        string `json:"custom_ciphers,omitempty"`
+	Name                 string         `json:"name,omitempty"`
+	HSTSEnabled          *bool          `json:"hsts_enabled,omitempty"`
+	Mode                 Mode           `json:"mode,omitempty"`
+	HSTSMaxAge           int            `json:"hsts_maxage,omitempty"`
+	Close                *bool          `json:"close,omitempty"`
+	RedirectHTTPS        *bool          `json:"redirect_https,omitempty"`
+	DefaultTargetGroupID int            `json:"default_target_group_id,omitempty"`
+	AccessIsAllowList    *bool          `json:"access_is_allow_list,omitempty"`
+	AllowTLSV1           *bool          `json:"allow_tlsv1,omitempty"`
+	AllowTLSV11          *bool          `json:"allow_tlsv11,omitempty"`
+	DisableTLSV12        *bool          `json:"disable_tlsv12,omitempty"`
+	DisableHTTP2         *bool          `json:"disable_http2,omitempty"`
+	HTTP2Only            *bool          `json:"http2_only,omitempty"`
+	CustomCiphers        string         `json:"custom_ciphers,omitempty"`
+	GeoIP                *ListenerGeoIP `json:"geoip,omitempty"`
 }
 
 // CreateAccessIPRequest represents a request to create an access IP

@@ -188,8 +188,41 @@ type Listener struct {
 	DisableHTTP2         bool                `json:"disable_http2"`
 	HTTP2Only            bool                `json:"http2_only"`
 	CustomCiphers        string              `json:"custom_ciphers"`
+	GeoIP                *ListenerGeoIP      `json:"geoip"`
 	CreatedAt            connection.DateTime `json:"created_at"`
 	UpdatedAt            connection.DateTime `json:"updated_at"`
+}
+type ListenerGeoIPRestriction string
+
+const (
+	ListenerGeoIPRestrictionAllow ListenerGeoIPRestriction = "allow"
+	ListenerGeoIPRestrictionDeny  ListenerGeoIPRestriction = "deny"
+)
+
+// ParseListenerGeoIPRestriction attempts to parse a ListenerGeoIPRestriction from string
+func ParseListenerGeoIPRestriction(s string) (ListenerGeoIPRestriction, error) {
+	e, err := connection.ParseEnum(s, ListenerGeoIPRestrictionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(ListenerGeoIPRestriction), err
+}
+
+func (s ListenerGeoIPRestriction) String() string {
+	return string(s)
+}
+
+var ListenerGeoIPRestrictionEnum connection.EnumSlice = []connection.Enum{
+	ListenerGeoIPRestrictionAllow,
+	ListenerGeoIPRestrictionDeny,
+}
+
+type ListenerGeoIP struct {
+	Restriction   ListenerGeoIPRestriction `json:"restriction"`
+	Continents    []string                 `json:"continents"`
+	Countries     []string                 `json:"countries"`
+	EuropeanUnion bool                     `json:"european_union"`
 }
 
 // AccessIP represents an access IP
