@@ -1732,10 +1732,10 @@ func TestCreateInstanceImage(t *testing.T) {
 			},
 		}, nil)
 
-		taskID, err := s.CreateInstanceImage("i-abcdef12", req)
+		task, err := s.CreateInstanceImage("i-abcdef12", req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "task-abcdef12", taskID)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
