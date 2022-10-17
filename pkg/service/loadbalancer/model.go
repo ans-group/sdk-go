@@ -215,6 +215,7 @@ type Certificate struct {
 	ID         int                 `json:"id"`
 	ListenerID int                 `json:"listener_id"`
 	Name       string              `json:"name"`
+	ExpiresAt  connection.DateTime `json:"expires_at"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
 }

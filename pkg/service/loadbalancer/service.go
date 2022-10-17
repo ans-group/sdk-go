@@ -72,6 +72,10 @@ type LoadBalancerService interface {
 	PatchAccessIP(accessIP int, req PatchAccessIPRequest) error
 	DeleteAccessIP(accessIP int) error
 
+	// Certificate
+	GetCertificates(parameters connection.APIRequestParameters) ([]Certificate, error)
+	GetCertificatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error)
+
 	// Listener Certificate
 	GetListenerCertificates(listenerID int, parameters connection.APIRequestParameters) ([]Certificate, error)
 	GetListenerCertificatesPaginated(listenerID int, parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error)
