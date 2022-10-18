@@ -113,21 +113,22 @@ type PatchVIPRequest struct {
 
 // CreateListenerRequest represents a request to create a listener
 type CreateListenerRequest struct {
-	Name                 string `json:"name"`
-	ClusterID            int    `json:"cluster_id"`
-	HSTSEnabled          bool   `json:"hsts_enabled"`
-	Mode                 Mode   `json:"mode"`
-	HSTSMaxAge           int    `json:"hsts_maxage"`
-	Close                bool   `json:"close"`
-	RedirectHTTPS        bool   `json:"redirect_https"`
-	DefaultTargetGroupID int    `json:"default_target_group_id"`
-	AccessIsAllowList    bool   `json:"access_is_allow_list"`
-	AllowTLSV1           bool   `json:"allow_tlsv1"`
-	AllowTLSV11          bool   `json:"allow_tlsv11"`
-	DisableTLSV12        bool   `json:"disable_tlsv12"`
-	DisableHTTP2         bool   `json:"disable_http2"`
-	HTTP2Only            bool   `json:"http2_only"`
-	CustomCiphers        string `json:"custom_ciphers"`
+	Name                 string         `json:"name"`
+	ClusterID            int            `json:"cluster_id"`
+	HSTSEnabled          bool           `json:"hsts_enabled"`
+	Mode                 Mode           `json:"mode"`
+	HSTSMaxAge           int            `json:"hsts_maxage"`
+	Close                bool           `json:"close"`
+	RedirectHTTPS        bool           `json:"redirect_https"`
+	DefaultTargetGroupID int            `json:"default_target_group_id"`
+	AccessIsAllowList    bool           `json:"access_is_allow_list"`
+	AllowTLSV1           bool           `json:"allow_tlsv1"`
+	AllowTLSV11          bool           `json:"allow_tlsv11"`
+	DisableTLSV12        bool           `json:"disable_tlsv12"`
+	DisableHTTP2         bool           `json:"disable_http2"`
+	HTTP2Only            bool           `json:"http2_only"`
+	CustomCiphers        string         `json:"custom_ciphers"`
+	GeoIP                *ListenerGeoIP `json:"geoip,omitempty"`
 }
 
 // PatchListenerRequest represents a request to patch a listener
