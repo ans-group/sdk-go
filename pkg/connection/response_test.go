@@ -73,76 +73,76 @@ func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
 }
 
 func TestAPIResponse_ValidateStatusCode(t *testing.T) {
-	t.Run("SingleCodeExpected_NoError", func(t *testing.T) {
+	t.Run("SingleCodeExpected_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200)
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("MultipleCodesExpected_NoError", func(t *testing.T) {
+	t.Run("MultipleCodesExpected_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 201,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200, 201}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200, 201)
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("SingleCodeUnexpected_Error", func(t *testing.T) {
+	t.Run("SingleCodeUnexpected_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200)
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 
-	t.Run("MultipleCodesUnexpected_Error", func(t *testing.T) {
+	t.Run("MultipleCodesUnexpected_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200, 201}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200, 201)
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 
-	t.Run("NoCodeExpected_ValidStatusCode_NoError", func(t *testing.T) {
+	t.Run("NoCodeExpected_ValidStatusCode_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode()
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("NoCodeExpected_InvalidStatusCode_Error", func(t *testing.T) {
+	t.Run("NoCodeExpected_InvalidStatusCode_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode()
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 }
 

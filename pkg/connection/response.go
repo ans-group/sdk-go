@@ -2,6 +2,7 @@ package connection
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,10 +11,9 @@ import (
 	"github.com/ans-group/sdk-go/pkg/logging"
 )
 
-type ResponseBody interface {
-	Error() error
-	Pagination() APIResponseMetadataPagination
-}
+// type ResponseBody interface {
+// 	Error() error
+// }
 
 // APIResponse represents the base API response
 type APIResponse struct {
@@ -100,20 +100,20 @@ func (r *APIResponse) DeserializeResponseBody(out interface{}) error {
 }
 
 // ValidateStatusCode validates the API response
-func (r *APIResponse) ValidateStatusCode(codes []int, respBody ResponseBody) error {
+func (r *APIResponse) ValidateStatusCode(codes ...int) bool {
 	if len(codes) > 0 {
 		for _, code := range codes {
 			if r.StatusCode == code {
-				return nil
+				return true
 			}
 		}
 	} else {
 		if r.StatusCode >= 200 && r.StatusCode <= 299 {
-			return nil
+			return true
 		}
 	}
 
-	return fmt.Errorf("unexpected status code (%d): %w", r.StatusCode, respBody.Error())
+	return false
 }
 
 type ResponseHandler func(resp *APIResponse) error
@@ -134,22 +134,34 @@ func NotFoundResponseHandler(err error) ResponseHandler {
 
 // HandleResponse deserializes the response body into provided respBody, and validates
 // the response using the optionally provided ResponseHandler handler
-func (r *APIResponse) HandleResponse(respBody ResponseBody, handlers ...ResponseHandler) error {
-	err := r.DeserializeResponseBody(respBody)
-	if err != nil {
-		return err
+func (r *APIResponse) HandleResponse(respBody interface{}, handlers ...ResponseHandler) error {
+	if respBody != nil {
+		err := r.DeserializeResponseBody(respBody)
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, handler := range handlers {
 		if handler != nil {
-			err = handler(r)
+			err := handler(r)
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	return r.ValidateStatusCode([]int{}, respBody)
+	if !r.ValidateStatusCode() {
+		errStr := fmt.Sprintf("unexpected status code (%d)", r.StatusCode)
+		err, ok := respBody.(error)
+		if ok {
+			return fmt.Errorf("%s: %w", errStr, err)
+		}
+
+		return errors.New(errStr)
+	}
+
+	return nil
 }
 
 // Error returns an error struct with embedded errors from body
