@@ -27,7 +27,7 @@ func TestAPIResponseBody_Deserialize(t *testing.T) {
 
 		out := testout{}
 
-		err := out.Deserialize(&resp, &out)
+		err := out.Deserializer()(&resp, &out)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "testvalue1", out.TestProperty1)
@@ -47,7 +47,7 @@ func TestAPIResponseBody_Deserialize(t *testing.T) {
 
 		out := testout{}
 
-		err := out.Deserialize(&resp, &out)
+		err := out.Deserializer()(&resp, &out)
 
 		assert.Nil(t, err)
 	})
@@ -70,7 +70,7 @@ func TestAPIResponseBody_Deserialize(t *testing.T) {
 
 		out := testout{}
 
-		err := out.Deserialize(&resp, &out)
+		err := out.Deserializer()(&resp, &out)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "failed to read response body with response status code 500: test reader error 1", err.Error())

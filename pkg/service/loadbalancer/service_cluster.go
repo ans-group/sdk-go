@@ -128,7 +128,7 @@ func (s *Service) ValidateCluster(clusterID int) error {
 
 	if response.StatusCode == 422 {
 		body := &validateClusterResponseBody{}
-		err := body.Deserialize(response, body)
+		err := body.Deserializer()(response, body)
 		if err != nil {
 			return err
 		}

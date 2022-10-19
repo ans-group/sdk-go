@@ -23,20 +23,22 @@ type APIResponseBody struct {
 	Metadata APIResponseMetadata `json:"meta"`
 }
 
-func (d *APIResponseBody) Deserialize(r *APIResponse, out interface{}) error {
-	defer r.Response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
+func (d *APIResponseBody) Deserializer() func(r *APIResponse, out interface{}) error {
+	return func(r *APIResponse, out interface{}) error {
+		defer r.Response.Body.Close()
+		bodyBytes, err := ioutil.ReadAll(r.Response.Body)
+		if err != nil {
+			return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
+		}
+
+		logging.Debugf("Response body: %s", string(bodyBytes))
+
+		if len(bodyBytes) > 0 {
+			return json.Unmarshal(bodyBytes, out)
+		}
+
+		return nil
 	}
-
-	logging.Debugf("Response body: %s", string(bodyBytes))
-
-	if len(bodyBytes) > 0 {
-		return json.Unmarshal(bodyBytes, out)
-	}
-
-	return nil
 }
 
 type APIResponseBodyError struct {
@@ -127,13 +129,15 @@ func NotFoundResponseHandler(err error) ResponseHandler {
 }
 
 type ResponseDeserializer interface {
-	Deserialize(r *APIResponse, out interface{}) error
+	Deserializer() func(r *APIResponse, out interface{}) error
 }
 
 type NopResponseDeserializer struct{}
 
-func (d *NopResponseDeserializer) Deserialize(r *APIResponse, out interface{}) error {
-	return nil
+func (d *NopResponseDeserializer) Deserializer() func(r *APIResponse, out interface{}) error {
+	return func(r *APIResponse, out interface{}) error {
+		return nil
+	}
 }
 
 // HandleResponse deserializes the response body into provided respBody, and validates
@@ -141,7 +145,7 @@ func (d *NopResponseDeserializer) Deserialize(r *APIResponse, out interface{}) e
 func (r *APIResponse) HandleResponse(respBody interface{}, handlers ...ResponseHandler) error {
 	if respBody != nil {
 		if respBodyDeserializer, ok := respBody.(ResponseDeserializer); ok {
-			err := respBodyDeserializer.Deserialize(r, respBody)
+			err := respBodyDeserializer.Deserializer()(r, respBody)
 			if err != nil {
 				return err
 			}

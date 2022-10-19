@@ -19,6 +19,7 @@ import (
 )
 
 type Client interface {
+	Connection() connection.Connection
 	AccountService() account.AccountService
 	BillingService() billing.BillingService
 	DDoSXService() ddosx.DDoSXService
@@ -43,6 +44,10 @@ func NewClient(connection connection.Connection) *UKFastClient {
 	return &UKFastClient{
 		connection: connection,
 	}
+}
+
+func (c *UKFastClient) Connection() connection.Connection {
+	return c.connection
 }
 
 func (c *UKFastClient) AccountService() account.AccountService {
