@@ -55,6 +55,9 @@ type CreateTargetGroupRequest struct {
 	Source                   string                   `json:"source,omitempty"`
 	TimeoutsConnect          int                      `json:"timeouts_connect,omitempty"`
 	TimeoutsServer           int                      `json:"timeouts_server,omitempty"`
+	TimeoutsHTTPRequest      int                      `json:"timeouts_http_request,omitempty"`
+	TimeoutsCheck            int                      `json:"timeouts_check,omitempty"`
+	TimeoutsTunnel           int                      `json:"timeouts_tunnel,omitempty"`
 	CustomOptions            string                   `json:"custom_options,omitempty"`
 	MonitorURL               string                   `json:"monitor_url,omitempty"`
 	MonitorMethod            TargetGroupMonitorMethod `json:"monitor_method,omitempty"`
@@ -83,6 +86,9 @@ type PatchTargetGroupRequest struct {
 	Source                   string                   `json:"source,omitempty"`
 	TimeoutsConnect          int                      `json:"timeouts_connect,omitempty"`
 	TimeoutsServer           int                      `json:"timeouts_server,omitempty"`
+	TimeoutsHTTPRequest      int                      `json:"timeouts_http_request,omitempty"`
+	TimeoutsCheck            int                      `json:"timeouts_check,omitempty"`
+	TimeoutsTunnel           int                      `json:"timeouts_tunnel,omitempty"`
 	CustomOptions            string                   `json:"custom_options,omitempty"`
 	MonitorURL               string                   `json:"monitor_url,omitempty"`
 	MonitorMethod            TargetGroupMonitorMethod `json:"monitor_method,omitempty"`

@@ -104,6 +104,9 @@ type TargetGroup struct {
 	Source                   string                   `json:"source"`
 	TimeoutsConnect          int                      `json:"timeouts_connect"`
 	TimeoutsServer           int                      `json:"timeouts_server"`
+	TimeoutsHTTPRequest      int                      `json:"timeouts_http_request"`
+	TimeoutsCheck            int                      `json:"timeouts_check"`
+	TimeoutsTunnel           int                      `json:"timeouts_tunnel"`
 	CustomOptions            string                   `json:"custom_options"`
 	MonitorURL               string                   `json:"monitor_url"`
 	MonitorMethod            TargetGroupMonitorMethod `json:"monitor_method"`
