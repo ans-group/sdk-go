@@ -11,10 +11,6 @@ import (
 	"github.com/ans-group/sdk-go/pkg/logging"
 )
 
-// type ResponseBody interface {
-// 	Error() error
-// }
-
 // APIResponse represents the base API response
 type APIResponse struct {
 	*http.Response
@@ -25,6 +21,22 @@ type APIResponseBody struct {
 	APIResponseBodyError
 
 	Metadata APIResponseMetadata `json:"meta"`
+}
+
+func (d *APIResponseBody) Deserialize(r *APIResponse, out interface{}) error {
+	defer r.Response.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
+	}
+
+	logging.Debugf("Response body: %s", string(bodyBytes))
+
+	if len(bodyBytes) > 0 {
+		return json.Unmarshal(bodyBytes, out)
+	}
+
+	return nil
 }
 
 type APIResponseBodyError struct {
@@ -81,24 +93,6 @@ type APIResponseMetadataPaginationLinks struct {
 	Last     string `json:"last"`
 }
 
-// DeserializeResponseBody deserializes the API response body and stores the result
-// in parameter out
-func (r *APIResponse) DeserializeResponseBody(out interface{}) error {
-	defer r.Response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
-	}
-
-	logging.Debugf("Response body: %s", string(bodyBytes))
-
-	if len(bodyBytes) > 0 {
-		return json.Unmarshal(bodyBytes, out)
-	}
-
-	return nil
-}
-
 // ValidateStatusCode validates the API response
 func (r *APIResponse) ValidateStatusCode(codes ...int) bool {
 	if len(codes) > 0 {
@@ -132,13 +126,25 @@ func NotFoundResponseHandler(err error) ResponseHandler {
 	return StatusCodeResponseHandler(404, err)
 }
 
+type ResponseDeserializer interface {
+	Deserialize(r *APIResponse, out interface{}) error
+}
+
+type NopResponseDeserializer struct{}
+
+func (d *NopResponseDeserializer) Deserialize(r *APIResponse, out interface{}) error {
+	return nil
+}
+
 // HandleResponse deserializes the response body into provided respBody, and validates
 // the response using the optionally provided ResponseHandler handler
 func (r *APIResponse) HandleResponse(respBody interface{}, handlers ...ResponseHandler) error {
 	if respBody != nil {
-		err := r.DeserializeResponseBody(respBody)
-		if err != nil {
-			return err
+		if respBodyDeserializer, ok := respBody.(ResponseDeserializer); ok {
+			err := respBodyDeserializer.Deserialize(r, respBody)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -162,19 +168,6 @@ func (r *APIResponse) HandleResponse(respBody interface{}, handlers ...ResponseH
 	}
 
 	return nil
-}
-
-// Error returns an error struct with embedded errors from body
-func (a *APIResponseBody) Error() error {
-	return &APIResponseBodyError{
-		Message: a.Message,
-		Errors:  a.Errors,
-	}
-}
-
-// TotalPages returns amount of pages for API response
-func (a *APIResponseBody) Pagination() APIResponseMetadataPagination {
-	return a.Metadata.Pagination
 }
 
 // APIResponseBodyStringData represents the API response body containing generic data
