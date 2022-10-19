@@ -53,6 +53,7 @@ type LoadBalancerService interface {
 	GetListener(listenerID int) (Listener, error)
 	CreateListener(req CreateListenerRequest) (int, error)
 	PatchListener(listenerID int, req PatchListenerRequest) error
+	DisableListenerGeoIP(listenerID int) error
 	DeleteListener(listenerID int) error
 
 	// Listener ACL

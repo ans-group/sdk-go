@@ -11,9 +11,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
+func TestAPIResponseBody_Deserialize(t *testing.T) {
 	t.Run("ExpectedOutput", func(t *testing.T) {
 		type testout struct {
+			APIResponseBody
 			TestProperty1 string `json:"testproperty1"`
 		}
 
@@ -26,14 +27,16 @@ func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
 
 		out := testout{}
 
-		err := resp.DeserializeResponseBody(&out)
+		err := out.Deserialize(&resp, &out)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "testvalue1", out.TestProperty1)
 	})
 
 	t.Run("NoBody_ReturnsNil", func(t *testing.T) {
-		type testout struct{}
+		type testout struct {
+			APIResponseBody
+		}
 
 		b := ioutil.NopCloser(bytes.NewReader([]byte{}))
 		resp := APIResponse{
@@ -44,13 +47,15 @@ func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
 
 		out := testout{}
 
-		err := resp.DeserializeResponseBody(&out)
+		err := out.Deserialize(&resp, &out)
 
 		assert.Nil(t, err)
 	})
 
 	t.Run("ReaderError_ReturnsError", func(t *testing.T) {
-		type testout struct{}
+		type testout struct {
+			APIResponseBody
+		}
 
 		b := test.TestReadCloser{
 			ReadError: errors.New("test reader error 1"),
@@ -65,7 +70,7 @@ func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
 
 		out := testout{}
 
-		err := resp.DeserializeResponseBody(&out)
+		err := out.Deserialize(&resp, &out)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "failed to read response body with response status code 500: test reader error 1", err.Error())
@@ -73,76 +78,76 @@ func TestAPIResponse_DeserializeResponseBody(t *testing.T) {
 }
 
 func TestAPIResponse_ValidateStatusCode(t *testing.T) {
-	t.Run("SingleCodeExpected_NoError", func(t *testing.T) {
+	t.Run("SingleCodeExpected_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200)
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("MultipleCodesExpected_NoError", func(t *testing.T) {
+	t.Run("MultipleCodesExpected_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 201,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200, 201}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200, 201)
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("SingleCodeUnexpected_Error", func(t *testing.T) {
+	t.Run("SingleCodeUnexpected_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200)
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 
-	t.Run("MultipleCodesUnexpected_Error", func(t *testing.T) {
+	t.Run("MultipleCodesUnexpected_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{200, 201}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode(200, 201)
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 
-	t.Run("NoCodeExpected_ValidStatusCode_NoError", func(t *testing.T) {
+	t.Run("NoCodeExpected_ValidStatusCode_True", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode()
 
-		assert.Nil(t, err)
+		assert.True(t, valid)
 	})
 
-	t.Run("NoCodeExpected_InvalidStatusCode_Error", func(t *testing.T) {
+	t.Run("NoCodeExpected_InvalidStatusCode_False", func(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
 			},
 		}
 
-		err := resp.ValidateStatusCode([]int{}, &APIResponseBody{})
+		valid := resp.ValidateStatusCode()
 
-		assert.NotNil(t, err)
+		assert.False(t, valid)
 	})
 }
 
@@ -236,7 +241,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 
 		err := b.Error()
 
-		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err.Error())
+		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err)
 	})
 
 	t.Run("MultipleErrors", func(t *testing.T) {
@@ -261,7 +266,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 
 		err := b.Error()
 
-		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"; title=\"test title 2\", detail=\"test detail 2\", status=\"501\", source=\"test source 2\"", err.Error())
+		assert.Equal(t, "title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"; title=\"test title 2\", detail=\"test detail 2\", status=\"501\", source=\"test source 2\"", err)
 	})
 
 	t.Run("WithMessage", func(t *testing.T) {
@@ -281,7 +286,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 
 		err := b.Error()
 
-		assert.Equal(t, "message=\"test message 1\"; title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err.Error())
+		assert.Equal(t, "message=\"test message 1\"; title=\"test title 1\", detail=\"test detail 1\", status=\"500\", source=\"test source 1\"", err)
 	})
 }
 
@@ -296,7 +301,7 @@ func TestAPIResponseBody_Pagination_ReturnsPagination(t *testing.T) {
 		},
 	}
 
-	pagination := b.Pagination()
+	pagination := b.Metadata.Pagination
 
 	assert.Equal(t, 1, pagination.Count)
 	assert.Equal(t, 2, pagination.PerPage)
