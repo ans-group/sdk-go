@@ -143,6 +143,7 @@ type CreateListenerRequest struct {
 	DisableHTTP2         bool                  `json:"disable_http2"`
 	HTTP2Only            bool                  `json:"http2_only"`
 	CustomCiphers        string                `json:"custom_ciphers"`
+	CustomOptions        string                `json:"custom_options,omitempty"`
 	GeoIP                *ListenerGeoIPRequest `json:"geoip,omitempty"`
 	TimeoutsClient       int                   `json:"timeouts_client,omitempty"`
 }
@@ -163,6 +164,7 @@ type PatchListenerRequest struct {
 	DisableHTTP2         *bool                 `json:"disable_http2,omitempty"`
 	HTTP2Only            *bool                 `json:"http2_only,omitempty"`
 	CustomCiphers        string                `json:"custom_ciphers,omitempty"`
+	CustomOptions        string                `json:"custom_options,omitempty"`
 	GeoIP                *ListenerGeoIPRequest `json:"geoip,omitempty"`
 	TimeoutsClient       int                   `json:"timeouts_client,omitempty"`
 }
