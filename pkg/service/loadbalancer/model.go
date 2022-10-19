@@ -188,6 +188,7 @@ type Listener struct {
 	DisableHTTP2         bool                `json:"disable_http2"`
 	HTTP2Only            bool                `json:"http2_only"`
 	CustomCiphers        string              `json:"custom_ciphers"`
+	TimeoutsClient       int                 `json:"timeouts_client"`
 	GeoIP                *ListenerGeoIP      `json:"geoip"`
 	CreatedAt            connection.DateTime `json:"created_at"`
 	UpdatedAt            connection.DateTime `json:"updated_at"`

@@ -138,6 +138,7 @@ type CreateListenerRequest struct {
 	HTTP2Only            bool                  `json:"http2_only"`
 	CustomCiphers        string                `json:"custom_ciphers"`
 	GeoIP                *ListenerGeoIPRequest `json:"geoip,omitempty"`
+	TimeoutsClient       int                   `json:"timeouts_client,omitempty"`
 }
 
 // PatchListenerRequest represents a request to patch a listener
@@ -157,6 +158,7 @@ type PatchListenerRequest struct {
 	HTTP2Only            *bool                 `json:"http2_only,omitempty"`
 	CustomCiphers        string                `json:"custom_ciphers,omitempty"`
 	GeoIP                *ListenerGeoIPRequest `json:"geoip,omitempty"`
+	TimeoutsClient       int                   `json:"timeouts_client,omitempty"`
 }
 
 // CreateAccessIPRequest represents a request to create an access IP
