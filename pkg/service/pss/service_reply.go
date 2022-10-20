@@ -65,7 +65,7 @@ func (s *Service) downloadReplyAttachmentResponse(replyID string, attachmentName
 		return response, &AttachmentNotFoundError{Name: attachmentName}
 	}
 
-	return response, response.HandleResponse(&connection.NopResponseDeserializer{})
+	return response, response.HandleResponse(nil)
 }
 
 // UploadReplyAttachmentStream uploads the provided attachment

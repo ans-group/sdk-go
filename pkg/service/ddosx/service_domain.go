@@ -1337,7 +1337,7 @@ func (s *Service) downloadDomainVerificationFileResponse(domainName string) (*co
 		return response, &DomainNotFoundError{Name: domainName}
 	}
 
-	return response, response.HandleResponse(&connection.NopResponseDeserializer{})
+	return response, response.HandleResponse(nil)
 }
 
 // VerifyDomainDNS verifies a domain via DNS method

@@ -23,10 +23,6 @@ type APIResponseBody struct {
 	Metadata APIResponseMetadata `json:"meta"`
 }
 
-func (d *APIResponseBody) Deserializer() ResponseDeserializerFunc {
-	return JSONResponseDeserializerFunc
-}
-
 type APIResponseBodyError struct {
 	Errors  []APIResponseBodyErrorItem `json:"errors"`
 	Message string                     `json:"message"`
@@ -115,12 +111,10 @@ func NotFoundResponseHandler(err error) ResponseHandler {
 }
 
 type ResponseDeserializer interface {
-	Deserializer() ResponseDeserializerFunc
+	Deserialize(r *APIResponse) error
 }
 
-type ResponseDeserializerFunc func(resp *APIResponse, out interface{}) error
-
-var JSONResponseDeserializerFunc ResponseDeserializerFunc = func(r *APIResponse, out interface{}) error {
+func APIResponseJSONDeserializer(r *APIResponse, out interface{}) error {
 	defer r.Response.Body.Close()
 	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
 	if err != nil {
@@ -136,22 +130,17 @@ var JSONResponseDeserializerFunc ResponseDeserializerFunc = func(r *APIResponse,
 	return nil
 }
 
-type NopResponseDeserializer struct{}
-
-func (d *NopResponseDeserializer) Deserializer() ResponseDeserializerFunc {
-	return NopResponseDeserializerFunc
-}
-
-var NopResponseDeserializerFunc ResponseDeserializerFunc = func(r *APIResponse, out interface{}) error {
-	return nil
-}
-
 // HandleResponse deserializes the response body into provided respBody, and validates
 // the response using the optionally provided ResponseHandler handler
 func (r *APIResponse) HandleResponse(respBody interface{}, handlers ...ResponseHandler) error {
 	if respBody != nil {
 		if respBodyDeserializer, ok := respBody.(ResponseDeserializer); ok {
-			err := respBodyDeserializer.Deserializer()(r, respBody)
+			err := respBodyDeserializer.Deserialize(r)
+			if err != nil {
+				return err
+			}
+		} else {
+			err := APIResponseJSONDeserializer(r, respBody)
 			if err != nil {
 				return err
 			}
