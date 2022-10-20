@@ -23,22 +23,8 @@ type APIResponseBody struct {
 	Metadata APIResponseMetadata `json:"meta"`
 }
 
-func (d *APIResponseBody) Deserializer() func(r *APIResponse, out interface{}) error {
-	return func(r *APIResponse, out interface{}) error {
-		defer r.Response.Body.Close()
-		bodyBytes, err := ioutil.ReadAll(r.Response.Body)
-		if err != nil {
-			return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
-		}
-
-		logging.Debugf("Response body: %s", string(bodyBytes))
-
-		if len(bodyBytes) > 0 {
-			return json.Unmarshal(bodyBytes, out)
-		}
-
-		return nil
-	}
+func (d *APIResponseBody) Deserializer() ResponseDeserializerFunc {
+	return JSONResponseDeserializerFunc
 }
 
 type APIResponseBodyError struct {
@@ -129,15 +115,35 @@ func NotFoundResponseHandler(err error) ResponseHandler {
 }
 
 type ResponseDeserializer interface {
-	Deserializer() func(r *APIResponse, out interface{}) error
+	Deserializer() ResponseDeserializerFunc
+}
+
+type ResponseDeserializerFunc func(resp *APIResponse, out interface{}) error
+
+var JSONResponseDeserializerFunc ResponseDeserializerFunc = func(r *APIResponse, out interface{}) error {
+	defer r.Response.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
+	}
+
+	logging.Debugf("Response body: %s", string(bodyBytes))
+
+	if len(bodyBytes) > 0 {
+		return json.Unmarshal(bodyBytes, out)
+	}
+
+	return nil
 }
 
 type NopResponseDeserializer struct{}
 
-func (d *NopResponseDeserializer) Deserializer() func(r *APIResponse, out interface{}) error {
-	return func(r *APIResponse, out interface{}) error {
-		return nil
-	}
+func (d *NopResponseDeserializer) Deserializer() ResponseDeserializerFunc {
+	return NopResponseDeserializerFunc
+}
+
+var NopResponseDeserializerFunc ResponseDeserializerFunc = func(r *APIResponse, out interface{}) error {
+	return nil
 }
 
 // HandleResponse deserializes the response body into provided respBody, and validates
