@@ -618,10 +618,11 @@ type UpdateImageRequest struct {
 
 // NATOverloadRule represents an eCloud NAT overload rule
 type CreateNATOverloadRuleRequest struct {
-	Name      string                `json:"name,omitempty"`
-	NetworkID string                `json:"network_id"`
-	Subnet    string                `json:"subnet"`
-	Action    NATOverloadRuleAction `json:"action"`
+	Name         string                `json:"name,omitempty"`
+	NetworkID    string                `json:"network_id"`
+	FloatingIPID string                `json:"floating_ip_id"`
+	Subnet       string                `json:"subnet"`
+	Action       NATOverloadRuleAction `json:"action"`
 }
 
 // NATOverloadRule represents an eCloud NAT overload rule
