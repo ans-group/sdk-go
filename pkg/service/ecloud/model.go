@@ -1107,12 +1107,13 @@ func (s NATOverloadRuleAction) String() string {
 
 // NATOverloadRule represents an eCloud NAT overload rule
 type NATOverloadRule struct {
-	ID        string                `json:"id"`
-	Name      string                `json:"name"`
-	NetworkID string                `json:"network_id"`
-	Subnet    string                `json:"subnet"`
-	Action    NATOverloadRuleAction `json:"action"`
-	Sync      ResourceSync          `json:"sync"`
-	CreatedAt connection.DateTime   `json:"created_at"`
-	UpdatedAt connection.DateTime   `json:"updated_at"`
+	ID           string                `json:"id"`
+	Name         string                `json:"name"`
+	NetworkID    string                `json:"network_id"`
+	FloatingIPID string                `json:"floating_ip_id"`
+	Subnet       string                `json:"subnet"`
+	Action       NATOverloadRuleAction `json:"action"`
+	Sync         ResourceSync          `json:"sync"`
+	CreatedAt    connection.DateTime   `json:"created_at"`
+	UpdatedAt    connection.DateTime   `json:"updated_at"`
 }
