@@ -451,3 +451,12 @@ type ResourceTierNotFoundError struct {
 func (e *ResourceTierNotFoundError) Error() string {
 	return fmt.Sprintf("Resource tier not found with ID [%s]", e.ID)
 }
+
+// NATOverloadRuleNotFoundError indicates a NAT overload rule was not found
+type NATOverloadRuleNotFoundError struct {
+	ID string
+}
+
+func (e *NATOverloadRuleNotFoundError) Error() string {
+	return fmt.Sprintf("NAT overload rule not found with ID [%s]", e.ID)
+}
