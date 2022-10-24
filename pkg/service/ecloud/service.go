@@ -442,6 +442,14 @@ type ECloudService interface {
 	GetResourceTiers(parameters connection.APIRequestParameters) ([]ResourceTier, error)
 	GetResourceTiersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ResourceTier], error)
 	GetResourceTier(tierID string) (ResourceTier, error)
+
+	// NAT Overload Rules
+	GetNATOverloadRules(parameters connection.APIRequestParameters) ([]NATOverloadRule, error)
+	GetNATOverloadRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NATOverloadRule], error)
+	GetNATOverloadRule(ruleID string) (NATOverloadRule, error)
+	CreateNATOverloadRule(req CreateNATOverloadRuleRequest) (TaskReference, error)
+	PatchNATOverloadRule(ruleID string, req PatchNATOverloadRuleRequest) (TaskReference, error)
+	DeleteNATOverloadRule(ruleID string) (string, error)
 }
 
 // Service implements ECloudService for managing

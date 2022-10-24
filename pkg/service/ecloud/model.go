@@ -1078,3 +1078,41 @@ type ResourceTier struct {
 	Name               string `json:"name"`
 	AvailabilityZoneID string `json:"availability_zone_id"`
 }
+
+type NATOverloadRuleAction string
+
+const (
+	NATOverloadRuleActionAllow NATOverloadRuleAction = "allow"
+	NATOverloadRuleActionDeny  NATOverloadRuleAction = "deny"
+)
+
+var NATOverloadRuleActionEnum connection.EnumSlice = []connection.Enum{
+	NATOverloadRuleActionAllow,
+	NATOverloadRuleActionDeny,
+}
+
+// ParseNATOverloadRuleAction attempts to parse a NATOverloadRuleAction from string
+func ParseNATOverloadRuleAction(s string) (NATOverloadRuleAction, error) {
+	e, err := connection.ParseEnum(s, NATOverloadRuleActionEnum)
+	if err != nil {
+		return "", err
+	}
+
+	return e.(NATOverloadRuleAction), err
+}
+
+func (s NATOverloadRuleAction) String() string {
+	return string(s)
+}
+
+// NATOverloadRule represents an eCloud NAT overload rule
+type NATOverloadRule struct {
+	ID        string                `json:"id"`
+	Name      string                `json:"name"`
+	NetworkID string                `json:"network_id"`
+	Subnet    string                `json:"subnet"`
+	Action    NATOverloadRuleAction `json:"action"`
+	Sync      ResourceSync          `json:"sync"`
+	CreatedAt connection.DateTime   `json:"created_at"`
+	UpdatedAt connection.DateTime   `json:"updated_at"`
+}
