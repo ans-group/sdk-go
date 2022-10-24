@@ -1082,8 +1082,8 @@ type ResourceTier struct {
 type NATOverloadRuleAction string
 
 const (
-	NATOverloadRuleActionAllow NATOverloadRuleAction = "ALLOW"
-	NATOverloadRuleActionDeny  NATOverloadRuleAction = "DENY"
+	NATOverloadRuleActionAllow NATOverloadRuleAction = "allow"
+	NATOverloadRuleActionDeny  NATOverloadRuleAction = "deny"
 )
 
 var NATOverloadRuleActionEnum connection.EnumSlice = []connection.Enum{
