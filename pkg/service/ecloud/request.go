@@ -250,6 +250,7 @@ type CreateInstanceRequest struct {
 	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
 	HostGroupID        string                 `json:"host_group_id,omitempty"`
 	ResourceTierID     string                 `json:"resource_tier_id,omitempty"`
+	CustomIPAddress    connection.IPAddress   `json:"custom_ip_address,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
