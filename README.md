@@ -27,7 +27,7 @@ Resources/models are separated into separate service packages, found within `pkg
 
 ## Config
 
-The SDK has default implementation for managing config, which is utilised by several utilities such as the [CLI](https://github.com/ans-group/cli) and Terraform providers. This config can be defined with both within config files and environment variables.
+The SDK has default implementation for managing config, which is utilised by several utilities such as the [CLI](https://github.com/ans-group/cli) and Terraform providers. This config can be defined both within config files and environment variables.
 
 There is a default connection factory included (`pkg/connection/factory.go`) which utilises the config package, which can be used in your applications as below:
 
