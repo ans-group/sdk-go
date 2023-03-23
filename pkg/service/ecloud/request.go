@@ -282,6 +282,7 @@ type CreateVolumeRequest struct {
 	IOPS               int    `json:"iops,omitempty"`
 	AvailabilityZoneID string `json:"availability_zone_id"`
 	VolumeGroupID      string `json:"volume_group_id,omitempty"`
+	IsShared           bool   `json:"is_shared,omitempty"`
 }
 
 // PatchVolumeRequest represents a request to patch a volume
