@@ -653,7 +653,7 @@ func (s *Service) encryptInstanceResponseBody(instanceID string) (*connection.AP
 	return connection.Post[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/encrypt", instanceID), nil, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
 }
 
-// EncryptInstance encrypts an instance
+// DecryptInstance decrypts an instance
 func (s *Service) DecryptInstance(instanceID string) (TaskReference, error) {
 	body, err := s.decryptInstanceResponseBody(instanceID)
 
