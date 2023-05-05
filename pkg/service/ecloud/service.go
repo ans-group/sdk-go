@@ -176,6 +176,8 @@ type ECloudService interface {
 	GetInstanceFloatingIPs(instanceID string, parameters connection.APIRequestParameters) ([]FloatingIP, error)
 	GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error)
 	CreateInstanceImage(instanceID string, req CreateInstanceImageRequest) (TaskReference, error)
+	EncryptInstance(instanceID string) (TaskReference, error)
+	DecryptInstance(instanceID string) (TaskReference, error)
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)

@@ -1772,3 +1772,121 @@ func TestCreateInstanceImage(t *testing.T) {
 		assert.Equal(t, "invalid instance id", err.Error())
 	})
 }
+
+func TestEncryptInstance(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		task, err := s.EncryptInstance("i-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.EncryptInstance("i-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.EncryptInstance("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+}
+
+func TestDecryptInstance(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		task, err := s.DecryptInstance("i-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.DecryptInstance("i-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.DecryptInstance("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+}

@@ -421,6 +421,7 @@ type Instance struct {
 	RAMCapacity        int                 `json:"ram_capacity"`
 	Locked             bool                `json:"locked"`
 	BackupEnabled      bool                `json:"backup_enabled"`
+	IsEncrypted        bool                `json:"is_encrypted"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
 	VolumeGroupID      string              `json:"volume_group_id"`
@@ -622,6 +623,7 @@ type Volume struct {
 	Type               VolumeType          `json:"type"`
 	VolumeGroupID      string              `json:"volume_group_id"`
 	IsShared           bool                `json:"is_shared"`
+	IsEncrypted        bool                `json:"is_encrypted"`
 	Sync               ResourceSync        `json:"sync"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
