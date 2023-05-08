@@ -639,10 +639,10 @@ func (s *Service) createInstanceImageResponseBody(instanceID string, req CreateI
 }
 
 // EncryptInstance encrypts an instance
-func (s *Service) EncryptInstance(instanceID string) (TaskReference, error) {
+func (s *Service) EncryptInstance(instanceID string) (string, error) {
 	body, err := s.encryptInstanceResponseBody(instanceID)
 
-	return body.Data, err
+	return body.Data.TaskID, err
 }
 
 func (s *Service) encryptInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {
@@ -654,10 +654,10 @@ func (s *Service) encryptInstanceResponseBody(instanceID string) (*connection.AP
 }
 
 // DecryptInstance decrypts an instance
-func (s *Service) DecryptInstance(instanceID string) (TaskReference, error) {
+func (s *Service) DecryptInstance(instanceID string) (string, error) {
 	body, err := s.decryptInstanceResponseBody(instanceID)
 
-	return body.Data, err
+	return body.Data.TaskID, err
 }
 
 func (s *Service) decryptInstanceResponseBody(instanceID string) (*connection.APIResponseBodyData[TaskReference], error) {

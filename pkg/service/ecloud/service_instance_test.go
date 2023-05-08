@@ -1791,10 +1791,10 @@ func TestEncryptInstance(t *testing.T) {
 			},
 		}, nil)
 
-		task, err := s.EncryptInstance("i-abcdef12")
+		taskID, err := s.EncryptInstance("i-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "task-abcdef12", task.TaskID)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -1850,10 +1850,10 @@ func TestDecryptInstance(t *testing.T) {
 			},
 		}, nil)
 
-		task, err := s.DecryptInstance("i-abcdef12")
+		taskID, err := s.DecryptInstance("i-abcdef12")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "task-abcdef12", task.TaskID)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
