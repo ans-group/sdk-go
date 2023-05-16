@@ -1784,7 +1784,7 @@ func TestEncryptInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
@@ -1807,7 +1807,7 @@ func TestEncryptInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.EncryptInstance("i-abcdef12")
 
@@ -1843,7 +1843,7 @@ func TestDecryptInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{
+		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
@@ -1866,7 +1866,7 @@ func TestDecryptInstance(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
 		_, err := s.DecryptInstance("i-abcdef12")
 

@@ -650,7 +650,7 @@ func (s *Service) encryptInstanceResponseBody(instanceID string) (*connection.AP
 		return &connection.APIResponseBodyData[TaskReference]{}, fmt.Errorf("invalid instance id")
 	}
 
-	return connection.Post[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/encrypt", instanceID), nil, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
+	return connection.Put[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/encrypt", instanceID), nil, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
 }
 
 // DecryptInstance decrypts an instance
@@ -665,5 +665,5 @@ func (s *Service) decryptInstanceResponseBody(instanceID string) (*connection.AP
 		return &connection.APIResponseBodyData[TaskReference]{}, fmt.Errorf("invalid instance id")
 	}
 
-	return connection.Post[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/decrypt", instanceID), nil, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
+	return connection.Put[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/decrypt", instanceID), nil, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
 }
