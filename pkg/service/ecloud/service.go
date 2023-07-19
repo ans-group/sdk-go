@@ -127,6 +127,8 @@ type ECloudService interface {
 	GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error)
 	GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error)
 	GetAvailabilityZone(azID string) (AvailabilityZone, error)
+	GetAvailabilityZoneIOPSTiers(azID string, parameters connection.APIRequestParameters) ([]IOPSTier, error)
+	GetAvailabilityZoneIOPSTiersPaginated(azID string, parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error)
 
 	// Network
 	GetNetworks(parameters connection.APIRequestParameters) ([]Network, error)
@@ -452,6 +454,11 @@ type ECloudService interface {
 	CreateNATOverloadRule(req CreateNATOverloadRuleRequest) (TaskReference, error)
 	PatchNATOverloadRule(ruleID string, req PatchNATOverloadRuleRequest) (TaskReference, error)
 	DeleteNATOverloadRule(ruleID string) (string, error)
+
+	//IOPS Tiers
+	GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error)
+	GetIOPSTiersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error)
+	GetIOPSTier(iopsID string) (IOPSTier, error)
 }
 
 // Service implements ECloudService for managing

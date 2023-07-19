@@ -138,3 +138,86 @@ func TestGetAvailabilityZone(t *testing.T) {
 		assert.IsType(t, &AvailabilityZoneNotFoundError{}, err)
 	})
 }
+
+func TestGetAvailabilityZoneIOPSTiers(t *testing.T) {
+	t.Run("Single", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/availability-zones/az-abcdef12/iops", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"iops-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		tiers, err := s.GetAvailabilityZoneIOPSTiers("az-abcdef12", connection.APIRequestParameters{})
+
+		assert.Nil(t, err)
+		assert.Len(t, tiers, 1)
+		assert.Equal(t, "iops-abcdef12", tiers[0].ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/availability-zones/az-abcdef12/iops", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetAvailabilityZoneIOPSTiers("az-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidAvailabilityZoneID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetAvailabilityZoneIOPSTiers("", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid az id", err.Error())
+	})
+
+	t.Run("404_ReturnsAvailabilityZoneNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/availability-zones/az-abcdef12/iops", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		_, err := s.GetAvailabilityZoneIOPSTiers("az-abcdef12", connection.APIRequestParameters{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &AvailabilityZoneNotFoundError{}, err)
+	})
+}

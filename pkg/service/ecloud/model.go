@@ -1119,3 +1119,12 @@ type NATOverloadRule struct {
 	CreatedAt    connection.DateTime   `json:"created_at"`
 	UpdatedAt    connection.DateTime   `json:"updated_at"`
 }
+
+// IOPSTier represents an eCloud IOPS tier
+type IOPSTier struct {
+	ID        string              `json:"id"`
+	Name      string              `json:"name"`
+	Level     int                 `json:"level"`
+	CreatedAt connection.DateTime `json:"created_at"`
+	UpdatedAt connection.DateTime `json:"updated_at"`
+}

@@ -460,3 +460,12 @@ type NATOverloadRuleNotFoundError struct {
 func (e *NATOverloadRuleNotFoundError) Error() string {
 	return fmt.Sprintf("NAT overload rule not found with ID [%s]", e.ID)
 }
+
+// IOPSNotFoundError indicates an IOPS tier was not found
+type IOPSNotFoundError struct {
+	ID string
+}
+
+func (e *IOPSNotFoundError) Error() string {
+	return fmt.Sprintf("IOPS tier not found with ID [%s]", e.ID)
+}
