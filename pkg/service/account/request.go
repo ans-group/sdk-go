@@ -18,7 +18,7 @@ type CreateClientRequest struct {
 	LastName         string `json:"last_name"`
 	EmailAddress     string `json:"email_address"`
 	LimitedNumber    string `json:"limited_number"`
-	VATNumber        int    `json:"vat_number"`
+	VATNumber        string `json:"vat_number"`
 	Address          string `json:"address"`
 	Address1         string `json:"address1"`
 	City             string `json:"city"`
@@ -41,7 +41,7 @@ type PatchClientRequest struct {
 	LastName         string `json:"last_name,omitempty"`
 	EmailAddress     string `json:"email_address,omitempty"`
 	LimitedNumber    string `json:"limited_number,omitempty"`
-	VATNumber        int    `json:"vat_number,omitempty"`
+	VATNumber        string `json:"vat_number,omitempty"`
 	Address          string `json:"address,omitempty"`
 	Address1         string `json:"address1,omitempty"`
 	City             string `json:"city,omitempty"`

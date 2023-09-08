@@ -67,7 +67,7 @@ type Client struct {
 	LastName         string `json:"last_name"`
 	EmailAddress     string `json:"email_address"`
 	LimitedNumber    string `json:"limited_number"`
-	VATNumber        int    `json:"vat_number"`
+	VATNumber        string `json:"vat_number"`
 	Address          string `json:"address"`
 	Address1         string `json:"address1"`
 	City             string `json:"city"`
