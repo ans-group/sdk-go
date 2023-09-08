@@ -365,6 +365,7 @@ type VPC struct {
 	ID                 string              `json:"id"`
 	Name               string              `json:"name"`
 	RegionID           string              `json:"region_id"`
+	ClientID           *int                `json:"client_id"`
 	Sync               ResourceSync        `json:"sync"`
 	SupportEnabled     bool                `json:"support_enabled"`
 	ConsoleEnabled     bool                `json:"console_enabled"`
