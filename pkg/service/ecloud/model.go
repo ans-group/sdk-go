@@ -332,6 +332,11 @@ type ResourceSync struct {
 	Type   SyncType   `json:"type"`
 }
 
+// ResourceTask represents the task status of a resource
+type ResourceTask struct {
+	InProgress bool `json:"in_progress"`
+}
+
 type TaskStatus string
 
 const (
@@ -367,6 +372,7 @@ type VPC struct {
 	RegionID           string              `json:"region_id"`
 	ClientID           *int                `json:"client_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	SupportEnabled     bool                `json:"support_enabled"`
 	ConsoleEnabled     bool                `json:"console_enabled"`
 	AdvancedNetworking bool                `json:"advanced_networking"`
@@ -390,6 +396,7 @@ type Network struct {
 	RouterID  string              `json:"router_id"`
 	Subnet    string              `json:"subnet"`
 	Sync      ResourceSync        `json:"sync"`
+	Task      ResourceTask        `json:"task"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -429,6 +436,7 @@ type Instance struct {
 	HostGroupID        string              `json:"host_group_id"`
 	ResourceTierID     string              `json:"resource_tier_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	Online             *bool               `json:"online"`
 	AgentRunning       *bool               `json:"agent_running"`
 	CreatedAt          connection.DateTime `json:"created_at"`
@@ -444,6 +452,7 @@ type FloatingIP struct {
 	ResourceID         string              `json:"resource_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -455,6 +464,7 @@ type FirewallPolicy struct {
 	RouterID  string              `json:"router_id"`
 	Sequence  int                 `json:"sequence"`
 	Sync      ResourceSync        `json:"sync"`
+	Task      ResourceTask        `json:"task"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -584,6 +594,7 @@ type Router struct {
 	RouterThroughputID string              `json:"router_throughput_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -626,6 +637,7 @@ type Volume struct {
 	IsShared           bool                `json:"is_shared"`
 	IsEncrypted        bool                `json:"is_encrypted"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -694,6 +706,7 @@ type Image struct {
 	VPCID              string              `json:"vpc_id"`
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -728,6 +741,7 @@ type HostGroup struct {
 	WindowsEnabled     bool                `json:"windows_enabled"`
 	HostSpecID         string              `json:"host_spec_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -749,6 +763,7 @@ type Host struct {
 	Name        string              `json:"name"`
 	HostGroupID string              `json:"host_group_id"`
 	Sync        ResourceSync        `json:"sync"`
+	Task        ResourceTask        `json:"task"`
 	CreatedAt   connection.DateTime `json:"created_at"`
 	UpdatedAt   connection.DateTime `json:"updated_at"`
 }
@@ -783,6 +798,7 @@ type NetworkPolicy struct {
 	NetworkID string              `json:"network_id"`
 	VPCID     string              `json:"vpc_id"`
 	Sync      ResourceSync        `json:"sync"`
+	Task      ResourceTask        `json:"task"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -907,6 +923,7 @@ type VolumeGroup struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Usage              VolumeGroupUsage    `json:"usage"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -932,6 +949,7 @@ type VPNService struct {
 	RouterID  string              `json:"router_id"`
 	VPCID     string              `json:"vpc_id"`
 	Sync      ResourceSync        `json:"sync"`
+	Task      ResourceTask        `json:"task"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
 }
@@ -943,6 +961,7 @@ type VPNEndpoint struct {
 	VPNServiceID string              `json:"vpn_service_id"`
 	FloatingIPID string              `json:"floating_ip_id"`
 	Sync         ResourceSync        `json:"sync"`
+	Task         ResourceTask        `json:"task"`
 	CreatedAt    connection.DateTime `json:"created_at"`
 	UpdatedAt    connection.DateTime `json:"updated_at"`
 }
@@ -959,6 +978,7 @@ type VPNSession struct {
 	LocalNetworks     string                   `json:"local_networks"`
 	TunnelDetails     *VPNSessionTunnelDetails `json:"tunnel_details"`
 	Sync              ResourceSync             `json:"sync"`
+	Task              ResourceTask             `json:"task"`
 	CreatedAt         connection.DateTime      `json:"created_at"`
 	UpdatedAt         connection.DateTime      `json:"updated_at"`
 }
@@ -988,6 +1008,7 @@ type LoadBalancer struct {
 	VPCID              string              `json:"vpc_id"`
 	LoadBalancerSpecID string              `json:"load_balancer_spec_id"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	ConfigID           int                 `json:"config_id"`
 	Nodes              int                 `json:"nodes"`
 	NetworkID          string              `json:"network_id"`
@@ -1012,6 +1033,7 @@ type VIP struct {
 	IPAddressID    string              `json:"ip_address_id"`
 	ConfigID       int                 `json:"config_id"`
 	Sync           ResourceSync        `json:"sync"`
+	Task           ResourceTask        `json:"task"`
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
@@ -1024,6 +1046,7 @@ type IPAddress struct {
 	NetworkID string               `json:"network_id"`
 	Type      string               `json:"type"`
 	Sync      ResourceSync         `json:"sync"`
+	Task      ResourceTask         `json:"task"`
 	CreatedAt connection.DateTime  `json:"created_at"`
 	UpdatedAt connection.DateTime  `json:"updated_at"`
 }
@@ -1062,6 +1085,7 @@ type AffinityRule struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	Type               AffinityRuleType    `json:"type"`
 	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
@@ -1072,6 +1096,7 @@ type AffinityRuleMember struct {
 	AffinityRuleID string              `json:"affinity_rule_id"`
 	InstanceID     string              `json:"instance_id"`
 	Sync           ResourceSync        `json:"sync"`
+	Task           ResourceTask        `json:"task"`
 	CreatedAt      connection.DateTime `json:"created_at"`
 	UpdatedAt      connection.DateTime `json:"updated_at"`
 }
@@ -1117,6 +1142,7 @@ type NATOverloadRule struct {
 	Subnet       string                `json:"subnet"`
 	Action       NATOverloadRuleAction `json:"action"`
 	Sync         ResourceSync          `json:"sync"`
+	Task         ResourceTask          `json:"task"`
 	CreatedAt    connection.DateTime   `json:"created_at"`
 	UpdatedAt    connection.DateTime   `json:"updated_at"`
 }
