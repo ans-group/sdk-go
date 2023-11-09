@@ -426,6 +426,8 @@ type Instance struct {
 	AvailabilityZoneID string              `json:"availability_zone_id"`
 	ImageID            string              `json:"image_id"`
 	VCPUCores          int                 `json:"vcpu_cores"`
+	VCPUSockets        int                 `json:"vcpu_sockets"`
+	VCPUCoresPerSocket int                 `json:"vcpu_cores_per_socket"`
 	RAMCapacity        int                 `json:"ram_capacity"`
 	Locked             bool                `json:"locked"`
 	BackupEnabled      bool                `json:"backup_enabled"`
