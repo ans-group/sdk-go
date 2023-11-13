@@ -49,8 +49,8 @@ func TestSave(t *testing.T) {
 		SetFs(fs)
 
 		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`contexts:
-  somecontext:
-    somekey: somevalue
+    somecontext:
+        somekey: somevalue
 `), 0644)
 
 		Init("/tmp/testconfig.yml")
@@ -60,8 +60,8 @@ func TestSave(t *testing.T) {
 		content, _ := afero.ReadFile(fs, "/tmp/testconfig.yml")
 
 		expected := `contexts:
-  somecontext:
-    somekey: newvalue
+    somecontext:
+        somekey: newvalue
 `
 
 		assert.Equal(t, expected, string(content))
@@ -80,8 +80,8 @@ func TestSave(t *testing.T) {
 		content, _ := afero.ReadFile(fs, defaultConfigFile)
 
 		expected := `contexts:
-  somecontext:
-    somekey: newvalue
+    somecontext:
+        somekey: newvalue
 `
 
 		assert.Equal(t, expected, string(content))
