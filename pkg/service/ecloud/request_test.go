@@ -137,14 +137,6 @@ func TestPatchVirtualMachineRequestDiskState_String_Expected(t *testing.T) {
 	assert.Equal(t, "present", s)
 }
 
-func TestTemplateType_String_Expected(t *testing.T) {
-	v := TemplateTypeSolution
-
-	s := v.String()
-
-	assert.Equal(t, "solution", s)
-}
-
 func TestCreateVirtualMachineTemplateRequest_Validate(t *testing.T) {
 	t.Run("Valid_NoError", func(t *testing.T) {
 		c := CreateVirtualMachineTemplateRequest{

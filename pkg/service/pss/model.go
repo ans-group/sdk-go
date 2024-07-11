@@ -4,33 +4,15 @@ import "github.com/ans-group/sdk-go/pkg/connection"
 
 type AuthorType string
 
-func (s AuthorType) String() string {
-	return string(s)
-}
-
 const (
 	AuthorTypeClient  AuthorType = "Client"
 	AuthorTypeAuto    AuthorType = "Auto"
 	AuthorTypeSupport AuthorType = "Support"
 )
 
-var AuthorTypeEnum connection.EnumSlice = []connection.Enum{AuthorTypeClient, AuthorTypeAuto, AuthorTypeSupport}
-
-// ParseAuthorType attempts to parse a AuthorType from string
-func ParseAuthorType(s string) (AuthorType, error) {
-	e, err := connection.ParseEnum(s, AuthorTypeEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(AuthorType), err
-}
+var AuthorTypeEnum connection.Enum[AuthorType] = []AuthorType{AuthorTypeClient, AuthorTypeAuto, AuthorTypeSupport}
 
 type RequestPriority string
-
-func (s RequestPriority) String() string {
-	return string(s)
-}
 
 const (
 	RequestPriorityNormal   RequestPriority = "Normal"
@@ -38,23 +20,9 @@ const (
 	RequestPriorityCritical RequestPriority = "Critical"
 )
 
-var RequestPriorityEnum connection.EnumSlice = []connection.Enum{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
-
-// ParseRequestPriority attempts to parse a RequestPriority from string
-func ParseRequestPriority(s string) (RequestPriority, error) {
-	e, err := connection.ParseEnum(s, RequestPriorityEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(RequestPriority), err
-}
+var RequestPriorityEnum connection.Enum[RequestPriority] = []RequestPriority{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
 
 type RequestStatus string
-
-func (s RequestStatus) String() string {
-	return string(s)
-}
 
 const (
 	RequestStatusCompleted                RequestStatus = "Completed"
@@ -63,21 +31,11 @@ const (
 	RequestStatusSubmitted                RequestStatus = "Submitted"
 )
 
-var RequestStatusEnum connection.EnumSlice = []connection.Enum{
+var RequestStatusEnum connection.Enum[RequestStatus] = []RequestStatus{
 	RequestStatusCompleted,
 	RequestStatusAwaitingCustomerResponse,
 	RequestStatusRepliedAndCompleted,
 	RequestStatusSubmitted,
-}
-
-// ParseRequestStatus attempts to parse a RequestStatus from string
-func ParseRequestStatus(s string) (RequestStatus, error) {
-	e, err := connection.ParseEnum(s, RequestStatusEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(RequestStatus), err
 }
 
 // Request represents a PSS request
@@ -142,4 +100,55 @@ type Feedback struct {
 	NPSScore         int                 `json:"nps_score"`
 	ThirdPartConsent bool                `json:"thirdparty_consent"`
 	CreatedAt        connection.DateTime `json:"created_at"`
+}
+
+// CaseCategory represents a PSS case category
+type CaseCategory struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// CaseOption represents a PSS case option
+type CaseOption struct {
+	Option string `json:"option"`
+}
+
+type CaseType string
+
+const (
+	CaseTypeAllow CaseType = "allow"
+	CaseTypeDeny  CaseType = "deny"
+)
+
+var CaseTypeEnum connection.Enum[CaseType] = []CaseType{
+	CaseTypeAllow,
+	CaseTypeDeny,
+}
+
+func test() {
+	_, _ = CaseTypeEnum.Parse("allow")
+
+}
+
+// Case represents a PSS case
+type Case struct {
+	ID                    string   `json:"id"`
+	CaseType              string   `json:"case_type"`
+	Title                 string   `json:"title"`
+	Description           string   `json:"description"`
+	IsSecurity            bool     `json:"is_security"`
+	Type                  CaseType `json:"type"`
+	Priority              string   `json:"priority"`
+	Squad                 string   `json:"squad"`
+	Status                string   `json:"status"`
+	CustomerReference     string   `json:"customer_reference"`
+	Source                string   `json:"source"`
+	Contact               string   `json:"contact"`
+	CriteriaForResolution string   `json:"criteria_for_resolution"`
+	ServiceName           string   `json:"service_name"`
+	Owner                 string   `json:"owner"`
+	ResponseTarget        string   `json:"response_target"`
+	ResolutionTarget      string   `json:"resolution_target"`
+	CreatedAt             string   `json:"created_at"`
+	UpdatedAt             string   `json:"updated_at"`
 }

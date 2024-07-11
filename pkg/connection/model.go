@@ -1,7 +1,6 @@
 package connection
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -59,37 +58,29 @@ func (e *ErrInvalidEnumValue) Error() string {
 	return e.Message
 }
 
-type Enum interface {
-	String() string
+type Enum[T ~string] []T
+
+// String returns string containing a comma separated list of enum string values
+func (enums Enum[T]) String() string {
+	return strings.Join(enums.StringSlice(), ", ")
 }
 
-type EnumSlice []Enum
-
-// ParseEnum parses string s against array of enums, returning parsed enum and nil error, or nil with error
-func ParseEnum(s string, enums EnumSlice) (Enum, error) {
-	if len(enums) < 1 {
-		return nil, errors.New("Must provide at least one enum")
-	}
-
-	for _, e := range enums {
-		if strings.ToUpper(s) == strings.ToUpper(e.String()) {
-			return e, nil
-		}
-	}
-
-	return nil, NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], enums.String()))
-}
-
-// StringSlice returns a slice of strings containing the string values of enums for EnumSlice
-func (enums EnumSlice) StringSlice() []string {
+// StringSlice returns a slice of strings containing the string values of enums for Enum
+func (enums Enum[T]) StringSlice() []string {
 	var values []string
 	for _, enum := range enums {
-		values = append(values, enum.String())
+		values = append(values, string(enum))
 	}
 	return values
 }
 
-// String returns string containing a comma separated list of enum string values
-func (enums EnumSlice) String() string {
-	return strings.Join(enums.StringSlice(), ", ")
+// Parse attempts to parse T from string
+func (enums Enum[T]) Parse(s string) (T, error) {
+	for _, e := range enums {
+		if strings.EqualFold(s, string(e)) {
+			return e, nil
+		}
+	}
+
+	return *new(T), NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], enums.String()))
 }

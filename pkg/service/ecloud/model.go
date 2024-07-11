@@ -12,15 +12,7 @@ const (
 	VirtualMachineStatusBeingBuilt VirtualMachineStatus = "Being Built"
 )
 
-func (s VirtualMachineStatus) String() string {
-	return string(s)
-}
-
 type VirtualMachineDiskType string
-
-func (e VirtualMachineDiskType) String() string {
-	return string(e)
-}
 
 const (
 	VirtualMachineDiskTypeStandard VirtualMachineDiskType = "Standard"
@@ -29,35 +21,17 @@ const (
 
 type VirtualMachinePowerStatus string
 
-func (s VirtualMachinePowerStatus) String() string {
-	return string(s)
-}
-
 const (
 	VirtualMachinePowerStatusOnline  VirtualMachinePowerStatus = "Online"
 	VirtualMachinePowerStatusOffline VirtualMachinePowerStatus = "Offline"
 )
 
-var VirtualMachinePowerStatusEnum connection.EnumSlice = []connection.Enum{
+var VirtualMachinePowerStatusEnum connection.Enum[VirtualMachinePowerStatus] = []VirtualMachinePowerStatus{
 	VirtualMachinePowerStatusOnline,
 	VirtualMachinePowerStatusOffline,
 }
 
-// ParseVirtualMachinePowerStatus attempts to parse a VirtualMachinePowerStatus from string
-func ParseVirtualMachinePowerStatus(s string) (VirtualMachinePowerStatus, error) {
-	e, err := connection.ParseEnum(s, VirtualMachinePowerStatusEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(VirtualMachinePowerStatus), err
-}
-
 type DatastoreStatus string
-
-func (s DatastoreStatus) String() string {
-	return string(s)
-}
 
 const (
 	DatastoreStatusCompleted DatastoreStatus = "Completed"
@@ -73,15 +47,7 @@ const (
 	SolutionEnvironmentPrivate SolutionEnvironment = "Private"
 )
 
-func (s SolutionEnvironment) String() string {
-	return string(s)
-}
-
 type FirewallRole string
-
-func (r FirewallRole) String() string {
-	return string(r)
-}
 
 const (
 	FirewallRoleNA     FirewallRole = "N/A"
@@ -279,23 +245,9 @@ const (
 	TemplateTypePod      TemplateType = "pod"
 )
 
-var TemplateTypeEnum connection.EnumSlice = []connection.Enum{
+var TemplateTypeEnum connection.Enum[TemplateType] = []TemplateType{
 	TemplateTypeSolution,
 	TemplateTypePod,
-}
-
-// ParseTemplateType attempts to parse a TemplateType from string
-func ParseTemplateType(s string) (TemplateType, error) {
-	e, err := connection.ParseEnum(s, TemplateTypeEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(TemplateType), err
-}
-
-func (s TemplateType) String() string {
-	return string(s)
 }
 
 // ConsoleSession represents an eCloud Virtual Machine console session
@@ -345,24 +297,10 @@ const (
 	TaskStatusInProgress TaskStatus = "in-progress"
 )
 
-var TaskStatusEnum connection.EnumSlice = []connection.Enum{
+var TaskStatusEnum connection.Enum[TaskStatus] = []TaskStatus{
 	TaskStatusComplete,
 	TaskStatusFailed,
 	TaskStatusInProgress,
-}
-
-// ParseTaskStatus attempts to parse a TaskStatus from string
-func ParseTaskStatus(s string) (TaskStatus, error) {
-	e, err := connection.ParseEnum(s, TaskStatusEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(TaskStatus), err
-}
-
-func (s TaskStatus) String() string {
-	return string(s)
 }
 
 // VPC represents an eCloud VPC
@@ -479,24 +417,10 @@ const (
 	FirewallRuleActionReject FirewallRuleAction = "REJECT"
 )
 
-var FirewallRuleActionEnum connection.EnumSlice = []connection.Enum{
+var FirewallRuleActionEnum connection.Enum[FirewallRuleAction] = []FirewallRuleAction{
 	FirewallRuleActionAllow,
 	FirewallRuleActionDrop,
 	FirewallRuleActionReject,
-}
-
-// ParseFirewallRuleAction attempts to parse a FirewallRuleAction from string
-func ParseFirewallRuleAction(s string) (FirewallRuleAction, error) {
-	e, err := connection.ParseEnum(s, FirewallRuleActionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(FirewallRuleAction), err
-}
-
-func (s FirewallRuleAction) String() string {
-	return string(s)
 }
 
 type FirewallRuleDirection string
@@ -507,24 +431,10 @@ const (
 	FirewallRuleDirectionInOut FirewallRuleDirection = "IN_OUT"
 )
 
-var FirewallRuleDirectionEnum connection.EnumSlice = []connection.Enum{
+var FirewallRuleDirectionEnum connection.Enum[FirewallRuleDirection] = []FirewallRuleDirection{
 	FirewallRuleDirectionIn,
 	FirewallRuleDirectionOut,
 	FirewallRuleDirectionInOut,
-}
-
-// ParseFirewallRuleDirection attempts to parse a FirewallRuleDirection from string
-func ParseFirewallRuleDirection(s string) (FirewallRuleDirection, error) {
-	e, err := connection.ParseEnum(s, FirewallRuleDirectionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(FirewallRuleDirection), err
-}
-
-func (s FirewallRuleDirection) String() string {
-	return string(s)
 }
 
 // FirewallRule represents an eCloud firewall rule
@@ -550,24 +460,10 @@ const (
 	FirewallRulePortProtocolICMPv4 FirewallRulePortProtocol = "ICMPv4"
 )
 
-var FirewallRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
+var FirewallRulePortProtocolEnum connection.Enum[FirewallRulePortProtocol] = []FirewallRulePortProtocol{
 	FirewallRulePortProtocolTCP,
 	FirewallRulePortProtocolUDP,
 	FirewallRulePortProtocolICMPv4,
-}
-
-// ParseFirewallRulePortProtocol attempts to parse a FirewallRulePortProtocol from string
-func ParseFirewallRulePortProtocol(s string) (FirewallRulePortProtocol, error) {
-	e, err := connection.ParseEnum(s, FirewallRulePortProtocolEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(FirewallRulePortProtocol), err
-}
-
-func (s FirewallRulePortProtocol) String() string {
-	return string(s)
 }
 
 // FirewallRulePort represents an eCloud firewall rule port
@@ -813,24 +709,10 @@ const (
 	NetworkRuleActionReject NetworkRuleAction = "REJECT"
 )
 
-var NetworkRuleActionEnum connection.EnumSlice = []connection.Enum{
+var NetworkRuleActionEnum connection.Enum[NetworkRuleAction] = []NetworkRuleAction{
 	NetworkRuleActionAllow,
 	NetworkRuleActionDrop,
 	NetworkRuleActionReject,
-}
-
-// ParseNetworkRuleAction attempts to parse a NetworkRuleAction from string
-func ParseNetworkRuleAction(s string) (NetworkRuleAction, error) {
-	e, err := connection.ParseEnum(s, NetworkRuleActionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(NetworkRuleAction), err
-}
-
-func (s NetworkRuleAction) String() string {
-	return string(s)
 }
 
 type NetworkRuleDirection string
@@ -841,24 +723,10 @@ const (
 	NetworkRuleDirectionInOut NetworkRuleDirection = "IN_OUT"
 )
 
-var NetworkRuleDirectionEnum connection.EnumSlice = []connection.Enum{
+var NetworkRuleDirectionEnum connection.Enum[NetworkRuleDirection] = []NetworkRuleDirection{
 	NetworkRuleDirectionIn,
 	NetworkRuleDirectionOut,
 	NetworkRuleDirectionInOut,
-}
-
-// ParseNetworkRuleDirection attempts to parse a NetworkRuleDirection from string
-func ParseNetworkRuleDirection(s string) (NetworkRuleDirection, error) {
-	e, err := connection.ParseEnum(s, NetworkRuleDirectionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(NetworkRuleDirection), err
-}
-
-func (s NetworkRuleDirection) String() string {
-	return string(s)
 }
 
 // NetworkRule represents an eCloud network rule
@@ -885,24 +753,10 @@ const (
 	NetworkRulePortProtocolICMPv4 NetworkRulePortProtocol = "ICMPv4"
 )
 
-var NetworkRulePortProtocolEnum connection.EnumSlice = []connection.Enum{
+var NetworkRulePortProtocolEnum connection.Enum[NetworkRulePortProtocol] = []NetworkRulePortProtocol{
 	NetworkRulePortProtocolTCP,
 	NetworkRulePortProtocolUDP,
 	NetworkRulePortProtocolICMPv4,
-}
-
-// ParseNetworkRulePortProtocol attempts to parse a NetworkRulePortProtocol from string
-func ParseNetworkRulePortProtocol(s string) (NetworkRulePortProtocol, error) {
-	e, err := connection.ParseEnum(s, NetworkRulePortProtocolEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(NetworkRulePortProtocol), err
-}
-
-func (s NetworkRulePortProtocol) String() string {
-	return string(s)
 }
 
 // NetworkRulePort represents an eCloud network rule port
@@ -1060,23 +914,9 @@ const (
 	AntiAffinity AffinityRuleType = "anti-affinity"
 )
 
-var AffinityRuleTypeEnum connection.EnumSlice = []connection.Enum{
+var AffinityRuleTypeEnum connection.Enum[AffinityRuleType] = []AffinityRuleType{
 	Affinity,
 	AntiAffinity,
-}
-
-// ParseAffinityRuleType attempts to parse an AffinityRuleType from string
-func ParseAffinityRuleType(s string) (AffinityRuleType, error) {
-	e, err := connection.ParseEnum(s, AffinityRuleTypeEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(AffinityRuleType), err
-}
-
-func (s AffinityRuleType) String() string {
-	return string(s)
 }
 
 // AffinityRule represents an eCloud Affinity or Anti-Affinity Rule
@@ -1116,23 +956,9 @@ const (
 	NATOverloadRuleActionDeny  NATOverloadRuleAction = "deny"
 )
 
-var NATOverloadRuleActionEnum connection.EnumSlice = []connection.Enum{
+var NATOverloadRuleActionEnum connection.Enum[NATOverloadRuleAction] = []NATOverloadRuleAction{
 	NATOverloadRuleActionAllow,
 	NATOverloadRuleActionDeny,
-}
-
-// ParseNATOverloadRuleAction attempts to parse a NATOverloadRuleAction from string
-func ParseNATOverloadRuleAction(s string) (NATOverloadRuleAction, error) {
-	e, err := connection.ParseEnum(s, NATOverloadRuleActionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(NATOverloadRuleAction), err
-}
-
-func (s NATOverloadRuleAction) String() string {
-	return string(s)
 }
 
 // NATOverloadRule represents an eCloud NAT overload rule

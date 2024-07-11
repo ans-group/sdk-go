@@ -92,16 +92,16 @@ type testEnum string
 
 var testEnumOne testEnum = "One"
 var testEnumTwo testEnum = "Two"
-var testEnums EnumSlice = []Enum{testEnumOne, testEnumTwo}
+var testEnums Enum[testEnum] = Enum[testEnum]{testEnumOne, testEnumTwo}
 
 func (t testEnum) String() string {
 	return string(t)
 }
 
-func TestEnum_ParseEnum(t *testing.T) {
+func TestEnum_Parse(t *testing.T) {
 	t.Run("ParsesExact", func(t *testing.T) {
 		v := "One"
-		s, err := ParseEnum(v, testEnums)
+		s, err := testEnums.Parse(v)
 
 		assert.Nil(t, err)
 		assert.Equal(t, testEnumOne, s)
@@ -109,36 +109,28 @@ func TestEnum_ParseEnum(t *testing.T) {
 
 	t.Run("ParsesMixedCase", func(t *testing.T) {
 		v := "OnE"
-		s, err := ParseEnum(v, testEnums)
+		s, err := testEnums.Parse(v)
 
 		assert.Nil(t, err)
 		assert.Equal(t, testEnumOne, s)
 	})
 
-	t.Run("NoEnumsSupplied_ReturnsError", func(t *testing.T) {
-		v := "OnE"
-		_, err := ParseEnum(v, []Enum{})
-
-		assert.NotNil(t, err)
-		assert.Equal(t, "Must provide at least one enum", err.Error())
-	})
-
 	t.Run("Invalid_ReturnsError", func(t *testing.T) {
 		v := "invalid"
-		_, err := ParseEnum(v, testEnums)
+		_, err := testEnums.Parse(v)
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &ErrInvalidEnumValue{}, err)
 	})
 }
 
-func TestEnumSlice_StringSlice_ReturnsExpected(t *testing.T) {
+func TestEnum_StringSlice_ReturnsExpected(t *testing.T) {
 	s := testEnums.StringSlice()
 
 	assert.Equal(t, s, []string{"One", "Two"})
 }
 
-func TestEnumSlice_String_ReturnsExpected(t *testing.T) {
+func TestEnum_String_ReturnsExpected(t *testing.T) {
 	s := testEnums.String()
 
 	assert.Equal(t, s, "One, Two")

@@ -37,7 +37,7 @@ const (
 	TargetGroupBalanceSource     TargetGroupBalance = "source"
 )
 
-var TargetGroupBalanceEnum connection.EnumSlice = []connection.Enum{
+var TargetGroupBalanceEnum connection.Enum[TargetGroupBalance] = []TargetGroupBalance{
 	TargetGroupBalanceRoundRobin,
 	TargetGroupBalanceStaticRR,
 	TargetGroupBalanceLeastConn,
@@ -49,20 +49,6 @@ var TargetGroupBalanceEnum connection.EnumSlice = []connection.Enum{
 	TargetGroupBalanceSource,
 }
 
-// ParseTargetGroupBalance attempts to parse a TargetGroupBalance from string
-func ParseTargetGroupBalance(s string) (TargetGroupBalance, error) {
-	e, err := connection.ParseEnum(s, TargetGroupBalanceEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(TargetGroupBalance), err
-}
-
-func (s TargetGroupBalance) String() string {
-	return string(s)
-}
-
 type TargetGroupMonitorMethod string
 
 const (
@@ -71,24 +57,10 @@ const (
 	TargetGroupMonitorMethodOPTIONS TargetGroupMonitorMethod = "OPTIONS"
 )
 
-var TargetGroupMonitorMethodEnum connection.EnumSlice = []connection.Enum{
+var TargetGroupMonitorMethodEnum connection.Enum[TargetGroupMonitorMethod] = []TargetGroupMonitorMethod{
 	TargetGroupMonitorMethodGET,
 	TargetGroupMonitorMethodHEAD,
 	TargetGroupMonitorMethodOPTIONS,
-}
-
-// ParseTargetGroupMonitorMethod attempts to parse a TargetGroupMonitorMethod from string
-func ParseTargetGroupMonitorMethod(s string) (TargetGroupMonitorMethod, error) {
-	e, err := connection.ParseEnum(s, TargetGroupMonitorMethodEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(TargetGroupMonitorMethod), err
-}
-
-func (s TargetGroupMonitorMethod) String() string {
-	return string(s)
 }
 
 // TargetGroup represents a target group
@@ -154,23 +126,9 @@ const (
 	ModeTCP  Mode = "tcp"
 )
 
-var ModeEnum connection.EnumSlice = []connection.Enum{
+var ModeEnum connection.Enum[Mode] = []Mode{
 	ModeHTTP,
 	ModeTCP,
-}
-
-// ParseMode attempts to parse a Mode from string
-func ParseMode(s string) (Mode, error) {
-	e, err := connection.ParseEnum(s, ModeEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(Mode), err
-}
-
-func (s Mode) String() string {
-	return string(s)
 }
 
 // Listener represents a listener / frontend
@@ -204,21 +162,7 @@ const (
 	ListenerGeoIPRestrictionDeny  ListenerGeoIPRestriction = "deny"
 )
 
-// ParseListenerGeoIPRestriction attempts to parse a ListenerGeoIPRestriction from string
-func ParseListenerGeoIPRestriction(s string) (ListenerGeoIPRestriction, error) {
-	e, err := connection.ParseEnum(s, ListenerGeoIPRestrictionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(ListenerGeoIPRestriction), err
-}
-
-func (s ListenerGeoIPRestriction) String() string {
-	return string(s)
-}
-
-var ListenerGeoIPRestrictionEnum connection.EnumSlice = []connection.Enum{
+var ListenerGeoIPRestrictionEnum connection.Enum[ListenerGeoIPRestriction] = []ListenerGeoIPRestriction{
 	ListenerGeoIPRestrictionAllow,
 	ListenerGeoIPRestrictionDeny,
 }
