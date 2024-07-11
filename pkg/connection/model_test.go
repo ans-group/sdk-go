@@ -124,8 +124,8 @@ func TestEnum_Parse(t *testing.T) {
 	})
 }
 
-func TestEnum_StringSlice_ReturnsExpected(t *testing.T) {
-	s := testEnums.StringSlice()
+func TestEnum_Values_ReturnsExpected(t *testing.T) {
+	s := testEnums.Values()
 
 	assert.Equal(t, s, []string{"One", "Two"})
 }

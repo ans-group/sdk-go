@@ -62,11 +62,11 @@ type Enum[T ~string] []T
 
 // String returns string containing a comma separated list of enum string values
 func (enums Enum[T]) String() string {
-	return strings.Join(enums.StringSlice(), ", ")
+	return strings.Join(enums.Values(), ", ")
 }
 
-// StringSlice returns a slice of strings containing the string values of enums for Enum
-func (enums Enum[T]) StringSlice() []string {
+// Values returns a slice of strings containing the string values of enums for Enum
+func (enums Enum[T]) Values() []string {
 	var values []string
 	for _, enum := range enums {
 		values = append(values, string(enum))
@@ -82,5 +82,5 @@ func (enums Enum[T]) Parse(s string) (T, error) {
 		}
 	}
 
-	return *new(T), NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", enums[0], enums.String()))
+	return *new(T), NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", *new(T), enums.String()))
 }
