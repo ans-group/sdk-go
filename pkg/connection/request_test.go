@@ -122,10 +122,10 @@ func TestAPIRequestParameters_WithPackedFilters_AddsFilters(t *testing.T) {
 func TestAPIRequestParameters_Copy_ReturnsCopy(t *testing.T) {
 	params := APIRequestParameters{
 		Filtering: []APIRequestFiltering{
-			APIRequestFiltering{
+			{
 				Property: "testproperty1",
 			},
-			APIRequestFiltering{
+			{
 				Operator: EQOperator,
 				Value:    []string{"testproperty2valuea", "testproperty2valueb"},
 			},
@@ -154,35 +154,35 @@ func TestParseOperator(t *testing.T) {
 		ExpectedOperator APIRequestFilteringOperator
 	}
 	operators := []testoperator{
-		testoperator{
+		{
 			Operator:         "EQ",
 			ExpectedOperator: EQOperator,
 		},
-		testoperator{
+		{
 			Operator:         "LK",
 			ExpectedOperator: LKOperator,
 		},
-		testoperator{
+		{
 			Operator:         "GT",
 			ExpectedOperator: GTOperator,
 		},
-		testoperator{
+		{
 			Operator:         "LT",
 			ExpectedOperator: LTOperator,
 		},
-		testoperator{
+		{
 			Operator:         "IN",
 			ExpectedOperator: INOperator,
 		},
-		testoperator{
+		{
 			Operator:         "NEQ",
 			ExpectedOperator: NEQOperator,
 		},
-		testoperator{
+		{
 			Operator:         "NIN",
 			ExpectedOperator: NINOperator,
 		},
-		testoperator{
+		{
 			Operator:         "NLK",
 			ExpectedOperator: NLKOperator,
 		},
@@ -458,8 +458,8 @@ func TestInvokeRequestAll_CallsInvoke(t *testing.T) {
 					},
 				},
 				Data: []GenericData{
-					GenericData{},
-					GenericData{},
+					{},
+					{},
 				},
 			},
 		}, nil

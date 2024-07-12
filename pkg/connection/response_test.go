@@ -162,7 +162,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 		b := APIResponseBody{
 			APIResponseBodyError: APIResponseBodyError{
 				Errors: []APIResponseBodyErrorItem{
-					APIResponseBodyErrorItem{
+					{
 						Detail: "test detail 1",
 						Source: "test source 1",
 						Status: 500,
@@ -181,13 +181,13 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 		b := APIResponseBody{
 			APIResponseBodyError: APIResponseBodyError{
 				Errors: []APIResponseBodyErrorItem{
-					APIResponseBodyErrorItem{
+					{
 						Detail: "test detail 1",
 						Source: "test source 1",
 						Status: 500,
 						Title:  "test title 1",
 					},
-					APIResponseBodyErrorItem{
+					{
 						Detail: "test detail 2",
 						Source: "test source 2",
 						Status: 501,
@@ -206,7 +206,7 @@ func TestAPIResponseBody_ErrorString(t *testing.T) {
 		b := APIResponseBody{
 			APIResponseBodyError: APIResponseBodyError{
 				Errors: []APIResponseBodyErrorItem{
-					APIResponseBodyErrorItem{
+					{
 						Detail: "test detail 1",
 						Source: "test source 1",
 						Status: 500,

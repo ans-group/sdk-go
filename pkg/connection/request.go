@@ -2,6 +2,7 @@ package connection
 
 import (
 	"errors"
+	"net/url"
 	"strings"
 
 	validator "gopkg.in/go-playground/validator.v9"
@@ -42,6 +43,7 @@ type APIRequest struct {
 	Method     string
 	Resource   string
 	Body       interface{}
+	Query      url.Values
 	Parameters APIRequestParameters
 }
 

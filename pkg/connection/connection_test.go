@@ -3,10 +3,10 @@ package connection
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 	"testing"
 
 	"github.com/ans-group/sdk-go/test"
@@ -14,18 +14,79 @@ import (
 )
 
 func TestAPIConnection_composeURI(t *testing.T) {
-	t.Run("NoQuery_NoQuerySeparator", func(t *testing.T) {
+	t.Run("WithResource_ExpectedUri", func(t *testing.T) {
 		c := NewAPIKeyCredentialsAPIConnection("testkey")
-		uri := c.composeURI("/some/test/resource", APIRequestPagination{}, APIRequestSorting{}, []APIRequestFiltering{})
+		request := APIRequest{
+			Resource: "/some/test/resource",
+		}
+		uri := c.composeURI(request)
 
-		assert.True(t, strings.HasSuffix(uri, "/some/test/resource"))
+		assert.Equal(t, fmt.Sprintf("https://%s/some/test/resource", c.APIURI), uri)
 	})
 
-	t.Run("Query_ExpectedQuerySeparator", func(t *testing.T) {
+	t.Run("WithPagination_ExpectedQueryParameter", func(t *testing.T) {
 		c := NewAPIKeyCredentialsAPIConnection("testkey")
-		uri := c.composeURI("/some/test/resource", APIRequestPagination{PerPage: 71}, APIRequestSorting{}, []APIRequestFiltering{})
+		request := APIRequest{
+			Resource: "/some/test/resource",
+			Parameters: APIRequestParameters{
+				Pagination: APIRequestPagination{PerPage: 71},
+			},
+		}
+		uri := c.composeURI(request)
 
-		assert.True(t, strings.HasSuffix(uri, "?per_page=71"))
+		assert.Equal(t, fmt.Sprintf("https://%s/some/test/resource?per_page=71", c.APIURI), uri)
+	})
+
+	t.Run("WithSorting_ExpectedURI", func(t *testing.T) {
+		c := NewAPIKeyCredentialsAPIConnection("testkey")
+		request := APIRequest{
+			Resource: "/some/test/resource",
+			Parameters: APIRequestParameters{
+				Sorting: APIRequestSorting{Property: "testproperty"},
+			},
+		}
+		uri := c.composeURI(request)
+
+		assert.Equal(t, fmt.Sprintf("https://%s/some/test/resource?sort=testproperty%%3Aasc", c.APIURI), uri)
+	})
+
+	t.Run("WithSorting_ExpectedURI", func(t *testing.T) {
+		c := NewAPIKeyCredentialsAPIConnection("testkey")
+		request := APIRequest{
+			Resource: "/some/test/resource",
+			Parameters: APIRequestParameters{
+				Filtering: []APIRequestFiltering{
+					{
+						Property: "testproperty",
+						Operator: EQOperator,
+						Value:    []string{"testvalue"},
+					},
+				},
+			},
+		}
+		uri := c.composeURI(request)
+
+		assert.Equal(t, fmt.Sprintf("https://%s/some/test/resource?testproperty%%3Aeq=testvalue", c.APIURI), uri)
+	})
+
+	t.Run("WithQueryAndParameters_ExpectedURI", func(t *testing.T) {
+		c := NewAPIKeyCredentialsAPIConnection("testkey")
+		request := APIRequest{
+			Resource: "/some/test/resource",
+			Query:    url.Values{"testquery": []string{"testvalue"}},
+			Parameters: APIRequestParameters{
+				Filtering: []APIRequestFiltering{
+					{
+						Property: "testproperty",
+						Operator: EQOperator,
+						Value:    []string{"testvalue"},
+					},
+				},
+			},
+		}
+		uri := c.composeURI(request)
+
+		assert.Equal(t, fmt.Sprintf("https://%s/some/test/resource?testproperty%%3Aeq=testvalue&testquery=testvalue", c.APIURI), uri)
 	})
 }
 
@@ -46,7 +107,7 @@ func TestAPIConnection_hydrateFilteringQuery_PopulatesQuery(t *testing.T) {
 	t.Run("SingleQuery", func(t *testing.T) {
 		q := &url.Values{}
 		filtering := []APIRequestFiltering{
-			APIRequestFiltering{
+			{
 				Property: "testproperty",
 				Operator: EQOperator,
 				Value:    []string{"testvalue"},
@@ -63,7 +124,7 @@ func TestAPIConnection_hydrateFilteringQuery_PopulatesQuery(t *testing.T) {
 	t.Run("MultipleQueries", func(t *testing.T) {
 		q := &url.Values{}
 		filtering := []APIRequestFiltering{
-			APIRequestFiltering{
+			{
 				Property: "testproperty",
 				Operator: EQOperator,
 				Value:    []string{"testvalue"},
@@ -80,7 +141,7 @@ func TestAPIConnection_hydrateFilteringQuery_PopulatesQuery(t *testing.T) {
 	t.Run("SingleQueryMultipleValue", func(t *testing.T) {
 		q := &url.Values{}
 		filtering := []APIRequestFiltering{
-			APIRequestFiltering{
+			{
 				Property: "testproperty",
 				Operator: INOperator,
 				Value:    []string{"testvalue1", "testvalue2"},
