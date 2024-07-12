@@ -533,7 +533,7 @@ type CaseUpdate struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
-// CaseUpdate represents a PSS case update
+// CaseUpdate represents a PSS supported service
 type SupportedService struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`

@@ -28,6 +28,27 @@ type PSSService interface {
 	DownloadReplyAttachmentStream(replyID string, attachmentName string) (contentStream io.ReadCloser, err error)
 	UploadReplyAttachmentStream(replyID string, attachmentName string, fileStream io.Reader) (err error)
 	DeleteReplyAttachment(replyID string, attachmentName string) error
+
+	GetCaseCategories(parameters connection.APIRequestParameters) ([]CaseCategory, error)
+	GetCaseCategoriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseCategory], error)
+
+	GetChangeImpactCaseOptions(parameters connection.APIRequestParameters) ([]CaseOption, error)
+	GetChangeImpactCaseOptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseOption], error)
+	GetChangeRiskCaseOptions(parameters connection.APIRequestParameters) ([]CaseOption, error)
+	GetChangeRiskCaseOptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseOption], error)
+	GetIncidentImpactCaseOptions(parameters connection.APIRequestParameters) ([]CaseOption, error)
+	GetIncidentImpactCaseOptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseOption], error)
+	GetIncidentTypeCaseOptions(parameters connection.APIRequestParameters) ([]CaseOption, error)
+	GetIncidentTypeCaseOptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseOption], error)
+
+	GetIncidentCases(parameters connection.APIRequestParameters) ([]IncidentCase, error)
+	GetIncidentCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IncidentCase], error)
+	GetIncidentCase(incidentID string) (IncidentCase, error)
+
+	GetChangeCases(parameters connection.APIRequestParameters) ([]ChangeCase, error)
+	GetChangeCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ChangeCase], error)
+	GetProblemCases(parameters connection.APIRequestParameters) ([]ProblemCase, error)
+	GetProblemCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ProblemCase], error)
 }
 
 // Service implements PSSService for managing

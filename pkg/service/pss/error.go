@@ -37,3 +37,12 @@ type RequestFeedbackNotFoundError struct {
 func (e *RequestFeedbackNotFoundError) Error() string {
 	return fmt.Sprintf("Feedback not found for request [%d]", e.RequestID)
 }
+
+// RequestFeedbackNotFoundError indicates feedback for a request was not found
+type IncidentCaseNotFoundError struct {
+	ID string
+}
+
+func (e *IncidentCaseNotFoundError) Error() string {
+	return fmt.Sprintf("Incident case not found for ID [%s]", e.ID)
+}
