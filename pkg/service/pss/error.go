@@ -38,11 +38,29 @@ func (e *RequestFeedbackNotFoundError) Error() string {
 	return fmt.Sprintf("Feedback not found for request [%d]", e.RequestID)
 }
 
-// RequestFeedbackNotFoundError indicates feedback for a request was not found
+// RequestFeedbackNotFoundError indicates an incident case was not found
 type IncidentCaseNotFoundError struct {
 	ID string
 }
 
 func (e *IncidentCaseNotFoundError) Error() string {
 	return fmt.Sprintf("Incident case not found for ID [%s]", e.ID)
+}
+
+// RequestFeedbackNotFoundError indicates a problem case was not found
+type ProblemCaseNotFoundError struct {
+	ID string
+}
+
+func (e *ProblemCaseNotFoundError) Error() string {
+	return fmt.Sprintf("Problem case not found for ID [%s]", e.ID)
+}
+
+// RequestFeedbackNotFoundError indicates a change case was not found
+type ChangeCaseNotFoundError struct {
+	ID string
+}
+
+func (e *ChangeCaseNotFoundError) Error() string {
+	return fmt.Sprintf("Change case not found for ID [%s]", e.ID)
 }

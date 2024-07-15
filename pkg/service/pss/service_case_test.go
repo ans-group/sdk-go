@@ -14,6 +14,54 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestCreateIncidentCase(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		createRequest := CreateIncidentCaseRequest{
+			Title:    "testincident",
+			CaseType: CaseTypeIncident,
+		}
+
+		c.EXPECT().Post("/pss/v2/cases", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"INC123456\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		id, err := s.CreateIncidentCase(createRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "INC123456", id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v2/cases", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateIncidentCase(CreateIncidentCaseRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
 func TestGetIncidentCases(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -164,6 +212,54 @@ func TestGetIncidentCase(t *testing.T) {
 	})
 }
 
+func TestCreateChangeCase(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		createRequest := CreateChangeCaseRequest{
+			Title:    "testchange",
+			CaseType: CaseTypeChange,
+		}
+
+		c.EXPECT().Post("/pss/v2/cases", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"CHG123456\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		id, err := s.CreateChangeCase(createRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "CHG123456", id)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v2/cases", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateChangeCase(CreateChangeCaseRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
 func TestGetChangeCases(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -232,6 +328,88 @@ func TestGetChangeCases(t *testing.T) {
 	})
 }
 
+func TestGetChangeCase(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/CHG123456", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"CHG123456\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		change, err := s.GetChangeCase("CHG123456")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "CHG123456", change.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/CHG123456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetChangeCase("CHG123456")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidChangeID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetChangeCase("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid change id", err.Error())
+	})
+
+	t.Run("404_ReturnsChangeNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/CHG123456", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetChangeCase("CHG123456")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ChangeCaseNotFoundError{}, err)
+	})
+}
+
 func TestGetProblemCases(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -297,5 +475,87 @@ func TestGetProblemCases(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestGetProblemCase(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/PRB123456", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"PRB123456\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		problem, err := s.GetProblemCase("PRB123456")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "PRB123456", problem.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/PRB123456", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.GetProblemCase("PRB123456")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidProblemID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetProblemCase("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid problem id", err.Error())
+	})
+
+	t.Run("404_ReturnsProblemNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/PRB123456", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		_, err := s.GetProblemCase("PRB123456")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ProblemCaseNotFoundError{}, err)
 	})
 }

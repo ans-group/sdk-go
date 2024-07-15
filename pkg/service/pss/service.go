@@ -41,14 +41,27 @@ type PSSService interface {
 	GetIncidentTypeCaseOptions(parameters connection.APIRequestParameters) ([]CaseOption, error)
 	GetIncidentTypeCaseOptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseOption], error)
 
+	GetSupportedServices(parameters connection.APIRequestParameters) ([]SupportedService, error)
+	GetSupportedServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SupportedService], error)
+
+	CreateIncidentCase(req CreateIncidentCaseRequest) (string, error)
 	GetIncidentCases(parameters connection.APIRequestParameters) ([]IncidentCase, error)
 	GetIncidentCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IncidentCase], error)
 	GetIncidentCase(incidentID string) (IncidentCase, error)
+	CloseIncidentCase(incidentID string, req CloseIncidentCaseRequest) (string, error)
 
+	CreateChangeCase(req CreateChangeCaseRequest) (string, error)
 	GetChangeCases(parameters connection.APIRequestParameters) ([]ChangeCase, error)
 	GetChangeCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ChangeCase], error)
+	GetChangeCase(changeID string) (ChangeCase, error)
+	ApproveChangeCase(changeID string, req ApproveChangeCaseRequest) (string, error)
+
 	GetProblemCases(parameters connection.APIRequestParameters) ([]ProblemCase, error)
 	GetProblemCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ProblemCase], error)
+	GetProblemCase(problemID string) (ProblemCase, error)
+
+	GetCaseUpdates(caseID string, parameters connection.APIRequestParameters) ([]CaseUpdate, error)
+	GetCaseUpdatesPaginated(caseID string, parameters connection.APIRequestParameters) (*connection.Paginated[CaseUpdate], error)
 }
 
 // Service implements PSSService for managing
