@@ -216,6 +216,6 @@ func (s *Service) getCaseUpdatesPaginatedResponseBody(caseID string, parameters 
 		return &connection.APIResponseBodyData[[]CaseUpdate]{}, fmt.Errorf("invalid case id")
 	}
 
-	return connection.Get[[]CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates", caseID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ChangeCaseNotFoundError{ID: changeID}))
+	return connection.Get[[]CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates", caseID), parameters, connection.NotFoundResponseHandler(&ChangeCaseNotFoundError{ID: caseID}))
 
 }

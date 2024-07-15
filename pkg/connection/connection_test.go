@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"testing"
@@ -252,7 +252,7 @@ func TestAPIConnection_Delete_ExpectedMethod(t *testing.T) {
 }
 
 func TestAPIConnection_Invoke_WithReader_ExpectedBody(t *testing.T) {
-	testRequestBody := ioutil.NopCloser(bytes.NewReader([]byte("test content")))
+	testRequestBody := io.NopCloser(bytes.NewReader([]byte("test content")))
 
 	c := NewAPIKeyCredentialsAPIConnection("testkey")
 	c.HTTPClient = test.NewTestClient(func(req *http.Request) (*http.Response, error) {

@@ -93,7 +93,7 @@ func (c *APIConnection) hydratePaginationQuery(q *url.Values, pagination APIRequ
 // hydrateFilteringQuery populates query parameters with filtering query parameters, if any
 func (c *APIConnection) hydrateFilteringQuery(q *url.Values, filtering []APIRequestFiltering) {
 	for _, filter := range filtering {
-		q.Add(fmt.Sprintf("%s:%s", filter.Property, filter.Operator.String()), strings.Join(filter.Value, ","))
+		q.Add(fmt.Sprintf("%s:%s", filter.Property, filter.Operator), strings.Join(filter.Value, ","))
 	}
 }
 
