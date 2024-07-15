@@ -638,6 +638,7 @@ type Volume struct {
 	VolumeGroupID      string              `json:"volume_group_id"`
 	IsShared           bool                `json:"is_shared"`
 	IsEncrypted        bool                `json:"is_encrypted"`
+	Port               int                 `json:"port"`
 	Sync               ResourceSync        `json:"sync"`
 	Task               ResourceTask        `json:"task"`
 	CreatedAt          connection.DateTime `json:"created_at"`
