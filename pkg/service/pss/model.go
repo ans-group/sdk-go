@@ -443,6 +443,20 @@ var ProblemCaseKnownCauseEnum connection.Enum[ProblemCaseKnownCause] = []Problem
 	ProblemCaseKnownCauseUser,
 }
 
+type Case struct {
+	ID                 string     `json:"id"`
+	CaseType           CaseType   `json:"case_type"`
+	Title              string     `json:"title"`
+	Description        string     `json:"description"`
+	IsSecurity         bool       `json:"is_security"`
+	Squad              string     `json:"squad"`
+	Status             CaseStatus `json:"status"`
+	CreatedAt          string     `json:"created_at"`
+	UpdatedAt          string     `json:"updated_at"`
+	CategoryID         string     `json:"category_id"`
+	SupportedServiceID string     `json:"supported_service_id"`
+}
+
 // IncidentCase represents a PSS incident-type case
 type IncidentCase struct {
 	ID                    string               `json:"id"`

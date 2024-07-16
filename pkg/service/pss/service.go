@@ -44,6 +44,10 @@ type PSSService interface {
 	GetSupportedServices(parameters connection.APIRequestParameters) ([]SupportedService, error)
 	GetSupportedServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SupportedService], error)
 
+	GetCases(parameters connection.APIRequestParameters) ([]Case, error)
+	GetCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Case], error)
+	GetCase(caseID string) (Case, error)
+
 	CreateIncidentCase(req CreateIncidentCaseRequest) (string, error)
 	GetIncidentCases(parameters connection.APIRequestParameters) ([]IncidentCase, error)
 	GetIncidentCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IncidentCase], error)
@@ -62,6 +66,8 @@ type PSSService interface {
 
 	GetCaseUpdates(caseID string, parameters connection.APIRequestParameters) ([]CaseUpdate, error)
 	GetCaseUpdatesPaginated(caseID string, parameters connection.APIRequestParameters) (*connection.Paginated[CaseUpdate], error)
+	GetCaseUpdate(caseID string, updateID string) (CaseUpdate, error)
+	CreateCaseUpdate(caseID string, req CreateCaseUpdateRequest) (string, error)
 }
 
 // Service implements PSSService for managing

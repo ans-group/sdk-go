@@ -95,3 +95,9 @@ type CloseIncidentCaseRequest struct {
 	Reason    string `json:"reason"`
 	ContactID int    `json:"contact_id,omitempty"`
 }
+
+// CreateCaseUpdateRequest represents a request to create a PSS incident case update
+type CreateCaseUpdateRequest struct {
+	Description string `json:"description"`
+	ContactID   int    `json:"contact_id,omitempty"`
+}

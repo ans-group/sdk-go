@@ -7,6 +7,36 @@ import (
 	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
+// GetCases retrieves a list of cases
+func (s *Service) GetCases(parameters connection.APIRequestParameters) ([]Case, error) {
+	return connection.InvokeRequestAll(s.GetCasesPaginated, parameters)
+}
+
+// GetCasesPaginated retrieves a paginated list of cases
+func (s *Service) GetCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Case], error) {
+	body, err := s.getCasesPaginatedResponseBody(parameters)
+	return connection.NewPaginated(body, parameters, s.GetCasesPaginated), err
+}
+
+func (s *Service) getCasesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Case], error) {
+	return connection.Get[[]Case](s.connection, "/pss/v2/cases", parameters)
+}
+
+// GetCase retrieves a single instance case by id
+func (s *Service) GetCase(caseID string) (Case, error) {
+	body, err := s.getCaseResponseBody(caseID)
+
+	return body.Data, err
+}
+
+func (s *Service) getCaseResponseBody(caseID string) (*connection.APIResponseBodyData[Case], error) {
+	if caseID == "" {
+		return &connection.APIResponseBodyData[Case]{}, fmt.Errorf("invalid case id")
+	}
+
+	return connection.Get[Case](s.connection, fmt.Sprintf("/pss/v2/cases/%s", caseID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: caseID}))
+}
+
 // CreateIncidentCase creates a incident case
 func (s *Service) CreateIncidentCase(req CreateIncidentCaseRequest) (string, error) {
 	body, err := s.createIncidentCaseResponseBody(req)
@@ -61,7 +91,7 @@ func (s *Service) getIncidentCaseResponseBody(incidentID string) (*connection.AP
 		return &connection.APIResponseBodyData[IncidentCase]{}, fmt.Errorf("invalid incident id")
 	}
 
-	return connection.Get[IncidentCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", incidentID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&IncidentCaseNotFoundError{ID: incidentID}))
+	return connection.Get[IncidentCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", incidentID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: incidentID}))
 }
 
 // CloseIncidentCase approves a incident case by id
@@ -76,7 +106,7 @@ func (s *Service) closeIncidentCaseResponseBody(incidentID string, req CloseInci
 		return &connection.APIResponseBodyData[IncidentCase]{}, fmt.Errorf("invalid incident id")
 	}
 
-	return connection.Post[IncidentCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s/close", incidentID), &req, connection.NotFoundResponseHandler(&IncidentCaseNotFoundError{ID: incidentID}))
+	return connection.Post[IncidentCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s/close", incidentID), &req, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: incidentID}))
 }
 
 // CreateChangeCase creates a change case
@@ -133,7 +163,7 @@ func (s *Service) getChangeCaseResponseBody(changeID string) (*connection.APIRes
 		return &connection.APIResponseBodyData[ChangeCase]{}, fmt.Errorf("invalid change id")
 	}
 
-	return connection.Get[ChangeCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", changeID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ChangeCaseNotFoundError{ID: changeID}))
+	return connection.Get[ChangeCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", changeID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: changeID}))
 }
 
 // ApproveChangeCase approves a change case by id
@@ -148,7 +178,7 @@ func (s *Service) approveChangeCaseResponseBody(changeID string, req ApproveChan
 		return &connection.APIResponseBodyData[ChangeCase]{}, fmt.Errorf("invalid change id")
 	}
 
-	return connection.Post[ChangeCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s/approve", changeID), &req, connection.NotFoundResponseHandler(&ChangeCaseNotFoundError{ID: changeID}))
+	return connection.Post[ChangeCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s/approve", changeID), &req, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: changeID}))
 }
 
 // GetProblemCases retrieves a list of problem cases
@@ -192,7 +222,7 @@ func (s *Service) getProblemCaseResponseBody(problemID string) (*connection.APIR
 		return &connection.APIResponseBodyData[ProblemCase]{}, fmt.Errorf("invalid problem id")
 	}
 
-	return connection.Get[ProblemCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", problemID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ProblemCaseNotFoundError{ID: problemID}))
+	return connection.Get[ProblemCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", problemID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: problemID}))
 }
 
 // GetCaseUpdates retrieves a list of problem case updates
@@ -216,6 +246,38 @@ func (s *Service) getCaseUpdatesPaginatedResponseBody(caseID string, parameters 
 		return &connection.APIResponseBodyData[[]CaseUpdate]{}, fmt.Errorf("invalid case id")
 	}
 
-	return connection.Get[[]CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates", caseID), parameters, connection.NotFoundResponseHandler(&ChangeCaseNotFoundError{ID: caseID}))
+	return connection.Get[[]CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates", caseID), parameters, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: caseID}))
+}
 
+// GetProblemCase retrieves a single instance case by id
+func (s *Service) GetCaseUpdate(caseID string, updateID string) (CaseUpdate, error) {
+	body, err := s.getCaseUpdateResponseBody(caseID, updateID)
+
+	return body.Data, err
+}
+
+func (s *Service) getCaseUpdateResponseBody(caseID string, updateID string) (*connection.APIResponseBodyData[CaseUpdate], error) {
+	if caseID == "" {
+		return &connection.APIResponseBodyData[CaseUpdate]{}, fmt.Errorf("invalid case id")
+	}
+	if updateID == "" {
+		return &connection.APIResponseBodyData[CaseUpdate]{}, fmt.Errorf("invalid case update id")
+	}
+
+	return connection.Get[CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates/%s", caseID, updateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseUpdateNotFoundError{ID: updateID}))
+}
+
+// CreateCaseUpdate creates a change case
+func (s *Service) CreateCaseUpdate(caseID string, req CreateCaseUpdateRequest) (string, error) {
+	body, err := s.createCaseUpdateResponseBody(caseID, req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createCaseUpdateResponseBody(caseID string, req CreateCaseUpdateRequest) (*connection.APIResponseBodyData[CaseUpdate], error) {
+	if caseID == "" {
+		return &connection.APIResponseBodyData[CaseUpdate]{}, fmt.Errorf("invalid case id")
+	}
+
+	return connection.Post[CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/update", caseID), &req)
 }
