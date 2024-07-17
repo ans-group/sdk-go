@@ -78,7 +78,7 @@ type CreateIncidentCaseRequest struct {
 	IsSecurity         bool               `json:"is_security"`
 	Type               IncidentCaseType   `json:"type"`
 	CustomerReference  string             `json:"customer_reference,omitempty"`
-	ContactID          int                `json:"contact_id"`
+	ContactID          int                `json:"contact_id,omitempty"`
 	CategoryID         string             `json:"category_id"`
 	SupportedServiceID string             `json:"supported_service_id"`
 	Impact             IncidentCaseImpact `json:"impact"`
