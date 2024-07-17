@@ -4,6 +4,10 @@ import "github.com/ans-group/sdk-go/pkg/connection"
 
 type AuthorType string
 
+func (s AuthorType) String() string {
+	return string(s)
+}
+
 const (
 	AuthorTypeClient  AuthorType = "Client"
 	AuthorTypeAuto    AuthorType = "Auto"
@@ -14,6 +18,10 @@ var AuthorTypeEnum connection.Enum[AuthorType] = []AuthorType{AuthorTypeClient, 
 
 type RequestPriority string
 
+func (s RequestPriority) String() string {
+	return string(s)
+}
+
 const (
 	RequestPriorityNormal   RequestPriority = "Normal"
 	RequestPriorityHigh     RequestPriority = "High"
@@ -23,6 +31,10 @@ const (
 var RequestPriorityEnum connection.Enum[RequestPriority] = []RequestPriority{RequestPriorityNormal, RequestPriorityHigh, RequestPriorityCritical}
 
 type RequestStatus string
+
+func (s RequestStatus) String() string {
+	return string(s)
+}
 
 const (
 	RequestStatusCompleted                RequestStatus = "Completed"
@@ -115,6 +127,10 @@ type CaseOption struct {
 
 type CaseType string
 
+func (s CaseType) String() string {
+	return string(s)
+}
+
 const (
 	CaseTypeChange   CaseType = "Change"
 	CaseTypeIncident CaseType = "Incident"
@@ -128,6 +144,10 @@ var CaseTypeEnum connection.Enum[CaseType] = []CaseType{
 }
 
 type CaseStatus string
+
+func (s CaseStatus) String() string {
+	return string(s)
+}
 
 const (
 	CaseStatusInProgress                   CaseStatus = "In Progress"
@@ -158,48 +178,6 @@ const (
 	CaseStatusOutofScopeofServiceContract  CaseStatus = "Out of Scope of Service Contract"
 )
 
-type ChangeCaseType string
-
-const (
-	ChangeCaseTypeNormal             ChangeCaseType = "Normal"
-	ChangeCaseTypeStandard           ChangeCaseType = "Standard"
-	ChangeCaseTypeEmergency          ChangeCaseType = "Emergency"
-	ChangeCaseTypeProject            ChangeCaseType = "Project"
-	ChangeCaseTypeCentreOfExcellence ChangeCaseType = "Centre of Excellence"
-)
-
-var ChangeCaseTypeEnum connection.Enum[ChangeCaseType] = []ChangeCaseType{
-	ChangeCaseTypeNormal,
-	ChangeCaseTypeStandard,
-	ChangeCaseTypeEmergency,
-	ChangeCaseTypeProject,
-	ChangeCaseTypeCentreOfExcellence,
-}
-
-type ChangeCasePriority string
-
-const (
-	ChangeCasePriorityCR1 ChangeCasePriority = "CR1"
-	ChangeCasePriorityCR2 ChangeCasePriority = "CR2"
-	ChangeCasePriorityCR3 ChangeCasePriority = "CR3"
-	ChangeCasePriorityCR4 ChangeCasePriority = "CR4"
-	ChangeCasePriorityCR5 ChangeCasePriority = "CR5"
-	ChangeCasePriorityCRS ChangeCasePriority = "CR-S"
-	ChangeCasePriorityCRE ChangeCasePriority = "CR-E"
-	ChangeCasePriorityCRP ChangeCasePriority = "CR-P"
-)
-
-var ChangeCasePriorityEnum connection.Enum[ChangeCasePriority] = []ChangeCasePriority{
-	ChangeCasePriorityCR1,
-	ChangeCasePriorityCR2,
-	ChangeCasePriorityCR3,
-	ChangeCasePriorityCR4,
-	ChangeCasePriorityCR5,
-	ChangeCasePriorityCRS,
-	ChangeCasePriorityCRE,
-	ChangeCasePriorityCRP,
-}
-
 var CaseStatusEnum connection.Enum[CaseStatus] = []CaseStatus{
 	CaseStatusInProgress,
 	CaseStatusOnHold,
@@ -229,7 +207,61 @@ var CaseStatusEnum connection.Enum[CaseStatus] = []CaseStatus{
 	CaseStatusOutofScopeofServiceContract,
 }
 
+type ChangeCaseType string
+
+func (s ChangeCaseType) String() string {
+	return string(s)
+}
+
+const (
+	ChangeCaseTypeNormal             ChangeCaseType = "Normal"
+	ChangeCaseTypeStandard           ChangeCaseType = "Standard"
+	ChangeCaseTypeEmergency          ChangeCaseType = "Emergency"
+	ChangeCaseTypeProject            ChangeCaseType = "Project"
+	ChangeCaseTypeCentreOfExcellence ChangeCaseType = "Centre of Excellence"
+)
+
+var ChangeCaseTypeEnum connection.Enum[ChangeCaseType] = []ChangeCaseType{
+	ChangeCaseTypeNormal,
+	ChangeCaseTypeStandard,
+	ChangeCaseTypeEmergency,
+	ChangeCaseTypeProject,
+	ChangeCaseTypeCentreOfExcellence,
+}
+
+type ChangeCasePriority string
+
+func (s ChangeCasePriority) String() string {
+	return string(s)
+}
+
+const (
+	ChangeCasePriorityCR1 ChangeCasePriority = "CR1"
+	ChangeCasePriorityCR2 ChangeCasePriority = "CR2"
+	ChangeCasePriorityCR3 ChangeCasePriority = "CR3"
+	ChangeCasePriorityCR4 ChangeCasePriority = "CR4"
+	ChangeCasePriorityCR5 ChangeCasePriority = "CR5"
+	ChangeCasePriorityCRS ChangeCasePriority = "CR-S"
+	ChangeCasePriorityCRE ChangeCasePriority = "CR-E"
+	ChangeCasePriorityCRP ChangeCasePriority = "CR-P"
+)
+
+var ChangeCasePriorityEnum connection.Enum[ChangeCasePriority] = []ChangeCasePriority{
+	ChangeCasePriorityCR1,
+	ChangeCasePriorityCR2,
+	ChangeCasePriorityCR3,
+	ChangeCasePriorityCR4,
+	ChangeCasePriorityCR5,
+	ChangeCasePriorityCRS,
+	ChangeCasePriorityCRE,
+	ChangeCasePriorityCRP,
+}
+
 type ChangeCaseStage string
+
+func (s ChangeCaseStage) String() string {
+	return string(s)
+}
 
 const (
 	ChangeCaseStageCaseType              ChangeCaseStage = "Case Type"
@@ -253,6 +285,10 @@ var ChangeCaseStageEnum connection.Enum[ChangeCaseStage] = []ChangeCaseStage{
 
 type ChangeCaseImpact string
 
+func (s ChangeCaseImpact) String() string {
+	return string(s)
+}
+
 const (
 	ChangeCaseImpactLow    ChangeCaseImpact = "Low"
 	ChangeCaseImpactMedium ChangeCaseImpact = "Medium"
@@ -267,6 +303,10 @@ var ChangeCaseImpactEnum connection.Enum[ChangeCaseImpact] = []ChangeCaseImpact{
 
 type ChangeCaseRisk string
 
+func (s ChangeCaseRisk) String() string {
+	return string(s)
+}
+
 const (
 	ChangeCaseRiskLow    ChangeCaseRisk = "Low"
 	ChangeCaseRiskMedium ChangeCaseRisk = "Medium"
@@ -280,6 +320,10 @@ var ChangeCaseRiskEnum connection.Enum[ChangeCaseRisk] = []ChangeCaseRisk{
 }
 
 type IncidentCaseType string
+
+func (s IncidentCaseType) String() string {
+	return string(s)
+}
 
 const (
 	IncidentCaseTypeFault                IncidentCaseType = "Fault"
@@ -305,6 +349,10 @@ var IncidentCaseTypeEnum connection.Enum[IncidentCaseType] = []IncidentCaseType{
 
 type IncidentCasePriority string
 
+func (s IncidentCasePriority) String() string {
+	return string(s)
+}
+
 const (
 	IncidentCasePriorityP1 IncidentCasePriority = "P1"
 	IncidentCasePriorityP2 IncidentCasePriority = "P2"
@@ -323,6 +371,10 @@ var IncidentCasePriorityEnum connection.Enum[IncidentCasePriority] = []IncidentC
 
 type IncidentCaseImpact string
 
+func (s IncidentCaseImpact) String() string {
+	return string(s)
+}
+
 const (
 	IncidentCaseImpactMajor    IncidentCaseImpact = "Major"
 	IncidentCaseImpactModerate IncidentCaseImpact = "Moderate"
@@ -336,6 +388,10 @@ var IncidentCaseImpactEnum connection.Enum[IncidentCaseImpact] = []IncidentCaseI
 }
 
 type ProblemCaseType string
+
+func (s ProblemCaseType) String() string {
+	return string(s)
+}
 
 const (
 	ProblemCaseTypeRCA              ProblemCaseType = "RCA"
@@ -356,6 +412,10 @@ var ProblemCaseTypeEnum connection.Enum[ProblemCaseType] = []ProblemCaseType{
 }
 
 type ProblemCasePriority string
+
+func (s ProblemCasePriority) String() string {
+	return string(s)
+}
 
 const (
 	ProblemCasePriorityPRB1   ProblemCasePriority = "PRB1"
@@ -379,6 +439,10 @@ var ProblemCasePriorityEnum connection.Enum[ProblemCasePriority] = []ProblemCase
 
 type ProblemCaseUrgency string
 
+func (s ProblemCaseUrgency) String() string {
+	return string(s)
+}
+
 const (
 	ProblemCaseUrgencySystemServiceDown ProblemCaseUrgency = "System / Service Down"
 	ProblemCaseUrgencySystemAffected    ProblemCaseUrgency = "System / Service Affected"
@@ -393,6 +457,10 @@ var ProblemCaseUrgencyEnum connection.Enum[ProblemCaseUrgency] = []ProblemCaseUr
 
 type ProblemCaseDetailedImpact string
 
+func (s ProblemCaseDetailedImpact) String() string {
+	return string(s)
+}
+
 const (
 	ProblemCaseDetailedImpactMajor    ProblemCaseDetailedImpact = "Major"
 	ProblemCaseDetailedImpactModerate ProblemCaseDetailedImpact = "Moderate"
@@ -406,6 +474,10 @@ var ProblemCaseDetailedImpactEnum connection.Enum[ProblemCaseDetailedImpact] = [
 }
 
 type ProblemCaseKnownWorkaround string
+
+func (s ProblemCaseKnownWorkaround) String() string {
+	return string(s)
+}
 
 const (
 	ProblemCaseKnownWorkaroundNotCurrentlyKnown                  ProblemCaseKnownWorkaround = "Not Currently Known"
@@ -422,6 +494,10 @@ var ProblemCaseKnownWorkaroundEnum connection.Enum[ProblemCaseKnownWorkaround] =
 }
 
 type ProblemCaseKnownCause string
+
+func (s ProblemCaseKnownCause) String() string {
+	return string(s)
+}
 
 const (
 	ProblemCaseKnownCauseNotCurrentlyKnown     ProblemCaseKnownCause = "Not Currently Known"

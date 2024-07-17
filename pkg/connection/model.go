@@ -58,7 +58,11 @@ func (e *ErrInvalidEnumValue) Error() string {
 	return e.Message
 }
 
-type Enum[T ~string] []T
+type EnumValue interface {
+	String() string
+}
+
+type Enum[T EnumValue] []T
 
 // String returns string containing a comma separated list of enum string values
 func (enums Enum[T]) String() string {
@@ -66,21 +70,21 @@ func (enums Enum[T]) String() string {
 }
 
 // Values returns a slice of strings containing the string values of enums for Enum
-func (enums Enum[T]) Values() []string {
+func (e Enum[T]) Values() []string {
 	var values []string
-	for _, enum := range enums {
-		values = append(values, string(enum))
+	for _, ev := range e {
+		values = append(values, ev.String())
 	}
 	return values
 }
 
-// Parse attempts to parse T from string
-func (enums Enum[T]) Parse(s string) (T, error) {
-	for _, e := range enums {
-		if strings.EqualFold(s, string(e)) {
-			return e, nil
+// Parse attempts to parse T from string value
+func (e Enum[T]) Parse(s string) (T, error) {
+	for _, ev := range e {
+		if strings.EqualFold(s, ev.String()) {
+			return ev, nil
 		}
 	}
 
-	return *new(T), NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", *new(T), enums.String()))
+	return *new(T), NewErrInvalidEnumValue(fmt.Sprintf("Invalid %T. Valid values: %s", *new(T), e.String()))
 }

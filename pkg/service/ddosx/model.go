@@ -20,6 +20,10 @@ const (
 
 type DomainPropertyName string
 
+func (s DomainPropertyName) String() string {
+	return string(s)
+}
+
 const (
 	DomainPropertyNameClientMaxBodySize DomainPropertyName = "client_max_body_size"
 	DomainPropertyNameProxyTimeout      DomainPropertyName = "proxy_timeout"
@@ -36,12 +40,25 @@ var DomainPropertyNameEnum connection.Enum[DomainPropertyName] = []DomainPropert
 
 type RecordType string
 
+func (s RecordType) String() string {
+	return string(s)
+}
+
 const (
 	RecordTypeA    RecordType = "A"
 	RecordTypeAAAA RecordType = "AAAA"
 )
 
+var RecordTypeEnum connection.Enum[RecordType] = []RecordType{
+	RecordTypeA,
+	RecordTypeAAAA,
+}
+
 type WAFMode string
+
+func (s WAFMode) String() string {
+	return string(s)
+}
 
 const (
 	WAFModeOn            WAFMode = "On"
@@ -56,6 +73,10 @@ var WAFModeEnum connection.Enum[WAFMode] = []WAFMode{
 }
 
 type WAFParanoiaLevel string
+
+func (s WAFParanoiaLevel) String() string {
+	return string(s)
+}
 
 const (
 	WAFParanoiaLevelLow     WAFParanoiaLevel = "Low"
@@ -95,6 +116,10 @@ const (
 
 type WAFAdvancedRuleSection string
 
+func (s WAFAdvancedRuleSection) String() string {
+	return string(s)
+}
+
 const (
 	WAFAdvancedRuleSectionArgs           WAFAdvancedRuleSection = "ARGS"
 	WAFAdvancedRuleSectionMatchedVars    WAFAdvancedRuleSection = "MATCHED_VARS"
@@ -117,6 +142,10 @@ var WAFAdvancedRuleSectionEnum connection.Enum[WAFAdvancedRuleSection] = []WAFAd
 
 type WAFAdvancedRuleModifier string
 
+func (s WAFAdvancedRuleModifier) String() string {
+	return string(s)
+}
+
 const (
 	WAFAdvancedRuleModifierBeginsWith   WAFAdvancedRuleModifier = "beginsWith"
 	WAFAdvancedRuleModifierEndsWith     WAFAdvancedRuleModifier = "endsWith"
@@ -133,6 +162,10 @@ var WAFAdvancedRuleModifierEnum connection.Enum[WAFAdvancedRuleModifier] = []WAF
 
 type ACLIPMode string
 
+func (s ACLIPMode) String() string {
+	return string(s)
+}
+
 const (
 	ACLIPModeAllow ACLIPMode = "Allow"
 	ACLIPModeDeny  ACLIPMode = "Deny"
@@ -144,6 +177,10 @@ var ACLIPModeEnum connection.Enum[ACLIPMode] = []ACLIPMode{
 }
 
 type ACLGeoIPRulesMode string
+
+func (s ACLGeoIPRulesMode) String() string {
+	return string(s)
+}
 
 const (
 	ACLGeoIPRulesModeWhitelist ACLGeoIPRulesMode = "Whitelist"
@@ -157,6 +194,10 @@ var ACLGeoIPRulesModeEnum connection.Enum[ACLGeoIPRulesMode] = []ACLGeoIPRulesMo
 
 type CDNRuleCacheControl string
 
+func (s CDNRuleCacheControl) String() string {
+	return string(s)
+}
+
 const (
 	CDNRuleCacheControlCustom CDNRuleCacheControl = "Custom"
 	CDNRuleCacheControlOrigin CDNRuleCacheControl = "Origin"
@@ -169,6 +210,10 @@ var CDNRuleCacheControlEnum connection.Enum[CDNRuleCacheControl] = []CDNRuleCach
 
 type CDNRuleType string
 
+func (s CDNRuleType) String() string {
+	return string(s)
+}
+
 const (
 	CDNRuleTypeGlobal CDNRuleType = "global"
 	CDNRuleTypePerURI CDNRuleType = "per-uri"
@@ -177,6 +222,10 @@ const (
 var CDNRuleTypeEnum connection.Enum[CDNRuleType] = []CDNRuleType{CDNRuleTypeGlobal, CDNRuleTypePerURI}
 
 type HSTSRuleType string
+
+func (s HSTSRuleType) String() string {
+	return string(s)
+}
 
 const (
 	HSTSRuleTypeDomain HSTSRuleType = "domain"

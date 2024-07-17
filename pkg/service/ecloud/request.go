@@ -403,6 +403,10 @@ type PatchHostRequest struct {
 
 type NetworkPolicyCatchallRuleAction string
 
+func (s NetworkPolicyCatchallRuleAction) String() string {
+	return string(s)
+}
+
 const (
 	NetworkPolicyCatchallRuleActionAllow  NetworkPolicyCatchallRuleAction = "ALLOW"
 	NetworkPolicyCatchallRuleActionDrop   NetworkPolicyCatchallRuleAction = "DROP"

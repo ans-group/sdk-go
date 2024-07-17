@@ -25,6 +25,10 @@ type Target struct {
 
 type TargetGroupBalance string
 
+func (s TargetGroupBalance) String() string {
+	return string(s)
+}
+
 const (
 	TargetGroupBalanceRoundRobin TargetGroupBalance = "roundrobin"
 	TargetGroupBalanceStaticRR   TargetGroupBalance = "static-rr"
@@ -50,6 +54,10 @@ var TargetGroupBalanceEnum connection.Enum[TargetGroupBalance] = []TargetGroupBa
 }
 
 type TargetGroupMonitorMethod string
+
+func (s TargetGroupMonitorMethod) String() string {
+	return string(s)
+}
 
 const (
 	TargetGroupMonitorMethodGET     TargetGroupMonitorMethod = "GET"
@@ -121,6 +129,10 @@ type VIP struct {
 
 type Mode string
 
+func (s Mode) String() string {
+	return string(s)
+}
+
 const (
 	ModeHTTP Mode = "http"
 	ModeTCP  Mode = "tcp"
@@ -156,6 +168,10 @@ type Listener struct {
 	UpdatedAt            connection.DateTime `json:"updated_at"`
 }
 type ListenerGeoIPRestriction string
+
+func (s ListenerGeoIPRestriction) String() string {
+	return string(s)
+}
 
 const (
 	ListenerGeoIPRestrictionAllow ListenerGeoIPRestriction = "allow"

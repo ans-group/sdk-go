@@ -21,6 +21,10 @@ const (
 
 type VirtualMachinePowerStatus string
 
+func (s VirtualMachinePowerStatus) String() string {
+	return string(s)
+}
+
 const (
 	VirtualMachinePowerStatusOnline  VirtualMachinePowerStatus = "Online"
 	VirtualMachinePowerStatusOffline VirtualMachinePowerStatus = "Offline"
@@ -240,6 +244,10 @@ type ActiveDirectoryDomain struct {
 
 type TemplateType string
 
+func (s TemplateType) String() string {
+	return string(s)
+}
+
 const (
 	TemplateTypeSolution TemplateType = "solution"
 	TemplateTypePod      TemplateType = "pod"
@@ -290,6 +298,10 @@ type ResourceTask struct {
 }
 
 type TaskStatus string
+
+func (s TaskStatus) String() string {
+	return string(s)
+}
 
 const (
 	TaskStatusComplete   TaskStatus = "complete"
@@ -411,6 +423,10 @@ type FirewallPolicy struct {
 
 type FirewallRuleAction string
 
+func (s FirewallRuleAction) String() string {
+	return string(s)
+}
+
 const (
 	FirewallRuleActionAllow  FirewallRuleAction = "ALLOW"
 	FirewallRuleActionDrop   FirewallRuleAction = "DROP"
@@ -424,6 +440,10 @@ var FirewallRuleActionEnum connection.Enum[FirewallRuleAction] = []FirewallRuleA
 }
 
 type FirewallRuleDirection string
+
+func (s FirewallRuleDirection) String() string {
+	return string(s)
+}
 
 const (
 	FirewallRuleDirectionIn    FirewallRuleDirection = "IN"
@@ -453,6 +473,10 @@ type FirewallRule struct {
 }
 
 type FirewallRulePortProtocol string
+
+func (s FirewallRulePortProtocol) String() string {
+	return string(s)
+}
 
 const (
 	FirewallRulePortProtocolTCP    FirewallRulePortProtocol = "TCP"
@@ -703,6 +727,10 @@ type NetworkPolicy struct {
 
 type NetworkRuleAction string
 
+func (s NetworkRuleAction) String() string {
+	return string(s)
+}
+
 const (
 	NetworkRuleActionAllow  NetworkRuleAction = "ALLOW"
 	NetworkRuleActionDrop   NetworkRuleAction = "DROP"
@@ -716,6 +744,10 @@ var NetworkRuleActionEnum connection.Enum[NetworkRuleAction] = []NetworkRuleActi
 }
 
 type NetworkRuleDirection string
+
+func (s NetworkRuleDirection) String() string {
+	return string(s)
+}
 
 const (
 	NetworkRuleDirectionIn    NetworkRuleDirection = "IN"
@@ -746,6 +778,10 @@ type NetworkRule struct {
 }
 
 type NetworkRulePortProtocol string
+
+func (s NetworkRulePortProtocol) String() string {
+	return string(s)
+}
 
 const (
 	NetworkRulePortProtocolTCP    NetworkRulePortProtocol = "TCP"
@@ -909,6 +945,10 @@ type IPAddress struct {
 
 type AffinityRuleType string
 
+func (s AffinityRuleType) String() string {
+	return string(s)
+}
+
 const (
 	Affinity     AffinityRuleType = "affinity"
 	AntiAffinity AffinityRuleType = "anti-affinity"
@@ -950,6 +990,10 @@ type ResourceTier struct {
 }
 
 type NATOverloadRuleAction string
+
+func (s NATOverloadRuleAction) String() string {
+	return string(s)
+}
 
 const (
 	NATOverloadRuleActionAllow NATOverloadRuleAction = "allow"

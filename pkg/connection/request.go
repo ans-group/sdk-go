@@ -110,6 +110,10 @@ func NewAPIRequestFiltering(property string, operator APIRequestFilteringOperato
 
 type APIRequestFilteringOperator string
 
+func (s APIRequestFilteringOperator) String() string {
+	return string(s)
+}
+
 const (
 	// EQOperator - equals
 	EQOperator APIRequestFilteringOperator = "eq"
