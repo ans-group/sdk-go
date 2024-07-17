@@ -279,5 +279,5 @@ func (s *Service) createCaseUpdateResponseBody(caseID string, req CreateCaseUpda
 		return &connection.APIResponseBodyData[CaseUpdate]{}, fmt.Errorf("invalid case id")
 	}
 
-	return connection.Post[CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/update", caseID), &req)
+	return connection.Post[CaseUpdate](s.connection, fmt.Sprintf("/pss/v2/cases/%s/updates", caseID), &req)
 }
