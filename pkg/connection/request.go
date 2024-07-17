@@ -1,8 +1,7 @@
 package connection
 
 import (
-	"errors"
-	"strings"
+	"net/url"
 
 	validator "gopkg.in/go-playground/validator.v9"
 )
@@ -42,6 +41,7 @@ type APIRequest struct {
 	Method     string
 	Resource   string
 	Body       interface{}
+	Query      url.Values
 	Parameters APIRequestParameters
 }
 
@@ -108,68 +108,40 @@ func NewAPIRequestFiltering(property string, operator APIRequestFilteringOperato
 	}
 }
 
-type APIRequestFilteringOperator int
+type APIRequestFilteringOperator string
+
+func (s APIRequestFilteringOperator) String() string {
+	return string(s)
+}
 
 const (
 	// EQOperator - equals
-	EQOperator APIRequestFilteringOperator = iota
+	EQOperator APIRequestFilteringOperator = "eq"
 	// LKOperator - like
-	LKOperator
+	LKOperator APIRequestFilteringOperator = "lk"
 	// GTOperator - greater than
-	GTOperator
+	GTOperator APIRequestFilteringOperator = "gt"
 	// LTOperator - less than
-	LTOperator
+	LTOperator APIRequestFilteringOperator = "lt"
 	// INOperator - in set
-	INOperator
+	INOperator APIRequestFilteringOperator = "in"
 	// NEQOperator - not equal
-	NEQOperator
+	NEQOperator APIRequestFilteringOperator = "neq"
 	// NINOperator - not in set
-	NINOperator
+	NINOperator APIRequestFilteringOperator = "nin"
 	// NLKOperator - not like
-	NLKOperator
+	NLKOperator APIRequestFilteringOperator = "nlk"
 )
 
-func (o APIRequestFilteringOperator) String() string {
-	operators := [...]string{
-		"eq",
-		"lk",
-		"gt",
-		"lt",
-		"in",
-		"neq",
-		"nin",
-		"nlk",
-	}
-
-	if o < EQOperator || o > NLKOperator {
-		return "Unknown"
-	}
-
-	return operators[o]
-}
-
-// ParseOperator attempts to parse an operator from string
-func ParseOperator(o string) (APIRequestFilteringOperator, error) {
-	switch strings.ToUpper(o) {
-	case "EQ":
-		return EQOperator, nil
-	case "LK":
-		return LKOperator, nil
-	case "GT":
-		return GTOperator, nil
-	case "LT":
-		return LTOperator, nil
-	case "IN":
-		return INOperator, nil
-	case "NEQ":
-		return NEQOperator, nil
-	case "NIN":
-		return NINOperator, nil
-	case "NLK":
-		return NLKOperator, nil
-	}
-
-	return 0, errors.New("Invalid filtering operator")
+var APIRequestFilteringOperatorEnum Enum[APIRequestFilteringOperator] = []APIRequestFilteringOperator{
+	EQOperator,
+	LKOperator,
+	GTOperator,
+	LTOperator,
+	INOperator,
+	NEQOperator,
+	NINOperator,
+	NLKOperator,
 }
 
 type Paginated[T any] struct {

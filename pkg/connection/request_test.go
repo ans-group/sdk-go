@@ -1,7 +1,6 @@
 package connection
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -122,10 +121,10 @@ func TestAPIRequestParameters_WithPackedFilters_AddsFilters(t *testing.T) {
 func TestAPIRequestParameters_Copy_ReturnsCopy(t *testing.T) {
 	params := APIRequestParameters{
 		Filtering: []APIRequestFiltering{
-			APIRequestFiltering{
+			{
 				Property: "testproperty1",
 			},
-			APIRequestFiltering{
+			{
 				Operator: EQOperator,
 				Value:    []string{"testproperty2valuea", "testproperty2valueb"},
 			},
@@ -146,87 +145,6 @@ func TestAPIRequestParameters_Copy_ReturnsCopy(t *testing.T) {
 	assert.Equal(t, "testproperty2valueb", newParams.Filtering[1].Value[1])
 	assert.Equal(t, "testproperty1", newParams.Sorting.Property)
 	assert.Equal(t, 4, newParams.Pagination.Page)
-}
-
-func TestParseOperator(t *testing.T) {
-	type testoperator struct {
-		Operator         string
-		ExpectedOperator APIRequestFilteringOperator
-	}
-	operators := []testoperator{
-		testoperator{
-			Operator:         "EQ",
-			ExpectedOperator: EQOperator,
-		},
-		testoperator{
-			Operator:         "LK",
-			ExpectedOperator: LKOperator,
-		},
-		testoperator{
-			Operator:         "GT",
-			ExpectedOperator: GTOperator,
-		},
-		testoperator{
-			Operator:         "LT",
-			ExpectedOperator: LTOperator,
-		},
-		testoperator{
-			Operator:         "IN",
-			ExpectedOperator: INOperator,
-		},
-		testoperator{
-			Operator:         "NEQ",
-			ExpectedOperator: NEQOperator,
-		},
-		testoperator{
-			Operator:         "NIN",
-			ExpectedOperator: NINOperator,
-		},
-		testoperator{
-			Operator:         "NLK",
-			ExpectedOperator: NLKOperator,
-		},
-	}
-
-	for _, operator := range operators {
-		t.Run(fmt.Sprintf("%s_Exact_Parses", operator.Operator), func(t *testing.T) {
-			parsedOperator, err := ParseOperator(operator.Operator)
-
-			assert.Nil(t, err)
-			assert.Equal(t, operator.ExpectedOperator, parsedOperator)
-		})
-	}
-
-	t.Run("MixedCase_Parses", func(t *testing.T) {
-		operator, err := ParseOperator("gT")
-
-		assert.Nil(t, err)
-		assert.Equal(t, GTOperator, operator)
-	})
-
-	t.Run("Invalid_Error", func(t *testing.T) {
-		_, err := ParseOperator("invalidoperator")
-
-		assert.NotNil(t, err)
-	})
-}
-
-func TestAPIRequestFilteringOperator_String(t *testing.T) {
-	t.Run("Valid_String", func(t *testing.T) {
-		o := GTOperator
-
-		s := o.String()
-
-		assert.Equal(t, "gt", s)
-	})
-
-	t.Run("Invalid_Unknown", func(t *testing.T) {
-		var o APIRequestFilteringOperator = 999
-
-		s := o.String()
-
-		assert.Equal(t, "Unknown", s)
-	})
 }
 
 type GenericData struct{}
@@ -458,8 +376,8 @@ func TestInvokeRequestAll_CallsInvoke(t *testing.T) {
 					},
 				},
 				Data: []GenericData{
-					GenericData{},
-					GenericData{},
+					{},
+					{},
 				},
 			},
 		}, nil

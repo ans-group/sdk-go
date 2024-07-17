@@ -403,30 +403,20 @@ type PatchHostRequest struct {
 
 type NetworkPolicyCatchallRuleAction string
 
+func (s NetworkPolicyCatchallRuleAction) String() string {
+	return string(s)
+}
+
 const (
 	NetworkPolicyCatchallRuleActionAllow  NetworkPolicyCatchallRuleAction = "ALLOW"
 	NetworkPolicyCatchallRuleActionDrop   NetworkPolicyCatchallRuleAction = "DROP"
 	NetworkPolicyCatchallRuleActionReject NetworkPolicyCatchallRuleAction = "REJECT"
 )
 
-var NetworkPolicyCatchallRuleActionEnum connection.EnumSlice = []connection.Enum{
+var NetworkPolicyCatchallRuleActionEnum connection.Enum[NetworkPolicyCatchallRuleAction] = []NetworkPolicyCatchallRuleAction{
 	NetworkPolicyCatchallRuleActionAllow,
 	NetworkPolicyCatchallRuleActionDrop,
 	NetworkPolicyCatchallRuleActionReject,
-}
-
-// ParseNetworkPolicyCatchallRuleAction attempts to parse a NetworkPolicyCatchallRuleAction from string
-func ParseNetworkPolicyCatchallRuleAction(s string) (NetworkPolicyCatchallRuleAction, error) {
-	e, err := connection.ParseEnum(s, NetworkPolicyCatchallRuleActionEnum)
-	if err != nil {
-		return "", err
-	}
-
-	return e.(NetworkPolicyCatchallRuleAction), err
-}
-
-func (s NetworkPolicyCatchallRuleAction) String() string {
-	return string(s)
 }
 
 // CreateNetworkPolicyRequest represents a request to create a network policy
