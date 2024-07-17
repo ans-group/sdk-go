@@ -933,3 +933,164 @@ func TestGetCaseUpdates(t *testing.T) {
 		assert.IsType(t, &CaseNotFoundError{}, err)
 	})
 }
+
+func TestGetCaseUpdate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/INC123456/updates/f29be71a-cb2c-449c-bb8d-01c3180bc49b", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"f29be71a-cb2c-449c-bb8d-01c3180bc49b\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil)
+
+		update, err := s.GetCaseUpdate("INC123456", "f29be71a-cb2c-449c-bb8d-01c3180bc49b")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "f29be71a-cb2c-449c-bb8d-01c3180bc49b", update.ID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/INC123456/updates/f29be71a-cb2c-449c-bb8d-01c3180bc49b", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.GetCaseUpdate("INC123456", "f29be71a-cb2c-449c-bb8d-01c3180bc49b")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidCaseID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetCaseUpdate("", "f29be71a-cb2c-449c-bb8d-01c3180bc49b")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid case id", err.Error())
+	})
+
+	t.Run("InvalidUpdateID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.GetCaseUpdate("INC123456", "")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid case update id", err.Error())
+	})
+
+	t.Run("404_ReturnsProblemNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/pss/v2/cases/INC123456/updates/f29be71a-cb2c-449c-bb8d-01c3180bc49b", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil)
+
+		_, err := s.GetCaseUpdate("INC123456", "f29be71a-cb2c-449c-bb8d-01c3180bc49b")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &CaseUpdateNotFoundError{}, err)
+	})
+}
+
+func TestCreateCaseUpdate(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		createRequest := CreateCaseUpdateRequest{
+			Description: "testupdate",
+		}
+
+		c.EXPECT().Post("/pss/v2/cases/INC123456/updates", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"ad824777-8559-47d4-959a-27643d9cb183\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		id, err := s.CreateCaseUpdate("INC123456", createRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "ad824777-8559-47d4-959a-27643d9cb183", id)
+	})
+
+	t.Run("InvalidCaseID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		_, err := s.CreateCaseUpdate("", CreateCaseUpdateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid case id", err.Error())
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/pss/v2/cases/INC123456/updates", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
+
+		_, err := s.CreateCaseUpdate("INC123456", CreateCaseUpdateRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
