@@ -630,3 +630,9 @@ type PatchNATOverloadRuleRequest struct {
 	Subnet string                `json:"subnet,omitempty"`
 	Action NATOverloadRuleAction `json:"action,omitempty"`
 }
+
+type ExecuteInstanceScriptRequest struct {
+	Script   string `json:"script"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}

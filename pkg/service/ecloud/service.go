@@ -180,6 +180,7 @@ type ECloudService interface {
 	CreateInstanceImage(instanceID string, req CreateInstanceImageRequest) (TaskReference, error)
 	EncryptInstance(instanceID string) (string, error)
 	DecryptInstance(instanceID string) (string, error)
+	ExecuteInstanceScript(instanceID string, req ExecuteInstanceScriptRequest) (string, error)
 
 	// Floating IP
 	GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error)

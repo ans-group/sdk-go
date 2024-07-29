@@ -3,6 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -1885,6 +1886,83 @@ func TestDecryptInstance(t *testing.T) {
 		}
 
 		_, err := s.DecryptInstance("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid instance id", err.Error())
+	})
+}
+
+func TestExecuteInstanceScript(t *testing.T) {
+	t.Run("Valid_NoError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/user-script", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil)
+
+		executeRequest := ExecuteInstanceScriptRequest{
+			Script:   "test script 1",
+			Username: "test_user",
+			Password: "test_password",
+		}
+
+		taskID, err := s.ExecuteInstanceScript("i-abcdef12", executeRequest)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/user-script", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		executeRequest := ExecuteInstanceScriptRequest{
+			Script:   "test script 1",
+			Username: "test_user",
+			Password: "test_password",
+		}
+
+		_, err := s.ExecuteInstanceScript("i-abcdef12", executeRequest)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidInstanceID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		executeRequest := ExecuteInstanceScriptRequest{
+			Script:   "test script 1",
+			Username: "test_user",
+			Password: "test_password",
+		}
+
+		_, err := s.ExecuteInstanceScript("", executeRequest)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
