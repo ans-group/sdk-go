@@ -83,3 +83,31 @@ type Client struct {
 	NominetContactID string `json:"nominet_contact_id"`
 	CreatedDate      string `json:"created_date"`
 }
+
+// Application represents an API Application
+type Application struct {
+	ID          string `json:"id"`
+	AppName     string `json:"name"`
+	Description string `json:"description"`
+	CreatedDate string `json:"created_at"`
+	CreatedBy   string `json:"created_by"`
+}
+
+type ApplicationService struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type ApplicationServiceMapping struct {
+	Scopes []ApplicationServiceScope `json:"scopes"`
+}
+
+type ApplicationServiceScope struct {
+	Service string   `json:"service"`
+	Roles   []string `json:"roles"`
+}
+
+type ApplicationRestriction struct {
+	RestrictionType string   `json:"ip_restriction_type"`
+	IPRanges        []string `json:"ip_ranges"`
+}
