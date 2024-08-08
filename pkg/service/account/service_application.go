@@ -41,18 +41,7 @@ func (s *Service) getApplicationResponseBody(appID string) (*connection.APIRespo
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Get[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // GetApplications retrieves a list of applications
@@ -83,14 +72,7 @@ func (s *Service) CreateApplication(req CreateApplicationRequest) (string, error
 }
 
 func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
-	body := &connection.APIResponseBodyData[Application]{}
-
-	response, err := s.connection.Post("/account/v1/applications", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
+	return connection.Post[Application](s.connection, "/account/v1/applications", &req)
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
@@ -107,18 +89,7 @@ func (s *Service) getApplicationServicesResponseBody(appID string) (*connection.
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/account/v1/applications/%s/services", appID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Get[ApplicationServiceMapping](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 func (s *Service) SetApplicationServices(appID string, req SetServiceRequest) error {
@@ -127,25 +98,14 @@ func (s *Service) SetApplicationServices(appID string, req SetServiceRequest) er
 	return err
 }
 
-func (s *Service) setApplicationServicesResponseBody(appID string, req SetServiceRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) setApplicationServicesResponseBody(appID string, req SetServiceRequest) (*connection.APIResponseBodyData[interface{}], error) {
+	body := &connection.APIResponseBodyData[interface{}]{}
 
 	if appID == "" {
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Put(fmt.Sprintf("/account/v1/applications/%s/services", appID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // DeleteApplication removes an application
@@ -155,25 +115,14 @@ func (s *Service) DeleteApplication(appID string) error {
 	return err
 }
 
-func (s *Service) deleteApplicationResponseBody(appID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteApplicationResponseBody(appID string) (*connection.APIResponseBodyData[interface{}], error) {
+	body := &connection.APIResponseBodyData[interface{}]{}
 
 	if appID == "" {
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Delete(fmt.Sprintf("/account/v1/applications/%s", appID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // GetApplicationRestrictions retrieves the IP restrictions of an application by id
@@ -190,18 +139,7 @@ func (s *Service) getApplicationRestrictionsResponseBody(appID string) (*connect
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Get(fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Get[ApplicationRestriction](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 func (s *Service) SetApplicationRestrictions(appID string, req SetRestrictionRequest) error {
@@ -210,23 +148,12 @@ func (s *Service) SetApplicationRestrictions(appID string, req SetRestrictionReq
 	return err
 }
 
-func (s *Service) setApplicationRestrictionsResponseBody(appID string, req SetRestrictionRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) setApplicationRestrictionsResponseBody(appID string, req SetRestrictionRequest) (*connection.APIResponseBodyData[interface{}], error) {
+	body := &connection.APIResponseBodyData[interface{}]{}
 
 	if appID == "" {
 		return body, fmt.Errorf("invalid application id")
 	}
 
-	response, err := s.connection.Put(fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &ApplicationNotFoundError{ID: appID}
-		}
-
-		return nil
-	})
+	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }

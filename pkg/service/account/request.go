@@ -58,8 +58,8 @@ type PatchClientRequest struct {
 }
 
 type CreateApplicationRequest struct {
-	Name           string `json:"name"`
-	AppDescription string `json:"description"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type SetServiceRequest struct {
@@ -67,6 +67,6 @@ type SetServiceRequest struct {
 }
 
 type SetRestrictionRequest struct {
-	RestrictionType string   `json:"ip_restriction_type"`
-	IPRanges        []string `json:"ip_ranges"`
+	IPRestrictionType string   `json:"ip_restriction_type"`
+	IPRanges          []string `json:"ip_ranges"`
 }

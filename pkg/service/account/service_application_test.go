@@ -480,7 +480,7 @@ func TestGetApplicationRestrictions(t *testing.T) {
 		id, err := s.GetApplicationRestrictions("test-id-123")
 
 		assert.Nil(t, err)
-		assert.Equal(t, "allowlist", id.RestrictionType)
+		assert.Equal(t, "allowlist", id.IPRestrictionType)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {

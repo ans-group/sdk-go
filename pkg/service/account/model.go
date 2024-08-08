@@ -87,9 +87,9 @@ type Client struct {
 // Application represents an API Application
 type Application struct {
 	ID          string `json:"id"`
-	AppName     string `json:"name"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
-	CreatedDate string `json:"created_at"`
+	CreatedAt   string `json:"created_at"`
 	CreatedBy   string `json:"created_by"`
 }
 
@@ -108,6 +108,6 @@ type ApplicationServiceScope struct {
 }
 
 type ApplicationRestriction struct {
-	RestrictionType string   `json:"ip_restriction_type"`
-	IPRanges        []string `json:"ip_ranges"`
+	IPRestrictionType string   `json:"ip_restriction_type"`
+	IPRanges          []string `json:"ip_ranges"`
 }
