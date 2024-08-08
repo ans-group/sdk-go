@@ -56,3 +56,17 @@ type PatchClientRequest struct {
 	IDReference      string `json:"id_reference,omitempty"`
 	NominetContactID string `json:"nominet_contact_id,omitempty"`
 }
+
+type CreateApplicationRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type SetServiceRequest struct {
+	Scopes []ApplicationServiceScope `json:"scopes"`
+}
+
+type SetRestrictionRequest struct {
+	IPRestrictionType string   `json:"ip_restriction_type"`
+	IPRanges          []string `json:"ip_ranges"`
+}
