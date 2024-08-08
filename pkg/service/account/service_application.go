@@ -17,14 +17,7 @@ func (s *Service) GetApplicationsPaginated(parameters connection.APIRequestParam
 }
 
 func (s *Service) getApplicationsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Application], error) {
-	body := &connection.APIResponseBodyData[[]Application]{}
-
-	response, err := s.connection.Get("/account/v1/applications", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
+	return connection.Get[[]Application](s.connection, "/account/v1/applications", parameters)
 }
 
 // GetApplication retrieves a single application by id
