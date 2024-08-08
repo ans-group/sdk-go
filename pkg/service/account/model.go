@@ -86,11 +86,11 @@ type Client struct {
 
 // Application represents an API Application
 type Application struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	CreatedAt   string `json:"created_at"`
-	CreatedBy   string `json:"created_by"`
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	CreatedBy   string              `json:"created_by"`
 }
 
 type ApplicationService struct {

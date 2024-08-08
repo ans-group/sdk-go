@@ -35,10 +35,8 @@ func (s *Service) GetApplication(appID string) (Application, error) {
 }
 
 func (s *Service) getApplicationResponseBody(appID string) (*connection.APIResponseBodyData[Application], error) {
-	body := &connection.APIResponseBodyData[Application]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[Application]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Get[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
@@ -83,10 +81,8 @@ func (s *Service) GetApplicationServices(appID string) (ApplicationServiceMappin
 }
 
 func (s *Service) getApplicationServicesResponseBody(appID string) (*connection.APIResponseBodyData[ApplicationServiceMapping], error) {
-	body := &connection.APIResponseBodyData[ApplicationServiceMapping]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[ApplicationServiceMapping]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Get[ApplicationServiceMapping](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
@@ -99,10 +95,8 @@ func (s *Service) SetApplicationServices(appID string, req SetServiceRequest) er
 }
 
 func (s *Service) setApplicationServicesResponseBody(appID string, req SetServiceRequest) (*connection.APIResponseBodyData[interface{}], error) {
-	body := &connection.APIResponseBodyData[interface{}]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
@@ -116,10 +110,8 @@ func (s *Service) DeleteApplication(appID string) error {
 }
 
 func (s *Service) deleteApplicationResponseBody(appID string) (*connection.APIResponseBodyData[interface{}], error) {
-	body := &connection.APIResponseBodyData[interface{}]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
@@ -133,10 +125,8 @@ func (s *Service) GetApplicationRestrictions(appID string) (ApplicationRestricti
 }
 
 func (s *Service) getApplicationRestrictionsResponseBody(appID string) (*connection.APIResponseBodyData[ApplicationRestriction], error) {
-	body := &connection.APIResponseBodyData[ApplicationRestriction]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[ApplicationRestriction]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Get[ApplicationRestriction](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
@@ -149,10 +139,8 @@ func (s *Service) SetApplicationRestrictions(appID string, req SetRestrictionReq
 }
 
 func (s *Service) setApplicationRestrictionsResponseBody(appID string, req SetRestrictionRequest) (*connection.APIResponseBodyData[interface{}], error) {
-	body := &connection.APIResponseBodyData[interface{}]{}
-
 	if appID == "" {
-		return body, fmt.Errorf("invalid application id")
+		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
 	}
 
 	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
