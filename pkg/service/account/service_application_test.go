@@ -389,14 +389,14 @@ func TestSetApplicationServices(t *testing.T) {
 
 		serviceRequest := SetServiceRequest{}
 
-		c.EXPECT().Put("/account/v1/applications/task-id-123/services", gomock.Eq(&serviceRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Eq(&serviceRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.SetApplicationServices("task-id-123", serviceRequest)
+		err := s.SetApplicationServices("test-id-123", serviceRequest)
 
 		assert.Nil(t, err)
 	})
@@ -411,9 +411,9 @@ func TestSetApplicationServices(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Put("/account/v1/applications/task-id-123/services", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.SetApplicationServices("task-id-123", SetServiceRequest{})
+		err := s.SetApplicationServices("test-id-123", SetServiceRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -554,14 +554,14 @@ func TestSetApplicationRestrictions(t *testing.T) {
 
 		restrictionRequest := SetRestrictionRequest{}
 
-		c.EXPECT().Put("/account/v1/applications/task-id-123/ip-restrictions", gomock.Eq(&restrictionRequest)).Return(&connection.APIResponse{
+		c.EXPECT().Put("/account/v1/applications/test-id-123/ip-restrictions", gomock.Eq(&restrictionRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.SetApplicationRestrictions("task-id-123", restrictionRequest)
+		err := s.SetApplicationRestrictions("test-id-123", restrictionRequest)
 
 		assert.Nil(t, err)
 	})
@@ -576,9 +576,9 @@ func TestSetApplicationRestrictions(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Put("/account/v1/applications/task-id-123/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Put("/account/v1/applications/test-id-123/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.SetApplicationRestrictions("task-id-123", SetRestrictionRequest{})
+		err := s.SetApplicationRestrictions("test-id-123", SetRestrictionRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
