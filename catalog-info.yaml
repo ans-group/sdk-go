@@ -1,0 +1,11 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  title: SDK - Go
+  name: sdk-go
+  description: Go SDK for the ANS APIs.
+spec:
+  type: library
+  owner: devops
+  lifecycle: production
