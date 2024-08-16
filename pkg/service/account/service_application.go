@@ -77,7 +77,7 @@ func (s *Service) updateApplicationResponseBody(appID string, req UpdateApplicat
 		return &connection.APIResponseBodyData[Application]{}, fmt.Errorf("invalid application id")
 	}
 
-	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), &req)
+	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), &req)
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
@@ -121,7 +121,7 @@ func (s *Service) deleteApplicationResponseBody(appID string) (*connection.APIRe
 		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
 	}
 
-	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/ccount/v1/applications/%sa", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
+	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // GetApplicationRestrictions retrieves the IP restrictions of an application by id
