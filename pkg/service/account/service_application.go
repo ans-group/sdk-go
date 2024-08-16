@@ -66,14 +66,18 @@ func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*
 	return connection.Post[CreateApplicationResponse](s.connection, "/account/v1/applications", &req)
 }
 
-func (s *Service) UpdateApplication(req UpdateApplicationRequest) (string, error) {
-	body, err := s.updateApplicationResponseBody(req)
+func (s *Service) UpdateApplication(appID string, req UpdateApplicationRequest) error {
+	_, err := s.updateApplicationResponseBody(appID, req)
 
-	return body.Data.ID, err
+	return err
 }
 
-func (s *Service) updateApplicationResponseBody(req UpdateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
-	return connection.Patch[Application](s.connection, "/account/v1/applications", &req)
+func (s *Service) updateApplicationResponseBody(appID string, req UpdateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
+	if appID == "" {
+		return &connection.APIResponseBodyData[Application]{}, fmt.Errorf("invalid application id")
+	}
+
+	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), &req)
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
@@ -117,7 +121,7 @@ func (s *Service) deleteApplicationResponseBody(appID string) (*connection.APIRe
 		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
 	}
 
-	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
+	return connection.Delete[interface{}](s.connection, fmt.Sprintf("/ccount/v1/applications/%sa", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // GetApplicationRestrictions retrieves the IP restrictions of an application by id
