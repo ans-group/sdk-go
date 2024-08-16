@@ -67,8 +67,8 @@ func (s *Service) CreateApplication(req CreateApplicationRequest) (CreateApplica
 	return response, err
 }
 
-func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
-	return connection.Post[Application](s.connection, "/account/v1/applications", &req)
+func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[CreateApplicationResponse], error) {
+	return connection.Post[CreateApplicationResponse](s.connection, "/account/v1/applications", &req)
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
