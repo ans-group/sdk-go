@@ -71,6 +71,16 @@ func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*
 	return connection.Post[CreateApplicationResponse](s.connection, "/account/v1/applications", &req)
 }
 
+func (s *Service) UpdateApplication(req CreateApplicationRequest) (string, error) {
+	body, err := s.updateApplicationResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) updateApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
+	return connection.Patch[Application](s.connection, "/account/v1/applications", &req)
+}
+
 // GetApplicationServices retrieves the services and roles of an application by id
 func (s *Service) GetApplicationServices(appID string) (ApplicationServiceMapping, error) {
 	body, err := s.getApplicationServicesResponseBody(appID)
