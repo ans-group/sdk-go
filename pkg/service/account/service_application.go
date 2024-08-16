@@ -56,10 +56,15 @@ func (s *Service) getServicesPaginatedResponseBody(parameters connection.APIRequ
 	return body, response.HandleResponse(body, nil)
 }
 
-func (s *Service) CreateApplication(req CreateApplicationRequest) (string, error) {
+func (s *Service) CreateApplication(req CreateApplicationRequest) (CreateApplicationResponse, error) {
 	body, err := s.createApplicationResponseBody(req)
 
-	return body.Data.ID, err
+	response := CreateApplicationResponse{
+		ID:  body.Data.ID,
+		Key: body.Data.Key,
+	}
+
+	return response, err
 }
 
 func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
