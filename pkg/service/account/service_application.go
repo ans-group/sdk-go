@@ -56,14 +56,28 @@ func (s *Service) getServicesPaginatedResponseBody(parameters connection.APIRequ
 	return body, response.HandleResponse(body, nil)
 }
 
-func (s *Service) CreateApplication(req CreateApplicationRequest) (string, error) {
+func (s *Service) CreateApplication(req CreateApplicationRequest) (CreateApplicationResponse, error) {
 	body, err := s.createApplicationResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
-	return connection.Post[Application](s.connection, "/account/v1/applications", &req)
+func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[CreateApplicationResponse], error) {
+	return connection.Post[CreateApplicationResponse](s.connection, "/account/v1/applications", &req)
+}
+
+func (s *Service) UpdateApplication(appID string, req UpdateApplicationRequest) error {
+	_, err := s.updateApplicationResponseBody(appID, req)
+
+	return err
+}
+
+func (s *Service) updateApplicationResponseBody(appID string, req UpdateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
+	if appID == "" {
+		return &connection.APIResponseBodyData[Application]{}, fmt.Errorf("invalid application id")
+	}
+
+	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), &req)
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
