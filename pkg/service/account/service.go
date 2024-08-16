@@ -36,7 +36,7 @@ type AccountService interface {
 	GetServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ApplicationService], error)
 	GetApplication(appID string) (Application, error)
 	CreateApplication(req CreateApplicationRequest) (CreateApplicationResponse, error)
-	UpdateApplication(req CreateApplicationRequest) (string, error)
+	UpdateApplication(req UpdateApplicationRequest) (string, error)
 	GetApplicationServices(appID string) (ApplicationServiceMapping, error)
 	SetApplicationServices(appID string, req SetServiceRequest) error
 	GetApplicationRestrictions(appID string) (ApplicationRestriction, error)

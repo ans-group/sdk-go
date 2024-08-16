@@ -59,25 +59,20 @@ func (s *Service) getServicesPaginatedResponseBody(parameters connection.APIRequ
 func (s *Service) CreateApplication(req CreateApplicationRequest) (CreateApplicationResponse, error) {
 	body, err := s.createApplicationResponseBody(req)
 
-	response := CreateApplicationResponse{
-		ID:  body.Data.ID,
-		Key: body.Data.Key,
-	}
-
-	return response, err
+	return body.Data, err
 }
 
 func (s *Service) createApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[CreateApplicationResponse], error) {
 	return connection.Post[CreateApplicationResponse](s.connection, "/account/v1/applications", &req)
 }
 
-func (s *Service) UpdateApplication(req CreateApplicationRequest) (string, error) {
+func (s *Service) UpdateApplication(req UpdateApplicationRequest) (string, error) {
 	body, err := s.updateApplicationResponseBody(req)
 
 	return body.Data.ID, err
 }
 
-func (s *Service) updateApplicationResponseBody(req CreateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
+func (s *Service) updateApplicationResponseBody(req UpdateApplicationRequest) (*connection.APIResponseBodyData[Application], error) {
 	return connection.Patch[Application](s.connection, "/account/v1/applications", &req)
 }
 

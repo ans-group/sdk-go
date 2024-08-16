@@ -62,6 +62,11 @@ type CreateApplicationRequest struct {
 	Description string `json:"description"`
 }
 
+type UpdateApplicationRequest struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
 type SetServiceRequest struct {
 	Scopes []ApplicationServiceScope `json:"scopes"`
 }
