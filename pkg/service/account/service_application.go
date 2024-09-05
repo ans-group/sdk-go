@@ -152,3 +152,17 @@ func (s *Service) setApplicationRestrictionsResponseBody(appID string, req SetRe
 
 	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
+
+func (s *Service) DeleteApplicationRestrictions(appID string) error {
+	_, err := s.deleteApplicationRestrictionsResponseBody(appID)
+
+	return err
+}
+
+func (s *Service) deleteApplicationRestrictionsResponseBody(appID string) (*connection.APIResponseBodyData[interface{}], error) {
+	if appID == "" {
+		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
+	}
+
+	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/ip-restrictions", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
+}
