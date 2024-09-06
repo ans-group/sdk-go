@@ -294,6 +294,89 @@ func TestCreateApplication(t *testing.T) {
 	})
 }
 
+func TestUpdateApplication(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		updateRequest := UpdateApplicationRequest{}
+
+		c.EXPECT().Patch("/account/v1/applications/test-id-123", gomock.Eq(&updateRequest)).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		err := s.UpdateApplication("test-id-123", updateRequest)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.UpdateApplication("test-id-123", UpdateApplicationRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidApplicationID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.UpdateApplication("", UpdateApplicationRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid application id", err.Error())
+	})
+
+	t.Run("404_ReturnsApplicationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.UpdateApplication("test-id-123", UpdateApplicationRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ApplicationNotFoundError{}, err)
+	})
+}
+
 func TestGetApplicationServices(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
@@ -453,6 +536,87 @@ func TestSetApplicationServices(t *testing.T) {
 		}, nil).Times(1)
 
 		err := s.SetApplicationServices("test-id-456", SetServiceRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &ApplicationNotFoundError{}, err)
+	})
+}
+
+func TestDeleteApplicationServices(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Eq(SetServiceRequest{Scopes: []ApplicationServiceScope{}})).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				StatusCode: 202,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteApplicationServices("test-id-123")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteApplicationServices("test-id-123")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidApplicationID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteApplicationServices("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid application id", err.Error())
+	})
+
+	t.Run("404_ReturnsApplicationNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Put("/account/v1/applications/test-id-456/services", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteApplicationServices("test-id-456")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &ApplicationNotFoundError{}, err)
