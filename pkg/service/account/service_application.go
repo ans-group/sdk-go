@@ -77,7 +77,7 @@ func (s *Service) updateApplicationResponseBody(appID string, req UpdateApplicat
 		return &connection.APIResponseBodyData[Application]{}, fmt.Errorf("invalid application id")
 	}
 
-	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), &req)
+	return connection.Patch[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // GetApplicationServices retrieves the services and roles of an application by id
@@ -107,6 +107,20 @@ func (s *Service) setApplicationServicesResponseBody(appID string, req SetServic
 	}
 
 	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), &req, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
+}
+
+func (s *Service) DeleteApplicationServices(appID string) error {
+	_, err := s.deleteApplicationServicesResponseBody(appID)
+
+	return err
+}
+
+func (s *Service) deleteApplicationServicesResponseBody(appID string) (*connection.APIResponseBodyData[interface{}], error) {
+	if appID == "" {
+		return &connection.APIResponseBodyData[interface{}]{}, fmt.Errorf("invalid application id")
+	}
+
+	return connection.Put[interface{}](s.connection, fmt.Sprintf("/account/v1/applications/%s/services", appID), SetServiceRequest{Scopes: []ApplicationServiceScope{}}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
 }
 
 // DeleteApplication removes an application

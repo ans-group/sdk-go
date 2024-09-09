@@ -39,6 +39,7 @@ type AccountService interface {
 	UpdateApplication(appID string, req UpdateApplicationRequest) error
 	GetApplicationServices(appID string) (ApplicationServiceMapping, error)
 	SetApplicationServices(appID string, req SetServiceRequest) error
+	DeleteApplicationServices(appID string) error
 	GetApplicationRestrictions(appID string) (ApplicationRestriction, error)
 	SetApplicationRestrictions(appID string, req SetRestrictionRequest) error
 	DeleteApplicationRestrictions(appID string) error
