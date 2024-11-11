@@ -1,6 +1,8 @@
 package ecloud
 
 import (
+	"fmt"
+
 	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
@@ -1027,4 +1029,95 @@ type IOPSTier struct {
 	Level     int                 `json:"level"`
 	CreatedAt connection.DateTime `json:"created_at"`
 	UpdatedAt connection.DateTime `json:"updated_at"`
+}
+
+// VPNGateway represents a VPN gateway
+type VPNGateway struct {
+	ID              string              `json:"id"`
+	Name            string              `json:"name"`
+	RouterID        string              `json:"router_id"`
+	SpecificationID string              `json:"specification_id"`
+	Sync            ResourceSync        `json:"sync"`
+	Task            ResourceTask        `json:"task"`
+	CreatedAt       connection.DateTime `json:"created_at"`
+	UpdatedAt       connection.DateTime `json:"updated_at"`
+}
+
+// CreateVPNGatewayRequest represents a request to create a VPN gateway
+type CreateVPNGatewayRequest struct {
+	Name            string `json:"name,omitempty"`
+	RouterID        string `json:"router_id"`
+	SpecificationID string `json:"specification_id"`
+}
+
+// PatchVPNGatewayRequest represents a request to patch a VPN gateway
+type PatchVPNGatewayRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// VPNGatewaySpecification represents a VPN gateway specification
+type VPNGatewaySpecification struct {
+	ID          string              `json:"id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	CreatedAt   connection.DateTime `json:"created_at"`
+	UpdatedAt   connection.DateTime `json:"updated_at"`
+}
+
+// VPNGatewayUser represents a VPN gateway user
+type VPNGatewayUser struct {
+	ID           string              `json:"id"`
+	Name         string              `json:"name"`
+	VPNGatewayID string              `json:"vpn_gateway_id"`
+	Username     string              `json:"username,omitempty"`
+	Sync         ResourceSync        `json:"sync"`
+	Task         ResourceTask        `json:"task"`
+	CreatedAt    connection.DateTime `json:"created_at"`
+	UpdatedAt    connection.DateTime `json:"updated_at"`
+}
+
+// CreateVPNGatewayUserRequest represents a request to create a VPN gateway user
+type CreateVPNGatewayUserRequest struct {
+	Name         string `json:"name,omitempty"`
+	VPNGatewayID string `json:"vpn_gateway_id"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+}
+
+// PatchVPNGatewayUserRequest represents a request to patch a VPN gateway user
+type PatchVPNGatewayUserRequest struct {
+	Name     string `json:"name,omitempty"`
+	Password string `json:"password,omitempty"`
+}
+
+// PatchVPNGatewayUserCredentialRequest represents a request to update VPN gateway user credentials
+type PatchVPNGatewayUserCredentialRequest struct {
+	Password string `json:"password"`
+}
+
+// VPNGatewayNotFoundError represents a VPN gateway not found error
+type VPNGatewayNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewayNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway not found with ID [%s]", e.ID)
+}
+
+// VPNGatewaySpecificationNotFoundError represents a VPN gateway specification not found error
+type VPNGatewaySpecificationNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewaySpecificationNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway specification not found with ID [%s]", e.ID)
+}
+
+// VPNGatewayUserNotFoundError represents a VPN gateway user not found error
+type VPNGatewayUserNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewayUserNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway user not found with ID [%s]", e.ID)
 }
