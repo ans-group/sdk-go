@@ -469,3 +469,30 @@ type IOPSNotFoundError struct {
 func (e *IOPSNotFoundError) Error() string {
 	return fmt.Sprintf("IOPS tier not found with ID [%s]", e.ID)
 }
+
+// VPNGatewayNotFoundError represents a VPN gateway not found error
+type VPNGatewayNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewayNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway not found with ID [%s]", e.ID)
+}
+
+// VPNGatewaySpecificationNotFoundError represents a VPN gateway specification not found error
+type VPNGatewaySpecificationNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewaySpecificationNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway specification not found with ID [%s]", e.ID)
+}
+
+// VPNGatewayUserNotFoundError represents a VPN gateway user not found error
+type VPNGatewayUserNotFoundError struct {
+	ID string
+}
+
+func (e *VPNGatewayUserNotFoundError) Error() string {
+	return fmt.Sprintf("VPN gateway user not found with ID [%s]", e.ID)
+}
