@@ -636,3 +636,29 @@ type ExecuteInstanceScriptRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+// CreateVPNGatewayRequest represents a request to create a VPN gateway
+type CreateVPNGatewayRequest struct {
+	Name            string `json:"name,omitempty"`
+	RouterID        string `json:"router_id"`
+	SpecificationID string `json:"specification_id"`
+}
+
+// PatchVPNGatewayRequest represents a request to patch a VPN gateway
+type PatchVPNGatewayRequest struct {
+	Name string `json:"name,omitempty"`
+}
+
+// CreateVPNGatewayUserRequest represents a request to create a VPN gateway user
+type CreateVPNGatewayUserRequest struct {
+	Name         string `json:"name,omitempty"`
+	VPNGatewayID string `json:"vpn_gateway_id"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+}
+
+// PatchVPNGatewayUserRequest represents a request to patch a VPN gateway user
+type PatchVPNGatewayUserRequest struct {
+	Name     string `json:"name,omitempty"`
+	Password string `json:"password,omitempty"`
+}
