@@ -664,3 +664,14 @@ type PatchVPNGatewayUserRequest struct {
 	Name     string `json:"name,omitempty"`
 	Password string `json:"password,omitempty"`
 }
+
+type CreateBackupGatewayRequest struct {
+	Name          string `json:"name,omitempty"`
+	VPCID         string `json:"vpc_id"`
+	RouterID      string `json:"router_id"`
+	GatewaySpecID string `json:"gateway_spec_id"`
+}
+
+type PatchBackupGatewayRequest struct {
+	Name string `json:"name"`
+}
