@@ -1068,14 +1068,9 @@ type VPNGatewayUser struct {
 
 // BackupGatewaySpecification represents a Backup Gateway specification
 type BackupGatewaySpecification struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	Description    string `json:"description"`
-	CPU            int    `json:"cpu"`
-	RAM            int    `json:"ram"`
-	IopsID         string `json:"iops_id"`
-	VolumeCapacity int    `json:"volume_capacity"`
-	ImageID        string `json:"image_id"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 // BackupGateway represents a Backup Gateway
