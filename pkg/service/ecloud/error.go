@@ -496,3 +496,21 @@ type VPNGatewayUserNotFoundError struct {
 func (e *VPNGatewayUserNotFoundError) Error() string {
 	return fmt.Sprintf("VPN gateway user not found with ID [%s]", e.ID)
 }
+
+// BackupGatewaySpecificationNotFoundError represents a VPN gateway specification not found error
+type BackupGatewaySpecificationNotFoundError struct {
+	ID string
+}
+
+func (e *BackupGatewaySpecificationNotFoundError) Error() string {
+	return fmt.Sprintf("Backup gateway specification not found with ID [%s]", e.ID)
+}
+
+// BackupGatewayNotFoundError represents a backup gateway not found error
+type BackupGatewayNotFoundError struct {
+	ID string
+}
+
+func (e *BackupGatewayNotFoundError) Error() string {
+	return fmt.Sprintf("Backup gateway not found with ID [%s]", e.ID)
+}

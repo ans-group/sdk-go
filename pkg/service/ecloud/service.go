@@ -485,6 +485,19 @@ type ECloudService interface {
 	GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error)
 	GetIOPSTiersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error)
 	GetIOPSTier(iopsID string) (IOPSTier, error)
+
+	// Backup Gateway Specifications
+	GetBackupGatewaySpecifications(parameters connection.APIRequestParameters) ([]BackupGatewaySpecification, error)
+	GetBackupGatewaySpecificationsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BackupGatewaySpecification], error)
+	GetBackupGatewaySpecification(specificationID string) (BackupGatewaySpecification, error)
+
+	// Backup Gateways
+	GetBackupGateways(parameters connection.APIRequestParameters) ([]BackupGateway, error)
+	GetBackupGatewaysPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BackupGateway], error)
+	GetBackupGateway(gatewayID string) (BackupGateway, error)
+	CreateBackupGateway(req CreateBackupGatewayRequest) (TaskReference, error)
+	PatchBackupGateway(gatewayID string, req PatchBackupGatewayRequest) (TaskReference, error)
+	DeleteBackupGateway(gatewayID string) (string, error)
 }
 
 // Service implements ECloudService for managing

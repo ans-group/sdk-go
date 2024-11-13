@@ -381,6 +381,8 @@ type Instance struct {
 	RAMCapacity        int                 `json:"ram_capacity"`
 	Locked             bool                `json:"locked"`
 	BackupEnabled      bool                `json:"backup_enabled"`
+	BackupGatewayID    string              `json:"backup_gateway_id"`
+	BackupAgentEnabled bool                `json:"secure_backup"` // TODO: Change tag to 'backup_agent_enabled' when ADO#34659 released
 	IsEncrypted        bool                `json:"is_encrypted"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
@@ -1062,4 +1064,29 @@ type VPNGatewayUser struct {
 	Task         ResourceTask        `json:"task"`
 	CreatedAt    connection.DateTime `json:"created_at"`
 	UpdatedAt    connection.DateTime `json:"updated_at"`
+}
+
+// BackupGatewaySpecification represents a Backup Gateway specification
+type BackupGatewaySpecification struct {
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	Description    string `json:"description"`
+	CPU            int    `json:"cpu"`
+	RAM            int    `json:"ram"`
+	IopsID         string `json:"iops_id"`
+	VolumeCapacity int    `json:"volume_capacity"`
+	ImageID        string `json:"image_id"`
+}
+
+// BackupGateway represents a Backup Gateway
+type BackupGateway struct {
+	ID                 string              `json:"id"`
+	VPCID              string              `json:"vpc_id"`
+	Name               string              `json:"name"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	GatewaySpecID      string              `json:"gateway_spec_id"`
+	Sync               ResourceSync        `json:"sync"`
+	Task               ResourceTask        `json:"task"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
 }

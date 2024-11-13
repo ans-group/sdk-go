@@ -247,6 +247,8 @@ type CreateInstanceRequest struct {
 	VolumeCapacity     int                    `json:"volume_capacity"`
 	VolumeIOPS         int                    `json:"volume_iops,omitempty"`
 	BackupEnabled      bool                   `json:"backup_enabled"`
+	BackupGatewayID    string                 `json:"backup_gateway_id,omitempty"`
+	BackupAgentEnabled bool                   `json:"secure_backup,omitempty"` // XXX: This will change in the future to `backup_agent_enabled`, see ADO#34659
 	IsEncrypted        bool                   `json:"is_encrypted"`
 	NetworkID          string                 `json:"network_id,omitempty"`
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
@@ -661,4 +663,15 @@ type CreateVPNGatewayUserRequest struct {
 type PatchVPNGatewayUserRequest struct {
 	Name     string `json:"name,omitempty"`
 	Password string `json:"password,omitempty"`
+}
+
+type CreateBackupGatewayRequest struct {
+	Name          string `json:"name,omitempty"`
+	VPCID         string `json:"vpc_id"`
+	RouterID      string `json:"router_id"`
+	GatewaySpecID string `json:"gateway_spec_id"`
+}
+
+type PatchBackupGatewayRequest struct {
+	Name string `json:"name"`
 }
