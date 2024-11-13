@@ -248,7 +248,6 @@ type CreateInstanceRequest struct {
 	VolumeIOPS         int                    `json:"volume_iops,omitempty"`
 	BackupEnabled      bool                   `json:"backup_enabled"`
 	BackupGatewayID    string                 `json:"backup_gateway_id,omitempty"`
-	BackupAgentEnabled bool                   `json:"secure_backup,omitempty"` // XXX: This will change in the future to `backup_agent_enabled`, see ADO#34659
 	IsEncrypted        bool                   `json:"is_encrypted"`
 	NetworkID          string                 `json:"network_id,omitempty"`
 	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
@@ -268,6 +267,7 @@ type PatchInstanceRequest struct {
 	VCPUCoresPerSocket int     `json:"vcpu_cores_per_socket,omitempty"`
 	RAMCapacity        int     `json:"ram_capacity,omitempty"`
 	VolumeGroupID      *string `json:"volume_group_id,omitempty"`
+	BackupGatewayID    string  `json:"backup_gateway_id,omitempty"`
 }
 
 // CreateFirewallPolicyRequest represents a request to create a firewall policy
