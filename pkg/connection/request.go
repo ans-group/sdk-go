@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"net/http"
 	"net/url"
 
 	validator "gopkg.in/go-playground/validator.v9"
@@ -43,6 +44,7 @@ type APIRequest struct {
 	Body       interface{}
 	Query      url.Values
 	Parameters APIRequestParameters
+	Headers    http.Header
 }
 
 // APIRequestParameters holds a collection of supported API request parameters

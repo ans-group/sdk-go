@@ -223,9 +223,18 @@ func (c *APIConnection) NewRequest(request APIRequest) (*http.Request, error) {
 		req.Header.Add(headerKey, headerValue)
 	}
 
-	// Append additional headers if defined
+	// Append additional connection headers, if defined
 	if c.Headers != nil {
 		for headerKey, headerValues := range c.Headers {
+			for _, headerValue := range headerValues {
+				req.Header.Add(headerKey, headerValue)
+			}
+		}
+	}
+
+	// Append additional request headers, if defined
+	if request.Headers != nil {
+		for headerKey, headerValues := range request.Headers {
 			for _, headerValue := range headerValues {
 				req.Header.Add(headerKey, headerValue)
 			}
@@ -240,6 +249,11 @@ func (c *APIConnection) InvokeRequest(req *http.Request) (*APIResponse, error) {
 	resp := &APIResponse{}
 
 	logging.Debugf("Executing request: %s %s", req.Method, req.URL.String())
+	if req.Header != nil {
+		for k, v := range req.Header {
+			logging.Debugf("%s: %s", k, strings.Join(v, ", "))
+		}
+	}
 
 	r, err := c.HTTPClient.Do(req)
 	if err != nil {
