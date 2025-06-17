@@ -235,28 +235,30 @@ type PatchLoadBalancerClusterRequest struct {
 
 // CreateInstanceRequest represents a request to create an instance
 type CreateInstanceRequest struct {
-	Name               string                 `json:"name,omitempty"`
-	VPCID              string                 `json:"vpc_id"`
-	ImageID            string                 `json:"image_id"`
-	ImageData          map[string]interface{} `json:"image_data"`
-	VCPUCores          int                    `json:"vcpu_cores,omitempty"`
-	VCPUSockets        int                    `json:"vcpu_sockets,omitempty"`
-	VCPUCoresPerSocket int                    `json:"vcpu_cores_per_socket,omitempty"`
-	RAMCapacity        int                    `json:"ram_capacity"`
-	Locked             bool                   `json:"locked"`
-	VolumeCapacity     int                    `json:"volume_capacity"`
-	VolumeIOPS         int                    `json:"volume_iops,omitempty"`
-	BackupEnabled      bool                   `json:"backup_enabled"`
-	BackupGatewayID    string                 `json:"backup_gateway_id,omitempty"`
-	IsEncrypted        bool                   `json:"is_encrypted"`
-	NetworkID          string                 `json:"network_id,omitempty"`
-	FloatingIPID       string                 `json:"floating_ip_id,omitempty"`
-	RequiresFloatingIP bool                   `json:"requires_floating_ip,omitempty"`
-	UserScript         string                 `json:"user_script,omitempty"`
-	SSHKeyPairIDs      []string               `json:"ssh_key_pair_ids,omitempty"`
-	HostGroupID        string                 `json:"host_group_id,omitempty"`
-	ResourceTierID     string                 `json:"resource_tier_id,omitempty"`
-	CustomIPAddress    connection.IPAddress   `json:"custom_ip_address,omitempty"`
+	Name                string                 `json:"name,omitempty"`
+	VPCID               string                 `json:"vpc_id"`
+	ImageID             string                 `json:"image_id"`
+	ImageData           map[string]interface{} `json:"image_data"`
+	VCPUCores           int                    `json:"vcpu_cores,omitempty"`
+	VCPUSockets         int                    `json:"vcpu_sockets,omitempty"`
+	VCPUCoresPerSocket  int                    `json:"vcpu_cores_per_socket,omitempty"`
+	RAMCapacity         int                    `json:"ram_capacity"`
+	Locked              bool                   `json:"locked"`
+	VolumeCapacity      int                    `json:"volume_capacity"`
+	VolumeIOPS          int                    `json:"volume_iops,omitempty"`
+	MonitoringEnabled   bool                   `json:"monitoring_enabled"`
+	MonitoringGatewayID string                 `json:"monitoring_gateway_id,omitempty"`
+	BackupEnabled       bool                   `json:"backup_enabled"`
+	BackupGatewayID     string                 `json:"backup_gateway_id,omitempty"`
+	IsEncrypted         bool                   `json:"is_encrypted"`
+	NetworkID           string                 `json:"network_id,omitempty"`
+	FloatingIPID        string                 `json:"floating_ip_id,omitempty"`
+	RequiresFloatingIP  bool                   `json:"requires_floating_ip,omitempty"`
+	UserScript          string                 `json:"user_script,omitempty"`
+	SSHKeyPairIDs       []string               `json:"ssh_key_pair_ids,omitempty"`
+	HostGroupID         string                 `json:"host_group_id,omitempty"`
+	ResourceTierID      string                 `json:"resource_tier_id,omitempty"`
+	CustomIPAddress     connection.IPAddress   `json:"custom_ip_address,omitempty"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance

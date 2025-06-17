@@ -498,6 +498,11 @@ type ECloudService interface {
 	CreateBackupGateway(req CreateBackupGatewayRequest) (TaskReference, error)
 	PatchBackupGateway(gatewayID string, req PatchBackupGatewayRequest) (TaskReference, error)
 	DeleteBackupGateway(gatewayID string) (string, error)
+
+	// Monitoring Gateways
+	GetMonitoringGateways(parameters connection.APIRequestParameters) ([]MonitoringGateway, error)
+	GetMonitoringGatewaysPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[MonitoringGateway], error)
+	GetMonitoringGateway(gatewayID string) (MonitoringGateway, error)
 }
 
 // Service implements ECloudService for managing

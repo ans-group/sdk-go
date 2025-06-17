@@ -514,3 +514,12 @@ type BackupGatewayNotFoundError struct {
 func (e *BackupGatewayNotFoundError) Error() string {
 	return fmt.Sprintf("Backup gateway not found with ID [%s]", e.ID)
 }
+
+// MonitoringGatewayNotFoundError represents a monitoring gateway not found error
+type MonitoringGatewayNotFoundError struct {
+	ID string
+}
+
+func (e *MonitoringGatewayNotFoundError) Error() string {
+	return fmt.Sprintf("Monitoring gateway not found with ID [%s]", e.ID)
+}

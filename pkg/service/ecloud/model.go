@@ -1085,3 +1085,15 @@ type BackupGateway struct {
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
+
+type MonitoringGateway struct {
+	ID                 string              `json:"id"`
+	VPCID              string              `json:"vpc_id"`
+	Name               string              `json:"name"`
+	AvailabilityZoneID string              `json:"availability_zone_id"`
+	RouterID           string              `json:"router_id"`
+	SpecificationID    string              `json:"specification_id"`
+	Sync               ResourceSync        `json:"sync"`
+	CreatedAt          connection.DateTime `json:"created_at"`
+	UpdatedAt          connection.DateTime `json:"updated_at"`
+}
