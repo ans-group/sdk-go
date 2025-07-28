@@ -188,3 +188,77 @@ func (s *Service) unassignNICIPAddressResponseBody(nicID string, ipID string) (*
 		return nil
 	})
 }
+
+// CreateNIC creates a new NIC
+func (s *Service) CreateNIC(req CreateNICRequest) (string, error) {
+	body, err := s.createNICResponseBody(req)
+
+	return body.Data.ID, err
+}
+
+func (s *Service) createNICResponseBody(req CreateNICRequest) (*connection.APIResponseBodyData[NIC], error) {
+	body := &connection.APIResponseBodyData[NIC]{}
+
+	response, err := s.connection.Post("/ecloud/v2/nics", &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, nil)
+}
+
+// PatchNIC patches a NIC
+func (s *Service) PatchNIC(nicID string, req PatchNICRequest) error {
+	_, err := s.patchNICResponseBody(nicID, req)
+
+	return err
+}
+
+func (s *Service) patchNICResponseBody(nicID string, req PatchNICRequest) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if nicID == "" {
+		return body, fmt.Errorf("invalid nic id")
+	}
+
+	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/nics/%s", nicID), &req)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NICNotFoundError{ID: nicID}
+		}
+
+		return nil
+	})
+}
+
+// DeleteNIC deletes a NIC
+func (s *Service) DeleteNIC(NICID string) error {
+	_, err := s.deleteNICResponseBody(NICID)
+
+	return err
+}
+
+func (s *Service) deleteNICResponseBody(NICID string) (*connection.APIResponseBody, error) {
+	body := &connection.APIResponseBody{}
+
+	if NICID == "" {
+		return body, fmt.Errorf("invalid nic id")
+	}
+
+	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/nics/%s", NICID), nil)
+	if err != nil {
+		return body, err
+	}
+
+	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
+		if response.StatusCode == 404 {
+			return &NICNotFoundError{ID: NICID}
+		}
+
+		return nil
+	})
+}
