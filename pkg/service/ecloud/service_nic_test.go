@@ -506,15 +506,16 @@ func TestCreateNIC(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/nics", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\"}}"))),
-				StatusCode: 200,
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		nic, err := s.CreateNIC(req)
+		taskRef, err := s.CreateNIC(req)
 
 		assert.Nil(t, err)
-		assert.Equal(t, "nic-abcdef12", nic)
+		assert.Equal(t, "nic-abcdef12", taskRef.ResourceID)
+		assert.Equal(t, "task-abcdef12", taskRef.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -553,14 +554,16 @@ func TestPatchNIC(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.PatchNIC("nic-abcdef12", req)
+		task, err := s.PatchNIC("nic-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "nic-abcdef12", task.ResourceID)
+		assert.Equal(t, "task-abcdef12", task.TaskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -575,10 +578,11 @@ func TestPatchNIC(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
+		_, err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
+
 	})
 
 	t.Run("InvalidNICID_ReturnsError", func(t *testing.T) {
@@ -591,7 +595,7 @@ func TestPatchNIC(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchNIC("", PatchNICRequest{})
+		_, err := s.PatchNIC("", PatchNICRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid nic id", err.Error())
@@ -614,7 +618,7 @@ func TestPatchNIC(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
+		_, err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &NICNotFoundError{}, err)
@@ -634,14 +638,15 @@ func TestDeleteNIC(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteNIC("nic-abcdef12")
+		taskID, err := s.DeleteNIC("nic-abcdef12")
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -656,7 +661,7 @@ func TestDeleteNIC(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteNIC("nic-abcdef12")
+		_, err := s.DeleteNIC("nic-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -672,7 +677,7 @@ func TestDeleteNIC(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteNIC("")
+		_, err := s.DeleteNIC("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid nic id", err.Error())
@@ -695,7 +700,7 @@ func TestDeleteNIC(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteNIC("nic-abcdef12")
+		_, err := s.DeleteNIC("nic-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &NICNotFoundError{}, err)

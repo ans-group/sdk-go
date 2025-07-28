@@ -268,9 +268,9 @@ type ECloudService interface {
 	GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[IPAddress], error)
 	AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (string, error)
 	UnassignNICIPAddress(nicID string, ipID string) (string, error)
-	CreateNIC(req CreateNICRequest) (string, error)
-	PatchNIC(nicID string, req PatchNICRequest) error
-	DeleteNIC(nicID string) error
+	CreateNIC(req CreateNICRequest) (TaskReference, error)
+	PatchNIC(nicID string, req PatchNICRequest) (TaskReference, error)
+	DeleteNIC(nicID string) (string, error)
 
 	// Billing metrics
 	GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error)
