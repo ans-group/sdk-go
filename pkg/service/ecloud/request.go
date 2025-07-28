@@ -677,3 +677,23 @@ type CreateBackupGatewayRequest struct {
 type PatchBackupGatewayRequest struct {
 	Name string `json:"name"`
 }
+
+type CreateMonitoringGatewayRequest struct {
+	Name     string `json:"name,omitempty"`
+	RouterID string `json:"router_id"`
+	SpecID   string `json:"specification_id"`
+}
+
+type PatchMonitoringGatewayRequest struct {
+	Name string `json:"name"`
+}
+
+type CreateNICRequest struct {
+	Name       string `json:"name"`
+	InstanceID string `json:"instance_id"`
+	NetworkID  string `json:"network_id"`
+}
+
+type PatchNICRequest struct {
+	Name string `json:"name"`
+}

@@ -570,6 +570,7 @@ type Volume struct {
 // NIC represents an eCloud network interface card
 type NIC struct {
 	ID         string              `json:"id"`
+	Name       string              `json:"name"`
 	MACAddress string              `json:"mac_address"`
 	InstanceID string              `json:"instance_id"`
 	NetworkID  string              `json:"network_id"`

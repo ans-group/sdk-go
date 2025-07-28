@@ -198,7 +198,7 @@ func TestGetNICTasks(t *testing.T) {
 		assert.Equal(t, "invalid nic id", err.Error())
 	})
 
-	t.Run("404_ReturnsRouterNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsNICNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -281,7 +281,7 @@ func TestGetNICIPAddresses(t *testing.T) {
 		assert.Equal(t, "invalid nic id", err.Error())
 	})
 
-	t.Run("404_ReturnsRouterNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsNICNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -483,6 +483,219 @@ func TestUnassignNICIPAddress(t *testing.T) {
 		}, nil).Times(1)
 
 		_, err := s.UnassignNICIPAddress("nic-abcdef12", "ip-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &NICNotFoundError{}, err)
+	})
+}
+
+func TestCreateNIC(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := CreateNICRequest{
+			Name: "test",
+		}
+
+		c.EXPECT().Post("/ecloud/v2/nics", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		nic, err := s.CreateNIC(req)
+
+		assert.Nil(t, err)
+		assert.Equal(t, "nic-abcdef12", nic)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Post("/ecloud/v2/nics", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		_, err := s.CreateNIC(CreateNICRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+}
+
+func TestPatchNIC(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		req := PatchNICRequest{
+			Name: "somenic",
+		}
+
+		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", &req).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchNIC("nic-abcdef12", req)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidNICID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.PatchNIC("", PatchNICRequest{})
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid nic id", err.Error())
+	})
+
+	t.Run("404_ReturnsNICNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.PatchNIC("nic-abcdef12", PatchNICRequest{})
+
+		assert.NotNil(t, err)
+		assert.IsType(t, &NICNotFoundError{}, err)
+	})
+}
+
+func TestDeleteNIC(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteNIC("nic-abcdef12")
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+
+		err := s.DeleteNIC("nic-abcdef12")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "test error 1", err.Error())
+	})
+
+	t.Run("InvalidNICID_ReturnsError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		err := s.DeleteNIC("")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "invalid nic id", err.Error())
+	})
+
+	t.Run("404_ReturnsNICNotFoundError", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				StatusCode: 404,
+			},
+		}, nil).Times(1)
+
+		err := s.DeleteNIC("nic-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &NICNotFoundError{}, err)

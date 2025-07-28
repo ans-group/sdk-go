@@ -268,6 +268,9 @@ type ECloudService interface {
 	GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[IPAddress], error)
 	AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (string, error)
 	UnassignNICIPAddress(nicID string, ipID string) (string, error)
+	CreateNIC(req CreateNICRequest) (string, error)
+	PatchNIC(nicID string, req PatchNICRequest) error
+	DeleteNIC(nicID string) error
 
 	// Billing metrics
 	GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error)
@@ -503,6 +506,9 @@ type ECloudService interface {
 	GetMonitoringGateways(parameters connection.APIRequestParameters) ([]MonitoringGateway, error)
 	GetMonitoringGatewaysPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[MonitoringGateway], error)
 	GetMonitoringGateway(gatewayID string) (MonitoringGateway, error)
+	CreateMonitoringGateway(req CreateMonitoringGatewayRequest) (TaskReference, error)
+	PatchMonitoringGateway(gatewayID string, req PatchMonitoringGatewayRequest) (TaskReference, error)
+	DeleteMonitoringGateway(gatewayID string) (string, error)
 }
 
 // Service implements ECloudService for managing
