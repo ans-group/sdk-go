@@ -577,6 +577,7 @@ type NIC struct {
 	IPAddress  string              `json:"ip_address"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
+	Task       ResourceTask        `json:"task"`
 }
 
 // RouterThroughput represents an eCloud router throughput

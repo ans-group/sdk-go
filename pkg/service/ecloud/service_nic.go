@@ -190,14 +190,14 @@ func (s *Service) unassignNICIPAddressResponseBody(nicID string, ipID string) (*
 }
 
 // CreateNIC creates a new NIC
-func (s *Service) CreateNIC(req CreateNICRequest) (string, error) {
+func (s *Service) CreateNIC(req CreateNICRequest) (TaskReference, error) {
 	body, err := s.createNICResponseBody(req)
 
-	return body.Data.ID, err
+	return body.Data, err
 }
 
-func (s *Service) createNICResponseBody(req CreateNICRequest) (*connection.APIResponseBodyData[NIC], error) {
-	body := &connection.APIResponseBodyData[NIC]{}
+func (s *Service) createNICResponseBody(req CreateNICRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	response, err := s.connection.Post("/ecloud/v2/nics", &req)
 	if err != nil {
@@ -208,14 +208,14 @@ func (s *Service) createNICResponseBody(req CreateNICRequest) (*connection.APIRe
 }
 
 // PatchNIC patches a NIC
-func (s *Service) PatchNIC(nicID string, req PatchNICRequest) error {
-	_, err := s.patchNICResponseBody(nicID, req)
+func (s *Service) PatchNIC(nicID string, req PatchNICRequest) (TaskReference, error) {
+	body, err := s.patchNICResponseBody(nicID, req)
 
-	return err
+	return body.Data, err
 }
 
-func (s *Service) patchNICResponseBody(nicID string, req PatchNICRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) patchNICResponseBody(nicID string, req PatchNICRequest) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if nicID == "" {
 		return body, fmt.Errorf("invalid nic id")
@@ -236,14 +236,14 @@ func (s *Service) patchNICResponseBody(nicID string, req PatchNICRequest) (*conn
 }
 
 // DeleteNIC deletes a NIC
-func (s *Service) DeleteNIC(NICID string) error {
-	_, err := s.deleteNICResponseBody(NICID)
+func (s *Service) DeleteNIC(NICID string) (string, error) {
+	body, err := s.deleteNICResponseBody(NICID)
 
-	return err
+	return body.Data.TaskID, err
 }
 
-func (s *Service) deleteNICResponseBody(NICID string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
+func (s *Service) deleteNICResponseBody(NICID string) (*connection.APIResponseBodyData[TaskReference], error) {
+	body := &connection.APIResponseBodyData[TaskReference]{}
 
 	if NICID == "" {
 		return body, fmt.Errorf("invalid nic id")
