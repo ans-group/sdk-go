@@ -964,7 +964,7 @@ func TestCreateVirtualMachineTemplate(t *testing.T) {
 	})
 }
 
-func TestGetVirtualMachineTagsV1(t *testing.T) {
+func TestGetVirtualMachineTags(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -982,7 +982,7 @@ func TestGetVirtualMachineTagsV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tags, err := s.GetVirtualMachineTagsV1(123, connection.APIRequestParameters{})
+		tags, err := s.GetVirtualMachineTags(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 1)
@@ -1014,7 +1014,7 @@ func TestGetVirtualMachineTagsV1(t *testing.T) {
 			}, nil),
 		)
 
-		tags, err := s.GetVirtualMachineTagsV1(123, connection.APIRequestParameters{})
+		tags, err := s.GetVirtualMachineTags(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 2)
@@ -1034,14 +1034,14 @@ func TestGetVirtualMachineTagsV1(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetVirtualMachineTagsV1(123, connection.APIRequestParameters{})
+		_, err := s.GetVirtualMachineTags(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetVirtualMachineTagV1(t *testing.T) {
+func TestGetVirtualMachineTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1059,7 +1059,7 @@ func TestGetVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		vm, err := s.GetVirtualMachineTagV1(123, "testkey1")
+		vm, err := s.GetVirtualMachineTag(123, "testkey1")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "testkey1", vm.Key)
@@ -1077,7 +1077,7 @@ func TestGetVirtualMachineTagV1(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetVirtualMachineTagV1(123, "testkey1")
+		_, err := s.GetVirtualMachineTag(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1093,7 +1093,7 @@ func TestGetVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetVirtualMachineTagV1(0, "testkey1")
+		_, err := s.GetVirtualMachineTag(0, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid virtual machine id", err.Error())
@@ -1109,7 +1109,7 @@ func TestGetVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetVirtualMachineTagV1(123, "")
+		_, err := s.GetVirtualMachineTag(123, "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1132,14 +1132,14 @@ func TestGetVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetVirtualMachineTagV1(123, "testkey1")
+		_, err := s.GetVirtualMachineTag(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &TagV1NotFoundError{}, err)
 	})
 }
 
-func TestCreateVirtualMachineTagV1(t *testing.T) {
+func TestCreateVirtualMachineTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1157,7 +1157,7 @@ func TestCreateVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.CreateVirtualMachineTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateVirtualMachineTag(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.Nil(t, err)
 	})
@@ -1174,7 +1174,7 @@ func TestCreateVirtualMachineTagV1(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateVirtualMachineTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateVirtualMachineTag(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1190,7 +1190,7 @@ func TestCreateVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.CreateVirtualMachineTagV1(0, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateVirtualMachineTag(0, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid virtual machine id", err.Error())
@@ -1213,14 +1213,14 @@ func TestCreateVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.CreateVirtualMachineTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateVirtualMachineTag(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VirtualMachineNotFoundError{}, err)
 	})
 }
 
-func TestPatchVirtualMachineTagV1(t *testing.T) {
+func TestPatchVirtualMachineTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1242,7 +1242,7 @@ func TestPatchVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVirtualMachineTagV1(123, "testkey1", patch)
+		err := s.PatchVirtualMachineTag(123, "testkey1", patch)
 
 		assert.Nil(t, err)
 	})
@@ -1259,7 +1259,7 @@ func TestPatchVirtualMachineTagV1(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchVirtualMachineTagV1(123, "testkey1", PatchTagV1Request{})
+		err := s.PatchVirtualMachineTag(123, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1275,7 +1275,7 @@ func TestPatchVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchVirtualMachineTagV1(0, "testkey1", PatchTagV1Request{})
+		err := s.PatchVirtualMachineTag(0, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid virtual machine id", err.Error())
@@ -1291,7 +1291,7 @@ func TestPatchVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchVirtualMachineTagV1(123, "", PatchTagV1Request{})
+		err := s.PatchVirtualMachineTag(123, "", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1314,14 +1314,14 @@ func TestPatchVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchVirtualMachineTagV1(123, "testkey1", PatchTagV1Request{})
+		err := s.PatchVirtualMachineTag(123, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &TagV1NotFoundError{}, err)
 	})
 }
 
-func TestDeleteVirtualMachineTagV1(t *testing.T) {
+func TestDeleteVirtualMachineTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1339,7 +1339,7 @@ func TestDeleteVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVirtualMachineTagV1(123, "testkey1")
+		err := s.DeleteVirtualMachineTag(123, "testkey1")
 
 		assert.Nil(t, err)
 	})
@@ -1356,7 +1356,7 @@ func TestDeleteVirtualMachineTagV1(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteVirtualMachineTagV1(123, "testkey1")
+		err := s.DeleteVirtualMachineTag(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1372,7 +1372,7 @@ func TestDeleteVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteVirtualMachineTagV1(0, "testkey1")
+		err := s.DeleteVirtualMachineTag(0, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid virtual machine id", err.Error())
@@ -1388,7 +1388,7 @@ func TestDeleteVirtualMachineTagV1(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteVirtualMachineTagV1(123, "")
+		err := s.DeleteVirtualMachineTag(123, "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1411,7 +1411,7 @@ func TestDeleteVirtualMachineTagV1(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteVirtualMachineTagV1(123, "testkey1")
+		err := s.DeleteVirtualMachineTag(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &TagV1NotFoundError{}, err)

@@ -327,18 +327,18 @@ func (s *Service) createVirtualMachineTemplateResponseBody(vmID int, req CreateV
 }
 
 // GetVirtualMachineTags retrieves a list of tags
-func (s *Service) GetVirtualMachineTagsV1(vmID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
+func (s *Service) GetVirtualMachineTags(vmID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
 	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-		return s.GetVirtualMachineTagsV1Paginated(vmID, p)
+		return s.GetVirtualMachineTagsPaginated(vmID, p)
 	}, parameters)
 }
 
-// GetVirtualMachineTagsV1Paginated retrieves a paginated list of v1 virtual machine tags
-func (s *Service) GetVirtualMachineTagsV1Paginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+// GetVirtualMachineTagsPaginated retrieves a paginated list of v1 virtual machine tags
+func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
 	body, err := s.getVirtualMachineTagsV1PaginatedResponseBody(vmID, parameters)
 
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-		return s.GetVirtualMachineTagsV1Paginated(vmID, p)
+		return s.GetVirtualMachineTagsPaginated(vmID, p)
 	}), err
 }
 
@@ -363,8 +363,8 @@ func (s *Service) getVirtualMachineTagsV1PaginatedResponseBody(vmID int, paramet
 	})
 }
 
-// GetVirtualMachineTagV1 retrieves a single virtual machine v1 tag by key
-func (s *Service) GetVirtualMachineTagV1(vmID int, tagKey string) (TagV1, error) {
+// GetVirtualMachineTag retrieves a single virtual machine v1 tag by key
+func (s *Service) GetVirtualMachineTag(vmID int, tagKey string) (TagV1, error) {
 	body, err := s.getVirtualMachineTagV1ResponseBody(vmID, tagKey)
 
 	return body.Data, err
@@ -394,8 +394,8 @@ func (s *Service) getVirtualMachineTagV1ResponseBody(vmID int, tagKey string) (*
 	})
 }
 
-// CreateVirtualMachineTagV1 creates a new virtual machine v1 tag
-func (s *Service) CreateVirtualMachineTagV1(vmID int, req CreateTagV1Request) error {
+// CreateVirtualMachineTag creates a new virtual machine v1 tag
+func (s *Service) CreateVirtualMachineTag(vmID int, req CreateTagV1Request) error {
 	_, err := s.createVirtualMachineTagV1ResponseBody(vmID, req)
 
 	return err
@@ -422,8 +422,8 @@ func (s *Service) createVirtualMachineTagV1ResponseBody(vmID int, req CreateTagV
 	})
 }
 
-// PatchVirtualMachineTagV1 patches an eCloud virtual machine v1 tag
-func (s *Service) PatchVirtualMachineTagV1(vmID int, tagKey string, patch PatchTagV1Request) error {
+// PatchVirtualMachineTag patches an eCloud virtual machine v1 tag
+func (s *Service) PatchVirtualMachineTag(vmID int, tagKey string, patch PatchTagV1Request) error {
 	_, err := s.patchVirtualMachineTagV1ResponseBody(vmID, tagKey, patch)
 
 	return err
@@ -453,8 +453,8 @@ func (s *Service) patchVirtualMachineTagV1ResponseBody(vmID int, tagKey string, 
 	})
 }
 
-// DeleteVirtualMachineTagV1 removes a virtual machine v1 tag
-func (s *Service) DeleteVirtualMachineTagV1(vmID int, tagKey string) error {
+// DeleteVirtualMachineTag removes a virtual machine v1 tag
+func (s *Service) DeleteVirtualMachineTag(vmID int, tagKey string) error {
 	_, err := s.deleteVirtualMachineTagV1ResponseBody(vmID, tagKey)
 
 	return err
