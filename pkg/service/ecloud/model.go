@@ -1100,7 +1100,7 @@ type MonitoringGateway struct {
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
-// Tag represents an eCloud tag
+// Tag represents an eCloud VPC tag
 type Tag struct {
 	ID         string              `json:"id"`
 	ResellerID int                 `json:"reseller_id"`
