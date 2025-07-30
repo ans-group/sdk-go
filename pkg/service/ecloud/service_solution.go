@@ -437,18 +437,18 @@ func (s *Service) deleteSolutionTemplateResponseBody(solutionID int, templateNam
 }
 
 // GetSolutionTags retrieves a list of tags
-func (s *Service) GetSolutionTagsV1(solutionID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
+func (s *Service) GetSolutionTags(solutionID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
 	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-		return s.GetSolutionTagsV1Paginated(solutionID, p)
+		return s.GetSolutionTagsPaginated(solutionID, p)
 	}, parameters)
 }
 
-// GetSolutionTagsV1Paginated retrieves a paginated list of v1 solution tags
-func (s *Service) GetSolutionTagsV1Paginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+// GetSolutionTagsPaginated retrieves a paginated list of v1 solution tags
+func (s *Service) GetSolutionTagsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
 	body, err := s.getSolutionTagsV1PaginatedResponseBody(solutionID, parameters)
 
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-		return s.GetSolutionTagsV1Paginated(solutionID, p)
+		return s.GetSolutionTagsPaginated(solutionID, p)
 	}), err
 }
 
@@ -473,8 +473,8 @@ func (s *Service) getSolutionTagsV1PaginatedResponseBody(solutionID int, paramet
 	})
 }
 
-// GetSolutionTagV1 retrieves a single solution v1 tag by key
-func (s *Service) GetSolutionTagV1(solutionID int, tagKey string) (TagV1, error) {
+// GetSolutionTag retrieves a single solution v1 tag by key
+func (s *Service) GetSolutionTag(solutionID int, tagKey string) (TagV1, error) {
 	body, err := s.getSolutionTagV1ResponseBody(solutionID, tagKey)
 
 	return body.Data, err
@@ -504,8 +504,8 @@ func (s *Service) getSolutionTagV1ResponseBody(solutionID int, tagKey string) (*
 	})
 }
 
-// CreateSolutionTagV1 creates a new solution v1 tag
-func (s *Service) CreateSolutionTagV1(solutionID int, req CreateTagV1Request) error {
+// CreateSolutionTag creates a new solution v1 tag
+func (s *Service) CreateSolutionTag(solutionID int, req CreateTagV1Request) error {
 	_, err := s.createSolutionTagV1ResponseBody(solutionID, req)
 
 	return err
@@ -532,8 +532,8 @@ func (s *Service) createSolutionTagV1ResponseBody(solutionID int, req CreateTagV
 	})
 }
 
-// PatchSolutionTagV1 patches an eCloud solution v1 tag
-func (s *Service) PatchSolutionTagV1(solutionID int, tagKey string, patch PatchTagV1Request) error {
+// PatchSolutionTag patches an eCloud solution v1 tag
+func (s *Service) PatchSolutionTag(solutionID int, tagKey string, patch PatchTagV1Request) error {
 	_, err := s.patchSolutionTagV1ResponseBody(solutionID, tagKey, patch)
 
 	return err
@@ -563,8 +563,8 @@ func (s *Service) patchSolutionTagV1ResponseBody(solutionID int, tagKey string, 
 	})
 }
 
-// DeleteSolutionTagV1 removes a solution v1 tag
-func (s *Service) DeleteSolutionTagV1(solutionID int, tagKey string) error {
+// DeleteSolutionTag removes a solution v1 tag
+func (s *Service) DeleteSolutionTag(solutionID int, tagKey string) error {
 	_, err := s.deleteSolutionTagV1ResponseBody(solutionID, tagKey)
 
 	return err

@@ -21,12 +21,12 @@ type ECloudService interface {
 	PowerShutdownVirtualMachine(vmID int) error
 	PowerRestartVirtualMachine(vmID int) error
 	CreateVirtualMachineTemplate(vmID int, req CreateVirtualMachineTemplateRequest) error
-	GetVirtualMachineTagsV1(vmID int, parameters connection.APIRequestParameters) ([]TagV1, error)
-	GetVirtualMachineTagsV1Paginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error)
-	GetVirtualMachineTagV1(vmID int, tagKey string) (TagV1, error)
-	CreateVirtualMachineTagV1(vmID int, req CreateTagV1Request) error
-	PatchVirtualMachineTagV1(vmID int, tagKey string, patch PatchTagV1Request) error
-	DeleteVirtualMachineTagV1(vmID int, tagKey string) error
+	GetVirtualMachineTags(vmID int, parameters connection.APIRequestParameters) ([]TagV1, error)
+	GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error)
+	GetVirtualMachineTag(vmID int, tagKey string) (TagV1, error)
+	CreateVirtualMachineTag(vmID int, req CreateTagV1Request) error
+	PatchVirtualMachineTag(vmID int, tagKey string, patch PatchTagV1Request) error
+	DeleteVirtualMachineTag(vmID int, tagKey string) error
 	CreateVirtualMachineConsoleSession(vmID int) (ConsoleSession, error)
 
 	// Solution
@@ -51,12 +51,12 @@ type ECloudService interface {
 	GetSolutionTemplate(solutionID int, templateName string) (Template, error)
 	DeleteSolutionTemplate(solutionID int, templateName string) error
 	RenameSolutionTemplate(solutionID int, templateName string, req RenameTemplateRequest) error
-	GetSolutionTagsV1(solutionID int, parameters connection.APIRequestParameters) ([]TagV1, error)
-	GetSolutionTagsV1Paginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error)
-	GetSolutionTagV1(solutionID int, tagKey string) (TagV1, error)
-	CreateSolutionTagV1(solutionID int, req CreateTagV1Request) error
-	PatchSolutionTagV1(solutionID int, tagKey string, patch PatchTagV1Request) error
-	DeleteSolutionTagV1(solutionID int, tagKey string) error
+	GetSolutionTags(solutionID int, parameters connection.APIRequestParameters) ([]TagV1, error)
+	GetSolutionTagsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error)
+	GetSolutionTag(solutionID int, tagKey string) (TagV1, error)
+	CreateSolutionTag(solutionID int, req CreateTagV1Request) error
+	PatchSolutionTag(solutionID int, tagKey string, patch PatchTagV1Request) error
+	DeleteSolutionTag(solutionID int, tagKey string) error
 
 	// Site
 	GetSites(parameters connection.APIRequestParameters) ([]Site, error)
