@@ -327,23 +327,23 @@ func (s *Service) createVirtualMachineTemplateResponseBody(vmID int, req CreateV
 }
 
 // GetVirtualMachineTags retrieves a list of tags
-func (s *Service) GetVirtualMachineTags(vmID int, parameters connection.APIRequestParameters) ([]Tag, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-		return s.GetVirtualMachineTagsPaginated(vmID, p)
+func (s *Service) GetVirtualMachineTagsV1(vmID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+		return s.GetVirtualMachineTagsV1Paginated(vmID, p)
 	}, parameters)
 }
 
-// GetVirtualMachineTagsPaginated retrieves a paginated list of domains
-func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-	body, err := s.getVirtualMachineTagsPaginatedResponseBody(vmID, parameters)
+// GetVirtualMachineTagsV1Paginated retrieves a paginated list of v1 virtual machine tags
+func (s *Service) GetVirtualMachineTagsV1Paginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+	body, err := s.getVirtualMachineTagsV1PaginatedResponseBody(vmID, parameters)
 
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-		return s.GetVirtualMachineTagsPaginated(vmID, p)
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+		return s.GetVirtualMachineTagsV1Paginated(vmID, p)
 	}), err
 }
 
-func (s *Service) getVirtualMachineTagsPaginatedResponseBody(vmID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Tag], error) {
-	body := &connection.APIResponseBodyData[[]Tag]{}
+func (s *Service) getVirtualMachineTagsV1PaginatedResponseBody(vmID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]TagV1], error) {
+	body := &connection.APIResponseBodyData[[]TagV1]{}
 
 	if vmID < 1 {
 		return body, fmt.Errorf("invalid virtual machine id")
@@ -363,15 +363,15 @@ func (s *Service) getVirtualMachineTagsPaginatedResponseBody(vmID int, parameter
 	})
 }
 
-// GetVirtualMachineTag retrieves a single virtual machine tag by key
-func (s *Service) GetVirtualMachineTag(vmID int, tagKey string) (Tag, error) {
-	body, err := s.getVirtualMachineTagResponseBody(vmID, tagKey)
+// GetVirtualMachineTagV1 retrieves a single virtual machine v1 tag by key
+func (s *Service) GetVirtualMachineTagV1(vmID int, tagKey string) (TagV1, error) {
+	body, err := s.getVirtualMachineTagV1ResponseBody(vmID, tagKey)
 
 	return body.Data, err
 }
 
-func (s *Service) getVirtualMachineTagResponseBody(vmID int, tagKey string) (*connection.APIResponseBodyData[Tag], error) {
-	body := &connection.APIResponseBodyData[Tag]{}
+func (s *Service) getVirtualMachineTagV1ResponseBody(vmID int, tagKey string) (*connection.APIResponseBodyData[TagV1], error) {
+	body := &connection.APIResponseBodyData[TagV1]{}
 
 	if vmID < 1 {
 		return body, fmt.Errorf("invalid virtual machine id")
@@ -387,21 +387,21 @@ func (s *Service) getVirtualMachineTagResponseBody(vmID int, tagKey string) (*co
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil
 	})
 }
 
-// CreateVirtualMachineTag creates a new virtual machine tag
-func (s *Service) CreateVirtualMachineTag(vmID int, req CreateTagRequest) error {
-	_, err := s.createVirtualMachineTagResponseBody(vmID, req)
+// CreateVirtualMachineTagV1 creates a new virtual machine v1 tag
+func (s *Service) CreateVirtualMachineTagV1(vmID int, req CreateTagV1Request) error {
+	_, err := s.createVirtualMachineTagV1ResponseBody(vmID, req)
 
 	return err
 }
 
-func (s *Service) createVirtualMachineTagResponseBody(vmID int, req CreateTagRequest) (*connection.APIResponseBody, error) {
+func (s *Service) createVirtualMachineTagV1ResponseBody(vmID int, req CreateTagV1Request) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if vmID < 1 {
@@ -422,14 +422,14 @@ func (s *Service) createVirtualMachineTagResponseBody(vmID int, req CreateTagReq
 	})
 }
 
-// PatchVirtualMachineTag patches an eCloud virtual machine tag
-func (s *Service) PatchVirtualMachineTag(vmID int, tagKey string, patch PatchTagRequest) error {
-	_, err := s.patchVirtualMachineTagResponseBody(vmID, tagKey, patch)
+// PatchVirtualMachineTagV1 patches an eCloud virtual machine v1 tag
+func (s *Service) PatchVirtualMachineTagV1(vmID int, tagKey string, patch PatchTagV1Request) error {
+	_, err := s.patchVirtualMachineTagV1ResponseBody(vmID, tagKey, patch)
 
 	return err
 }
 
-func (s *Service) patchVirtualMachineTagResponseBody(vmID int, tagKey string, patch PatchTagRequest) (*connection.APIResponseBody, error) {
+func (s *Service) patchVirtualMachineTagV1ResponseBody(vmID int, tagKey string, patch PatchTagV1Request) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if vmID < 1 {
@@ -446,21 +446,21 @@ func (s *Service) patchVirtualMachineTagResponseBody(vmID int, tagKey string, pa
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil
 	})
 }
 
-// DeleteVirtualMachineTag removes a virtual machine tag
-func (s *Service) DeleteVirtualMachineTag(vmID int, tagKey string) error {
-	_, err := s.deleteVirtualMachineTagResponseBody(vmID, tagKey)
+// DeleteVirtualMachineTagV1 removes a virtual machine v1 tag
+func (s *Service) DeleteVirtualMachineTagV1(vmID int, tagKey string) error {
+	_, err := s.deleteVirtualMachineTagV1ResponseBody(vmID, tagKey)
 
 	return err
 }
 
-func (s *Service) deleteVirtualMachineTagResponseBody(vmID int, tagKey string) (*connection.APIResponseBody, error) {
+func (s *Service) deleteVirtualMachineTagV1ResponseBody(vmID int, tagKey string) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if vmID < 1 {
@@ -477,7 +477,7 @@ func (s *Service) deleteVirtualMachineTagResponseBody(vmID int, tagKey string) (
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil

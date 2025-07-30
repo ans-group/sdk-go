@@ -437,23 +437,23 @@ func (s *Service) deleteSolutionTemplateResponseBody(solutionID int, templateNam
 }
 
 // GetSolutionTags retrieves a list of tags
-func (s *Service) GetSolutionTags(solutionID int, parameters connection.APIRequestParameters) ([]Tag, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-		return s.GetSolutionTagsPaginated(solutionID, p)
+func (s *Service) GetSolutionTagsV1(solutionID int, parameters connection.APIRequestParameters) ([]TagV1, error) {
+	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+		return s.GetSolutionTagsV1Paginated(solutionID, p)
 	}, parameters)
 }
 
-// GetSolutionTagsPaginated retrieves a paginated list of domains
-func (s *Service) GetSolutionTagsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-	body, err := s.getSolutionTagsPaginatedResponseBody(solutionID, parameters)
+// GetSolutionTagsV1Paginated retrieves a paginated list of v1 solution tags
+func (s *Service) GetSolutionTagsV1Paginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+	body, err := s.getSolutionTagsV1PaginatedResponseBody(solutionID, parameters)
 
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Tag], error) {
-		return s.GetSolutionTagsPaginated(solutionID, p)
+	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
+		return s.GetSolutionTagsV1Paginated(solutionID, p)
 	}), err
 }
 
-func (s *Service) getSolutionTagsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Tag], error) {
-	body := &connection.APIResponseBodyData[[]Tag]{}
+func (s *Service) getSolutionTagsV1PaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]TagV1], error) {
+	body := &connection.APIResponseBodyData[[]TagV1]{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -473,15 +473,15 @@ func (s *Service) getSolutionTagsPaginatedResponseBody(solutionID int, parameter
 	})
 }
 
-// GetSolutionTag retrieves a single solution tag by key
-func (s *Service) GetSolutionTag(solutionID int, tagKey string) (Tag, error) {
-	body, err := s.getSolutionTagResponseBody(solutionID, tagKey)
+// GetSolutionTagV1 retrieves a single solution v1 tag by key
+func (s *Service) GetSolutionTagV1(solutionID int, tagKey string) (TagV1, error) {
+	body, err := s.getSolutionTagV1ResponseBody(solutionID, tagKey)
 
 	return body.Data, err
 }
 
-func (s *Service) getSolutionTagResponseBody(solutionID int, tagKey string) (*connection.APIResponseBodyData[Tag], error) {
-	body := &connection.APIResponseBodyData[Tag]{}
+func (s *Service) getSolutionTagV1ResponseBody(solutionID int, tagKey string) (*connection.APIResponseBodyData[TagV1], error) {
+	body := &connection.APIResponseBodyData[TagV1]{}
 
 	if solutionID < 1 {
 		return body, fmt.Errorf("invalid solution id")
@@ -497,21 +497,21 @@ func (s *Service) getSolutionTagResponseBody(solutionID int, tagKey string) (*co
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil
 	})
 }
 
-// CreateSolutionTag creates a new solution tag
-func (s *Service) CreateSolutionTag(solutionID int, req CreateTagRequest) error {
-	_, err := s.createSolutionTagResponseBody(solutionID, req)
+// CreateSolutionTagV1 creates a new solution v1 tag
+func (s *Service) CreateSolutionTagV1(solutionID int, req CreateTagV1Request) error {
+	_, err := s.createSolutionTagV1ResponseBody(solutionID, req)
 
 	return err
 }
 
-func (s *Service) createSolutionTagResponseBody(solutionID int, req CreateTagRequest) (*connection.APIResponseBody, error) {
+func (s *Service) createSolutionTagV1ResponseBody(solutionID int, req CreateTagV1Request) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if solutionID < 1 {
@@ -532,14 +532,14 @@ func (s *Service) createSolutionTagResponseBody(solutionID int, req CreateTagReq
 	})
 }
 
-// PatchSolutionTag patches an eCloud solution tag
-func (s *Service) PatchSolutionTag(solutionID int, tagKey string, patch PatchTagRequest) error {
-	_, err := s.patchSolutionTagResponseBody(solutionID, tagKey, patch)
+// PatchSolutionTagV1 patches an eCloud solution v1 tag
+func (s *Service) PatchSolutionTagV1(solutionID int, tagKey string, patch PatchTagV1Request) error {
+	_, err := s.patchSolutionTagV1ResponseBody(solutionID, tagKey, patch)
 
 	return err
 }
 
-func (s *Service) patchSolutionTagResponseBody(solutionID int, tagKey string, patch PatchTagRequest) (*connection.APIResponseBody, error) {
+func (s *Service) patchSolutionTagV1ResponseBody(solutionID int, tagKey string, patch PatchTagV1Request) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if solutionID < 1 {
@@ -556,21 +556,21 @@ func (s *Service) patchSolutionTagResponseBody(solutionID int, tagKey string, pa
 
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil
 	})
 }
 
-// DeleteSolutionTag removes a solution tag
-func (s *Service) DeleteSolutionTag(solutionID int, tagKey string) error {
-	_, err := s.deleteSolutionTagResponseBody(solutionID, tagKey)
+// DeleteSolutionTagV1 removes a solution v1 tag
+func (s *Service) DeleteSolutionTagV1(solutionID int, tagKey string) error {
+	_, err := s.deleteSolutionTagV1ResponseBody(solutionID, tagKey)
 
 	return err
 }
 
-func (s *Service) deleteSolutionTagResponseBody(solutionID int, tagKey string) (*connection.APIResponseBody, error) {
+func (s *Service) deleteSolutionTagV1ResponseBody(solutionID int, tagKey string) (*connection.APIResponseBody, error) {
 	body := &connection.APIResponseBody{}
 
 	if solutionID < 1 {
@@ -586,7 +586,7 @@ func (s *Service) deleteSolutionTagResponseBody(solutionID int, tagKey string) (
 	}
 	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
 		if response.StatusCode == 404 {
-			return &TagNotFoundError{Key: tagKey}
+			return &TagV1NotFoundError{Key: tagKey}
 		}
 
 		return nil
