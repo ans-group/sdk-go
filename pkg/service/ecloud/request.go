@@ -697,3 +697,27 @@ type CreateNICRequest struct {
 type PatchNICRequest struct {
 	Name string `json:"name"`
 }
+
+// CreateTagV2Request represents a request to create an eCloud v2 tag
+type CreateTagV2Request struct {
+	connection.APIRequestBodyDefaultValidator
+
+	Name  string `json:"name" validate:"required"`
+	Scope string `json:"scope,omitempty"`
+}
+
+// Validate returns an error if struct properties are missing/invalid
+func (c *CreateTagV2Request) Validate() *connection.ValidationError {
+	return c.APIRequestBodyDefaultValidator.Validate(c)
+}
+
+// PatchTagV2Request represents a request to patch an eCloud v2 tag
+type PatchTagV2Request struct {
+	Name  string `json:"name,omitempty"`
+	Scope string `json:"scope,omitempty"`
+}
+
+// Validate returns an error if struct properties are missing/invalid
+func (c *PatchTagV2Request) Validate() *connection.ValidationError {
+	return nil
+}

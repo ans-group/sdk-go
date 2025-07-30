@@ -509,6 +509,14 @@ type ECloudService interface {
 	CreateMonitoringGateway(req CreateMonitoringGatewayRequest) (TaskReference, error)
 	PatchMonitoringGateway(gatewayID string, req PatchMonitoringGatewayRequest) (TaskReference, error)
 	DeleteMonitoringGateway(gatewayID string) (string, error)
+
+	// Tags V2
+	GetTagsV2(parameters connection.APIRequestParameters) ([]TagV2, error)
+	GetTagsV2Paginated(parameters connection.APIRequestParameters) (*connection.Paginated[TagV2], error)
+	GetTagV2(tagID string) (TagV2, error)
+	CreateTagV2(req CreateTagV2Request) (string, error)
+	PatchTagV2(tagID string, req PatchTagV2Request) error
+	DeleteTagV2(tagID string) error
 }
 
 // Service implements ECloudService for managing

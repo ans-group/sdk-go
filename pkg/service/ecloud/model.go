@@ -1099,3 +1099,13 @@ type MonitoringGateway struct {
 	CreatedAt          connection.DateTime `json:"created_at"`
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
+
+// TagV2 represents an eCloud v2 tag
+type TagV2 struct {
+	ID         string              `json:"id"`
+	ResellerID int                 `json:"reseller_id"`
+	Name       string              `json:"name"`
+	Scope      string              `json:"scope"`
+	CreatedAt  connection.DateTime `json:"created_at"`
+	UpdatedAt  connection.DateTime `json:"updated_at"`
+}

@@ -523,3 +523,12 @@ type MonitoringGatewayNotFoundError struct {
 func (e *MonitoringGatewayNotFoundError) Error() string {
 	return fmt.Sprintf("Monitoring gateway not found with ID [%s]", e.ID)
 }
+
+// TagV2NotFoundError represents a v2 tag not found error
+type TagV2NotFoundError struct {
+	ID string
+}
+
+func (e *TagV2NotFoundError) Error() string {
+	return fmt.Sprintf("ecloud: tag not found with ID [%s]", e.ID)
+}
