@@ -99,8 +99,8 @@ type VirtualMachineDisk struct {
 	Capacity int `json:"capacity"`
 }
 
-// Tag represents an eCloud tag
-type Tag struct {
+// TagV1 represents an eCloud v1 tag
+type TagV1 struct {
 	Key       string              `json:"key"`
 	Value     string              `json:"value"`
 	CreatedAt connection.DateTime `json:"created_at"`
@@ -1100,8 +1100,8 @@ type MonitoringGateway struct {
 	UpdatedAt          connection.DateTime `json:"updated_at"`
 }
 
-// TagV2 represents an eCloud v2 tag
-type TagV2 struct {
+// Tag represents an eCloud tag
+type Tag struct {
 	ID         string              `json:"id"`
 	ResellerID int                 `json:"reseller_id"`
 	Name       string              `json:"name"`

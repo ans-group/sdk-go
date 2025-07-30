@@ -6,17 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPatchTagRequest_Validate_NoError(t *testing.T) {
-	r := PatchTagRequest{}
+func TestPatchTagV1Request_Validate_NoError(t *testing.T) {
+	r := PatchTagV1Request{}
 
 	err := r.Validate()
 
 	assert.Nil(t, err)
 }
 
-func TestCreateTagRequest_Validate(t *testing.T) {
+func TestCreateTagV1Request_Validate(t *testing.T) {
 	t.Run("Valid_NoError", func(t *testing.T) {
-		c := CreateTagRequest{
+		c := CreateTagV1Request{
 			Key:   "testkey1",
 			Value: "testvalue1",
 		}
@@ -27,7 +27,7 @@ func TestCreateTagRequest_Validate(t *testing.T) {
 	})
 
 	t.Run("Invalid_Error", func(t *testing.T) {
-		c := CreateTagRequest{}
+		c := CreateTagV1Request{}
 
 		err := c.Validate()
 

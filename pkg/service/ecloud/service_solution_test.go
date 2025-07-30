@@ -1094,7 +1094,7 @@ func TestDeleteSolutionTemplate(t *testing.T) {
 	})
 }
 
-func TestGetSolutionTags(t *testing.T) {
+func TestGetSolutionTagsV1(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1112,7 +1112,7 @@ func TestGetSolutionTags(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tags, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+		tags, err := s.GetSolutionTagsV1(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 1)
@@ -1144,7 +1144,7 @@ func TestGetSolutionTags(t *testing.T) {
 			}, nil),
 		)
 
-		tags, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+		tags, err := s.GetSolutionTagsV1(123, connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 2)
@@ -1164,14 +1164,14 @@ func TestGetSolutionTags(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetSolutionTags(123, connection.APIRequestParameters{})
+		_, err := s.GetSolutionTagsV1(123, connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetSolutionTag(t *testing.T) {
+func TestGetSolutionTagV1(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1189,7 +1189,7 @@ func TestGetSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		solution, err := s.GetSolutionTag(123, "testkey1")
+		solution, err := s.GetSolutionTagV1(123, "testkey1")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "testkey1", solution.Key)
@@ -1207,7 +1207,7 @@ func TestGetSolutionTag(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetSolutionTag(123, "testkey1")
+		_, err := s.GetSolutionTagV1(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1223,7 +1223,7 @@ func TestGetSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionTag(0, "testkey1")
+		_, err := s.GetSolutionTagV1(0, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1239,7 +1239,7 @@ func TestGetSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetSolutionTag(123, "")
+		_, err := s.GetSolutionTagV1(123, "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1262,14 +1262,14 @@ func TestGetSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetSolutionTag(123, "testkey1")
+		_, err := s.GetSolutionTagV1(123, "testkey1")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagNotFoundError{}, err)
+		assert.IsType(t, &TagV1NotFoundError{}, err)
 	})
 }
 
-func TestCreateSolutionTag(t *testing.T) {
+func TestCreateSolutionTagV1(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1280,14 +1280,14 @@ func TestCreateSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Eq(&CreateTagRequest{Key: "testkey1", Value: "test value 1"})).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Eq(&CreateTagV1Request{Key: "testkey1", Value: "test value 1"})).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
 
-		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateSolutionTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.Nil(t, err)
 	})
@@ -1304,7 +1304,7 @@ func TestCreateSolutionTag(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/solutions/123/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateSolutionTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1320,7 +1320,7 @@ func TestCreateSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.CreateSolutionTag(0, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateSolutionTagV1(0, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1343,14 +1343,14 @@ func TestCreateSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.CreateSolutionTag(123, CreateTagRequest{Key: "testkey1", Value: "test value 1"})
+		err := s.CreateSolutionTagV1(123, CreateTagV1Request{Key: "testkey1", Value: "test value 1"})
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &SolutionNotFoundError{}, err)
 	})
 }
 
-func TestPatchSolutionTag(t *testing.T) {
+func TestPatchSolutionTagV1(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1361,7 +1361,7 @@ func TestPatchSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		patch := PatchTagRequest{
+		patch := PatchTagV1Request{
 			Value: "new test value 1",
 		}
 
@@ -1372,7 +1372,7 @@ func TestPatchSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchSolutionTag(123, "testkey1", patch)
+		err := s.PatchSolutionTagV1(123, "testkey1", patch)
 
 		assert.Nil(t, err)
 	})
@@ -1389,7 +1389,7 @@ func TestPatchSolutionTag(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchSolutionTag(123, "testkey1", PatchTagRequest{})
+		err := s.PatchSolutionTagV1(123, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1405,7 +1405,7 @@ func TestPatchSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchSolutionTag(0, "testkey1", PatchTagRequest{})
+		err := s.PatchSolutionTagV1(0, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1421,7 +1421,7 @@ func TestPatchSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchSolutionTag(123, "", PatchTagRequest{})
+		err := s.PatchSolutionTagV1(123, "", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1444,14 +1444,14 @@ func TestPatchSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchSolutionTag(123, "testkey1", PatchTagRequest{})
+		err := s.PatchSolutionTagV1(123, "testkey1", PatchTagV1Request{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagNotFoundError{}, err)
+		assert.IsType(t, &TagV1NotFoundError{}, err)
 	})
 }
 
-func TestDeleteSolutionTag(t *testing.T) {
+func TestDeleteSolutionTagV1(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -1469,7 +1469,7 @@ func TestDeleteSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteSolutionTag(123, "testkey1")
+		err := s.DeleteSolutionTagV1(123, "testkey1")
 
 		assert.Nil(t, err)
 	})
@@ -1486,7 +1486,7 @@ func TestDeleteSolutionTag(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/solutions/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteSolutionTag(123, "testkey1")
+		err := s.DeleteSolutionTagV1(123, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -1502,7 +1502,7 @@ func TestDeleteSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteSolutionTag(0, "testkey1")
+		err := s.DeleteSolutionTagV1(0, "testkey1")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid solution id", err.Error())
@@ -1518,7 +1518,7 @@ func TestDeleteSolutionTag(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteSolutionTag(123, "")
+		err := s.DeleteSolutionTagV1(123, "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid tag key", err.Error())
@@ -1541,9 +1541,9 @@ func TestDeleteSolutionTag(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteSolutionTag(123, "testkey1")
+		err := s.DeleteSolutionTagV1(123, "testkey1")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagNotFoundError{}, err)
+		assert.IsType(t, &TagV1NotFoundError{}, err)
 	})
 }

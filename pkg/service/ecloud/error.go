@@ -11,12 +11,12 @@ func (e *VirtualMachineNotFoundError) Error() string {
 	return fmt.Sprintf("virtual machine not found with ID [%d]", e.ID)
 }
 
-// TagNotFoundError indicates a tag was not found within eCloud
-type TagNotFoundError struct {
+// TagV1NotFoundError indicates a v1 tag was not found within eCloud
+type TagV1NotFoundError struct {
 	Key string
 }
 
-func (e *TagNotFoundError) Error() string {
+func (e *TagV1NotFoundError) Error() string {
 	return fmt.Sprintf("tag not found with key [%s]", e.Key)
 }
 
@@ -524,11 +524,11 @@ func (e *MonitoringGatewayNotFoundError) Error() string {
 	return fmt.Sprintf("Monitoring gateway not found with ID [%s]", e.ID)
 }
 
-// TagV2NotFoundError represents a v2 tag not found error
-type TagV2NotFoundError struct {
+// TagNotFoundError represents a tag not found error
+type TagNotFoundError struct {
 	ID string
 }
 
-func (e *TagV2NotFoundError) Error() string {
+func (e *TagNotFoundError) Error() string {
 	return fmt.Sprintf("ecloud: tag not found with ID [%s]", e.ID)
 }

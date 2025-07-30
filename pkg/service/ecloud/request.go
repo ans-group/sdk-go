@@ -4,18 +4,18 @@ import (
 	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
-// PatchTagRequest represents an eCloud tag patch request
-type PatchTagRequest struct {
+// PatchTagV1Request represents an eCloud v1 tag patch request
+type PatchTagV1Request struct {
 	Value string `json:"value,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
-func (c *PatchTagRequest) Validate() *connection.ValidationError {
+func (c *PatchTagV1Request) Validate() *connection.ValidationError {
 	return nil
 }
 
-// CreateTagRequest represents a request to create an eCloud tag
-type CreateTagRequest struct {
+// CreateTagV1Request represents a request to create an eCloud v1 tag
+type CreateTagV1Request struct {
 	connection.APIRequestBodyDefaultValidator
 
 	Key   string `json:"key" validate:"required"`
@@ -23,7 +23,7 @@ type CreateTagRequest struct {
 }
 
 // Validate returns an error if struct properties are missing/invalid
-func (c *CreateTagRequest) Validate() *connection.ValidationError {
+func (c *CreateTagV1Request) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
 
@@ -44,7 +44,7 @@ type CreateVirtualMachineRequest struct {
 	Disks                   []CreateVirtualMachineRequestDisk      `json:"hdd_disks,omitempty"`
 	Name                    string                                 `json:"name,omitempty"`
 	ComputerName            string                                 `json:"computername,omitempty"`
-	Tags                    []CreateTagRequest                     `json:"tags,omitempty"`
+	Tags                    []CreateTagV1Request                   `json:"tags,omitempty"`
 	Backup                  bool                                   `json:"backup"`
 	Support                 bool                                   `json:"support"`
 	Monitoring              bool                                   `json:"monitoring"`
@@ -698,8 +698,8 @@ type PatchNICRequest struct {
 	Name string `json:"name"`
 }
 
-// CreateTagV2Request represents a request to create an eCloud v2 tag
-type CreateTagV2Request struct {
+// CreateTagRequest represents a request to create an eCloud tag
+type CreateTagRequest struct {
 	connection.APIRequestBodyDefaultValidator
 
 	Name  string `json:"name" validate:"required"`
@@ -707,17 +707,17 @@ type CreateTagV2Request struct {
 }
 
 // Validate returns an error if struct properties are missing/invalid
-func (c *CreateTagV2Request) Validate() *connection.ValidationError {
+func (c *CreateTagRequest) Validate() *connection.ValidationError {
 	return c.APIRequestBodyDefaultValidator.Validate(c)
 }
 
-// PatchTagV2Request represents a request to patch an eCloud v2 tag
-type PatchTagV2Request struct {
+// PatchTagRequest represents a request to patch an eCloud tag
+type PatchTagRequest struct {
 	Name  string `json:"name,omitempty"`
 	Scope string `json:"scope,omitempty"`
 }
 
 // Validate returns an error if struct properties are missing/invalid
-func (c *PatchTagV2Request) Validate() *connection.ValidationError {
+func (c *PatchTagRequest) Validate() *connection.ValidationError {
 	return nil
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetTagsV2(t *testing.T) {
+func TestGetTags(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -31,7 +31,7 @@ func TestGetTagsV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tags, err := s.GetTagsV2(connection.APIRequestParameters{})
+		tags, err := s.GetTags(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 1)
@@ -65,7 +65,7 @@ func TestGetTagsV2(t *testing.T) {
 			}, nil),
 		)
 
-		tags, err := s.GetTagsV2(connection.APIRequestParameters{})
+		tags, err := s.GetTags(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags, 2)
@@ -85,14 +85,14 @@ func TestGetTagsV2(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetTagsV2(connection.APIRequestParameters{})
+		_, err := s.GetTags(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetTagsV2Paginated(t *testing.T) {
+func TestGetTagsPaginated(t *testing.T) {
 	t.Run("Single", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -110,7 +110,7 @@ func TestGetTagsV2Paginated(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tags, err := s.GetTagsV2Paginated(connection.APIRequestParameters{})
+		tags, err := s.GetTagsPaginated(connection.APIRequestParameters{})
 
 		assert.Nil(t, err)
 		assert.Len(t, tags.Items(), 1)
@@ -129,14 +129,14 @@ func TestGetTagsV2Paginated(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		_, err := s.GetTagsV2Paginated(connection.APIRequestParameters{})
+		_, err := s.GetTagsPaginated(connection.APIRequestParameters{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestGetTagV2(t *testing.T) {
+func TestGetTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -154,7 +154,7 @@ func TestGetTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tag, err := s.GetTagV2("tag-abcdef12")
+		tag, err := s.GetTag("tag-abcdef12")
 
 		assert.Nil(t, err)
 		assert.Equal(t, "tag-abcdef12", tag.ID)
@@ -174,7 +174,7 @@ func TestGetTagV2(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/tags/tag-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.GetTagV2("tag-abcdef12")
+		_, err := s.GetTag("tag-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -190,13 +190,13 @@ func TestGetTagV2(t *testing.T) {
 			connection: c,
 		}
 
-		_, err := s.GetTagV2("")
+		_, err := s.GetTag("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "ecloud: invalid tag id", err.Error())
 	})
 
-	t.Run("404_ReturnsTagV2NotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTagNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -213,14 +213,14 @@ func TestGetTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		_, err := s.GetTagV2("tag-abcdef12")
+		_, err := s.GetTag("tag-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagV2NotFoundError{}, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
 	})
 }
 
-func TestCreateTagV2(t *testing.T) {
+func TestCreateTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -231,7 +231,7 @@ func TestCreateTagV2(t *testing.T) {
 			connection: c,
 		}
 
-		req := CreateTagV2Request{
+		req := CreateTagRequest{
 			Name:  "test-tag",
 			Scope: "global",
 		}
@@ -243,7 +243,7 @@ func TestCreateTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		tagID, err := s.CreateTagV2(req)
+		tagID, err := s.CreateTag(req)
 
 		assert.Nil(t, err)
 		assert.Equal(t, "tag-abcdef12", tagID)
@@ -261,14 +261,14 @@ func TestCreateTagV2(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/tags", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		_, err := s.CreateTagV2(CreateTagV2Request{})
+		_, err := s.CreateTag(CreateTagRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
 	})
 }
 
-func TestPatchTagV2(t *testing.T) {
+func TestPatchTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -279,7 +279,7 @@ func TestPatchTagV2(t *testing.T) {
 			connection: c,
 		}
 
-		req := PatchTagV2Request{
+		req := PatchTagRequest{
 			Name:  "updated-tag",
 			Scope: "vpc",
 		}
@@ -291,7 +291,7 @@ func TestPatchTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchTagV2("tag-abcdef12", req)
+		err := s.PatchTag("tag-abcdef12", req)
 
 		assert.Nil(t, err)
 	})
@@ -308,7 +308,7 @@ func TestPatchTagV2(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/tags/tag-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.PatchTagV2("tag-abcdef12", PatchTagV2Request{})
+		err := s.PatchTag("tag-abcdef12", PatchTagRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -324,13 +324,13 @@ func TestPatchTagV2(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.PatchTagV2("", PatchTagV2Request{})
+		err := s.PatchTag("", PatchTagRequest{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "ecloud: invalid tag id", err.Error())
 	})
 
-	t.Run("404_ReturnsTagV2NotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTagNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -347,14 +347,14 @@ func TestPatchTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.PatchTagV2("tag-abcdef12", PatchTagV2Request{})
+		err := s.PatchTag("tag-abcdef12", PatchTagRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagV2NotFoundError{}, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
 	})
 }
 
-func TestDeleteTagV2(t *testing.T) {
+func TestDeleteTag(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -372,7 +372,7 @@ func TestDeleteTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteTagV2("tag-abcdef12")
+		err := s.DeleteTag("tag-abcdef12")
 
 		assert.Nil(t, err)
 	})
@@ -389,7 +389,7 @@ func TestDeleteTagV2(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/tags/tag-abcdef12", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeleteTagV2("tag-abcdef12")
+		err := s.DeleteTag("tag-abcdef12")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -405,13 +405,13 @@ func TestDeleteTagV2(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeleteTagV2("")
+		err := s.DeleteTag("")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "ecloud: invalid tag id", err.Error())
 	})
 
-	t.Run("404_ReturnsTagV2NotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsTagNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -428,9 +428,9 @@ func TestDeleteTagV2(t *testing.T) {
 			},
 		}, nil).Times(1)
 
-		err := s.DeleteTagV2("tag-abcdef12")
+		err := s.DeleteTag("tag-abcdef12")
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &TagV2NotFoundError{}, err)
+		assert.IsType(t, &TagNotFoundError{}, err)
 	})
 }
