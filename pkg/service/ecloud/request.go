@@ -264,14 +264,14 @@ type CreateInstanceRequest struct {
 
 // PatchInstanceRequest represents a request to patch an instance
 type PatchInstanceRequest struct {
-	Name               string   `json:"name,omitempty"`
-	VCPUCores          int      `json:"vcpu_cores,omitempty"`
-	VCPUSockets        int      `json:"vcpu_sockets,omitempty"`
-	VCPUCoresPerSocket int      `json:"vcpu_cores_per_socket,omitempty"`
-	RAMCapacity        int      `json:"ram_capacity,omitempty"`
-	VolumeGroupID      *string  `json:"volume_group_id,omitempty"`
-	BackupGatewayID    string   `json:"backup_gateway_id,omitempty"`
-	TagIDs             []string `json:"tag_ids,omitempty"`
+	Name               string    `json:"name,omitempty"`
+	VCPUCores          int       `json:"vcpu_cores,omitempty"`
+	VCPUSockets        int       `json:"vcpu_sockets,omitempty"`
+	VCPUCoresPerSocket int       `json:"vcpu_cores_per_socket,omitempty"`
+	RAMCapacity        int       `json:"ram_capacity,omitempty"`
+	VolumeGroupID      *string   `json:"volume_group_id,omitempty"`
+	BackupGatewayID    string    `json:"backup_gateway_id,omitempty"`
+	TagIDs             *[]string `json:"tag_ids,omitempty"`
 }
 
 // CreateFirewallPolicyRequest represents a request to create a firewall policy

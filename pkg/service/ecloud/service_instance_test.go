@@ -2216,11 +2216,12 @@ func TestPatchInstanceWithTags(t *testing.T) {
 			connection: c,
 		}
 
+		tagIDs := []string{"tag-abc123", "tag-def456"}
 		patchRequest := PatchInstanceRequest{
 			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
-			TagIDs:      []string{"tag-ghi789"},
+			TagIDs:      &tagIDs,
 		}
 
 		c.EXPECT().Patch("/ecloud/v2/instances/i-abcdef12", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
@@ -2245,11 +2246,12 @@ func TestPatchInstanceWithTags(t *testing.T) {
 			connection: c,
 		}
 
+		var emptyTagsIDs []string
 		patchRequest := PatchInstanceRequest{
 			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
-			TagIDs:      []string{},
+			TagIDs:      &emptyTagsIDs,
 		}
 
 		c.EXPECT().Patch("/ecloud/v2/instances/i-abcdef12", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
