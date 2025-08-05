@@ -382,7 +382,7 @@ type Instance struct {
 	Locked             bool                `json:"locked"`
 	BackupEnabled      bool                `json:"backup_enabled"`
 	BackupGatewayID    string              `json:"backup_gateway_id"`
-	BackupAgentEnabled bool                `json:"secure_backup"` // TODO: Change tag to 'backup_agent_enabled' when ADO#34659 released
+	BackupAgentEnabled bool                `json:"backup_agent_enabled"`
 	IsEncrypted        bool                `json:"is_encrypted"`
 	Platform           string              `json:"platform"`
 	VolumeCapacity     int                 `json:"volume_capacity"`
