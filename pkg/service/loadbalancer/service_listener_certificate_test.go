@@ -3,7 +3,7 @@ package loadbalancer
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetListenerCertificates(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -86,7 +86,7 @@ func TestGetListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -159,7 +159,7 @@ func TestGetListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -188,7 +188,7 @@ func TestCreateListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -245,7 +245,7 @@ func TestCreateListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/listeners/123/certs", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -274,7 +274,7 @@ func TestPatchListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -346,7 +346,7 @@ func TestPatchListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -371,7 +371,7 @@ func TestDeleteListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -443,7 +443,7 @@ func TestDeleteListenerCertificate(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/listeners/123/certs/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)

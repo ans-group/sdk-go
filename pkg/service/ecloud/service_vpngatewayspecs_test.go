@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetVPNGatewaySpecifications(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateway-specifications", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vpngs-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vpngs-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -70,7 +70,7 @@ func TestGetVPNGatewaySpecification(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateway-specifications/vpngs-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpngs-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpngs-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -127,7 +127,7 @@ func TestGetVPNGatewaySpecification(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateway-specifications/vpngs-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -152,7 +152,7 @@ func TestGetVPNGatewaySpecificationAvailabilityZones(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateway-specifications/vpngs-abcdef12/availability-zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"az-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"az-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,7 +210,7 @@ func TestGetVPNGatewaySpecificationAvailabilityZones(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateway-specifications/vpngs-abcdef12/availability-zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

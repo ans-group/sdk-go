@@ -3,7 +3,7 @@ package account
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetApplications(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -51,13 +51,13 @@ func TestGetApplications(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/account/v1/applications", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/account/v1/applications", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-456\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-456\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -103,7 +103,7 @@ func TestGetApplication(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -160,7 +160,7 @@ func TestGetApplication(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -185,7 +185,7 @@ func TestGetServices(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/services", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,13 +210,13 @@ func TestGetServices(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/account/v1/services", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-123\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/account/v1/services", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-456\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"test-id-456\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -264,7 +264,7 @@ func TestCreateApplication(t *testing.T) {
 
 		c.EXPECT().Post("/account/v1/applications", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -309,7 +309,7 @@ func TestUpdateApplication(t *testing.T) {
 
 		c.EXPECT().Patch("/account/v1/applications/test-id-123", gomock.Eq(&updateRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -365,7 +365,7 @@ func TestUpdateApplication(t *testing.T) {
 
 		c.EXPECT().Patch("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -390,7 +390,7 @@ func TestGetApplicationServices(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123/services", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"scopes\":[{\"service\":\"accounts\",\"roles\":[\"read\",\"write\"]}]}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"scopes\":[{\"service\":\"accounts\",\"roles\":[\"read\",\"write\"]}]}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -447,7 +447,7 @@ func TestGetApplicationServices(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123/services", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -474,7 +474,7 @@ func TestSetApplicationServices(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Eq(&serviceRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -530,7 +530,7 @@ func TestSetApplicationServices(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-456/services", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -555,7 +555,7 @@ func TestDeleteApplicationServices(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-123/services", gomock.Eq(SetServiceRequest{Scopes: []ApplicationServiceScope{}})).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"test-id-123\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -611,7 +611,7 @@ func TestDeleteApplicationServices(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-456/services", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -636,7 +636,7 @@ func TestGetApplicationRestrictions(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"ip_restriction_type\":\"allowlist\",\"ip_ranges\":[\"8.8.8.8\"]},\"meta\":{}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"ip_restriction_type\":\"allowlist\",\"ip_ranges\":[\"8.8.8.8\"]},\"meta\":{}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -693,7 +693,7 @@ func TestGetApplicationRestrictions(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/applications/test-id-123/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -720,7 +720,7 @@ func TestSetApplicationRestrictions(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-123/ip-restrictions", gomock.Eq(&restrictionRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -776,7 +776,7 @@ func TestSetApplicationRestrictions(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-456/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -801,7 +801,7 @@ func TestDeleteApplicationRestriction(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-123/ip-restrictions", gomock.Eq(connection.APIRequestParameters{})).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -857,7 +857,7 @@ func TestDeleteApplicationRestriction(t *testing.T) {
 
 		c.EXPECT().Put("/account/v1/applications/test-id-456/ip-restrictions", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -882,7 +882,7 @@ func TestDeleteApplication(t *testing.T) {
 
 		c.EXPECT().Delete("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -938,7 +938,7 @@ func TestDeleteApplication(t *testing.T) {
 
 		c.EXPECT().Delete("/account/v1/applications/test-id-123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

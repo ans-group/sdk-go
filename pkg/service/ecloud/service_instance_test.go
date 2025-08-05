@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"testing"
 
@@ -27,7 +26,7 @@ func TestGetInstances(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"i-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"i-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -71,7 +70,7 @@ func TestGetInstance(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -128,7 +127,7 @@ func TestGetInstance(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -159,7 +158,7 @@ func TestCreateInstance(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -208,7 +207,7 @@ func TestPatchInstance(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/instances/i-abcdef12", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 202,
 			},
 		}, nil)
@@ -264,7 +263,7 @@ func TestPatchInstance(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -289,7 +288,7 @@ func TestDeleteInstance(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -345,7 +344,7 @@ func TestDeleteInstance(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -370,7 +369,7 @@ func TestLockInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/lock", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -426,7 +425,7 @@ func TestLockInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/lock", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -451,7 +450,7 @@ func TestUnlockInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/unlock", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -507,7 +506,7 @@ func TestUnlockInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/unlock", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -532,7 +531,7 @@ func TestPowerOnInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-on", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -589,7 +588,7 @@ func TestPowerOnInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-on", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -614,7 +613,7 @@ func TestPowerOffInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-off", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -671,7 +670,7 @@ func TestPowerOffInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-off", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -696,7 +695,7 @@ func TestPowerResetInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-reset", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -753,7 +752,7 @@ func TestPowerResetInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-reset", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -778,7 +777,7 @@ func TestPowerShutdownInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-shutdown", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -835,7 +834,7 @@ func TestPowerShutdownInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-shutdown", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -860,7 +859,7 @@ func TestPowerRestartInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-restart", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -917,7 +916,7 @@ func TestPowerRestartInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/power-restart", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -946,7 +945,7 @@ func TestMigrateInstance(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -973,7 +972,7 @@ func TestMigrateInstance(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -1030,7 +1029,7 @@ func TestMigrateInstance(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/migrate", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1055,7 +1054,7 @@ func TestGetInstanceVolumes(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/volumes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -1113,7 +1112,7 @@ func TestGetInstanceVolumes(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/volumes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1138,7 +1137,7 @@ func TestGetInstanceCredentials(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -1196,7 +1195,7 @@ func TestGetInstanceCredentials(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/credentials", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1221,7 +1220,7 @@ func TestGetInstanceNICs(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -1279,7 +1278,7 @@ func TestGetInstanceNICs(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/nics", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1304,7 +1303,7 @@ func TestCreateInstanceConsoleSession(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/console-session", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"url\":\"ukfast.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"url\":\"ukfast.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1361,7 +1360,7 @@ func TestCreateInstanceConsoleSession(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/console-session", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1386,7 +1385,7 @@ func TestGetInstanceTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1444,7 +1443,7 @@ func TestGetInstanceTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1473,7 +1472,7 @@ func TestAttachInstanceVolume(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/volume-attach", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil)
@@ -1530,7 +1529,7 @@ func TestAttachInstanceVolume(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/volume-attach", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1559,7 +1558,7 @@ func TestDetachInstanceVolume(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/volume-detach", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil)
@@ -1616,7 +1615,7 @@ func TestDetachInstanceVolume(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/volume-detach", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1641,7 +1640,7 @@ func TestGetInstanceFloatingIPs(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/floating-ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -1699,7 +1698,7 @@ func TestGetInstanceFloatingIPs(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12/floating-ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -1728,7 +1727,7 @@ func TestCreateInstanceImage(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/instances/i-abcdef12/create-image", gomock.Eq(&req)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil)
@@ -1787,7 +1786,7 @@ func TestEncryptInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/encrypt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil)
@@ -1846,7 +1845,7 @@ func TestDecryptInstance(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v2/instances/i-abcdef12/decrypt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil)

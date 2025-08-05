@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetNICs(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"nic-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"nic-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -70,7 +70,7 @@ func TestGetNIC(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -127,7 +127,7 @@ func TestGetNIC(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -152,7 +152,7 @@ func TestGetNICTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,7 +210,7 @@ func TestGetNICTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -235,7 +235,7 @@ func TestGetNICIPAddresses(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12/ip-addresses", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"ip-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"ip-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -293,7 +293,7 @@ func TestGetNICIPAddresses(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/nics/nic-abcdef12/ip-addresses", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -322,7 +322,7 @@ func TestAssignNICIPAddress(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/nics/nic-abcdef12/ip-addresses", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -379,7 +379,7 @@ func TestAssignNICIPAddress(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/nics/nic-abcdef12/ip-addresses", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -404,7 +404,7 @@ func TestUnassignNICIPAddress(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12/ip-addresses/ip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -477,7 +477,7 @@ func TestUnassignNICIPAddress(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12/ip-addresses/ip-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -506,7 +506,7 @@ func TestCreateNIC(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/nics", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -554,7 +554,7 @@ func TestPatchNIC(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"nic-abcdef12\",\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -613,7 +613,7 @@ func TestPatchNIC(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/nics/nic-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -638,7 +638,7 @@ func TestDeleteNIC(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -695,7 +695,7 @@ func TestDeleteNIC(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/nics/nic-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

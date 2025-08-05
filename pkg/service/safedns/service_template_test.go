@@ -3,7 +3,7 @@ package safedns
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -24,7 +24,7 @@ func TestGetTemplates(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -47,13 +47,13 @@ func TestGetTemplates(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/safedns/v1/templates", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -95,7 +95,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -146,7 +146,7 @@ func TestGetTemplate(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -173,7 +173,7 @@ func TestCreateTemplate(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/templates", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -216,7 +216,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c.EXPECT().Patch("/safedns/v1/templates/123", gomock.Eq(&patch)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -267,7 +267,7 @@ func TestPatchTemplate(t *testing.T) {
 
 		c.EXPECT().Patch("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -290,7 +290,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -340,7 +340,7 @@ func TestDeleteTemplate(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/templates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -363,7 +363,7 @@ func TestGetTemplateRecords(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -386,13 +386,13 @@ func TestGetTemplateRecords(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":789}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":789}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -434,7 +434,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -499,7 +499,7 @@ func TestGetTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -526,7 +526,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/templates/123/records", gomock.Eq(&createReq)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -577,7 +577,7 @@ func TestCreateTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/templates/123/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -604,7 +604,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Patch("/safedns/v1/templates/123/records/456", gomock.Eq(&patch)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -668,7 +668,7 @@ func TestPatchTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Patch("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -691,7 +691,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -755,7 +755,7 @@ func TestDeleteTemplateRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/templates/123/records/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

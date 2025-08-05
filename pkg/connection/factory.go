@@ -36,7 +36,7 @@ func NewDefaultConnectionFactory(opts ...DefaultConnectionFactoryOption) *Defaul
 func (f *DefaultConnectionFactory) NewConnection() (Connection, error) {
 	apiKey := config.GetString("api_key")
 	if len(apiKey) < 1 {
-		return nil, errors.New("Missing api_key")
+		return nil, errors.New("missing api_key")
 	}
 
 	conn := NewAPIConnection(&APIKeyCredentials{APIKey: apiKey})

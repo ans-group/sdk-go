@@ -21,11 +21,13 @@ func TestInit(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`testconfig:
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`testconfig:
   somekey: somevalue
 `), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 		someKey := GetString("testconfig.somekey")
 
 		assert.Equal(t, "somevalue", someKey)
@@ -48,14 +50,17 @@ func TestSave(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`contexts:
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`contexts:
     somecontext:
         somekey: somevalue
 `), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 		Set("somecontext", "somekey", "newvalue")
-		Save()
+		err = Save()
+		assert.NoError(t, err)
 
 		content, _ := afero.ReadFile(fs, "/tmp/testconfig.yml")
 
@@ -72,10 +77,12 @@ func TestSave(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		Init("")
+		err := Init("")
+		assert.NoError(t, err)
 		defaultConfigFile = "/tmp/defaultconfig.yml"
 		Set("somecontext", "somekey", "newvalue")
-		Save()
+		err = Save()
+		assert.NoError(t, err)
 
 		content, _ := afero.ReadFile(fs, defaultConfigFile)
 
@@ -100,9 +107,11 @@ func TestGetCurrentContextName(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	SetFs(fs)
 
-	afero.WriteFile(fs, "/tmp/testconfig.yml", []byte("current_context: testcontext"), 0644)
+	err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte("current_context: testcontext"), 0644)
+	assert.NoError(t, err)
 
-	Init("/tmp/testconfig.yml")
+	err = Init("/tmp/testconfig.yml")
+	assert.NoError(t, err)
 
 	currentContext := GetCurrentContextName()
 
@@ -114,14 +123,16 @@ func TestGetContextNames(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	SetFs(fs)
 
-	afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`contexts:
+	err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(`contexts:
   testcontext1:
     somekey: somevalue
   testcontext2:
     somekey: somevalue
 `), 0644)
+	assert.NoError(t, err)
 
-	Init("/tmp/testconfig.yml")
+	err = Init("/tmp/testconfig.yml")
+	assert.NoError(t, err)
 
 	contexts := GetContextNames()
 
@@ -135,11 +146,14 @@ func TestSetCurrentContext(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 
-		SetCurrentContext("somekey", "somenewvalue")
+		err = SetCurrentContext("somekey", "somenewvalue")
+		assert.NoError(t, err)
 		value := GetString("somekey")
 
 		assert.Equal(t, "somenewvalue", value)
@@ -159,9 +173,11 @@ func TestSet(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 
 		Set("testcontext1", "somekey", "somenewvalue")
 		value := GetString("somekey")
@@ -174,9 +190,11 @@ func TestSet(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		SetFs(fs)
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 
 		Set("", "somekey", "somenewvalue")
 		value := GetString("somekey")
@@ -194,11 +212,14 @@ func TestSwitchCurrentContext(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	SetFs(fs)
 
-	afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+	err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(defaultConfig), 0644)
+	assert.NoError(t, err)
 
-	Init("/tmp/testconfig.yml")
+	err = Init("/tmp/testconfig.yml")
+	assert.NoError(t, err)
 
-	SwitchCurrentContext("testcontext2")
+	err = SwitchCurrentContext("testcontext2")
+	assert.NoError(t, err)
 	currentContext := GetCurrentContextName()
 
 	assert.Equal(t, "testcontext2", currentContext)
@@ -219,9 +240,11 @@ current_context: testcontext1
 somekey: someothervalue
 `
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(config), 0644)
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(config), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 
 		value := GetString("somekey")
 
@@ -242,9 +265,11 @@ current_context: testcontext1
 someotherkey: someothervalue
 `
 
-		afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(config), 0644)
+		err := afero.WriteFile(fs, "/tmp/testconfig.yml", []byte(config), 0644)
+		assert.NoError(t, err)
 
-		Init("/tmp/testconfig.yml")
+		err = Init("/tmp/testconfig.yml")
+		assert.NoError(t, err)
 
 		value := GetString("someotherkey")
 

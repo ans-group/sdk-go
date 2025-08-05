@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetVolumeGroups(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/volume-groups", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"volgroup-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"volgroup-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -70,7 +70,7 @@ func TestGetVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/volume-groups/volgroup-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"volgroup-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"volgroup-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -127,7 +127,7 @@ func TestGetVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/volume-groups/volgroup-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -156,7 +156,7 @@ func TestCreateVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/volume-groups", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"volgroup-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"volgroup-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -204,7 +204,7 @@ func TestPatchVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/volume-groups/volgroup-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -261,7 +261,7 @@ func TestPatchVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/volume-groups/volgroup-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -286,7 +286,7 @@ func TestDeleteVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/volume-groups/volgroup-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -343,7 +343,7 @@ func TestDeleteVolumeGroup(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/volume-groups/volgroup-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -368,7 +368,7 @@ func TestGetVolumeGroupVolumes(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/volume-groups/volgroup-abcdef12/volumes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vol-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -426,7 +426,7 @@ func TestGetVolumeGroupVolumes(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/volume-groups/volgroup-abcdef12/volumes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

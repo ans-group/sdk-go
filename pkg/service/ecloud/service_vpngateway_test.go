@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetVPNGateways(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateways", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vpng-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"vpng-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -70,7 +70,7 @@ func TestGetVPNGateway(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateways/vpng-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -127,7 +127,7 @@ func TestGetVPNGateway(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateways/vpng-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -156,7 +156,7 @@ func TestCreateVPNGateway(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v2/vpn-gateways", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -204,7 +204,7 @@ func TestPatchVPNGateway(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/vpn-gateways/vpng-abcdef12", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpng-abcdef12\",\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -262,7 +262,7 @@ func TestPatchVPNGateway(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v2/vpn-gateways/vpng-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -287,7 +287,7 @@ func TestDeleteVPNGateway(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/vpn-gateways/vpng-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"task_id\":\"task-abcdef12\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -344,7 +344,7 @@ func TestDeleteVPNGateway(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v2/vpn-gateways/vpng-abcdef12", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -369,7 +369,7 @@ func TestGetVPNGatewayTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateways/vpng-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"task-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -427,7 +427,7 @@ func TestGetVPNGatewayTasks(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/vpn-gateways/vpng-abcdef12/tasks", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

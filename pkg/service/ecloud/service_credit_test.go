@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetCredits(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/credits", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"type\":\"test credit\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"type\":\"test credit\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)

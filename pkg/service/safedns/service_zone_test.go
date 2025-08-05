@@ -3,7 +3,7 @@ package safedns
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -25,7 +25,7 @@ func TestGetZones(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -48,13 +48,13 @@ func TestGetZones(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/safedns/v1/zones", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain2.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain2.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -96,7 +96,7 @@ func TestGetZone(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -147,7 +147,7 @@ func TestGetZone(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -174,7 +174,7 @@ func TestCreateZone(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/zones", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -216,7 +216,7 @@ func TestPatchZone(t *testing.T) {
 
 		c.EXPECT().Patch("/safedns/v1/zones/testdomain1.co.uk", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -268,7 +268,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -318,7 +318,7 @@ func TestDeleteZone(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -341,7 +341,7 @@ func TestGetZoneRecords(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -364,13 +364,13 @@ func TestGetZoneRecords(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -412,7 +412,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -477,7 +477,7 @@ func TestGetZoneRecord(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -504,7 +504,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Eq(&createReq)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -555,7 +555,7 @@ func TestCreateZoneRecord(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -583,7 +583,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Eq(&record)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -647,7 +647,7 @@ func TestUpdateZoneRecord(t *testing.T) {
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -674,7 +674,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Eq(&patch)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -738,7 +738,7 @@ func TestPatchZoneRecord(t *testing.T) {
 
 		c.EXPECT().Put("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -761,7 +761,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -825,7 +825,7 @@ func TestDeleteZoneRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/safedns/v1/zones/testdomain1.co.uk/records/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -848,7 +848,7 @@ func TestGetZoneNotes(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -871,13 +871,13 @@ func TestGetZoneNotes(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -919,7 +919,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -984,7 +984,7 @@ func TestGetZoneNote(t *testing.T) {
 
 		c.EXPECT().Get("/safedns/v1/zones/testdomain1.co.uk/notes/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1011,7 +1011,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Eq(&createReq)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -1062,7 +1062,7 @@ func TestCreateZoneNote(t *testing.T) {
 
 		c.EXPECT().Post("/safedns/v1/zones/testdomain1.co.uk/notes", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

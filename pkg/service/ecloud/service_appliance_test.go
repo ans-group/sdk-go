@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetAppliances(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/appliances", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -51,13 +51,13 @@ func TestGetAppliances(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ecloud/v1/appliances", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ecloud/v1/appliances", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -103,7 +103,7 @@ func TestGetAppliance(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -160,7 +160,7 @@ func TestGetAppliance(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -185,7 +185,7 @@ func TestGetApplianceParameters(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,13 +210,13 @@ func TestGetApplianceParameters(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ecloud/v1/appliances/00000000-0000-0000-0000-000000000000/parameters", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),

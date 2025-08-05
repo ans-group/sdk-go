@@ -92,13 +92,13 @@ type Report struct {
 		OpenSSLVersion string              `json:"openssl_version"`
 		SSLVersions    struct {
 			TLS struct {
-				_1   bool `json:"1"`
-				_1_1 bool `json:"1.1"`
-				_1_2 bool `json:"1.2"`
+				V1   bool `json:"1"`
+				V1_1 bool `json:"1.1"`
+				V1_2 bool `json:"1.2"`
 			} `json:"tls"`
 			SSL struct {
-				_2 bool `json:"2"`
-				_3 bool `json:"3"`
+				V2 bool `json:"2"`
+				V3 bool `json:"3"`
 			} `json:"ssl"`
 		} `json:"ssl_versions"`
 	} `json:"server"`

@@ -3,7 +3,7 @@ package ddosx
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -30,7 +30,7 @@ func TestGetDomains(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -55,13 +55,13 @@ func TestGetDomains(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain1.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain2.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"testdomain2.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -107,7 +107,7 @@ func TestGetDomain(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -164,7 +164,7 @@ func TestGetDomain(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -193,7 +193,7 @@ func TestCreateDomain(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -235,7 +235,7 @@ func TestDeleteDomain(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", &DeleteDomainRequest{}).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -291,7 +291,7 @@ func TestDeleteDomain(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk", &DeleteDomainRequest{}).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -316,7 +316,7 @@ func TestDeployDomain(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/deploy", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -372,7 +372,7 @@ func TestDeployDomain(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/deploy", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -397,7 +397,7 @@ func TestGetDomainRecords(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -422,13 +422,13 @@ func TestGetDomainRecords(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -474,7 +474,7 @@ func TestGetDomainRecord(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -547,7 +547,7 @@ func TestGetDomainRecord(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -576,7 +576,7 @@ func TestCreateDomainRecord(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/records", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -633,7 +633,7 @@ func TestCreateDomainRecord(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/records", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -662,7 +662,7 @@ func TestPatchDomainRecord(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -734,7 +734,7 @@ func TestPatchDomainRecord(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -759,7 +759,7 @@ func TestDeleteDomainRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -831,7 +831,7 @@ func TestDeleteDomainRecord(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/records/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -856,7 +856,7 @@ func TestGetDomainProperties(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/properties", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -881,13 +881,13 @@ func TestGetDomainProperties(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/properties", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/properties", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -933,7 +933,7 @@ func TestGetDomainProperty(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/properties/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1006,7 +1006,7 @@ func TestGetDomainProperty(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/properties/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1035,7 +1035,7 @@ func TestPatchDomainProperty(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/properties/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1107,7 +1107,7 @@ func TestPatchDomainProperty(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/properties/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1132,7 +1132,7 @@ func TestGetDomainWAF(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"mode\":\"On\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"mode\":\"On\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1189,7 +1189,7 @@ func TestGetDomainWAF(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1219,7 +1219,7 @@ func TestCreateDomainWAF(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -1275,7 +1275,7 @@ func TestCreateDomainWAF(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1305,7 +1305,7 @@ func TestPatchDomainWAF(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1361,7 +1361,7 @@ func TestPatchDomainWAF(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1386,7 +1386,7 @@ func TestDeleteDomainWAF(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -1442,7 +1442,7 @@ func TestDeleteDomainWAF(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1467,7 +1467,7 @@ func TestGetDomainWAFRuleSets(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1492,13 +1492,13 @@ func TestGetDomainWAFRuleSets(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -1544,7 +1544,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1617,7 +1617,7 @@ func TestGetDomainWAFRuleSet(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1642,7 +1642,7 @@ func TestPatchDomainWAFRuleSet(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1714,7 +1714,7 @@ func TestPatchDomainWAFRuleSet(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/rulesets/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1739,7 +1739,7 @@ func TestGetDomainWAFRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1764,13 +1764,13 @@ func TestGetDomainWAFRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -1816,7 +1816,7 @@ func TestGetDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1889,7 +1889,7 @@ func TestGetDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1919,7 +1919,7 @@ func TestCreateDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf/rules", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -1976,7 +1976,7 @@ func TestCreateDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2001,7 +2001,7 @@ func TestPatchDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2073,7 +2073,7 @@ func TestPatchDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2098,7 +2098,7 @@ func TestDeleteDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -2170,7 +2170,7 @@ func TestDeleteDomainWAFRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2195,7 +2195,7 @@ func TestGetDomainWAFAdvancedRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2220,13 +2220,13 @@ func TestGetDomainWAFAdvancedRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -2272,7 +2272,7 @@ func TestGetDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2345,7 +2345,7 @@ func TestGetDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2377,7 +2377,7 @@ func TestCreateDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -2434,7 +2434,7 @@ func TestCreateDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2459,7 +2459,7 @@ func TestPatchDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2531,7 +2531,7 @@ func TestPatchDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2556,7 +2556,7 @@ func TestDeleteDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -2628,7 +2628,7 @@ func TestDeleteDomainWAFAdvancedRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/waf/advanced-rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2653,7 +2653,7 @@ func TestGetDomainACLGeoIPRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2678,13 +2678,13 @@ func TestGetDomainACLGeoIPRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -2730,7 +2730,7 @@ func TestGetDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2803,7 +2803,7 @@ func TestGetDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2832,7 +2832,7 @@ func TestCreateDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -2889,7 +2889,7 @@ func TestCreateDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -2918,7 +2918,7 @@ func TestPatchDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -2990,7 +2990,7 @@ func TestPatchDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3015,7 +3015,7 @@ func TestDeleteDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -3087,7 +3087,7 @@ func TestDeleteDomainACLGeoIPRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3112,7 +3112,7 @@ func TestGetDomainACLGeoIPRulesMode(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/mode", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"mode\":\"Whitelist\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"mode\":\"Whitelist\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3169,7 +3169,7 @@ func TestGetDomainACLGeoIPRulesMode(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/mode", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3198,7 +3198,7 @@ func TestPatchDomainACLGeoIPRulesMode(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/mode", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3254,7 +3254,7 @@ func TestPatchDomainACLGeoIPRulesMode(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/geo-ips/mode", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3279,7 +3279,7 @@ func TestGetDomainACLIPRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3304,13 +3304,13 @@ func TestGetDomainACLIPRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/ips", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/ips", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -3356,7 +3356,7 @@ func TestGetDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3429,7 +3429,7 @@ func TestGetDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3458,7 +3458,7 @@ func TestCreateDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/acls/ips", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -3515,7 +3515,7 @@ func TestCreateDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/acls/ips", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3544,7 +3544,7 @@ func TestPatchDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3616,7 +3616,7 @@ func TestPatchDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3641,7 +3641,7 @@ func TestDeleteDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -3713,7 +3713,7 @@ func TestDeleteDomainACLIPRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/acls/ips/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3737,7 +3737,7 @@ func TestDownloadDomainVerificationFile(t *testing.T) {
 		}
 
 		response := &http.Response{
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte("test content"))),
+			Body:       io.NopCloser(bytes.NewReader([]byte("test content"))),
 			StatusCode: 200,
 		}
 		response.Header = http.Header{}
@@ -3812,7 +3812,7 @@ func TestDownloadDomainVerificationFile(t *testing.T) {
 		}
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/verify/file-upload", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("test content"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("test content"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -3853,7 +3853,7 @@ func TestDownloadDomainVerificationFile(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/verify/file-upload", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3878,7 +3878,7 @@ func TestVerifyDomainDNS(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/dns", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -3934,7 +3934,7 @@ func TestVerifyDomainDNS(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/dns", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -3957,7 +3957,7 @@ func TestVerifyDomainDNS(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/dns", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 400,
 			},
 		}, nil).Times(1)
@@ -3982,7 +3982,7 @@ func TestVerifyDomainFileUpload(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/file-upload", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4038,7 +4038,7 @@ func TestVerifyDomainFileUpload(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/file-upload", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4061,7 +4061,7 @@ func TestVerifyDomainFileUpload(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/verify/file-upload", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 400,
 			},
 		}, nil).Times(1)
@@ -4086,7 +4086,7 @@ func TestAddDomainCDNConfiguration(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -4142,7 +4142,7 @@ func TestAddDomainCDNConfiguration(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4167,7 +4167,7 @@ func TestDeleteDomainCDNConfiguration(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -4223,7 +4223,7 @@ func TestDeleteDomainCDNConfiguration(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4255,7 +4255,7 @@ func TestCreateDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -4312,7 +4312,7 @@ func TestCreateDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4337,7 +4337,7 @@ func TestGetDomainCDNRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4362,13 +4362,13 @@ func TestGetDomainCDNRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -4414,7 +4414,7 @@ func TestGetDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4487,7 +4487,7 @@ func TestGetDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4516,7 +4516,7 @@ func TestPatchDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4588,7 +4588,7 @@ func TestPatchDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4613,7 +4613,7 @@ func TestDeleteDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -4685,7 +4685,7 @@ func TestDeleteDomainCDNRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/cdn/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4715,7 +4715,7 @@ func TestPurgeDomainCDN(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/purge", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -4771,7 +4771,7 @@ func TestPurgeDomainCDN(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/cdn/purge", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4796,7 +4796,7 @@ func TestGetDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"enabled\":true}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"enabled\":true}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4853,7 +4853,7 @@ func TestGetDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4878,7 +4878,7 @@ func TestAddDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -4934,7 +4934,7 @@ func TestAddDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -4959,7 +4959,7 @@ func TestDeleteDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5015,7 +5015,7 @@ func TestDeleteDomainHSTSConfiguration(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5044,7 +5044,7 @@ func TestCreateDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -5101,7 +5101,7 @@ func TestCreateDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5126,7 +5126,7 @@ func TestGetDomainHSTSRules(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5151,13 +5151,13 @@ func TestGetDomainHSTSRules(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000001\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -5203,7 +5203,7 @@ func TestGetDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5276,7 +5276,7 @@ func TestGetDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Get("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5305,7 +5305,7 @@ func TestPatchDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5377,7 +5377,7 @@ func TestPatchDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Patch("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5402,7 +5402,7 @@ func TestDeleteDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -5474,7 +5474,7 @@ func TestDeleteDomainHSTSRule(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/hsts/rules/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5499,7 +5499,7 @@ func TestActivateDomainDNSRouting(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/dns/active", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5555,7 +5555,7 @@ func TestActivateDomainDNSRouting(t *testing.T) {
 
 		c.EXPECT().Post("/ddosx/v1/domains/testdomain1.co.uk/dns/active", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -5580,7 +5580,7 @@ func TestDeactivateDomainDNSRouting(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/dns/active", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -5636,7 +5636,7 @@ func TestDeactivateDomainDNSRouting(t *testing.T) {
 
 		c.EXPECT().Delete("/ddosx/v1/domains/testdomain1.co.uk/dns/active", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

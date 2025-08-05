@@ -3,7 +3,7 @@ package registrar
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetWhois(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/whois/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -83,7 +83,7 @@ func TestGetWhois(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/whois/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -108,7 +108,7 @@ func TestGetWhoisRaw(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/whois/testdomain1.co.uk/raw", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":\"rawwhois\"}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":\"rawwhois\"}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -165,7 +165,7 @@ func TestGetWhoisRaw(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/whois/testdomain1.co.uk/raw", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

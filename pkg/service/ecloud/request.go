@@ -80,7 +80,7 @@ type CreateVirtualMachineRequestParameter struct {
 
 // Validate returns an error if struct properties are missing/invalid
 func (c *CreateVirtualMachineRequest) Validate() *connection.ValidationError {
-	if c.HDD == 0 && (c.Disks == nil || len(c.Disks) < 1) {
+	if c.HDD == 0 && len(c.Disks) < 1 {
 		return connection.NewValidationError("HDD or Disks must be provided")
 	}
 

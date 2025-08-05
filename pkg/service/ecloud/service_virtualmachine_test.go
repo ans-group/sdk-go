@@ -3,7 +3,7 @@ package ecloud
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -27,7 +27,7 @@ func TestGetVirtualMachines(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -52,13 +52,13 @@ func TestGetVirtualMachines(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ecloud/v1/vms", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ecloud/v1/vms", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -104,7 +104,7 @@ func TestGetVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -161,7 +161,7 @@ func TestGetVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -186,7 +186,7 @@ func TestDeleteVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/vms/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -242,7 +242,7 @@ func TestDeleteVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/vms/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -273,7 +273,7 @@ func TestCreateVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -320,7 +320,7 @@ func TestPatchVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/vms/123", gomock.Eq(&patch)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -376,7 +376,7 @@ func TestPatchVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/vms/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -405,7 +405,7 @@ func TestCloneVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/clone", gomock.Eq(&cloneRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -462,7 +462,7 @@ func TestCloneVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/clone", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -487,7 +487,7 @@ func TestPowerOnVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-on", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -543,7 +543,7 @@ func TestPowerOnVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-on", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -568,7 +568,7 @@ func TestPowerOffVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-off", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -624,7 +624,7 @@ func TestPowerOffVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-off", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -649,7 +649,7 @@ func TestPowerResetVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-reset", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -705,7 +705,7 @@ func TestPowerResetVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-reset", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -730,7 +730,7 @@ func TestPowerShutdownVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-shutdown", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -786,7 +786,7 @@ func TestPowerShutdownVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-shutdown", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -811,7 +811,7 @@ func TestPowerRestartVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-restart", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -867,7 +867,7 @@ func TestPowerRestartVirtualMachine(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/power-restart", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -896,7 +896,7 @@ func TestCreateVirtualMachineTemplate(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/clone-to-template", gomock.Eq(&expectedRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 202,
 			},
 		}, nil).Times(1)
@@ -952,7 +952,7 @@ func TestCreateVirtualMachineTemplate(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/clone-to-template", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -977,7 +977,7 @@ func TestGetVirtualMachineTags(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1002,13 +1002,13 @@ func TestGetVirtualMachineTags(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey1\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"key\":\"testkey2\"}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -1054,7 +1054,7 @@ func TestGetVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"key\":\"testkey1\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"key\":\"testkey1\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1127,7 +1127,7 @@ func TestGetVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1152,7 +1152,7 @@ func TestCreateVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/tags", gomock.Eq(&CreateTagV1Request{Key: "testkey1", Value: "test value 1"})).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 201,
 			},
 		}, nil).Times(1)
@@ -1208,7 +1208,7 @@ func TestCreateVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Post("/ecloud/v1/vms/123/tags", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1237,7 +1237,7 @@ func TestPatchVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/vms/123/tags/testkey1", gomock.Eq(&patch)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1309,7 +1309,7 @@ func TestPatchVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Patch("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1334,7 +1334,7 @@ func TestDeleteVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -1406,7 +1406,7 @@ func TestDeleteVirtualMachineTag(t *testing.T) {
 
 		c.EXPECT().Delete("/ecloud/v1/vms/123/tags/testkey1", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1431,7 +1431,7 @@ func TestCreateVirtualMachineConsoleSession(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/console-session", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"url\":\"ukfast.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"url\":\"ukfast.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1488,7 +1488,7 @@ func TestCreateVirtualMachineConsoleSession(t *testing.T) {
 
 		c.EXPECT().Put("/ecloud/v1/vms/123/console-session", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

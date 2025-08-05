@@ -3,7 +3,7 @@ package loadbalancer
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetACLs(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/acls", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -70,7 +70,7 @@ func TestGetACL(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -127,7 +127,7 @@ func TestGetACL(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -156,7 +156,7 @@ func TestPatchACL(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/acls/123", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -212,7 +212,7 @@ func TestPatchACL(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -237,7 +237,7 @@ func TestDeleteACL(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/acls/123", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -293,7 +293,7 @@ func TestDeleteACL(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/acls/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)

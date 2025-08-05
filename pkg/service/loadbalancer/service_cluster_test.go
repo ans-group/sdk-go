@@ -3,7 +3,7 @@ package loadbalancer
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetClusters(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/clusters", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -70,7 +70,7 @@ func TestGetCluster(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -127,7 +127,7 @@ func TestGetCluster(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -156,7 +156,7 @@ func TestPatchCluster(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -212,7 +212,7 @@ func TestPatchCluster(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/clusters/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -237,7 +237,7 @@ func TestDeployCluster(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/clusters/123/deploy", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -293,7 +293,7 @@ func TestDeployCluster(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/clusters/123/deploy", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -318,7 +318,7 @@ func TestValidateCluster(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/clusters/123/validate", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -374,7 +374,7 @@ func TestValidateCluster(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/clusters/123/validate", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)

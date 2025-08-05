@@ -3,7 +3,7 @@ package cloudflare
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetTotalSpendMonthToDate(t *testing.T) {
 
 		c.EXPECT().Get("/cloudflare/v1/total-spend/month-to-date", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"spend_plan_amount\":1.23, \"total_spend\": 2.34}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"spend_plan_amount\":1.23, \"total_spend\": 2.34}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)

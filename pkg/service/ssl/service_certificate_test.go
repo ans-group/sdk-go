@@ -3,7 +3,7 @@ package ssl
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetCertificates(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -51,13 +51,13 @@ func TestGetCertificates(t *testing.T) {
 		gomock.InOrder(
 			c.EXPECT().Get("/ssl/v1/certificates", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":123}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
 			c.EXPECT().Get("/ssl/v1/certificates", gomock.Any()).Return(&connection.APIResponse{
 				Response: &http.Response{
-					Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
+					Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":2}}}"))),
 					StatusCode: 200,
 				},
 			}, nil),
@@ -103,7 +103,7 @@ func TestGetCertificate(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":123}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -160,7 +160,7 @@ func TestGetCertificate(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -185,7 +185,7 @@ func TestGetCertificateContent(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123/download", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"server\":\"testserver1\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"server\":\"testserver1\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -242,7 +242,7 @@ func TestGetCertificateContent(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123/download", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -267,7 +267,7 @@ func TestGetCertificatePrivateKey(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123/private-key", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"key\":\"testcontent1\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"key\":\"testcontent1\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -324,7 +324,7 @@ func TestGetCertificatePrivateKey(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/certificates/123/private-key", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

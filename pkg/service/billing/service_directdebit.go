@@ -1,8 +1,6 @@
 package billing
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
 )
 
@@ -16,7 +14,7 @@ func (s *Service) GetDirectDebit() (DirectDebit, error) {
 func (s *Service) getDirectDebitResponseBody() (*connection.APIResponseBodyData[DirectDebit], error) {
 	body := &connection.APIResponseBodyData[DirectDebit]{}
 
-	response, err := s.connection.Get(fmt.Sprintf("/billing/v1/direct-debit"), connection.APIRequestParameters{})
+	response, err := s.connection.Get("/billing/v1/direct-debit", connection.APIRequestParameters{})
 	if err != nil {
 		return body, err
 	}

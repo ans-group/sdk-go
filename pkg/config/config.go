@@ -36,7 +36,7 @@ func Init(configPath string) error {
 	// If a config file is found, read it in
 	err := viper.ReadInConfig()
 	if len(configPath) > 0 && err != nil {
-		return fmt.Errorf("Failed to read config from file '%s': %s", configPath, err.Error())
+		return fmt.Errorf("failed to read config from file '%s': %s", configPath, err.Error())
 	}
 
 	initialised = true
@@ -47,7 +47,7 @@ func Init(configPath string) error {
 // Save saves the config to configured config file (or default)
 func Save() error {
 	if !initialised {
-		return errors.New("Config not initialised")
+		return errors.New("config not initialised")
 	}
 
 	configFile := viper.ConfigFileUsed()

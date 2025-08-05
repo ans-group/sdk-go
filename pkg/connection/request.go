@@ -236,9 +236,7 @@ func InvokeRequestAll[T any](getFunc PaginatedGetFunc[T], parameters APIRequestP
 			return nil, err
 		}
 
-		for _, item := range paginated.Items() {
-			items = append(items, item)
-		}
+		items = append(items, paginated.Items()...)
 
 		totalPages = paginated.TotalPages()
 	}

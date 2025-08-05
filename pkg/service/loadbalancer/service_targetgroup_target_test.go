@@ -3,7 +3,7 @@ package loadbalancer
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetTargetGroupTargets(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":456}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -86,7 +86,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -159,7 +159,7 @@ func TestGetTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Get("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -188,7 +188,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":456}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -245,7 +245,7 @@ func TestCreateTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Post("/loadbalancers/v2/target-groups/123/targets", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -274,7 +274,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -346,7 +346,7 @@ func TestPatchTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Patch("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
@@ -371,7 +371,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", nil).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -443,7 +443,7 @@ func TestDeleteTargetGroupTarget(t *testing.T) {
 
 		c.EXPECT().Delete("/loadbalancers/v2/target-groups/123/targets/456", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil)
