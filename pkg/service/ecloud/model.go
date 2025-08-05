@@ -389,6 +389,7 @@ type Instance struct {
 	VolumeGroupID      string              `json:"volume_group_id"`
 	HostGroupID        string              `json:"host_group_id"`
 	ResourceTierID     string              `json:"resource_tier_id"`
+	Tags               []ResourceTag       `json:"tags"`
 	Sync               ResourceSync        `json:"sync"`
 	Task               ResourceTask        `json:"task"`
 	Online             *bool               `json:"online"`
@@ -1108,4 +1109,11 @@ type Tag struct {
 	Scope      string              `json:"scope"`
 	CreatedAt  connection.DateTime `json:"created_at"`
 	UpdatedAt  connection.DateTime `json:"updated_at"`
+}
+
+// ResourceTag represents the data returned about a tag on a resource
+type ResourceTag struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Scope string `json:"scope"`
 }

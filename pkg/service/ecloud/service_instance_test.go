@@ -27,7 +27,7 @@ func TestGetInstances(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"i-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"i-abcdef12\",\"tags\":[{\"id\":\"tag-abc123\",\"name\":\"production\",\"scope\":\"vpc\"}]}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -37,6 +37,10 @@ func TestGetInstances(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Len(t, instances, 1)
 		assert.Equal(t, "i-abcdef12", instances[0].ID)
+		assert.Len(t, instances[0].Tags, 1)
+		assert.Equal(t, "tag-abc123", instances[0].Tags[0].ID)
+		assert.Equal(t, "production", instances[0].Tags[0].Name)
+		assert.Equal(t, "vpc", instances[0].Tags[0].Scope)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -71,7 +75,7 @@ func TestGetInstance(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\",\"tags\":[{\"id\":\"tag-def456\",\"name\":\"development\",\"scope\":\"instance\"}]}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -80,6 +84,10 @@ func TestGetInstance(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, "i-abcdef12", instance.ID)
+		assert.Len(t, instance.Tags, 1)
+		assert.Equal(t, "tag-def456", instance.Tags[0].ID)
+		assert.Equal(t, "development", instance.Tags[0].Name)
+		assert.Equal(t, "instance", instance.Tags[0].Scope)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -155,6 +163,7 @@ func TestCreateInstance(t *testing.T) {
 			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
+			TagIDs:      []string{"tag-abc123", "tag-def456"},
 		}
 
 		c.EXPECT().Post("/ecloud/v2/instances", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
@@ -204,6 +213,7 @@ func TestPatchInstance(t *testing.T) {
 			Name:        "test instance 1",
 			VCPUCores:   2,
 			RAMCapacity: 4,
+			TagIDs:      []string{"tag-ghi789"},
 		}
 
 		c.EXPECT().Patch("/ecloud/v2/instances/i-abcdef12", gomock.Eq(&patchRequest)).Return(&connection.APIResponse{
@@ -1966,5 +1976,85 @@ func TestExecuteInstanceScript(t *testing.T) {
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid instance id", err.Error())
+	})
+}
+
+func TestGetInstanceWithTagsEdgeCases(t *testing.T) {
+	t.Run("EmptyTagsArray", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\",\"tags\":[]}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		instance, err := s.GetInstance("i-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "i-abcdef12", instance.ID)
+		assert.Len(t, instance.Tags, 0)
+	})
+
+	t.Run("MissingTagsField", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\"}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		instance, err := s.GetInstance("i-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "i-abcdef12", instance.ID)
+		assert.Len(t, instance.Tags, 0)
+	})
+
+	t.Run("MultipleTagsWithDifferentScopes", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		c := mocks.NewMockConnection(mockCtrl)
+
+		s := Service{
+			connection: c,
+		}
+
+		c.EXPECT().Get("/ecloud/v2/instances/i-abcdef12", gomock.Any()).Return(&connection.APIResponse{
+			Response: &http.Response{
+				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"i-abcdef12\",\"tags\":[{\"id\":\"tag-vpc123\",\"name\":\"production\",\"scope\":\"vpc\"},{\"id\":\"tag-inst456\",\"name\":\"web-server\",\"scope\":\"instance\"}]}}"))),
+				StatusCode: 200,
+			},
+		}, nil).Times(1)
+
+		instance, err := s.GetInstance("i-abcdef12")
+
+		assert.Nil(t, err)
+		assert.Equal(t, "i-abcdef12", instance.ID)
+		assert.Len(t, instance.Tags, 2)
+		assert.Equal(t, "tag-vpc123", instance.Tags[0].ID)
+		assert.Equal(t, "production", instance.Tags[0].Name)
+		assert.Equal(t, "vpc", instance.Tags[0].Scope)
+		assert.Equal(t, "tag-inst456", instance.Tags[1].ID)
+		assert.Equal(t, "web-server", instance.Tags[1].Name)
+		assert.Equal(t, "instance", instance.Tags[1].Scope)
 	})
 }
