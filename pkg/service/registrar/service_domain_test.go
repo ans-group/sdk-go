@@ -3,7 +3,7 @@ package registrar
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -27,7 +27,7 @@ func TestGetDomains(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/domains", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"example.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"name\":\"example.co.uk\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -71,7 +71,7 @@ func TestGetDomain(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"testdomain1.co.uk\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -128,7 +128,7 @@ func TestGetDomain(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -153,7 +153,7 @@ func TestGetDomainNameservers(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk/nameservers", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"host\":\"ns0.example.com\"}]}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"host\":\"ns0.example.com\"}]}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,7 +210,7 @@ func TestGetDomainNameservers(t *testing.T) {
 
 		c.EXPECT().Get("/registrar/v1/domains/testdomain1.co.uk/nameservers", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

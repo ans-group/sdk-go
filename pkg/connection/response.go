@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -115,8 +115,12 @@ type ResponseDeserializer interface {
 }
 
 func APIResponseJSONDeserializer(r *APIResponse, out interface{}) error {
-	defer r.Response.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(r.Response.Body)
+	defer func() {
+		if closeErr := r.Body.Close(); closeErr != nil {
+			logging.Debugf("failed to close response body: %s", closeErr)
+		}
+	}()
+	bodyBytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response body with response status code %d: %s", r.StatusCode, err)
 	}

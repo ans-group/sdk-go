@@ -3,7 +3,7 @@ package draas
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetSolutions(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -70,7 +70,7 @@ func TestGetSolution(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -127,7 +127,7 @@ func TestGetSolution(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -154,7 +154,7 @@ func TestPatchSolution(t *testing.T) {
 
 		c.EXPECT().Patch("/draas/v1/solutions/00000000-0000-0000-0000-000000000000", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000000\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -210,7 +210,7 @@ func TestPatchSolution(t *testing.T) {
 
 		c.EXPECT().Patch("/draas/v1/solutions/00000000-0000-0000-0000-000000000000", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -235,7 +235,7 @@ func TestGetSolutionBackupResources(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-resources", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -295,7 +295,7 @@ func TestGetSolutionBackupService(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-service", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"service\":\"testservice\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"service\":\"testservice\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -352,7 +352,7 @@ func TestGetSolutionBackupService(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-service", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -379,7 +379,7 @@ func TestResetSolutionBackupServiceCredentials(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-service/reset-credentials", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -435,7 +435,7 @@ func TestResetSolutionBackupServiceCredentials(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/backup-service/reset-credentials", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -460,7 +460,7 @@ func TestGetSolutionFailoverPlans(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -520,7 +520,7 @@ func TestGetSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -593,7 +593,7 @@ func TestGetSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -622,7 +622,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/start", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -694,7 +694,7 @@ func TestStartSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/start", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -719,7 +719,7 @@ func TestStopSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/stop", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -791,7 +791,7 @@ func TestStopSolutionFailoverPlan(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/failover-plans/00000000-0000-0000-0000-000000000001/stop", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -816,7 +816,7 @@ func TestGetSolutionComputeResources(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/compute-resources", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -876,7 +876,7 @@ func TestGetSolutionComputeResource(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/compute-resources/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -949,7 +949,7 @@ func TestGetSolutionComputeResource(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/compute-resources/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -974,7 +974,7 @@ func TestGetSolutionHardwarePlans(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000000\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1034,7 +1034,7 @@ func TestGetSolutionHardwarePlan(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"00000000-0000-0000-0000-000000000001\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1107,7 +1107,7 @@ func TestGetSolutionHardwarePlan(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans/00000000-0000-0000-0000-000000000001", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -1132,7 +1132,7 @@ func TestGetSolutionHardwarePlanReplicas(t *testing.T) {
 
 		c.EXPECT().Get("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/hardware-plans/00000000-0000-0000-0000-000000000001/replicas", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000002\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"00000000-0000-0000-0000-000000000002\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1212,7 +1212,7 @@ func TestUpdateSolutionReplicaIOPS(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/replicas/00000000-0000-0000-0000-000000000001/iops", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -1284,7 +1284,7 @@ func TestUpdateSolutionReplicaIOPS(t *testing.T) {
 
 		c.EXPECT().Post("/draas/v1/solutions/00000000-0000-0000-0000-000000000000/replicas/00000000-0000-0000-0000-000000000001/iops", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

@@ -3,7 +3,7 @@ package pss
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetReply(t *testing.T) {
 
 		c.EXPECT().Get("/pss/v1/replies/abc", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -83,7 +83,7 @@ func TestGetReply(t *testing.T) {
 
 		c.EXPECT().Get("/pss/v1/replies/abc", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -107,7 +107,7 @@ func TestDownloadReplyAttachmentStream(t *testing.T) {
 		}
 
 		response := &http.Response{
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte("test content"))),
+			Body:       io.NopCloser(bytes.NewReader([]byte("test content"))),
 			StatusCode: 200,
 		}
 
@@ -118,7 +118,7 @@ func TestDownloadReplyAttachmentStream(t *testing.T) {
 		contentStream, err := s.DownloadReplyAttachmentStream("abc", "test.txt")
 		assert.Nil(t, err)
 
-		content, err := ioutil.ReadAll(contentStream)
+		content, err := io.ReadAll(contentStream)
 		assert.Nil(t, err)
 
 		assert.Equal(t, "test content", string(content))
@@ -186,7 +186,7 @@ func TestDownloadReplyAttachmentStream(t *testing.T) {
 
 		c.EXPECT().Get("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
@@ -209,11 +209,11 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 			connection: c,
 		}
 
-		fileStream := ioutil.NopCloser(bytes.NewReader([]byte("test content")))
+		fileStream := io.NopCloser(bytes.NewReader([]byte("test content")))
 
 		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", fileStream).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
@@ -232,7 +232,7 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.UploadReplyAttachmentStream("", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+		err := s.UploadReplyAttachmentStream("", "test.txt", io.NopCloser(bytes.NewReader([]byte("test content"))))
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid reply id", err.Error())
@@ -248,7 +248,7 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.UploadReplyAttachmentStream("abc", "", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+		err := s.UploadReplyAttachmentStream("abc", "", io.NopCloser(bytes.NewReader([]byte("test content"))))
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid attachment name", err.Error())
@@ -282,7 +282,7 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 
 		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{}, errors.New("test error 1"))
 
-		err := s.UploadReplyAttachmentStream("abc", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", io.NopCloser(bytes.NewReader([]byte("test content"))))
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -300,12 +300,12 @@ func TestUploadReplyAttachmentStream(t *testing.T) {
 
 		c.EXPECT().Post("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"abc\"}}"))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.UploadReplyAttachmentStream("abc", "test.txt", ioutil.NopCloser(bytes.NewReader([]byte("test content"))))
+		err := s.UploadReplyAttachmentStream("abc", "test.txt", io.NopCloser(bytes.NewReader([]byte("test content"))))
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &ReplyNotFoundError{}, err)
@@ -323,7 +323,7 @@ func TestDeleteReplyAttachment(t *testing.T) {
 
 		c.EXPECT().Delete("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 204,
 			},
 		}, nil).Times(1)
@@ -387,7 +387,7 @@ func TestDeleteReplyAttachment(t *testing.T) {
 
 		c.EXPECT().Delete("/pss/v1/replies/abc/attachments/test.txt", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

@@ -23,8 +23,7 @@ func TestInt(t *testing.T) {
 }
 
 func TestInt8(t *testing.T) {
-	var i int8
-	i = 1
+	i := int8(1)
 
 	if *Int8(i) != i {
 		t.Error("expected pointer to int8")
@@ -32,8 +31,7 @@ func TestInt8(t *testing.T) {
 }
 
 func TestInt16(t *testing.T) {
-	var i int16
-	i = 1
+	i := int16(1)
 
 	if *Int16(i) != i {
 		t.Error("expected pointer to int16")
@@ -41,8 +39,7 @@ func TestInt16(t *testing.T) {
 }
 
 func TestInt32(t *testing.T) {
-	var i int32
-	i = 1
+	i := int32(1)
 
 	if *Int32(i) != i {
 		t.Error("expected pointer to int32")
@@ -50,8 +47,7 @@ func TestInt32(t *testing.T) {
 }
 
 func TestInt64(t *testing.T) {
-	var i int64
-	i = 1
+	i := int64(1)
 
 	if *Int64(i) != i {
 		t.Error("expected pointer to int64")
@@ -59,8 +55,7 @@ func TestInt64(t *testing.T) {
 }
 
 func TestUInt(t *testing.T) {
-	var i uint
-	i = 1
+	i := uint(1)
 
 	if *UInt(i) != i {
 		t.Error("expected pointer to uint")
@@ -68,8 +63,7 @@ func TestUInt(t *testing.T) {
 }
 
 func TestUInt8(t *testing.T) {
-	var i uint8
-	i = 1
+	i := uint8(1)
 
 	if *UInt8(i) != i {
 		t.Error("expected pointer to uint8")
@@ -77,8 +71,7 @@ func TestUInt8(t *testing.T) {
 }
 
 func TestUInt16(t *testing.T) {
-	var i uint16
-	i = 1
+	i := uint16(1)
 
 	if *UInt16(i) != i {
 		t.Error("expected pointer to uint16")
@@ -86,8 +79,7 @@ func TestUInt16(t *testing.T) {
 }
 
 func TestUInt32(t *testing.T) {
-	var i uint32
-	i = 1
+	i := uint32(1)
 
 	if *UInt32(i) != i {
 		t.Error("expected pointer to uint32")
@@ -95,8 +87,7 @@ func TestUInt32(t *testing.T) {
 }
 
 func TestUInt64(t *testing.T) {
-	var i uint64
-	i = 1
+	i := uint64(1)
 
 	if *UInt64(i) != i {
 		t.Error("expected pointer to uint64")
@@ -104,8 +95,7 @@ func TestUInt64(t *testing.T) {
 }
 
 func TestUIntPtr(t *testing.T) {
-	var i uintptr
-	i = 1
+	i := uintptr(1)
 
 	if *UIntPtr(i) != i {
 		t.Error("expected pointer to uintptr")
@@ -113,8 +103,7 @@ func TestUIntPtr(t *testing.T) {
 }
 
 func TestFloat32(t *testing.T) {
-	var i float32
-	i = 1
+	i := float32(1)
 
 	if *Float32(i) != i {
 		t.Error("expected pointer to float32")
@@ -122,8 +111,7 @@ func TestFloat32(t *testing.T) {
 }
 
 func TestFloat64(t *testing.T) {
-	var i float64
-	i = 1
+	i := float64(1)
 
 	if *Float64(i) != i {
 		t.Error("expected pointer to float64")
@@ -131,8 +119,7 @@ func TestFloat64(t *testing.T) {
 }
 
 func TestComplex64(t *testing.T) {
-	var i complex64
-	i = 1
+	i := complex64(1)
 
 	if *Complex64(i) != i {
 		t.Error("expected pointer to complex64")
@@ -140,8 +127,7 @@ func TestComplex64(t *testing.T) {
 }
 
 func TestComplex128(t *testing.T) {
-	var i complex128
-	i = 1
+	i := complex128(1)
 
 	if *Complex128(i) != i {
 		t.Error("expected pointer to complex128")
@@ -207,8 +193,7 @@ func TestToIntOrDefault(t *testing.T) {
 
 func TestToInt8OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i int8
-		i = 1
+		i := int8(1)
 
 		if ToInt8OrDefault(&i) != i {
 			t.Error("expected int8")
@@ -226,8 +211,7 @@ func TestToInt8OrDefault(t *testing.T) {
 
 func TestToInt16OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i int16
-		i = 1
+		i := int16(1)
 
 		if ToInt16OrDefault(&i) != i {
 			t.Error("expected int16")
@@ -245,8 +229,7 @@ func TestToInt16OrDefault(t *testing.T) {
 
 func TestToInt32OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i int32
-		i = 1
+		i := int32(1)
 
 		if ToInt32OrDefault(&i) != i {
 			t.Error("expected int32")
@@ -264,8 +247,7 @@ func TestToInt32OrDefault(t *testing.T) {
 
 func TestToInt64OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i int64
-		i = 1
+		i := int64(1)
 
 		if ToInt64OrDefault(&i) != i {
 			t.Error("expected int64")
@@ -283,8 +265,7 @@ func TestToInt64OrDefault(t *testing.T) {
 
 func TestToUIntOrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uint
-		i = 1
+		i := uint(1)
 
 		if ToUIntOrDefault(&i) != i {
 			t.Error("expected uint")
@@ -302,8 +283,7 @@ func TestToUIntOrDefault(t *testing.T) {
 
 func TestToUInt8OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uint8
-		i = 1
+		i := uint8(1)
 
 		if ToUInt8OrDefault(&i) != i {
 			t.Error("expected uint8")
@@ -321,8 +301,7 @@ func TestToUInt8OrDefault(t *testing.T) {
 
 func TestToUInt16OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uint16
-		i = 1
+		i := uint16(1)
 
 		if ToUInt16OrDefault(&i) != i {
 			t.Error("expected uint16")
@@ -340,8 +319,7 @@ func TestToUInt16OrDefault(t *testing.T) {
 
 func TestToUInt32OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uint32
-		i = 1
+		i := uint32(1)
 
 		if ToUInt32OrDefault(&i) != i {
 			t.Error("expected uint32")
@@ -359,8 +337,7 @@ func TestToUInt32OrDefault(t *testing.T) {
 
 func TestToUInt64OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uint64
-		i = 1
+		i := uint64(1)
 
 		if ToUInt64OrDefault(&i) != i {
 			t.Error("expected uint64")
@@ -378,8 +355,7 @@ func TestToUInt64OrDefault(t *testing.T) {
 
 func TestToUIntPtrOrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i uintptr
-		i = 1
+		i := uintptr(1)
 
 		if ToUIntPtrOrDefault(&i) != i {
 			t.Error("expected uintptr")
@@ -397,8 +373,7 @@ func TestToUIntPtrOrDefault(t *testing.T) {
 
 func TestToFloat32OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i float32
-		i = 1
+		i := float32(1)
 
 		if ToFloat32OrDefault(&i) != i {
 			t.Error("expected float32")
@@ -416,8 +391,7 @@ func TestToFloat32OrDefault(t *testing.T) {
 
 func TestToFloat64OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i float64
-		i = 1
+		i := float64(1)
 
 		if ToFloat64OrDefault(&i) != i {
 			t.Error("expected float64")
@@ -435,8 +409,7 @@ func TestToFloat64OrDefault(t *testing.T) {
 
 func TestToComplex64OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i complex64
-		i = 1
+		i := complex64(1)
 
 		if ToComplex64OrDefault(&i) != i {
 			t.Error("expected complex64")
@@ -454,8 +427,7 @@ func TestToComplex64OrDefault(t *testing.T) {
 
 func TestToComplex128OrDefault(t *testing.T) {
 	t.Run("NotNil", func(t *testing.T) {
-		var i complex128
-		i = 1
+		i := complex128(1)
 
 		if ToComplex128OrDefault(&i) != i {
 			t.Error("expected complex128")

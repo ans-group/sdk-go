@@ -3,7 +3,6 @@ package ddosx
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
@@ -1295,9 +1294,9 @@ func (s *Service) DownloadDomainVerificationFile(domainName string) (content str
 		return "", "", err
 	}
 
-	defer stream.Close()
+	defer stream.Close() //nolint:errcheck
 
-	bodyBytes, err := ioutil.ReadAll(stream)
+	bodyBytes, err := io.ReadAll(stream)
 	if err != nil {
 		return "", "", err
 	}

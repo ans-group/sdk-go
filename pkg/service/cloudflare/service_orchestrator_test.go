@@ -3,7 +3,7 @@ package cloudflare
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -28,7 +28,7 @@ func TestCreateOrchestration(t *testing.T) {
 
 		c.EXPECT().Post("/cloudflare/v1/orchestrator", gomock.Eq(&createRequest)).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)

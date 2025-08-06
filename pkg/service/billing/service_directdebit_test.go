@@ -3,7 +3,7 @@ package billing
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetDirectDebit(t *testing.T) {
 
 		c.EXPECT().Get("/billing/v1/direct-debit", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"test\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"name\":\"test\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -67,7 +67,7 @@ func TestGetDirectDebit(t *testing.T) {
 
 		c.EXPECT().Get("/billing/v1/direct-debit", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte(""))),
+				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)

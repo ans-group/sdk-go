@@ -3,7 +3,7 @@ package connection
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -89,7 +89,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 			},
 		}
 
@@ -102,7 +102,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("invalidjson"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("invalidjson"))),
 			},
 		}
 
@@ -115,7 +115,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 500,
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 			},
 		}
 
@@ -128,7 +128,7 @@ func TestAPIResponse_HandleResponse(t *testing.T) {
 		resp := APIResponse{
 			Response: &http.Response{
 				StatusCode: 200,
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 			},
 		}
 

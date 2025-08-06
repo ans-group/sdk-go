@@ -3,7 +3,7 @@ package ssl
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -32,7 +32,7 @@ func TestValidateCertificate(t *testing.T) {
 
 		c.EXPECT().Post("/ssl/v1/validate", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"domains\":[\"testdomain.co.uk\"]}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"domains\":[\"testdomain.co.uk\"]}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)

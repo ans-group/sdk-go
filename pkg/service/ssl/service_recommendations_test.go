@@ -3,7 +3,7 @@ package ssl
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetRecommendations(t *testing.T) {
 
 		c.EXPECT().Get("/ssl/v1/recommendations/example.com", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"level\":\"low\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"level\":\"low\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)

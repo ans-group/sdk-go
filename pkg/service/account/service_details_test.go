@@ -3,7 +3,7 @@ package account
 import (
 	"bytes"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -26,7 +26,7 @@ func TestGetDetails(t *testing.T) {
 
 		c.EXPECT().Get("/account/v1/details", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"data\":{\"company_registration_number\":\"abc123\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"company_registration_number\":\"abc123\"}}"))),
 				StatusCode: 200,
 			},
 		}, nil)
