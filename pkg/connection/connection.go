@@ -254,11 +254,7 @@ func (c *APIConnection) InvokeRequest(req *http.Request) (*APIResponse, error) {
 			if k == "Authorization" {
 				redactedValues := make([]string, len(v))
 				for i, token := range v {
-					if token == "" {
-						redactedValues[i] = "[empty]"
-					} else {
-						redactedValues[i] = token[:3] + "...[redacted]"
-					}
+					redactedValues[i] = fmt.Sprintf("%.*s", 3, token) + "...[redacted]"
 				}
 				v = redactedValues
 			}
