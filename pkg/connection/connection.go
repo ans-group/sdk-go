@@ -251,6 +251,13 @@ func (c *APIConnection) InvokeRequest(req *http.Request) (*APIResponse, error) {
 	logging.Debugf("Executing request: %s %s", req.Method, req.URL.String())
 	if req.Header != nil {
 		for k, v := range req.Header {
+			if k == "Authorization" {
+				redactedValues := make([]string, len(v))
+				for i, token := range v {
+					redactedValues[i] = fmt.Sprintf("%.*s", 3, token) + "...[redacted]"
+				}
+				v = redactedValues
+			}
 			logging.Debugf("%s: %s", k, strings.Join(v, ", "))
 		}
 	}
