@@ -1,6 +1,10 @@
 package account
 
-import "github.com/ans-group/sdk-go/pkg/connection"
+import (
+	"encoding/json"
+
+	"github.com/ans-group/sdk-go/pkg/connection"
+)
 
 type ContactType string
 
@@ -116,4 +120,26 @@ type ApplicationServiceScope struct {
 type ApplicationRestriction struct {
 	IPRestrictionType string   `json:"ip_restriction_type"`
 	IPRanges          []string `json:"ip_ranges"`
+}
+
+func (a *ApplicationRestriction) UnmarshalJSON(data []byte) error {
+	var raw json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	// If the data starts with '[', it's an array (empty restrictions)
+	if len(raw) > 0 && raw[0] == '[' {
+		a.IPRestrictionType = ""
+		a.IPRanges = nil
+		return nil
+	}
+
+	type Alias ApplicationRestriction
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+	return json.Unmarshal(data, aux)
 }
