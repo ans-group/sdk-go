@@ -123,7 +123,6 @@ type ApplicationRestriction struct {
 }
 
 func (a *ApplicationRestriction) UnmarshalJSON(data []byte) error {
-	// First, try to determine if the data is an array or object
 	var raw json.RawMessage
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
@@ -131,13 +130,11 @@ func (a *ApplicationRestriction) UnmarshalJSON(data []byte) error {
 
 	// If the data starts with '[', it's an array (empty restrictions)
 	if len(raw) > 0 && raw[0] == '[' {
-		// Empty restrictions case - initialize with empty values
 		a.IPRestrictionType = ""
 		a.IPRanges = nil
 		return nil
 	}
 
-	// Otherwise, unmarshal as normal object
 	type Alias ApplicationRestriction
 	aux := &struct {
 		*Alias
