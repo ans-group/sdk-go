@@ -370,32 +370,34 @@ type VPN struct {
 
 // Instance represents an eCloud instance
 type Instance struct {
-	ID                 string              `json:"id"`
-	Name               string              `json:"name"`
-	VPCID              string              `json:"vpc_id"`
-	AvailabilityZoneID string              `json:"availability_zone_id"`
-	ImageID            string              `json:"image_id"`
-	VCPUCores          int                 `json:"vcpu_cores"`
-	VCPUSockets        int                 `json:"vcpu_sockets"`
-	VCPUCoresPerSocket int                 `json:"vcpu_cores_per_socket"`
-	RAMCapacity        int                 `json:"ram_capacity"`
-	Locked             bool                `json:"locked"`
-	BackupEnabled      bool                `json:"backup_enabled"`
-	BackupGatewayID    string              `json:"backup_gateway_id"`
-	BackupAgentEnabled bool                `json:"backup_agent_enabled"`
-	IsEncrypted        bool                `json:"is_encrypted"`
-	Platform           string              `json:"platform"`
-	VolumeCapacity     int                 `json:"volume_capacity"`
-	VolumeGroupID      string              `json:"volume_group_id"`
-	HostGroupID        string              `json:"host_group_id"`
-	ResourceTierID     string              `json:"resource_tier_id"`
-	Tags               []ResourceTag       `json:"tags"`
-	Sync               ResourceSync        `json:"sync"`
-	Task               ResourceTask        `json:"task"`
-	Online             *bool               `json:"online"`
-	AgentRunning       *bool               `json:"agent_running"`
-	CreatedAt          connection.DateTime `json:"created_at"`
-	UpdatedAt          connection.DateTime `json:"updated_at"`
+	ID                  string              `json:"id"`
+	Name                string              `json:"name"`
+	VPCID               string              `json:"vpc_id"`
+	AvailabilityZoneID  string              `json:"availability_zone_id"`
+	ImageID             string              `json:"image_id"`
+	VCPUCores           int                 `json:"vcpu_cores"`
+	VCPUSockets         int                 `json:"vcpu_sockets"`
+	VCPUCoresPerSocket  int                 `json:"vcpu_cores_per_socket"`
+	RAMCapacity         int                 `json:"ram_capacity"`
+	Locked              bool                `json:"locked"`
+	BackupEnabled       bool                `json:"backup_enabled"`
+	BackupGatewayID     string              `json:"backup_gateway_id"`
+	BackupAgentEnabled  bool                `json:"backup_agent_enabled"`
+	MonitoringEnabled   bool                `json:"monitoring_enabled"`
+	MonitoringGatewayID string              `json:"monitoring_gateway_id"`
+	IsEncrypted         bool                `json:"is_encrypted"`
+	Platform            string              `json:"platform"`
+	VolumeCapacity      int                 `json:"volume_capacity"`
+	VolumeGroupID       string              `json:"volume_group_id"`
+	HostGroupID         string              `json:"host_group_id"`
+	ResourceTierID      string              `json:"resource_tier_id"`
+	Tags                []ResourceTag       `json:"tags"`
+	Sync                ResourceSync        `json:"sync"`
+	Task                ResourceTask        `json:"task"`
+	Online              *bool               `json:"online"`
+	AgentRunning        *bool               `json:"agent_running"`
+	CreatedAt           connection.DateTime `json:"created_at"`
+	UpdatedAt           connection.DateTime `json:"updated_at"`
 }
 
 // FloatingIP represents an eCloud floating IP address
