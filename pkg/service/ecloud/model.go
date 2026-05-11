@@ -617,7 +617,7 @@ type BillingMetric struct {
 	ResourceID string              `json:"resource_id"`
 	VPCID      string              `json:"vpc_id"`
 	Key        string              `json:"key"`
-	Value      string              `json:"value"`
+	Value      int                 `json:"value"`
 	Start      connection.DateTime `json:"start"`
 	End        connection.DateTime `json:"end"`
 	CreatedAt  connection.DateTime `json:"created_at"`
