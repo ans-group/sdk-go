@@ -26,7 +26,7 @@ func TestGetBillingMetrics(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/billing-metrics", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"bm-abcdef12\"}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":[{\"id\":\"bm-abcdef12\",\"value\":2}],\"meta\":{\"pagination\":{\"total_pages\":1}}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -36,6 +36,7 @@ func TestGetBillingMetrics(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Len(t, metrics, 1)
 		assert.Equal(t, "bm-abcdef12", metrics[0].ID)
+		assert.Equal(t, 2, metrics[0].Value)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -70,7 +71,7 @@ func TestGetBillingMetric(t *testing.T) {
 
 		c.EXPECT().Get("/ecloud/v2/billing-metrics/bm-abcdef12", gomock.Any()).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"bm-abcdef12\"}}"))),
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"bm-abcdef12\",\"value\":1024}}"))),
 				StatusCode: 200,
 			},
 		}, nil).Times(1)
@@ -79,6 +80,7 @@ func TestGetBillingMetric(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, "bm-abcdef12", metric.ID)
+		assert.Equal(t, 1024, metric.Value)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
