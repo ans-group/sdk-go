@@ -9,10 +9,6 @@ func (s *Service) GetCaseCategories(parameters connection.APIRequestParameters) 
 
 // GetCaseCategoriesPaginated retrieves a paginated list of case categories
 func (s *Service) GetCaseCategoriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CaseCategory], error) {
-	body, err := s.getCaseCategoriesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]CaseCategory](s.connection, "/pss/v2/case-categories", parameters)
 	return connection.NewPaginated(body, parameters, s.GetCaseCategoriesPaginated), err
-}
-
-func (s *Service) getCaseCategoriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]CaseCategory], error) {
-	return connection.Get[[]CaseCategory](s.connection, "/pss/v2/case-categories", parameters)
 }

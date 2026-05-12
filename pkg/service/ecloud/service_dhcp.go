@@ -13,47 +13,17 @@ func (s *Service) GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, 
 
 // GetDHCPsPaginated retrieves a paginated list of dhcps
 func (s *Service) GetDHCPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[DHCP], error) {
-	body, err := s.getDHCPsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]DHCP](s.connection, "/ecloud/v2/dhcps", parameters)
 	return connection.NewPaginated(body, parameters, s.GetDHCPsPaginated), err
-}
-
-func (s *Service) getDHCPsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]DHCP], error) {
-	body := &connection.APIResponseBodyData[[]DHCP]{}
-
-	response, err := s.connection.Get("/ecloud/v2/dhcps", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetDHCP retrieves a single dhcp by id
 func (s *Service) GetDHCP(dhcpID string) (DHCP, error) {
-	body, err := s.getDHCPResponseBody(dhcpID)
-
-	return body.Data, err
-}
-
-func (s *Service) getDHCPResponseBody(dhcpID string) (*connection.APIResponseBodyData[DHCP], error) {
-	body := &connection.APIResponseBodyData[DHCP]{}
-
 	if dhcpID == "" {
-		return body, fmt.Errorf("invalid dhcp id")
+		return DHCP{}, fmt.Errorf("invalid dhcp id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/dhcps/%s", dhcpID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &DHCPNotFoundError{ID: dhcpID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[DHCP](s.connection, fmt.Sprintf("/ecloud/v2/dhcps/%s", dhcpID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&DHCPNotFoundError{ID: dhcpID}))
+	return body.Data, err
 }
 
 // GetDHCPTasks retrieves a list of DHCP tasks
@@ -65,29 +35,11 @@ func (s *Service) GetDHCPTasks(dhcpID string, parameters connection.APIRequestPa
 
 // GetDHCPTasksPaginated retrieves a paginated list of DHCP tasks
 func (s *Service) GetDHCPTasksPaginated(dhcpID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	body, err := s.getDHCPTasksPaginatedResponseBody(dhcpID, parameters)
+	if dhcpID == "" {
+		return nil, fmt.Errorf("invalid dhcp id")
+	}
+	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/dhcps/%s/tasks", dhcpID), parameters, connection.NotFoundResponseHandler(&DHCPNotFoundError{ID: dhcpID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetDHCPTasksPaginated(dhcpID, p)
 	}), err
-}
-
-func (s *Service) getDHCPTasksPaginatedResponseBody(dhcpID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
-	body := &connection.APIResponseBodyData[[]Task]{}
-
-	if dhcpID == "" {
-		return body, fmt.Errorf("invalid dhcp id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/dhcps/%s/tasks", dhcpID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &DHCPNotFoundError{ID: dhcpID}
-		}
-
-		return nil
-	})
 }

@@ -8,20 +8,8 @@ import (
 
 // CreateRequest creates a new request
 func (s *Service) CreateRequest(req CreateRequestRequest) (int, error) {
-	body, err := s.createRequestResponseBody(req)
-
+	body, err := connection.Post[Request](s.connection, "/pss/v1/requests", &req)
 	return body.Data.ID, err
-}
-
-func (s *Service) createRequestResponseBody(req CreateRequestRequest) (*connection.APIResponseBodyData[Request], error) {
-	body := &connection.APIResponseBodyData[Request]{}
-
-	response, err := s.connection.Post("/pss/v1/requests", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetRequests retrieves a list of requests
@@ -31,103 +19,34 @@ func (s *Service) GetRequests(parameters connection.APIRequestParameters) ([]Req
 
 // GetRequestsPaginated retrieves a paginated list of requests
 func (s *Service) GetRequestsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Request], error) {
-	body, err := s.getRequestsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Request](s.connection, "/pss/v1/requests", parameters)
 	return connection.NewPaginated(body, parameters, s.GetRequestsPaginated), err
-}
-
-func (s *Service) getRequestsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Request], error) {
-	body := &connection.APIResponseBodyData[[]Request]{}
-
-	response, err := s.connection.Get("/pss/v1/requests", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetRequest retrieves a single request by id
 func (s *Service) GetRequest(requestID int) (Request, error) {
-	body, err := s.getRequestResponseBody(requestID)
-
-	return body.Data, err
-}
-
-func (s *Service) getRequestResponseBody(requestID int) (*connection.APIResponseBodyData[Request], error) {
-	body := &connection.APIResponseBodyData[Request]{}
-
 	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
+		return Request{}, fmt.Errorf("invalid request id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/pss/v1/requests/%d", requestID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestNotFoundError{ID: requestID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Request](s.connection, fmt.Sprintf("/pss/v1/requests/%d", requestID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
+	return body.Data, err
 }
 
 // PatchRequest patches a request
 func (s *Service) PatchRequest(requestID int, req PatchRequestRequest) error {
-	_, err := s.patchRequestResponseBody(requestID, req)
-
-	return err
-}
-
-func (s *Service) patchRequestResponseBody(requestID int, req PatchRequestRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
+		return fmt.Errorf("invalid request id")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/pss/v1/requests/%d", requestID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestNotFoundError{ID: requestID}
-		}
-
-		return nil
-	})
+	return connection.PatchRaw(s.connection, fmt.Sprintf("/pss/v1/requests/%d", requestID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
 }
 
 // CreateRequestReply creates a new request reply
 func (s *Service) CreateRequestReply(requestID int, req CreateReplyRequest) (string, error) {
-	body, err := s.createRequestReplyResponseBody(requestID, req)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) createRequestReplyResponseBody(requestID int, req CreateReplyRequest) (*connection.APIResponseBodyData[Reply], error) {
-	body := &connection.APIResponseBodyData[Reply]{}
-
 	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
+		return "", fmt.Errorf("invalid request id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/pss/v1/requests/%d/replies", requestID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestNotFoundError{ID: requestID}
-		}
-
-		return nil
-	})
+	body, err := connection.Post[Reply](s.connection, fmt.Sprintf("/pss/v1/requests/%d/replies", requestID), &req, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
+	return body.Data.ID, err
 }
 
 // GetRequestReplies is an alias for GetRequestConversation
@@ -149,86 +68,29 @@ func (s *Service) GetRequestConversation(solutionID int, parameters connection.A
 
 // GetRequestConversationPaginated retrieves a paginated list of domains
 func (s *Service) GetRequestConversationPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
-	body, err := s.getRequestConversationPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid request id")
+	}
+	body, err := connection.Get[[]Reply](s.connection, fmt.Sprintf("/pss/v1/requests/%d/conversation", solutionID), parameters, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
 		return s.GetRequestConversationPaginated(solutionID, p)
 	}), err
 }
 
-func (s *Service) getRequestConversationPaginatedResponseBody(requestID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Reply], error) {
-	body := &connection.APIResponseBodyData[[]Reply]{}
-
-	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/pss/v1/requests/%d/conversation", requestID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestNotFoundError{ID: requestID}
-		}
-
-		return nil
-	})
-}
-
 // GetRequestFeedback retrieves feedback for a request
 func (s *Service) GetRequestFeedback(requestID int) (Feedback, error) {
-	body, err := s.getRequestFeedbackResponseBody(requestID)
-
-	return body.Data, err
-}
-
-func (s *Service) getRequestFeedbackResponseBody(requestID int) (*connection.APIResponseBodyData[Feedback], error) {
-	body := &connection.APIResponseBodyData[Feedback]{}
-
 	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
+		return Feedback{}, fmt.Errorf("invalid request id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestFeedbackNotFoundError{RequestID: requestID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Feedback](s.connection, fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&RequestFeedbackNotFoundError{RequestID: requestID}))
+	return body.Data, err
 }
 
 // CreateRequestFeedback creates a new request feedback
 func (s *Service) CreateRequestFeedback(requestID int, req CreateFeedbackRequest) (int, error) {
-	body, err := s.createRequestFeedbackResponseBody(requestID, req)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) createRequestFeedbackResponseBody(requestID int, req CreateFeedbackRequest) (*connection.APIResponseBodyData[Feedback], error) {
-	body := &connection.APIResponseBodyData[Feedback]{}
-
 	if requestID < 1 {
-		return body, fmt.Errorf("invalid request id")
+		return 0, fmt.Errorf("invalid request id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RequestNotFoundError{ID: requestID}
-		}
-
-		return nil
-	})
+	body, err := connection.Post[Feedback](s.connection, fmt.Sprintf("/pss/v1/requests/%d/feedback", requestID), &req, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
+	return body.Data.ID, err
 }

@@ -11,17 +11,6 @@ func (s *Service) GetSubscriptions(parameters connection.APIRequestParameters) (
 
 // GetSubscriptionsPaginated retrieves a paginated list of subscriptions
 func (s *Service) GetSubscriptionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Subscription], error) {
-	body, err := s.getSubscriptionsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Subscription](s.connection, "/cloudflare/v1/subscriptions", parameters)
 	return connection.NewPaginated(body, parameters, s.GetSubscriptionsPaginated), err
-}
-
-func (s *Service) getSubscriptionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Subscription], error) {
-	body := &connection.APIResponseBodyData[[]Subscription]{}
-
-	response, err := s.connection.Get("/cloudflare/v1/subscriptions", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }

@@ -13,47 +13,17 @@ func (s *Service) GetInvoices(parameters connection.APIRequestParameters) ([]Inv
 
 // GetInvoicesPaginated retrieves a paginated list of invoices
 func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error) {
-	body, err := s.getInvoicesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Invoice](s.connection, "/account/v1/invoices", parameters)
 	return connection.NewPaginated(body, parameters, s.GetInvoicesPaginated), err
-}
-
-func (s *Service) getInvoicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Invoice], error) {
-	body := &connection.APIResponseBodyData[[]Invoice]{}
-
-	response, err := s.connection.Get("/account/v1/invoices", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetInvoice retrieves a single invoice by id
 func (s *Service) GetInvoice(invoiceID int) (Invoice, error) {
-	body, err := s.getInvoiceResponseBody(invoiceID)
-
-	return body.Data, err
-}
-
-func (s *Service) getInvoiceResponseBody(invoiceID int) (*connection.APIResponseBodyData[Invoice], error) {
-	body := &connection.APIResponseBodyData[Invoice]{}
-
 	if invoiceID < 1 {
-		return body, fmt.Errorf("invalid invoice id")
+		return Invoice{}, fmt.Errorf("invalid invoice id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/account/v1/invoices/%d", invoiceID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &InvoiceNotFoundError{ID: invoiceID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Invoice](s.connection, fmt.Sprintf("/account/v1/invoices/%d", invoiceID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InvoiceNotFoundError{ID: invoiceID}))
+	return body.Data, err
 }
 
 // GetInvoiceQueries retrieves a list of invoice queries
@@ -63,63 +33,21 @@ func (s *Service) GetInvoiceQueries(parameters connection.APIRequestParameters) 
 
 // GetInvoiceQueriesPaginated retrieves a paginated list of invoice queries
 func (s *Service) GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[InvoiceQuery], error) {
-	body, err := s.getInvoiceQueriesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]InvoiceQuery](s.connection, "/account/v1/invoice-queries", parameters)
 	return connection.NewPaginated(body, parameters, s.GetInvoiceQueriesPaginated), err
-}
-
-func (s *Service) getInvoiceQueriesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]InvoiceQuery], error) {
-	body := &connection.APIResponseBodyData[[]InvoiceQuery]{}
-
-	response, err := s.connection.Get("/account/v1/invoice-queries", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetInvoiceQuery retrieves a single invoice query by id
 func (s *Service) GetInvoiceQuery(queryID int) (InvoiceQuery, error) {
-	body, err := s.getInvoiceQueryResponseBody(queryID)
-
-	return body.Data, err
-}
-
-func (s *Service) getInvoiceQueryResponseBody(queryID int) (*connection.APIResponseBodyData[InvoiceQuery], error) {
-	body := &connection.APIResponseBodyData[InvoiceQuery]{}
-
 	if queryID < 1 {
-		return body, fmt.Errorf("invalid invoice query id")
+		return InvoiceQuery{}, fmt.Errorf("invalid invoice query id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/account/v1/invoice-queries/%d", queryID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &InvoiceQueryNotFoundError{ID: queryID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[InvoiceQuery](s.connection, fmt.Sprintf("/account/v1/invoice-queries/%d", queryID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InvoiceQueryNotFoundError{ID: queryID}))
+	return body.Data, err
 }
 
 // CreateInvoiceQuery retrieves creates an InvoiceQuery
 func (s *Service) CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error) {
-	body, err := s.createInvoiceQueryResponseBody(req)
-
+	body, err := connection.Post[InvoiceQuery](s.connection, "/account/v1/invoice-queries", &req)
 	return body.Data.ID, err
-}
-
-func (s *Service) createInvoiceQueryResponseBody(req CreateInvoiceQueryRequest) (*connection.APIResponseBodyData[InvoiceQuery], error) {
-	body := &connection.APIResponseBodyData[InvoiceQuery]{}
-
-	response, err := s.connection.Post("/account/v1/invoice-queries", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }

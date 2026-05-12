@@ -13,121 +13,41 @@ func (s *Service) GetHosts(parameters connection.APIRequestParameters) ([]Host, 
 
 // GetHostsPaginated retrieves a paginated list of hosts
 func (s *Service) GetHostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Host], error) {
-	body, err := s.getHostsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Host](s.connection, "/ecloud/v2/hosts", parameters)
 	return connection.NewPaginated(body, parameters, s.GetHostsPaginated), err
-}
-
-func (s *Service) getHostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Host], error) {
-	body := &connection.APIResponseBodyData[[]Host]{}
-
-	response, err := s.connection.Get("/ecloud/v2/hosts", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetHost retrieves a single host by id
 func (s *Service) GetHost(hostID string) (Host, error) {
-	body, err := s.getHostResponseBody(hostID)
-
-	return body.Data, err
-}
-
-func (s *Service) getHostResponseBody(hostID string) (*connection.APIResponseBodyData[Host], error) {
-	body := &connection.APIResponseBodyData[Host]{}
-
 	if hostID == "" {
-		return body, fmt.Errorf("invalid host id")
+		return Host{}, fmt.Errorf("invalid host id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &HostNotFoundError{ID: hostID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Host](s.connection, fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&HostNotFoundError{ID: hostID}))
+	return body.Data, err
 }
 
 // CreateHost creates a host
 func (s *Service) CreateHost(req CreateHostRequest) (TaskReference, error) {
-	body, err := s.createHostResponseBody(req)
-
+	body, err := connection.Post[TaskReference](s.connection, "/ecloud/v2/hosts", &req)
 	return body.Data, err
-}
-
-func (s *Service) createHostResponseBody(req CreateHostRequest) (*connection.APIResponseBodyData[TaskReference], error) {
-	body := &connection.APIResponseBodyData[TaskReference]{}
-
-	response, err := s.connection.Post("/ecloud/v2/hosts", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // PatchHost patches a host
 func (s *Service) PatchHost(hostID string, req PatchHostRequest) (TaskReference, error) {
-	body, err := s.patchHostResponseBody(hostID, req)
-
-	return body.Data, err
-}
-
-func (s *Service) patchHostResponseBody(hostID string, req PatchHostRequest) (*connection.APIResponseBodyData[TaskReference], error) {
-	body := &connection.APIResponseBodyData[TaskReference]{}
-
 	if hostID == "" {
-		return body, fmt.Errorf("invalid host id")
+		return TaskReference{}, fmt.Errorf("invalid host id")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &HostNotFoundError{ID: hostID}
-		}
-
-		return nil
-	})
+	body, err := connection.Patch[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), &req, connection.NotFoundResponseHandler(&HostNotFoundError{ID: hostID}))
+	return body.Data, err
 }
 
 // DeleteHost deletes a host
 func (s *Service) DeleteHost(hostID string) (string, error) {
-	body, err := s.deleteHostResponseBody(hostID)
-
-	return body.Data.TaskID, err
-}
-
-func (s *Service) deleteHostResponseBody(hostID string) (*connection.APIResponseBodyData[TaskReference], error) {
-	body := &connection.APIResponseBodyData[TaskReference]{}
-
 	if hostID == "" {
-		return body, fmt.Errorf("invalid host id")
+		return "", fmt.Errorf("invalid host id")
 	}
-
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &HostNotFoundError{ID: hostID}
-		}
-
-		return nil
-	})
+	body, err := connection.Delete[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/hosts/%s", hostID), nil, connection.NotFoundResponseHandler(&HostNotFoundError{ID: hostID}))
+	return body.Data.TaskID, err
 }
 
 // GetHostTasks retrieves a list of Host tasks
@@ -139,30 +59,11 @@ func (s *Service) GetHostTasks(hostID string, parameters connection.APIRequestPa
 
 // GetHostTasksPaginated retrieves a paginated list of Host tasks
 func (s *Service) GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	body, err := s.getHostTasksPaginatedResponseBody(hostID, parameters)
-
+	if hostID == "" {
+		return nil, fmt.Errorf("invalid host id")
+	}
+	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/hosts/%s/tasks", hostID), parameters, connection.NotFoundResponseHandler(&HostNotFoundError{ID: hostID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
 		return s.GetHostTasksPaginated(hostID, p)
 	}), err
-}
-
-func (s *Service) getHostTasksPaginatedResponseBody(hostID string, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Task], error) {
-	body := &connection.APIResponseBodyData[[]Task]{}
-
-	if hostID == "" {
-		return body, fmt.Errorf("invalid host id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/hosts/%s/tasks", hostID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &HostNotFoundError{ID: hostID}
-		}
-
-		return nil
-	})
 }

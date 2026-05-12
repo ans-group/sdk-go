@@ -7,18 +7,6 @@ import (
 
 // GetCredits retrieves a list of credits
 func (s *Service) GetCredits(parameters connection.APIRequestParameters) ([]account.Credit, error) {
-	body, err := s.getCreditsResponseBody(parameters)
-
+	body, err := connection.Get[[]account.Credit](s.connection, "/ecloud/v1/credits", parameters)
 	return body.Data, err
-}
-
-func (s *Service) getCreditsResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]account.Credit], error) {
-	body := &connection.APIResponseBodyData[[]account.Credit]{}
-
-	response, err := s.connection.Get("/ecloud/v1/credits", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }

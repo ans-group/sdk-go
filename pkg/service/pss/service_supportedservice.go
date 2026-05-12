@@ -9,10 +9,6 @@ func (s *Service) GetSupportedServices(parameters connection.APIRequestParameter
 
 // GetSupportedServicesPaginated retrieves a paginated list of supported services
 func (s *Service) GetSupportedServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SupportedService], error) {
-	body, err := s.getSupportedServicesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]SupportedService](s.connection, "/pss/v2/supported-services", parameters)
 	return connection.NewPaginated(body, parameters, s.GetSupportedServicesPaginated), err
-}
-
-func (s *Service) getSupportedServicesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]SupportedService], error) {
-	return connection.Get[[]SupportedService](s.connection, "/pss/v2/supported-services", parameters)
 }

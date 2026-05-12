@@ -13,45 +13,15 @@ func (s *Service) GetV1Hosts(parameters connection.APIRequestParameters) ([]V1Ho
 
 // GetV1HostsPaginated retrieves a paginated list of v1 hosts
 func (s *Service) GetV1HostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[V1Host], error) {
-	body, err := s.getV1HostsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]V1Host](s.connection, "/ecloud/v1/hosts", parameters)
 	return connection.NewPaginated(body, parameters, s.GetV1HostsPaginated), err
-}
-
-func (s *Service) getV1HostsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]V1Host], error) {
-	body := &connection.APIResponseBodyData[[]V1Host]{}
-
-	response, err := s.connection.Get("/ecloud/v1/hosts", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetV1Host retrieves a single v1 host by ID
 func (s *Service) GetV1Host(hostID int) (V1Host, error) {
-	body, err := s.getV1HostResponseBody(hostID)
-
-	return body.Data, err
-}
-
-func (s *Service) getV1HostResponseBody(hostID int) (*connection.APIResponseBodyData[V1Host], error) {
-	body := &connection.APIResponseBodyData[V1Host]{}
-
 	if hostID < 1 {
-		return body, fmt.Errorf("invalid host id")
+		return V1Host{}, fmt.Errorf("invalid host id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/hosts/%d", hostID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &V1HostNotFoundError{ID: hostID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[V1Host](s.connection, fmt.Sprintf("/ecloud/v1/hosts/%d", hostID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&V1HostNotFoundError{ID: hostID}))
+	return body.Data, err
 }

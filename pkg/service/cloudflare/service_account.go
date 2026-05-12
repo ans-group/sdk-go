@@ -13,107 +13,39 @@ func (s *Service) GetAccounts(parameters connection.APIRequestParameters) ([]Acc
 
 // GetAccountsPaginated retrieves a paginated list of accounts
 func (s *Service) GetAccountsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Account], error) {
-	body, err := s.getAccountsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Account](s.connection, "/cloudflare/v1/accounts", parameters)
 	return connection.NewPaginated(body, parameters, s.GetAccountsPaginated), err
-}
-
-func (s *Service) getAccountsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Account], error) {
-	body := &connection.APIResponseBodyData[[]Account]{}
-
-	response, err := s.connection.Get("/cloudflare/v1/accounts", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetAccount retrieves a single account by id
 func (s *Service) GetAccount(accountID string) (Account, error) {
-	body, err := s.getAccountResponseBody(accountID)
-
-	return body.Data, err
-}
-
-func (s *Service) getAccountResponseBody(accountID string) (*connection.APIResponseBodyData[Account], error) {
-	body := &connection.APIResponseBodyData[Account]{}
-
 	if accountID == "" {
-		return body, fmt.Errorf("invalid account id")
+		return Account{}, fmt.Errorf("invalid account id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &AccountNotFoundError{ID: accountID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Account](s.connection, fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&AccountNotFoundError{ID: accountID}))
+	return body.Data, err
 }
 
 // CreateAccount creates a new account
 func (s *Service) CreateAccount(req CreateAccountRequest) (string, error) {
-	body, err := s.createAccountResponseBody(req)
-
+	body, err := connection.Post[Account](s.connection, "/cloudflare/v1/accounts", &req)
 	return body.Data.ID, err
-}
-
-func (s *Service) createAccountResponseBody(req CreateAccountRequest) (*connection.APIResponseBodyData[Account], error) {
-	body := &connection.APIResponseBodyData[Account]{}
-
-	response, err := s.connection.Post("/cloudflare/v1/accounts", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // PatchAccount updates an account
 func (s *Service) PatchAccount(accountID string, req PatchAccountRequest) error {
-	_, err := s.patchAccountResponseBody(accountID, req)
-
-	return err
-}
-
-func (s *Service) patchAccountResponseBody(accountID string, req PatchAccountRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if accountID == "" {
-		return body, fmt.Errorf("invalid account id")
+		return fmt.Errorf("invalid account id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
+	_, err := connection.Post[struct{}](s.connection, fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), &req)
+	return err
 }
 
 // CreateAccount creates a new account member
 func (s *Service) CreateAccountMember(accountID string, req CreateAccountMemberRequest) error {
-	_, err := s.createAccountMemberResponseBody(accountID, req)
-
-	return err
-}
-
-func (s *Service) createAccountMemberResponseBody(accountID string, req CreateAccountMemberRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if accountID == "" {
-		return body, fmt.Errorf("invalid account id")
+		return fmt.Errorf("invalid account id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/cloudflare/v1/accounts/%s/members", accountID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
+	_, err := connection.Post[struct{}](s.connection, fmt.Sprintf("/cloudflare/v1/accounts/%s/members", accountID), &req)
+	return err
 }
