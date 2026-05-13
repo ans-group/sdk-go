@@ -28,40 +28,36 @@ func (s *Service) GetNIC(nicID string) (NIC, error) {
 	return s.nicRes().Get(nicID)
 }
 
+func (s *Service) nicTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(nicID string) string { return fmt.Sprintf("/ecloud/v2/nics/%s/tasks", nicID) },
+		"nic", "id", func(nicID string) error { return &NICNotFoundError{ID: nicID} })
+}
+
 // GetNICTasks retrieves a list of NIC tasks
 func (s *Service) GetNICTasks(nicID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNICTasksPaginated(nicID, p)
-	}, parameters)
+	return s.nicTasksRes().List(nicID, parameters)
 }
 
 // GetNICTasksPaginated retrieves a paginated list of NIC tasks
 func (s *Service) GetNICTasksPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if nicID == "" {
-		return nil, fmt.Errorf("invalid nic id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/nics/%s/tasks", nicID), parameters, connection.NotFoundResponseHandler(&NICNotFoundError{ID: nicID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNICTasksPaginated(nicID, p)
-	}), err
+	return s.nicTasksRes().ListPaginated(nicID, parameters)
+}
+
+func (s *Service) nicIPAddressRes() *resource.SubResourceList[IPAddress, string] {
+	return resource.NewStringSubResourceList[IPAddress](s.connection,
+		func(nicID string) string { return fmt.Sprintf("/ecloud/v2/nics/%s/ip-addresses", nicID) },
+		"nic", "id", func(nicID string) error { return &NICNotFoundError{ID: nicID} })
 }
 
 // GetNICIPAddress retrieves a list of NIC IP addresses
 func (s *Service) GetNICIPAddresses(nicID string, parameters connection.APIRequestParameters) ([]IPAddress, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
-		return s.GetNICIPAddressesPaginated(nicID, p)
-	}, parameters)
+	return s.nicIPAddressRes().List(nicID, parameters)
 }
 
 // GetNICIPAddressPaginated retrieves a paginated list of NIC IP addresses
 func (s *Service) GetNICIPAddressesPaginated(nicID string, parameters connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
-	if nicID == "" {
-		return nil, fmt.Errorf("invalid nic id")
-	}
-	body, err := connection.Get[[]IPAddress](s.connection, fmt.Sprintf("/ecloud/v2/nics/%s/ip-addresses", nicID), parameters, connection.NotFoundResponseHandler(&NICNotFoundError{ID: nicID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[IPAddress], error) {
-		return s.GetNICIPAddressesPaginated(nicID, p)
-	}), err
+	return s.nicIPAddressRes().ListPaginated(nicID, parameters)
 }
 
 func (s *Service) AssignNICIPAddress(nicID string, req AssignIPAddressRequest) (string, error) {

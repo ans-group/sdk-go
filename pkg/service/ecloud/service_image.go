@@ -46,38 +46,34 @@ func (s *Service) DeleteImage(imageID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) imageParameterRes() *resource.SubResourceList[ImageParameter, string] {
+	return resource.NewStringSubResourceList[ImageParameter](s.connection,
+		func(imageID string) string { return fmt.Sprintf("/ecloud/v2/images/%s/parameters", imageID) },
+		"image", "id", func(imageID string) error { return &ImageNotFoundError{ID: imageID} })
+}
+
 // GetImageParameters retrieves a list of parameters
 func (s *Service) GetImageParameters(imageID string, parameters connection.APIRequestParameters) ([]ImageParameter, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
-		return s.GetImageParametersPaginated(imageID, p)
-	}, parameters)
+	return s.imageParameterRes().List(imageID, parameters)
 }
 
 // GetImageParametersPaginated retrieves a paginated list of domains
 func (s *Service) GetImageParametersPaginated(imageID string, parameters connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
-	if imageID == "" {
-		return nil, fmt.Errorf("invalid image id")
-	}
-	body, err := connection.Get[[]ImageParameter](s.connection, fmt.Sprintf("/ecloud/v2/images/%s/parameters", imageID), parameters, connection.NotFoundResponseHandler(&ImageNotFoundError{ID: imageID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ImageParameter], error) {
-		return s.GetImageParametersPaginated(imageID, p)
-	}), err
+	return s.imageParameterRes().ListPaginated(imageID, parameters)
+}
+
+func (s *Service) imageMetadataRes() *resource.SubResourceList[ImageMetadata, string] {
+	return resource.NewStringSubResourceList[ImageMetadata](s.connection,
+		func(imageID string) string { return fmt.Sprintf("/ecloud/v2/images/%s/metadata", imageID) },
+		"image", "id", func(imageID string) error { return &ImageNotFoundError{ID: imageID} })
 }
 
 // GetImageMetadata retrieves a list of metadata
 func (s *Service) GetImageMetadata(imageID string, parameters connection.APIRequestParameters) ([]ImageMetadata, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
-		return s.GetImageMetadataPaginated(imageID, p)
-	}, parameters)
+	return s.imageMetadataRes().List(imageID, parameters)
 }
 
 // GetImageMetadataPaginated retrieves a paginated list of domains
 func (s *Service) GetImageMetadataPaginated(imageID string, parameters connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
-	if imageID == "" {
-		return nil, fmt.Errorf("invalid image id")
-	}
-	body, err := connection.Get[[]ImageMetadata](s.connection, fmt.Sprintf("/ecloud/v2/images/%s/metadata", imageID), parameters, connection.NotFoundResponseHandler(&ImageNotFoundError{ID: imageID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ImageMetadata], error) {
-		return s.GetImageMetadataPaginated(imageID, p)
-	}), err
+	return s.imageMetadataRes().ListPaginated(imageID, parameters)
 }

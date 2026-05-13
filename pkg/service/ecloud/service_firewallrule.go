@@ -52,17 +52,19 @@ func (s *Service) DeleteFirewallRule(ruleID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) firewallRulePortsRes() *resource.SubResourceList[FirewallRulePort, string] {
+	return resource.NewUncheckedStringSubResourceList[FirewallRulePort](s.connection,
+		func(firewallRuleID string) string {
+			return fmt.Sprintf("/ecloud/v2/firewall-rules/%s/ports", firewallRuleID)
+		})
+}
+
 // GetFirewallRuleFirewallRulePorts retrieves a list of firewall rule ports
 func (s *Service) GetFirewallRuleFirewallRulePorts(firewallRuleID string, parameters connection.APIRequestParameters) ([]FirewallRulePort, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FirewallRulePort], error) {
-		return s.GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID, p)
-	}, parameters)
+	return s.firewallRulePortsRes().List(firewallRuleID, parameters)
 }
 
 // GetFirewallRuleFirewallRulePortsPaginated retrieves a paginated list of firewall rule ports
 func (s *Service) GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID string, parameters connection.APIRequestParameters) (*connection.Paginated[FirewallRulePort], error) {
-	body, err := connection.Get[[]FirewallRulePort](s.connection, fmt.Sprintf("/ecloud/v2/firewall-rules/%s/ports", firewallRuleID), parameters)
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FirewallRulePort], error) {
-		return s.GetFirewallRuleFirewallRulePortsPaginated(firewallRuleID, p)
-	}), err
+	return s.firewallRulePortsRes().ListPaginated(firewallRuleID, parameters)
 }

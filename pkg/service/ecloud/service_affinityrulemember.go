@@ -13,23 +13,21 @@ func (s *Service) affinityRuleMemberRes() *resource.Resource[AffinityRuleMember,
 	})
 }
 
+func (s *Service) affinityRuleMembersRes() *resource.SubResourceList[AffinityRuleMember, string] {
+	return resource.NewUncheckedStringSubResourceList[AffinityRuleMember](s.connection,
+		func(affinityRuleID string) string {
+			return fmt.Sprintf("/ecloud/v2/affinity-rules/%s/members", affinityRuleID)
+		})
+}
+
 // GetAffinityRuleMembers retrieves a list of affinity rule members
 func (s *Service) GetAffinityRuleMembers(affinityRuleID string, parameters connection.APIRequestParameters) ([]AffinityRuleMember, error) {
-	return connection.InvokeRequestAll(
-		func(p connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error) {
-			return s.GetAffinityRuleMembersPaginated(affinityRuleID, p)
-		}, parameters)
+	return s.affinityRuleMembersRes().List(affinityRuleID, parameters)
 }
 
 // GetAffinityRuleMembersPaginated retrieves a paginated list of affinity rule members
 func (s *Service) GetAffinityRuleMembersPaginated(affinityRuleID string, parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error) {
-	body, err := connection.Get[[]AffinityRuleMember](s.connection, fmt.Sprintf("/ecloud/v2/affinity-rules/%s/members", affinityRuleID), parameters)
-	return connection.NewPaginated(
-		body,
-		parameters,
-		func(p connection.APIRequestParameters) (*connection.Paginated[AffinityRuleMember], error) {
-			return s.GetAffinityRuleMembersPaginated(affinityRuleID, p)
-		}), err
+	return s.affinityRuleMembersRes().ListPaginated(affinityRuleID, parameters)
 }
 
 // GetAffinityRuleMember retrieves a single AffinityRuleMember by id

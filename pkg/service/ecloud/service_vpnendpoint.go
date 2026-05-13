@@ -52,20 +52,18 @@ func (s *Service) DeleteVPNEndpoint(endpointID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) vpnEndpointTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(endpointID string) string { return fmt.Sprintf("/ecloud/v2/vpn-endpoints/%s/tasks", endpointID) },
+		"vpn endpoint", "id", func(endpointID string) error { return &VPNEndpointNotFoundError{ID: endpointID} })
+}
+
 // GetVPNEndpointTasks retrieves a list of VPN endpoint tasks
 func (s *Service) GetVPNEndpointTasks(endpointID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPNEndpointTasksPaginated(endpointID, p)
-	}, parameters)
+	return s.vpnEndpointTasksRes().List(endpointID, parameters)
 }
 
 // GetVPNEndpointTasksPaginated retrieves a paginated list of VPN endpoint tasks
 func (s *Service) GetVPNEndpointTasksPaginated(endpointID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if endpointID == "" {
-		return nil, fmt.Errorf("invalid vpn endpoint id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/vpn-endpoints/%s/tasks", endpointID), parameters, connection.NotFoundResponseHandler(&VPNEndpointNotFoundError{ID: endpointID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPNEndpointTasksPaginated(endpointID, p)
-	}), err
+	return s.vpnEndpointTasksRes().ListPaginated(endpointID, parameters)
 }

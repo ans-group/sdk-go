@@ -52,56 +52,50 @@ func (s *Service) DeployVPCDefaults(vpcID string) error {
 	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/deploy-defaults", vpcID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
 }
 
+func (s *Service) vpcVolumeRes() *resource.SubResourceList[Volume, string] {
+	return resource.NewStringSubResourceList[Volume](s.connection,
+		func(vpcID string) string { return fmt.Sprintf("/ecloud/v2/vpcs/%s/volumes", vpcID) },
+		"vpc", "id", func(vpcID string) error { return &VPCNotFoundError{ID: vpcID} })
+}
+
 // GetVPCVolumes retrieves a list of firewall rule volumes
 func (s *Service) GetVPCVolumes(vpcID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetVPCVolumesPaginated(vpcID, p)
-	}, parameters)
+	return s.vpcVolumeRes().List(vpcID, parameters)
 }
 
 // GetVPCVolumesPaginated retrieves a paginated list of firewall rule volumes
 func (s *Service) GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-	if vpcID == "" {
-		return nil, fmt.Errorf("invalid vpc id")
-	}
-	body, err := connection.Get[[]Volume](s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/volumes", vpcID), parameters, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetVPCVolumesPaginated(vpcID, p)
-	}), err
+	return s.vpcVolumeRes().ListPaginated(vpcID, parameters)
+}
+
+func (s *Service) vpcInstanceRes() *resource.SubResourceList[Instance, string] {
+	return resource.NewStringSubResourceList[Instance](s.connection,
+		func(vpcID string) string { return fmt.Sprintf("/ecloud/v2/vpcs/%s/instances", vpcID) },
+		"vpc", "id", func(vpcID string) error { return &VPCNotFoundError{ID: vpcID} })
 }
 
 // GetVPCInstances retrieves a list of firewall rule instances
 func (s *Service) GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-		return s.GetVPCInstancesPaginated(vpcID, p)
-	}, parameters)
+	return s.vpcInstanceRes().List(vpcID, parameters)
 }
 
 // GetVPCInstancesPaginated retrieves a paginated list of firewall rule instances
 func (s *Service) GetVPCInstancesPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-	if vpcID == "" {
-		return nil, fmt.Errorf("invalid vpc id")
-	}
-	body, err := connection.Get[[]Instance](s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/instances", vpcID), parameters, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-		return s.GetVPCInstancesPaginated(vpcID, p)
-	}), err
+	return s.vpcInstanceRes().ListPaginated(vpcID, parameters)
+}
+
+func (s *Service) vpcTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(vpcID string) string { return fmt.Sprintf("/ecloud/v2/vpcs/%s/tasks", vpcID) },
+		"vpc", "id", func(vpcID string) error { return &VPCNotFoundError{ID: vpcID} })
 }
 
 // GetVPCTasks retrieves a list of VPC tasks
 func (s *Service) GetVPCTasks(vpcID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPCTasksPaginated(vpcID, p)
-	}, parameters)
+	return s.vpcTasksRes().List(vpcID, parameters)
 }
 
 // GetVPCTasksPaginated retrieves a paginated list of VPC tasks
 func (s *Service) GetVPCTasksPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if vpcID == "" {
-		return nil, fmt.Errorf("invalid vpc id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/tasks", vpcID), parameters, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPCTasksPaginated(vpcID, p)
-	}), err
+	return s.vpcTasksRes().ListPaginated(vpcID, parameters)
 }

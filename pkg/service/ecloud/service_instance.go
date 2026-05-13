@@ -114,58 +114,52 @@ func (s *Service) MigrateInstance(instanceID string, req MigrateInstanceRequest)
 	return body.Data.TaskID, err
 }
 
+func (s *Service) instanceVolumeRes() *resource.SubResourceList[Volume, string] {
+	return resource.NewStringSubResourceList[Volume](s.connection,
+		func(instanceID string) string { return fmt.Sprintf("/ecloud/v2/instances/%s/volumes", instanceID) },
+		"instance", "id", func(instanceID string) error { return &InstanceNotFoundError{ID: instanceID} })
+}
+
 // GetInstanceVolumes retrieves a list of instance volumes
 func (s *Service) GetInstanceVolumes(instanceID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetInstanceVolumesPaginated(instanceID, p)
-	}, parameters)
+	return s.instanceVolumeRes().List(instanceID, parameters)
 }
 
 // GetInstanceVolumesPaginated retrieves a paginated list of instance volumes
 func (s *Service) GetInstanceVolumesPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-	if instanceID == "" {
-		return nil, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[[]Volume](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/volumes", instanceID), parameters, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetInstanceVolumesPaginated(instanceID, p)
-	}), err
+	return s.instanceVolumeRes().ListPaginated(instanceID, parameters)
+}
+
+func (s *Service) instanceCredentialRes() *resource.SubResourceList[Credential, string] {
+	return resource.NewStringSubResourceList[Credential](s.connection,
+		func(instanceID string) string { return fmt.Sprintf("/ecloud/v2/instances/%s/credentials", instanceID) },
+		"instance", "id", func(instanceID string) error { return &InstanceNotFoundError{ID: instanceID} })
 }
 
 // GetInstanceCredentials retrieves a list of instance credentials
 func (s *Service) GetInstanceCredentials(instanceID string, parameters connection.APIRequestParameters) ([]Credential, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
-		return s.GetInstanceCredentialsPaginated(instanceID, p)
-	}, parameters)
+	return s.instanceCredentialRes().List(instanceID, parameters)
 }
 
 // GetInstanceCredentialsPaginated retrieves a paginated list of instance credentials
 func (s *Service) GetInstanceCredentialsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
-	if instanceID == "" {
-		return nil, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[[]Credential](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/credentials", instanceID), parameters, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Credential], error) {
-		return s.GetInstanceCredentialsPaginated(instanceID, p)
-	}), err
+	return s.instanceCredentialRes().ListPaginated(instanceID, parameters)
+}
+
+func (s *Service) instanceNICRes() *resource.SubResourceList[NIC, string] {
+	return resource.NewStringSubResourceList[NIC](s.connection,
+		func(instanceID string) string { return fmt.Sprintf("/ecloud/v2/instances/%s/nics", instanceID) },
+		"instance", "id", func(instanceID string) error { return &InstanceNotFoundError{ID: instanceID} })
 }
 
 // GetInstanceNICs retrieves a list of instance NICs
 func (s *Service) GetInstanceNICs(instanceID string, parameters connection.APIRequestParameters) ([]NIC, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-		return s.GetInstanceNICsPaginated(instanceID, p)
-	}, parameters)
+	return s.instanceNICRes().List(instanceID, parameters)
 }
 
 // GetInstanceNICsPaginated retrieves a paginated list of instance NICs
 func (s *Service) GetInstanceNICsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-	if instanceID == "" {
-		return nil, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[[]NIC](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/nics", instanceID), parameters, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-		return s.GetInstanceNICsPaginated(instanceID, p)
-	}), err
+	return s.instanceNICRes().ListPaginated(instanceID, parameters)
 }
 
 // CreateInstanceConsoleSession creates an instance console session
@@ -177,22 +171,20 @@ func (s *Service) CreateInstanceConsoleSession(instanceID string) (ConsoleSessio
 	return body.Data, err
 }
 
+func (s *Service) instanceTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(instanceID string) string { return fmt.Sprintf("/ecloud/v2/instances/%s/tasks", instanceID) },
+		"instance", "id", func(instanceID string) error { return &InstanceNotFoundError{ID: instanceID} })
+}
+
 // GetInstanceTasks retrieves a list of Instance tasks
 func (s *Service) GetInstanceTasks(instanceID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetInstanceTasksPaginated(instanceID, p)
-	}, parameters)
+	return s.instanceTasksRes().List(instanceID, parameters)
 }
 
 // GetInstanceTasksPaginated retrieves a paginated list of Instance tasks
 func (s *Service) GetInstanceTasksPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if instanceID == "" {
-		return nil, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/tasks", instanceID), parameters, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetInstanceTasksPaginated(instanceID, p)
-	}), err
+	return s.instanceTasksRes().ListPaginated(instanceID, parameters)
 }
 
 // AttachInstanceVolume attaches a volume to an instance
@@ -213,22 +205,20 @@ func (s *Service) DetachInstanceVolume(instanceID string, req AttachDetachInstan
 	return body.Data.TaskID, err
 }
 
+func (s *Service) instanceFloatingIPRes() *resource.SubResourceList[FloatingIP, string] {
+	return resource.NewStringSubResourceList[FloatingIP](s.connection,
+		func(instanceID string) string { return fmt.Sprintf("/ecloud/v2/instances/%s/floating-ips", instanceID) },
+		"instance", "id", func(instanceID string) error { return &InstanceNotFoundError{ID: instanceID} })
+}
+
 // GetInstanceFloatingIPs retrieves a list of instance fips
 func (s *Service) GetInstanceFloatingIPs(instanceID string, parameters connection.APIRequestParameters) ([]FloatingIP, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
-		return s.GetInstanceFloatingIPsPaginated(instanceID, p)
-	}, parameters)
+	return s.instanceFloatingIPRes().List(instanceID, parameters)
 }
 
 // GetInstanceFloatingIPsPaginated retrieves a paginated list of instance floating IPs
 func (s *Service) GetInstanceFloatingIPsPaginated(instanceID string, parameters connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
-	if instanceID == "" {
-		return nil, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[[]FloatingIP](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s/floating-ips", instanceID), parameters, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
-		return s.GetInstanceFloatingIPsPaginated(instanceID, p)
-	}), err
+	return s.instanceFloatingIPRes().ListPaginated(instanceID, parameters)
 }
 
 // CreateInstanceImage attaches a volume to an instance

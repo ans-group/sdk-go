@@ -52,20 +52,20 @@ func (s *Service) DeleteVolumeGroup(volumeGroupID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) volumeGroupVolumeRes() *resource.SubResourceList[Volume, string] {
+	return resource.NewStringSubResourceList[Volume](s.connection,
+		func(volumeGroupID string) string {
+			return fmt.Sprintf("/ecloud/v2/volume-groups/%s/volumes", volumeGroupID)
+		},
+		"volume group", "id", func(volumeGroupID string) error { return &VolumeGroupNotFoundError{ID: volumeGroupID} })
+}
+
 // GetVolumeGroupVolumes retrieves a list of VolumeGroup volumes
 func (s *Service) GetVolumeGroupVolumes(volumeGroupID string, parameters connection.APIRequestParameters) ([]Volume, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
-	}, parameters)
+	return s.volumeGroupVolumeRes().List(volumeGroupID, parameters)
 }
 
 // GetVolumeGroupVolumesPaginated retrieves a paginated list of VolumeGroup volumes
 func (s *Service) GetVolumeGroupVolumesPaginated(volumeGroupID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-	if volumeGroupID == "" {
-		return nil, fmt.Errorf("invalid volume group id")
-	}
-	body, err := connection.Get[[]Volume](s.connection, fmt.Sprintf("/ecloud/v2/volume-groups/%s/volumes", volumeGroupID), parameters, connection.NotFoundResponseHandler(&VolumeGroupNotFoundError{ID: volumeGroupID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-		return s.GetVolumeGroupVolumesPaginated(volumeGroupID, p)
-	}), err
+	return s.volumeGroupVolumeRes().ListPaginated(volumeGroupID, parameters)
 }

@@ -52,38 +52,36 @@ func (s *Service) DeleteNetworkPolicy(policyID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) networkPolicyRuleRes() *resource.SubResourceList[NetworkRule, string] {
+	return resource.NewStringSubResourceList[NetworkRule](s.connection,
+		func(policyID string) string {
+			return fmt.Sprintf("/ecloud/v2/network-policies/%s/network-rules", policyID)
+		},
+		"network policy", "id", func(policyID string) error { return &NetworkPolicyNotFoundError{ID: policyID} })
+}
+
 // GetNetworkPolicyNetworkRules retrieves a list of network policy rules
 func (s *Service) GetNetworkPolicyNetworkRules(policyID string, parameters connection.APIRequestParameters) ([]NetworkRule, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
-		return s.GetNetworkPolicyNetworkRulesPaginated(policyID, p)
-	}, parameters)
+	return s.networkPolicyRuleRes().List(policyID, parameters)
 }
 
 // GetNetworkPolicyNetworkRulesPaginated retrieves a paginated list of network policy NetworkRules
 func (s *Service) GetNetworkPolicyNetworkRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
-	if policyID == "" {
-		return nil, fmt.Errorf("invalid network policy id")
-	}
-	body, err := connection.Get[[]NetworkRule](s.connection, fmt.Sprintf("/ecloud/v2/network-policies/%s/network-rules", policyID), parameters, connection.NotFoundResponseHandler(&NetworkPolicyNotFoundError{ID: policyID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
-		return s.GetNetworkPolicyNetworkRulesPaginated(policyID, p)
-	}), err
+	return s.networkPolicyRuleRes().ListPaginated(policyID, parameters)
+}
+
+func (s *Service) networkPolicyTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(policyID string) string { return fmt.Sprintf("/ecloud/v2/network-policies/%s/tasks", policyID) },
+		"network policy", "id", func(policyID string) error { return &NetworkPolicyNotFoundError{ID: policyID} })
 }
 
 // GetNetworkPolicyTasks retrieves a list of NetworkPolicy tasks
 func (s *Service) GetNetworkPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNetworkPolicyTasksPaginated(policyID, p)
-	}, parameters)
+	return s.networkPolicyTasksRes().List(policyID, parameters)
 }
 
 // GetNetworkPolicyTasksPaginated retrieves a paginated list of NetworkPolicy tasks
 func (s *Service) GetNetworkPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if policyID == "" {
-		return nil, fmt.Errorf("invalid network policy id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/network-policies/%s/tasks", policyID), parameters, connection.NotFoundResponseHandler(&NetworkPolicyNotFoundError{ID: policyID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNetworkPolicyTasksPaginated(policyID, p)
-	}), err
+	return s.networkPolicyTasksRes().ListPaginated(policyID, parameters)
 }

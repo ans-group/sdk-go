@@ -12,6 +12,17 @@ func (s *Service) templateRes() *resource.Resource[Template, int] {
 		func(id int) error { return &TemplateNotFoundError{TemplateID: id} })
 }
 
+func (s *Service) templateRecordRes() *resource.SubResource[Record, int, int] {
+	return resource.NewIntIntSubResource[Record](
+		s.connection,
+		func(templateID int) string { return fmt.Sprintf("/safedns/v1/templates/%d/records", templateID) },
+		"template", "id", func(templateID int) error { return &TemplateNotFoundError{TemplateID: templateID} },
+		"record", "id", func(templateID int, recordID int) error {
+			return &TemplateRecordNotFoundError{TemplateID: templateID, RecordID: recordID}
+		},
+	)
+}
+
 // GetTemplates retrieves a list of templates
 func (s *Service) GetTemplates(parameters connection.APIRequestParameters) ([]Template, error) {
 	return s.templateRes().List(parameters)
@@ -49,62 +60,32 @@ func (s *Service) DeleteTemplate(templateID int) error {
 
 // GetTemplateRecords retrieves a list of records
 func (s *Service) GetTemplateRecords(templateID int, parameters connection.APIRequestParameters) ([]Record, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-		return s.GetTemplateRecordsPaginated(templateID, p)
-	}, parameters)
+	return s.templateRecordRes().List(templateID, parameters)
 }
 
 // GetTemplateRecordsPaginated retrieves a paginated list of templates
 func (s *Service) GetTemplateRecordsPaginated(templateID int, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-	if templateID < 1 {
-		return nil, fmt.Errorf("invalid template id")
-	}
-	body, err := connection.Get[[]Record](s.connection, fmt.Sprintf("/safedns/v1/templates/%d/records", templateID), parameters, connection.NotFoundResponseHandler(&TemplateNotFoundError{TemplateID: templateID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-		return s.GetTemplateRecordsPaginated(templateID, p)
-	}), err
+	return s.templateRecordRes().ListPaginated(templateID, parameters)
 }
 
 // GetTemplateRecord retrieves a single zone record by ID
 func (s *Service) GetTemplateRecord(templateID int, recordID int) (Record, error) {
-	if templateID < 1 {
-		return Record{}, fmt.Errorf("invalid template id")
-	}
-	if recordID < 1 {
-		return Record{}, fmt.Errorf("invalid record id")
-	}
-	body, err := connection.Get[Record](s.connection, fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, recordID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TemplateRecordNotFoundError{TemplateID: templateID, RecordID: recordID}))
-	return body.Data, err
+	return s.templateRecordRes().Get(templateID, recordID)
 }
 
-// CreateTemplateRecord creates a new SafeDNS zone record
+// CreateTemplateRecord creates a new SafeDNS template record
 func (s *Service) CreateTemplateRecord(templateID int, req CreateRecordRequest) (int, error) {
-	if templateID < 1 {
-		return 0, fmt.Errorf("invalid template id")
-	}
-	body, err := connection.Post[Template](s.connection, fmt.Sprintf("/safedns/v1/templates/%d/records", templateID), &req, connection.NotFoundResponseHandler(&TemplateNotFoundError{TemplateID: templateID}))
-	return body.Data.ID, err
+	data, err := s.templateRecordRes().Create(templateID, &req)
+	return data.ID, err
 }
 
 // PatchTemplateRecord patches a SafeDNS template record
 func (s *Service) PatchTemplateRecord(templateID int, recordID int, patch PatchRecordRequest) (int, error) {
-	if templateID < 1 {
-		return 0, fmt.Errorf("invalid template id")
-	}
-	if recordID < 1 {
-		return 0, fmt.Errorf("invalid record id")
-	}
-	body, err := connection.Patch[Template](s.connection, fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, recordID), &patch, connection.NotFoundResponseHandler(&TemplateRecordNotFoundError{TemplateID: templateID, RecordID: recordID}))
-	return body.Data.ID, err
+	data, err := s.templateRecordRes().PatchReturning(templateID, recordID, &patch)
+	return data.ID, err
 }
 
 // DeleteTemplateRecord removes a SafeDNS template record
 func (s *Service) DeleteTemplateRecord(templateID int, recordID int) error {
-	if templateID < 1 {
-		return fmt.Errorf("invalid template id")
-	}
-	if recordID < 1 {
-		return fmt.Errorf("invalid record id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/safedns/v1/templates/%d/records/%d", templateID, recordID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TemplateRecordNotFoundError{TemplateID: templateID, RecordID: recordID}))
+	return s.templateRecordRes().Delete(templateID, recordID)
 }
