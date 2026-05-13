@@ -13,317 +13,96 @@ func (s *Service) GetVirtualMachines(parameters connection.APIRequestParameters)
 
 // GetVirtualMachinesPaginated retrieves a paginated list of vms
 func (s *Service) GetVirtualMachinesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VirtualMachine], error) {
-	body, err := s.getVirtualMachinesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]VirtualMachine](s.connection, "/ecloud/v1/vms", parameters)
 	return connection.NewPaginated(body, parameters, s.GetVirtualMachinesPaginated), err
-}
-
-func (s *Service) getVirtualMachinesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VirtualMachine], error) {
-	body := &connection.APIResponseBodyData[[]VirtualMachine]{}
-
-	response, err := s.connection.Get("/ecloud/v1/vms", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetVirtualMachine retrieves a single virtual machine by ID
 func (s *Service) GetVirtualMachine(vmID int) (VirtualMachine, error) {
-	body, err := s.getVirtualMachineResponseBody(vmID)
-
-	return body.Data, err
-}
-
-func (s *Service) getVirtualMachineResponseBody(vmID int) (*connection.APIResponseBodyData[VirtualMachine], error) {
-	body := &connection.APIResponseBodyData[VirtualMachine]{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return VirtualMachine{}, fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/vms/%d", vmID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[VirtualMachine](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
+	return body.Data, err
 }
 
 // DeleteVirtualMachine removes a virtual machine
 func (s *Service) DeleteVirtualMachine(vmID int) error {
-	_, err := s.deleteVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) deleteVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v1/vms/%d", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // CreateVirtualMachine creates a new virtual machine
 func (s *Service) CreateVirtualMachine(req CreateVirtualMachineRequest) (int, error) {
-	body, err := s.createVirtualMachineResponseBody(req)
-
+	body, err := connection.Post[VirtualMachine](s.connection, "/ecloud/v1/vms", &req)
 	return body.Data.ID, err
-}
-
-func (s *Service) createVirtualMachineResponseBody(req CreateVirtualMachineRequest) (*connection.APIResponseBodyData[VirtualMachine], error) {
-	body := &connection.APIResponseBodyData[VirtualMachine]{}
-
-	response, err := s.connection.Post("/ecloud/v1/vms", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // PatchVirtualMachine patches an eCloud virtual machine
 func (s *Service) PatchVirtualMachine(vmID int, patch PatchVirtualMachineRequest) error {
-	_, err := s.patchVirtualMachineResponseBody(vmID, patch)
-
-	return err
-}
-
-func (s *Service) patchVirtualMachineResponseBody(vmID int, patch PatchVirtualMachineRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v1/vms/%d", vmID), &patch)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), &patch, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // CloneVirtualMachine clones a virtual machine
 func (s *Service) CloneVirtualMachine(vmID int, req CloneVirtualMachineRequest) (int, error) {
-	body, err := s.cloneVirtualMachineResponseBody(vmID, req)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) cloneVirtualMachineResponseBody(vmID int, req CloneVirtualMachineRequest) (*connection.APIResponseBodyData[VirtualMachine], error) {
-	body := &connection.APIResponseBodyData[VirtualMachine]{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return 0, fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v1/vms/%d/clone", vmID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	body, err := connection.Post[VirtualMachine](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/clone", vmID), &req, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
+	return body.Data.ID, err
 }
 
 // PowerOnVirtualMachine powers on a virtual machine
 func (s *Service) PowerOnVirtualMachine(vmID int) error {
-	_, err := s.powerOnVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) powerOnVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/power-on", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PutRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/power-on", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // PowerOffVirtualMachine powers off a virtual machine
 func (s *Service) PowerOffVirtualMachine(vmID int) error {
-	_, err := s.powerOffVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) powerOffVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/power-off", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PutRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/power-off", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // PowerResetVirtualMachine resets a virtual machine (hard power off)
 func (s *Service) PowerResetVirtualMachine(vmID int) error {
-	_, err := s.powerResetVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) powerResetVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/power-reset", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PutRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/power-reset", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // PowerShutdownVirtualMachine shuts down a virtual machine
 func (s *Service) PowerShutdownVirtualMachine(vmID int) error {
-	_, err := s.powerShutdownVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) powerShutdownVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/power-shutdown", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PutRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/power-shutdown", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // PowerRestartVirtualMachine resets a virtual machine (graceful power off)
 func (s *Service) PowerRestartVirtualMachine(vmID int) error {
-	_, err := s.powerRestartVirtualMachineResponseBody(vmID)
-
-	return err
-}
-
-func (s *Service) powerRestartVirtualMachineResponseBody(vmID int) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/power-restart", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PutRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/power-restart", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // CreateVirtualMachineTemplate creates a virtual machine template
 func (s *Service) CreateVirtualMachineTemplate(vmID int, req CreateVirtualMachineTemplateRequest) error {
-	_, err := s.createVirtualMachineTemplateResponseBody(vmID, req)
-
-	return err
-}
-
-func (s *Service) createVirtualMachineTemplateResponseBody(vmID int, req CreateVirtualMachineTemplateRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v1/vms/%d/clone-to-template", vmID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/clone-to-template", vmID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // GetVirtualMachineTags retrieves a list of tags
@@ -335,179 +114,62 @@ func (s *Service) GetVirtualMachineTags(vmID int, parameters connection.APIReque
 
 // GetVirtualMachineTagsPaginated retrieves a paginated list of v1 virtual machine tags
 func (s *Service) GetVirtualMachineTagsPaginated(vmID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-	body, err := s.getVirtualMachineTagsV1PaginatedResponseBody(vmID, parameters)
-
+	if vmID < 1 {
+		return nil, fmt.Errorf("invalid virtual machine id")
+	}
+	body, err := connection.Get[[]TagV1](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/tags", vmID), parameters, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
 		return s.GetVirtualMachineTagsPaginated(vmID, p)
 	}), err
 }
 
-func (s *Service) getVirtualMachineTagsV1PaginatedResponseBody(vmID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]TagV1], error) {
-	body := &connection.APIResponseBodyData[[]TagV1]{}
-
-	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/vms/%d/tags", vmID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
-}
-
 // GetVirtualMachineTag retrieves a single virtual machine v1 tag by key
 func (s *Service) GetVirtualMachineTag(vmID int, tagKey string) (TagV1, error) {
-	body, err := s.getVirtualMachineTagV1ResponseBody(vmID, tagKey)
-
-	return body.Data, err
-}
-
-func (s *Service) getVirtualMachineTagV1ResponseBody(vmID int, tagKey string) (*connection.APIResponseBodyData[TagV1], error) {
-	body := &connection.APIResponseBodyData[TagV1]{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return TagV1{}, fmt.Errorf("invalid virtual machine id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return TagV1{}, fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[TagV1](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
+	return body.Data, err
 }
 
 // CreateVirtualMachineTag creates a new virtual machine v1 tag
 func (s *Service) CreateVirtualMachineTag(vmID int, req CreateTagV1Request) error {
-	_, err := s.createVirtualMachineTagV1ResponseBody(vmID, req)
-
-	return err
-}
-
-func (s *Service) createVirtualMachineTagV1ResponseBody(vmID int, req CreateTagV1Request) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v1/vms/%d/tags", vmID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/tags", vmID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
 }
 
 // PatchVirtualMachineTag patches an eCloud virtual machine v1 tag
 func (s *Service) PatchVirtualMachineTag(vmID int, tagKey string, patch PatchTagV1Request) error {
-	_, err := s.patchVirtualMachineTagV1ResponseBody(vmID, tagKey, patch)
-
-	return err
-}
-
-func (s *Service) patchVirtualMachineTagV1ResponseBody(vmID int, tagKey string, patch PatchTagV1Request) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), &patch)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), &patch, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
 }
 
 // DeleteVirtualMachineTag removes a virtual machine v1 tag
 func (s *Service) DeleteVirtualMachineTag(vmID int, tagKey string) error {
-	_, err := s.deleteVirtualMachineTagV1ResponseBody(vmID, tagKey)
-
-	return err
-}
-
-func (s *Service) deleteVirtualMachineTagV1ResponseBody(vmID int, tagKey string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return fmt.Errorf("invalid virtual machine id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/tags/%s", vmID, tagKey), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
 }
 
 // CreateVirtualMachineConsoleSession creates a virtual machine console session
 func (s *Service) CreateVirtualMachineConsoleSession(vmID int) (ConsoleSession, error) {
-	body, err := s.createVirtualMachineConsoleSessionResponseBody(vmID)
-
-	return body.Data, err
-}
-
-func (s *Service) createVirtualMachineConsoleSessionResponseBody(vmID int) (*connection.APIResponseBodyData[ConsoleSession], error) {
-	body := &connection.APIResponseBodyData[ConsoleSession]{}
-
 	if vmID < 1 {
-		return body, fmt.Errorf("invalid virtual machine id")
+		return ConsoleSession{}, fmt.Errorf("invalid virtual machine id")
 	}
-
-	response, err := s.connection.Put(fmt.Sprintf("/ecloud/v1/vms/%d/console-session", vmID), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &VirtualMachineNotFoundError{ID: vmID}
-		}
-
-		return nil
-	})
+	body, err := connection.Put[ConsoleSession](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d/console-session", vmID), nil, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
+	return body.Data, err
 }

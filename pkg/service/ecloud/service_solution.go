@@ -13,75 +13,26 @@ func (s *Service) GetSolutions(parameters connection.APIRequestParameters) ([]So
 
 // GetSolutionsPaginated retrieves a paginated list of solutions
 func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Solution], error) {
-	body, err := s.getSolutionsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Solution](s.connection, "/ecloud/v1/solutions", parameters)
 	return connection.NewPaginated(body, parameters, s.GetSolutionsPaginated), err
-}
-
-func (s *Service) getSolutionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Solution], error) {
-	body := &connection.APIResponseBodyData[[]Solution]{}
-
-	response, err := s.connection.Get("/ecloud/v1/solutions", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetSolution retrieves a single Solution by ID
 func (s *Service) GetSolution(solutionID int) (Solution, error) {
-	body, err := s.getSolutionResponseBody(solutionID)
-
-	return body.Data, err
-}
-
-func (s *Service) getSolutionResponseBody(solutionID int) (*connection.APIResponseBodyData[Solution], error) {
-	body := &connection.APIResponseBodyData[Solution]{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return Solution{}, fmt.Errorf("invalid solution id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d", solutionID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Solution](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d", solutionID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
+	return body.Data, err
 }
 
 // PatchSolution patches an eCloud solution
 func (s *Service) PatchSolution(solutionID int, patch PatchSolutionRequest) (int, error) {
-	body, err := s.patchSolutionResponseBody(solutionID, patch)
-
-	return body.Data.ID, err
-}
-
-func (s *Service) patchSolutionResponseBody(solutionID int, patch PatchSolutionRequest) (*connection.APIResponseBodyData[Solution], error) {
-	body := &connection.APIResponseBodyData[Solution]{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return 0, fmt.Errorf("invalid solution id")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v1/solutions/%d", solutionID), &patch)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
+	body, err := connection.Patch[Solution](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d", solutionID), &patch, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
+	return body.Data.ID, err
 }
 
 // GetSolutionVirtualMachines retrieves a list of vms
@@ -93,32 +44,13 @@ func (s *Service) GetSolutionVirtualMachines(solutionID int, parameters connecti
 
 // GetSolutionVirtualMachinesPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionVirtualMachinesPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[VirtualMachine], error) {
-	body, err := s.getSolutionVirtualMachinesPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]VirtualMachine](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/vms", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[VirtualMachine], error) {
 		return s.GetSolutionVirtualMachinesPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionVirtualMachinesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]VirtualMachine], error) {
-	body := &connection.APIResponseBodyData[[]VirtualMachine]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/vms", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionSites retrieves a list of sites
@@ -130,32 +62,13 @@ func (s *Service) GetSolutionSites(solutionID int, parameters connection.APIRequ
 
 // GetSolutionSitesPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionSitesPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Site], error) {
-	body, err := s.getSolutionSitesPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]Site](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/sites", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Site], error) {
 		return s.GetSolutionSitesPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionSitesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Site], error) {
-	body := &connection.APIResponseBodyData[[]Site]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/sites", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionDatastores retrieves a list of datastores
@@ -167,32 +80,13 @@ func (s *Service) GetSolutionDatastores(solutionID int, parameters connection.AP
 
 // GetSolutionDatastoresPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionDatastoresPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Datastore], error) {
-	body, err := s.getSolutionDatastoresPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]Datastore](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/datastores", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Datastore], error) {
 		return s.GetSolutionDatastoresPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionDatastoresPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Datastore], error) {
-	body := &connection.APIResponseBodyData[[]Datastore]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/datastores", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionHosts retrieves a list of hosts
@@ -204,32 +98,13 @@ func (s *Service) GetSolutionHosts(solutionID int, parameters connection.APIRequ
 
 // GetSolutionHostsPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionHostsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[V1Host], error) {
-	body, err := s.getSolutionHostsPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]V1Host](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/hosts", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[V1Host], error) {
 		return s.GetSolutionHostsPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionHostsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]V1Host], error) {
-	body := &connection.APIResponseBodyData[[]V1Host]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/hosts", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionNetworks retrieves a list of networks
@@ -241,32 +116,13 @@ func (s *Service) GetSolutionNetworks(solutionID int, parameters connection.APIR
 
 // GetSolutionNetworksPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionNetworksPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[V1Network], error) {
-	body, err := s.getSolutionNetworksPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]V1Network](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/networks", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[V1Network], error) {
 		return s.GetSolutionNetworksPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionNetworksPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]V1Network], error) {
-	body := &connection.APIResponseBodyData[[]V1Network]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/networks", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionFirewalls retrieves a list of firewalls
@@ -278,32 +134,13 @@ func (s *Service) GetSolutionFirewalls(solutionID int, parameters connection.API
 
 // GetSolutionFirewallsPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionFirewallsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Firewall], error) {
-	body, err := s.getSolutionFirewallsPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]Firewall](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/firewalls", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Firewall], error) {
 		return s.GetSolutionFirewallsPaginated(solutionID, p)
 	}), err
-}
-
-func (s *Service) getSolutionFirewallsPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Firewall], error) {
-	body := &connection.APIResponseBodyData[[]Firewall]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/firewalls", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
 }
 
 // GetSolutionTemplates retrieves a list of templates
@@ -315,125 +152,47 @@ func (s *Service) GetSolutionTemplates(solutionID int, parameters connection.API
 
 // GetSolutionTemplatesPaginated retrieves a paginated list of domains
 func (s *Service) GetSolutionTemplatesPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Template], error) {
-	body, err := s.getSolutionTemplatesPaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]Template](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/templates", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Template], error) {
 		return s.GetSolutionTemplatesPaginated(solutionID, p)
 	}), err
 }
 
-func (s *Service) getSolutionTemplatesPaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Template], error) {
-	body := &connection.APIResponseBodyData[[]Template]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/templates", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
-}
-
 // GetSolutionTemplate retrieves a single solution template by name
 func (s *Service) GetSolutionTemplate(solutionID int, templateName string) (Template, error) {
-	body, err := s.getSolutionTemplateResponseBody(solutionID, templateName)
-
-	return body.Data, err
-}
-
-func (s *Service) getSolutionTemplateResponseBody(solutionID int, templateName string) (*connection.APIResponseBodyData[Template], error) {
-	body := &connection.APIResponseBodyData[Template]{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return Template{}, fmt.Errorf("invalid solution id")
 	}
 	if templateName == "" {
-		return body, fmt.Errorf("invalid template name")
+		return Template{}, fmt.Errorf("invalid template name")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s", solutionID, templateName), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TemplateNotFoundError{Name: templateName}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Template](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s", solutionID, templateName), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TemplateNotFoundError{Name: templateName}))
+	return body.Data, err
 }
 
 // RenameSolutionTemplate renames a solution template
 func (s *Service) RenameSolutionTemplate(solutionID int, templateName string, req RenameTemplateRequest) error {
-	_, err := s.renameSolutionTemplateResponseBody(solutionID, templateName, req)
-
-	return err
-}
-
-func (s *Service) renameSolutionTemplateResponseBody(solutionID int, templateName string, req RenameTemplateRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return fmt.Errorf("invalid solution id")
 	}
 	if templateName == "" {
-		return body, fmt.Errorf("invalid template name")
+		return fmt.Errorf("invalid template name")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s/move", solutionID, templateName), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TemplateNotFoundError{Name: templateName}
-		}
-
-		return nil
-	})
+	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s/move", solutionID, templateName), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TemplateNotFoundError{Name: templateName}))
 }
 
 // DeleteSolutionTemplate removes a solution template
 func (s *Service) DeleteSolutionTemplate(solutionID int, templateName string) error {
-	_, err := s.deleteSolutionTemplateResponseBody(solutionID, templateName)
-
-	return err
-}
-
-func (s *Service) deleteSolutionTemplateResponseBody(solutionID int, templateName string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return fmt.Errorf("invalid solution id")
 	}
 	if templateName == "" {
-		return body, fmt.Errorf("invalid template name")
+		return fmt.Errorf("invalid template name")
 	}
-
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s", solutionID, templateName), nil)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TemplateNotFoundError{Name: templateName}
-		}
-
-		return nil
-	})
+	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/templates/%s", solutionID, templateName), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TemplateNotFoundError{Name: templateName}))
 }
 
 // GetSolutionTags retrieves a list of tags
@@ -445,150 +204,53 @@ func (s *Service) GetSolutionTags(solutionID int, parameters connection.APIReque
 
 // GetSolutionTagsPaginated retrieves a paginated list of v1 solution tags
 func (s *Service) GetSolutionTagsPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
-	body, err := s.getSolutionTagsV1PaginatedResponseBody(solutionID, parameters)
-
+	if solutionID < 1 {
+		return nil, fmt.Errorf("invalid solution id")
+	}
+	body, err := connection.Get[[]TagV1](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/tags", solutionID), parameters, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[TagV1], error) {
 		return s.GetSolutionTagsPaginated(solutionID, p)
 	}), err
 }
 
-func (s *Service) getSolutionTagsV1PaginatedResponseBody(solutionID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]TagV1], error) {
-	body := &connection.APIResponseBodyData[[]TagV1]{}
-
-	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/tags", solutionID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
-}
-
 // GetSolutionTag retrieves a single solution v1 tag by key
 func (s *Service) GetSolutionTag(solutionID int, tagKey string) (TagV1, error) {
-	body, err := s.getSolutionTagV1ResponseBody(solutionID, tagKey)
-
-	return body.Data, err
-}
-
-func (s *Service) getSolutionTagV1ResponseBody(solutionID int, tagKey string) (*connection.APIResponseBodyData[TagV1], error) {
-	body := &connection.APIResponseBodyData[TagV1]{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return TagV1{}, fmt.Errorf("invalid solution id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return TagV1{}, fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[TagV1](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
+	return body.Data, err
 }
 
 // CreateSolutionTag creates a new solution v1 tag
 func (s *Service) CreateSolutionTag(solutionID int, req CreateTagV1Request) error {
-	_, err := s.createSolutionTagV1ResponseBody(solutionID, req)
-
-	return err
-}
-
-func (s *Service) createSolutionTagV1ResponseBody(solutionID int, req CreateTagV1Request) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return fmt.Errorf("invalid solution id")
 	}
-
-	response, err := s.connection.Post(fmt.Sprintf("/ecloud/v1/solutions/%d/tags", solutionID), &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &SolutionNotFoundError{ID: solutionID}
-		}
-
-		return nil
-	})
+	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/tags", solutionID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
 }
 
 // PatchSolutionTag patches an eCloud solution v1 tag
 func (s *Service) PatchSolutionTag(solutionID int, tagKey string, patch PatchTagV1Request) error {
-	_, err := s.patchSolutionTagV1ResponseBody(solutionID, tagKey, patch)
-
-	return err
-}
-
-func (s *Service) patchSolutionTagV1ResponseBody(solutionID int, tagKey string, patch PatchTagV1Request) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return fmt.Errorf("invalid solution id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Patch(fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), &patch)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), &patch, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
 }
 
 // DeleteSolutionTag removes a solution v1 tag
 func (s *Service) DeleteSolutionTag(solutionID int, tagKey string) error {
-	_, err := s.deleteSolutionTagV1ResponseBody(solutionID, tagKey)
-
-	return err
-}
-
-func (s *Service) deleteSolutionTagV1ResponseBody(solutionID int, tagKey string) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
 	if solutionID < 1 {
-		return body, fmt.Errorf("invalid solution id")
+		return fmt.Errorf("invalid solution id")
 	}
 	if tagKey == "" {
-		return body, fmt.Errorf("invalid tag key")
+		return fmt.Errorf("invalid tag key")
 	}
-
-	response, err := s.connection.Delete(fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), nil)
-	if err != nil {
-		return body, err
-	}
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &TagV1NotFoundError{Key: tagKey}
-		}
-
-		return nil
-	})
+	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d/tags/%s", solutionID, tagKey), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TagV1NotFoundError{Key: tagKey}))
 }

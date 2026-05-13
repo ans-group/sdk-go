@@ -13,45 +13,15 @@ func (s *Service) GetRegions(parameters connection.APIRequestParameters) ([]Regi
 
 // GetRegionsPaginated retrieves a paginated list of regions
 func (s *Service) GetRegionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Region], error) {
-	body, err := s.getRegionsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Region](s.connection, "/ecloud/v2/regions", parameters)
 	return connection.NewPaginated(body, parameters, s.GetRegionsPaginated), err
-}
-
-func (s *Service) getRegionsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Region], error) {
-	body := &connection.APIResponseBodyData[[]Region]{}
-
-	response, err := s.connection.Get("/ecloud/v2/regions", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetRegion retrieves a single region by id
 func (s *Service) GetRegion(regionID string) (Region, error) {
-	body, err := s.getRegionResponseBody(regionID)
-
-	return body.Data, err
-}
-
-func (s *Service) getRegionResponseBody(regionID string) (*connection.APIResponseBodyData[Region], error) {
-	body := &connection.APIResponseBodyData[Region]{}
-
 	if regionID == "" {
-		return body, fmt.Errorf("invalid region id")
+		return Region{}, fmt.Errorf("invalid region id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ecloud/v2/regions/%s", regionID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &RegionNotFoundError{ID: regionID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Region](s.connection, fmt.Sprintf("/ecloud/v2/regions/%s", regionID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&RegionNotFoundError{ID: regionID}))
+	return body.Data, err
 }

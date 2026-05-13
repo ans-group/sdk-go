@@ -11,17 +11,6 @@ func (s *Service) GetRecords(parameters connection.APIRequestParameters) ([]Reco
 
 // GetRecordsPaginated retrieves a paginated list of domains
 func (s *Service) GetRecordsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-	body, err := s.getRecordsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Record](s.connection, "/ddosx/v1/records", parameters)
 	return connection.NewPaginated(body, parameters, s.GetRecordsPaginated), err
-}
-
-func (s *Service) getRecordsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Record], error) {
-	body := &connection.APIResponseBodyData[[]Record]{}
-
-	response, err := s.connection.Get("/ddosx/v1/records", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }

@@ -15,24 +15,11 @@ func (s *Service) GetTargetGroupACLs(targetGroupID int, parameters connection.AP
 
 // GetTargetGroupACLsPaginated retrieves a paginated list of ACLs
 func (s *Service) GetTargetGroupACLsPaginated(targetGroupID int, parameters connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
-	body, err := s.getTargetGroupACLsPaginatedResponseBody(targetGroupID, parameters)
-
+	if targetGroupID < 1 {
+		return nil, fmt.Errorf("invalid target group id")
+	}
+	body, err := connection.Get[[]ACL](s.connection, fmt.Sprintf("/loadbalancers/v2/target-groups/%d/acls", targetGroupID), parameters)
 	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[ACL], error) {
 		return s.GetTargetGroupACLsPaginated(targetGroupID, p)
 	}), err
-}
-
-func (s *Service) getTargetGroupACLsPaginatedResponseBody(targetGroupID int, parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]ACL], error) {
-	body := &connection.APIResponseBodyData[[]ACL]{}
-
-	if targetGroupID < 1 {
-		return body, fmt.Errorf("invalid target group id")
-	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/loadbalancers/v2/target-groups/%d/acls", targetGroupID), parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }

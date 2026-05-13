@@ -13,73 +13,24 @@ func (s *Service) GetDomains(parameters connection.APIRequestParameters) ([]Doma
 
 // GetDomainsPaginated retrieves a paginated list of domains
 func (s *Service) GetDomainsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Domain], error) {
-	body, err := s.getDomainsPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Domain](s.connection, "/registrar/v1/domains", parameters)
 	return connection.NewPaginated(body, parameters, s.GetDomainsPaginated), err
-}
-
-func (s *Service) getDomainsPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Domain], error) {
-	body := &connection.APIResponseBodyData[[]Domain]{}
-
-	response, err := s.connection.Get("/registrar/v1/domains", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetDomain retrieves a single domain by name
 func (s *Service) GetDomain(domainName string) (Domain, error) {
-	body, err := s.getDomainResponseBody(domainName)
-
-	return body.Data, err
-}
-
-func (s *Service) getDomainResponseBody(domainName string) (*connection.APIResponseBodyData[Domain], error) {
-	body := &connection.APIResponseBodyData[Domain]{}
-
 	if domainName == "" {
-		return body, fmt.Errorf("invalid domain name")
+		return Domain{}, fmt.Errorf("invalid domain name")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/registrar/v1/domains/%s", domainName), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &DomainNotFoundError{Name: domainName}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Domain](s.connection, fmt.Sprintf("/registrar/v1/domains/%s", domainName), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&DomainNotFoundError{Name: domainName}))
+	return body.Data, err
 }
 
 // GetDomainNameservers retrieves the nameservers for a domain
 func (s *Service) GetDomainNameservers(domainName string) ([]Nameserver, error) {
-	body, err := s.getDomainNameserversResponseBody(domainName)
-
-	return body.Data, err
-}
-
-func (s *Service) getDomainNameserversResponseBody(domainName string) (*connection.APIResponseBodyData[[]Nameserver], error) {
-	body := &connection.APIResponseBodyData[[]Nameserver]{}
-
 	if domainName == "" {
-		return body, fmt.Errorf("invalid domain name")
+		return []Nameserver{}, fmt.Errorf("invalid domain name")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/registrar/v1/domains/%s/nameservers", domainName), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &DomainNotFoundError{Name: domainName}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[[]Nameserver](s.connection, fmt.Sprintf("/registrar/v1/domains/%s/nameservers", domainName), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&DomainNotFoundError{Name: domainName}))
+	return body.Data, err
 }

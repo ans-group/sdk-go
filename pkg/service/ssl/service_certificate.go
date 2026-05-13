@@ -13,101 +13,33 @@ func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([
 
 // GetCertificatesPaginated retrieves a paginated list of certificates
 func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
-	body, err := s.getCertificatesPaginatedResponseBody(parameters)
+	body, err := connection.Get[[]Certificate](s.connection, "/ssl/v1/certificates", parameters)
 	return connection.NewPaginated(body, parameters, s.GetCertificatesPaginated), err
-}
-
-func (s *Service) getCertificatesPaginatedResponseBody(parameters connection.APIRequestParameters) (*connection.APIResponseBodyData[[]Certificate], error) {
-	body := &connection.APIResponseBodyData[[]Certificate]{}
-
-	response, err := s.connection.Get("/ssl/v1/certificates", parameters)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
 
 // GetCertificate retrieves a single certificate by id
 func (s *Service) GetCertificate(certificateID int) (Certificate, error) {
-	body, err := s.getCertificateResponseBody(certificateID)
-
-	return body.Data, err
-}
-
-func (s *Service) getCertificateResponseBody(certificateID int) (*connection.APIResponseBodyData[Certificate], error) {
-	body := &connection.APIResponseBodyData[Certificate]{}
-
 	if certificateID < 1 {
-		return body, fmt.Errorf("invalid certificate id")
+		return Certificate{}, fmt.Errorf("invalid certificate id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ssl/v1/certificates/%d", certificateID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &CertificateNotFoundError{ID: certificateID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[Certificate](s.connection, fmt.Sprintf("/ssl/v1/certificates/%d", certificateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CertificateNotFoundError{ID: certificateID}))
+	return body.Data, err
 }
 
 // GetCertificateContent retrieves the content of an SSL certificate
 func (s *Service) GetCertificateContent(certificateID int) (CertificateContent, error) {
-	body, err := s.getCertificateContentResponseBody(certificateID)
-
-	return body.Data, err
-}
-
-func (s *Service) getCertificateContentResponseBody(certificateID int) (*connection.APIResponseBodyData[CertificateContent], error) {
-	body := &connection.APIResponseBodyData[CertificateContent]{}
-
 	if certificateID < 1 {
-		return body, fmt.Errorf("invalid certificate id")
+		return CertificateContent{}, fmt.Errorf("invalid certificate id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ssl/v1/certificates/%d/download", certificateID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &CertificateNotFoundError{ID: certificateID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[CertificateContent](s.connection, fmt.Sprintf("/ssl/v1/certificates/%d/download", certificateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CertificateNotFoundError{ID: certificateID}))
+	return body.Data, err
 }
 
 // GetCertificatePrivateKey retrieves an SSL certificate private key
 func (s *Service) GetCertificatePrivateKey(certificateID int) (CertificatePrivateKey, error) {
-	body, err := s.getCertificatePrivateKeyResponseBody(certificateID)
-
-	return body.Data, err
-}
-
-func (s *Service) getCertificatePrivateKeyResponseBody(certificateID int) (*connection.APIResponseBodyData[CertificatePrivateKey], error) {
-	body := &connection.APIResponseBodyData[CertificatePrivateKey]{}
-
 	if certificateID < 1 {
-		return body, fmt.Errorf("invalid certificate id")
+		return CertificatePrivateKey{}, fmt.Errorf("invalid certificate id")
 	}
-
-	response, err := s.connection.Get(fmt.Sprintf("/ssl/v1/certificates/%d/private-key", certificateID), connection.APIRequestParameters{})
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, func(resp *connection.APIResponse) error {
-		if response.StatusCode == 404 {
-			return &CertificateNotFoundError{ID: certificateID}
-		}
-
-		return nil
-	})
+	body, err := connection.Get[CertificatePrivateKey](s.connection, fmt.Sprintf("/ssl/v1/certificates/%d/private-key", certificateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CertificateNotFoundError{ID: certificateID}))
+	return body.Data, err
 }

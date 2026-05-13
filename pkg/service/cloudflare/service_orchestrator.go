@@ -6,18 +6,6 @@ import (
 
 // CreateOrchestration creates a new orchestration request
 func (s *Service) CreateOrchestration(req CreateOrchestrationRequest) error {
-	_, err := s.createOrchestrationResponseBody(req)
-
+	_, err := connection.Post[struct{}](s.connection, "/cloudflare/v1/orchestrator", &req)
 	return err
-}
-
-func (s *Service) createOrchestrationResponseBody(req CreateOrchestrationRequest) (*connection.APIResponseBody, error) {
-	body := &connection.APIResponseBody{}
-
-	response, err := s.connection.Post("/cloudflare/v1/orchestrator", &req)
-	if err != nil {
-		return body, err
-	}
-
-	return body, response.HandleResponse(body, nil)
 }
