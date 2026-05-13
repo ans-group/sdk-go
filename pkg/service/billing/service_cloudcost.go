@@ -1,27 +1,26 @@
 package billing
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) cloudCostRes() *resource.Resource[CloudCost, int] {
+	return resource.NewIntResource[CloudCost](s.connection, "/billing/v1/cloud-costs", "cost",
+		func(id int) error { return &CloudCostNotFoundError{ID: id} })
+}
 
 // GetCloudCosts retrieves a list of costs
 func (s *Service) GetCloudCosts(parameters connection.APIRequestParameters) ([]CloudCost, error) {
-	return connection.InvokeRequestAll(s.GetCloudCostsPaginated, parameters)
+	return s.cloudCostRes().List(parameters)
 }
 
 // GetCloudCostsPaginated retrieves a paginated list of costs
 func (s *Service) GetCloudCostsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[CloudCost], error) {
-	body, err := connection.Get[[]CloudCost](s.connection, "/billing/v1/cloud-costs", parameters)
-	return connection.NewPaginated(body, parameters, s.GetCloudCostsPaginated), err
+	return s.cloudCostRes().ListPaginated(parameters)
 }
 
 // GetCloudCost retrieves a single cost by id
 func (s *Service) GetCloudCost(costID int) (CloudCost, error) {
-	if costID < 1 {
-		return CloudCost{}, fmt.Errorf("invalid cost id")
-	}
-	body, err := connection.Get[CloudCost](s.connection, fmt.Sprintf("/billing/v1/cloud-costs/%d", costID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CloudCostNotFoundError{ID: costID}))
-	return body.Data, err
+	return s.cloudCostRes().Get(costID)
 }

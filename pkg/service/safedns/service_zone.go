@@ -4,26 +4,27 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) zoneRes() *resource.Resource[Zone, string] {
+	return resource.NewStringResourceWithIdentifier[Zone](s.connection, "/safedns/v1/zones", "zone", "name",
+		func(id string) error { return &ZoneNotFoundError{ZoneName: id} })
+}
 
 // GetZones retrieves a list of zones
 func (s *Service) GetZones(parameters connection.APIRequestParameters) ([]Zone, error) {
-	return connection.InvokeRequestAll(s.GetZonesPaginated, parameters)
+	return s.zoneRes().List(parameters)
 }
 
 // GetZonesPaginated retrieves a paginated list of zones
 func (s *Service) GetZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Zone], error) {
-	body, err := connection.Get[[]Zone](s.connection, "/safedns/v1/zones", parameters)
-	return connection.NewPaginated(body, parameters, s.GetZonesPaginated), err
+	return s.zoneRes().ListPaginated(parameters)
 }
 
 // GetZone retrieves a single zone by name
 func (s *Service) GetZone(zoneName string) (Zone, error) {
-	if zoneName == "" {
-		return Zone{}, fmt.Errorf("invalid zone name")
-	}
-	body, err := connection.Get[Zone](s.connection, fmt.Sprintf("/safedns/v1/zones/%s", zoneName), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
-	return body.Data, err
+	return s.zoneRes().Get(zoneName)
 }
 
 // CreateZone creates a new SafeDNS zone
@@ -41,10 +42,7 @@ func (s *Service) PatchZone(zoneName string, req PatchZoneRequest) error {
 
 // DeleteZone removes a SafeDNS zone
 func (s *Service) DeleteZone(zoneName string) error {
-	if zoneName == "" {
-		return fmt.Errorf("invalid zone name")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/safedns/v1/zones/%s", zoneName), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
+	return s.zoneRes().Delete(zoneName)
 }
 
 // GetZoneRecords retrieves a list of records

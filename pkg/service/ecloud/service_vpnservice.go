@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpnServiceRes() *resource.Resource[VPNService, string] {
+	return resource.NewStringResource[VPNService](s.connection, "/ecloud/v2/vpn-services", "vpn service", func(id string) error {
+		return &VPNServiceNotFoundError{ID: id}
+	})
+}
 
 // GetVPNServices retrieves a list of VPN services
 func (s *Service) GetVPNServices(parameters connection.APIRequestParameters) ([]VPNService, error) {
-	return connection.InvokeRequestAll(s.GetVPNServicesPaginated, parameters)
+	return s.vpnServiceRes().List(parameters)
 }
 
 // GetVPNServicesPaginated retrieves a paginated list of VPN services
 func (s *Service) GetVPNServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNService], error) {
-	body, err := connection.Get[[]VPNService](s.connection, "/ecloud/v2/vpn-services", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPNServicesPaginated), err
+	return s.vpnServiceRes().ListPaginated(parameters)
 }
 
 // GetVPNService retrieves a single VPN service by id
 func (s *Service) GetVPNService(serviceID string) (VPNService, error) {
-	if serviceID == "" {
-		return VPNService{}, fmt.Errorf("invalid vpn service id")
-	}
-	body, err := connection.Get[VPNService](s.connection, fmt.Sprintf("/ecloud/v2/vpn-services/%s", serviceID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPNServiceNotFoundError{ID: serviceID}))
-	return body.Data, err
+	return s.vpnServiceRes().Get(serviceID)
 }
 
 // CreateVPNService creates a new VPN service

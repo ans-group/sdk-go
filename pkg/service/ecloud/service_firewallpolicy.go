@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) firewallPolicyRes() *resource.Resource[FirewallPolicy, string] {
+	return resource.NewStringResource[FirewallPolicy](s.connection, "/ecloud/v2/firewall-policies", "firewall policy", func(id string) error {
+		return &FirewallPolicyNotFoundError{ID: id}
+	})
+}
 
 // GetFirewallPolicies retrieves a list of firewall policies
 func (s *Service) GetFirewallPolicies(parameters connection.APIRequestParameters) ([]FirewallPolicy, error) {
-	return connection.InvokeRequestAll(s.GetFirewallPoliciesPaginated, parameters)
+	return s.firewallPolicyRes().List(parameters)
 }
 
 // GetFirewallPoliciesPaginated retrieves a paginated list of firewall policies
 func (s *Service) GetFirewallPoliciesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
-	body, err := connection.Get[[]FirewallPolicy](s.connection, "/ecloud/v2/firewall-policies", parameters)
-	return connection.NewPaginated(body, parameters, s.GetFirewallPoliciesPaginated), err
+	return s.firewallPolicyRes().ListPaginated(parameters)
 }
 
 // GetFirewallPolicy retrieves a single firewall policy by id
 func (s *Service) GetFirewallPolicy(policyID string) (FirewallPolicy, error) {
-	if policyID == "" {
-		return FirewallPolicy{}, fmt.Errorf("invalid firewall policy id")
-	}
-	body, err := connection.Get[FirewallPolicy](s.connection, fmt.Sprintf("/ecloud/v2/firewall-policies/%s", policyID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&FirewallPolicyNotFoundError{ID: policyID}))
-	return body.Data, err
+	return s.firewallPolicyRes().Get(policyID)
 }
 
 // CreateFirewallPolicy creates a new FirewallPolicy

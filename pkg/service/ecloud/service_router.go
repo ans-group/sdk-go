@@ -4,48 +4,44 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) routerRes() *resource.Resource[Router, string] {
+	return resource.NewStringResource[Router](s.connection, "/ecloud/v2/routers", "router", func(id string) error {
+		return &RouterNotFoundError{ID: id}
+	})
+}
 
 // GetRouters retrieves a list of routers
 func (s *Service) GetRouters(parameters connection.APIRequestParameters) ([]Router, error) {
-	return connection.InvokeRequestAll(s.GetRoutersPaginated, parameters)
+	return s.routerRes().List(parameters)
 }
 
 // GetRoutersPaginated retrieves a paginated list of routers
 func (s *Service) GetRoutersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Router], error) {
-	body, err := connection.Get[[]Router](s.connection, "/ecloud/v2/routers", parameters)
-	return connection.NewPaginated(body, parameters, s.GetRoutersPaginated), err
+	return s.routerRes().ListPaginated(parameters)
 }
 
 // GetRouter retrieves a single router by id
 func (s *Service) GetRouter(routerID string) (Router, error) {
-	if routerID == "" {
-		return Router{}, fmt.Errorf("invalid router id")
-	}
-	body, err := connection.Get[Router](s.connection, fmt.Sprintf("/ecloud/v2/routers/%s", routerID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
-	return body.Data, err
+	return s.routerRes().Get(routerID)
 }
 
 // CreateRouter creates a new Router
 func (s *Service) CreateRouter(req CreateRouterRequest) (string, error) {
-	body, err := connection.Post[Router](s.connection, "/ecloud/v2/routers", &req)
-	return body.Data.ID, err
+	data, err := s.routerRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchRouter patches a Router
 func (s *Service) PatchRouter(routerID string, req PatchRouterRequest) error {
-	if routerID == "" {
-		return fmt.Errorf("invalid router id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v2/routers/%s", routerID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
+	return s.routerRes().Patch(routerID, &req)
 }
 
 // DeleteRouter deletes a Router
 func (s *Service) DeleteRouter(routerID string) error {
-	if routerID == "" {
-		return fmt.Errorf("invalid router id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v2/routers/%s", routerID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
+	return s.routerRes().Delete(routerID)
 }
 
 // GetRouterFirewallPolicies retrieves a list of firewall rule policies

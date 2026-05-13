@@ -5,15 +5,17 @@ import (
 	"io"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) replyRes() *resource.Resource[Reply, string] {
+	return resource.NewStringResource[Reply](s.connection, "/pss/v1/replies", "reply",
+		func(id string) error { return &ReplyNotFoundError{ID: id} })
+}
 
 // GetReply retrieves a single reply by id
 func (s *Service) GetReply(replyID string) (Reply, error) {
-	if replyID == "" {
-		return Reply{}, fmt.Errorf("invalid reply id")
-	}
-	body, err := connection.Get[Reply](s.connection, fmt.Sprintf("/pss/v1/replies/%s", replyID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ReplyNotFoundError{ID: replyID}))
-	return body.Data, err
+	return s.replyRes().Get(replyID)
 }
 
 // DownloadReplyAttachmentStream downloads the provided attachment, returning

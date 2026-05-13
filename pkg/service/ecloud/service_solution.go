@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) solutionRes() *resource.Resource[Solution, int] {
+	return resource.NewIntResource[Solution](s.connection, "/ecloud/v1/solutions", "solution", func(id int) error {
+		return &SolutionNotFoundError{ID: id}
+	})
+}
 
 // GetSolutions retrieves a list of solutions
 func (s *Service) GetSolutions(parameters connection.APIRequestParameters) ([]Solution, error) {
-	return connection.InvokeRequestAll(s.GetSolutionsPaginated, parameters)
+	return s.solutionRes().List(parameters)
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solutions
 func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Solution], error) {
-	body, err := connection.Get[[]Solution](s.connection, "/ecloud/v1/solutions", parameters)
-	return connection.NewPaginated(body, parameters, s.GetSolutionsPaginated), err
+	return s.solutionRes().ListPaginated(parameters)
 }
 
 // GetSolution retrieves a single Solution by ID
 func (s *Service) GetSolution(solutionID int) (Solution, error) {
-	if solutionID < 1 {
-		return Solution{}, fmt.Errorf("invalid solution id")
-	}
-	body, err := connection.Get[Solution](s.connection, fmt.Sprintf("/ecloud/v1/solutions/%d", solutionID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
-	return body.Data, err
+	return s.solutionRes().Get(solutionID)
 }
 
 // PatchSolution patches an eCloud solution

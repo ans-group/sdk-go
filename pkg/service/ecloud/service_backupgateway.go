@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) backupGatewayRes() *resource.Resource[BackupGateway, string] {
+	return resource.NewStringResource[BackupGateway](s.connection, "/ecloud/v2/backup-gateways", "backup gateway", func(id string) error {
+		return &BackupGatewayNotFoundError{ID: id}
+	})
+}
 
 // GetBackupGateways retrieves a list of backup gateways
 func (s *Service) GetBackupGateways(parameters connection.APIRequestParameters) ([]BackupGateway, error) {
-	return connection.InvokeRequestAll(s.GetBackupGatewaysPaginated, parameters)
+	return s.backupGatewayRes().List(parameters)
 }
 
 // GetBackupGatewaysPaginated retrieves a paginated list of backup gateways
 func (s *Service) GetBackupGatewaysPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BackupGateway], error) {
-	body, err := connection.Get[[]BackupGateway](s.connection, "/ecloud/v2/backup-gateways", parameters)
-	return connection.NewPaginated(body, parameters, s.GetBackupGatewaysPaginated), err
+	return s.backupGatewayRes().ListPaginated(parameters)
 }
 
 // GetBackupGateway retrieves a single backup gateway by ID
 func (s *Service) GetBackupGateway(gatewayID string) (BackupGateway, error) {
-	if gatewayID == "" {
-		return BackupGateway{}, fmt.Errorf("invalid backup gateway id")
-	}
-	body, err := connection.Get[BackupGateway](s.connection, fmt.Sprintf("/ecloud/v2/backup-gateways/%s", gatewayID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&BackupGatewayNotFoundError{ID: gatewayID}))
-	return body.Data, err
+	return s.backupGatewayRes().Get(gatewayID)
 }
 
 // CreateBackupGateway creates a new backup gateway

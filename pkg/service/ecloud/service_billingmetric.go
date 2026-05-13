@@ -1,27 +1,27 @@
 package ecloud
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) billingMetricRes() *resource.Resource[BillingMetric, string] {
+	return resource.NewStringResource[BillingMetric](s.connection, "/ecloud/v2/billing-metrics", "metric", func(id string) error {
+		return &BillingMetricNotFoundError{ID: id}
+	})
+}
 
 // GetBillingMetrics retrieves a list of billing metrics
 func (s *Service) GetBillingMetrics(parameters connection.APIRequestParameters) ([]BillingMetric, error) {
-	return connection.InvokeRequestAll(s.GetBillingMetricsPaginated, parameters)
+	return s.billingMetricRes().List(parameters)
 }
 
 // GetBillingMetricsPaginated retrieves a paginated list of billing metrics
 func (s *Service) GetBillingMetricsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[BillingMetric], error) {
-	body, err := connection.Get[[]BillingMetric](s.connection, "/ecloud/v2/billing-metrics", parameters)
-	return connection.NewPaginated(body, parameters, s.GetBillingMetricsPaginated), err
+	return s.billingMetricRes().ListPaginated(parameters)
 }
 
 // GetBillingMetric retrieves a single billing metrics by id
 func (s *Service) GetBillingMetric(metricID string) (BillingMetric, error) {
-	if metricID == "" {
-		return BillingMetric{}, fmt.Errorf("invalid metric id")
-	}
-	body, err := connection.Get[BillingMetric](s.connection, fmt.Sprintf("/ecloud/v2/billing-metrics/%s", metricID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&BillingMetricNotFoundError{ID: metricID}))
-	return body.Data, err
+	return s.billingMetricRes().Get(metricID)
 }

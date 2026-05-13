@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) networkPolicyRes() *resource.Resource[NetworkPolicy, string] {
+	return resource.NewStringResource[NetworkPolicy](s.connection, "/ecloud/v2/network-policies", "network policy", func(id string) error {
+		return &NetworkPolicyNotFoundError{ID: id}
+	})
+}
 
 // GetNetworkPolicies retrieves a list of network policies
 func (s *Service) GetNetworkPolicies(parameters connection.APIRequestParameters) ([]NetworkPolicy, error) {
-	return connection.InvokeRequestAll(s.GetNetworkPoliciesPaginated, parameters)
+	return s.networkPolicyRes().List(parameters)
 }
 
 // GetNetworkPoliciesPaginated retrieves a paginated list of network policies
 func (s *Service) GetNetworkPoliciesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkPolicy], error) {
-	body, err := connection.Get[[]NetworkPolicy](s.connection, "/ecloud/v2/network-policies", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNetworkPoliciesPaginated), err
+	return s.networkPolicyRes().ListPaginated(parameters)
 }
 
 // GetNetworkPolicy retrieves a single network policy by id
 func (s *Service) GetNetworkPolicy(policyID string) (NetworkPolicy, error) {
-	if policyID == "" {
-		return NetworkPolicy{}, fmt.Errorf("invalid network policy id")
-	}
-	body, err := connection.Get[NetworkPolicy](s.connection, fmt.Sprintf("/ecloud/v2/network-policies/%s", policyID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NetworkPolicyNotFoundError{ID: policyID}))
-	return body.Data, err
+	return s.networkPolicyRes().Get(policyID)
 }
 
 // CreateNetworkPolicy creates a new NetworkPolicy

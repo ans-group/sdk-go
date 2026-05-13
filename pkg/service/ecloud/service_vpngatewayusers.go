@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpnGatewayUserRes() *resource.Resource[VPNGatewayUser, string] {
+	return resource.NewStringResource[VPNGatewayUser](s.connection, "/ecloud/v2/vpn-gateway-users", "vpn gateway user", func(id string) error {
+		return &VPNGatewayUserNotFoundError{ID: id}
+	})
+}
 
 // GetVPNGatewayUsers retrieves a list of VPN gateway users
 func (s *Service) GetVPNGatewayUsers(parameters connection.APIRequestParameters) ([]VPNGatewayUser, error) {
-	return connection.InvokeRequestAll(s.GetVPNGatewayUsersPaginated, parameters)
+	return s.vpnGatewayUserRes().List(parameters)
 }
 
 // GetVPNGatewayUsersPaginated retrieves a paginated list of VPN gateway users
 func (s *Service) GetVPNGatewayUsersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNGatewayUser], error) {
-	body, err := connection.Get[[]VPNGatewayUser](s.connection, "/ecloud/v2/vpn-gateway-users", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPNGatewayUsersPaginated), err
+	return s.vpnGatewayUserRes().ListPaginated(parameters)
 }
 
 // GetVPNGatewayUser retrieves a single VPN gateway user by ID
 func (s *Service) GetVPNGatewayUser(userID string) (VPNGatewayUser, error) {
-	if userID == "" {
-		return VPNGatewayUser{}, fmt.Errorf("invalid vpn gateway user id")
-	}
-	body, err := connection.Get[VPNGatewayUser](s.connection, fmt.Sprintf("/ecloud/v2/vpn-gateway-users/%s", userID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPNGatewayUserNotFoundError{ID: userID}))
-	return body.Data, err
+	return s.vpnGatewayUserRes().Get(userID)
 }
 
 // CreateVPNGatewayUser creates a new VPN gateway user

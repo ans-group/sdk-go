@@ -4,48 +4,44 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) instanceRes() *resource.Resource[Instance, string] {
+	return resource.NewStringResource[Instance](s.connection, "/ecloud/v2/instances", "instance", func(id string) error {
+		return &InstanceNotFoundError{ID: id}
+	})
+}
 
 // GetInstances retrieves a list of instances
 func (s *Service) GetInstances(parameters connection.APIRequestParameters) ([]Instance, error) {
-	return connection.InvokeRequestAll(s.GetInstancesPaginated, parameters)
+	return s.instanceRes().List(parameters)
 }
 
 // GetInstancesPaginated retrieves a paginated list of instances
 func (s *Service) GetInstancesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-	body, err := connection.Get[[]Instance](s.connection, "/ecloud/v2/instances", parameters)
-	return connection.NewPaginated(body, parameters, s.GetInstancesPaginated), err
+	return s.instanceRes().ListPaginated(parameters)
 }
 
 // GetInstance retrieves a single instance by id
 func (s *Service) GetInstance(instanceID string) (Instance, error) {
-	if instanceID == "" {
-		return Instance{}, fmt.Errorf("invalid instance id")
-	}
-	body, err := connection.Get[Instance](s.connection, fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
-	return body.Data, err
+	return s.instanceRes().Get(instanceID)
 }
 
 // CreateInstance creates a new instance
 func (s *Service) CreateInstance(req CreateInstanceRequest) (string, error) {
-	body, err := connection.Post[Instance](s.connection, "/ecloud/v2/instances", &req)
-	return body.Data.ID, err
+	data, err := s.instanceRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchInstance updates an instance
 func (s *Service) PatchInstance(instanceID string, req PatchInstanceRequest) error {
-	if instanceID == "" {
-		return fmt.Errorf("invalid instance id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
+	return s.instanceRes().Patch(instanceID, &req)
 }
 
 // DeleteInstance removes an instance
 func (s *Service) DeleteInstance(instanceID string) error {
-	if instanceID == "" {
-		return fmt.Errorf("invalid instance id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v2/instances/%s", instanceID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&InstanceNotFoundError{ID: instanceID}))
+	return s.instanceRes().Delete(instanceID)
 }
 
 // LockInstance locks an instance from update/removal

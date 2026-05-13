@@ -4,32 +4,33 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) templateRes() *resource.Resource[Template, int] {
+	return resource.NewIntResource[Template](s.connection, "/safedns/v1/templates", "template",
+		func(id int) error { return &TemplateNotFoundError{TemplateID: id} })
+}
 
 // GetTemplates retrieves a list of templates
 func (s *Service) GetTemplates(parameters connection.APIRequestParameters) ([]Template, error) {
-	return connection.InvokeRequestAll(s.GetTemplatesPaginated, parameters)
+	return s.templateRes().List(parameters)
 }
 
 // GetTemplatesPaginated retrieves a paginated list of templates
 func (s *Service) GetTemplatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Template], error) {
-	body, err := connection.Get[[]Template](s.connection, "/safedns/v1/templates", parameters)
-	return connection.NewPaginated(body, parameters, s.GetTemplatesPaginated), err
+	return s.templateRes().ListPaginated(parameters)
 }
 
 // GetTemplate retrieves a single template by ID
 func (s *Service) GetTemplate(templateID int) (Template, error) {
-	if templateID < 1 {
-		return Template{}, fmt.Errorf("invalid template id")
-	}
-	body, err := connection.Get[Template](s.connection, fmt.Sprintf("/safedns/v1/templates/%d", templateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TemplateNotFoundError{TemplateID: templateID}))
-	return body.Data, err
+	return s.templateRes().Get(templateID)
 }
 
 // CreateTemplate creates a new SafeDNS template
 func (s *Service) CreateTemplate(req CreateTemplateRequest) (int, error) {
-	body, err := connection.Post[Template](s.connection, "/safedns/v1/templates", &req)
-	return body.Data.ID, err
+	data, err := s.templateRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchTemplate patches a SafeDNS template
@@ -43,10 +44,7 @@ func (s *Service) PatchTemplate(templateID int, patch PatchTemplateRequest) (int
 
 // DeleteTemplate removes a SafeDNS template
 func (s *Service) DeleteTemplate(templateID int) error {
-	if templateID < 1 {
-		return fmt.Errorf("invalid template id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/safedns/v1/templates/%d", templateID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&TemplateNotFoundError{TemplateID: templateID}))
+	return s.templateRes().Delete(templateID)
 }
 
 // GetTemplateRecords retrieves a list of records

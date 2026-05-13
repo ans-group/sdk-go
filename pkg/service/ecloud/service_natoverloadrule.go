@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) natOverloadRuleRes() *resource.Resource[NATOverloadRule, string] {
+	return resource.NewStringResource[NATOverloadRule](s.connection, "/ecloud/v2/nat-overload-rules", "nat overload rule", func(id string) error {
+		return &NATOverloadRuleNotFoundError{ID: id}
+	})
+}
 
 // GetNATOverloadRules retrieves a list of NAT overload rules
 func (s *Service) GetNATOverloadRules(parameters connection.APIRequestParameters) ([]NATOverloadRule, error) {
-	return connection.InvokeRequestAll(s.GetNATOverloadRulesPaginated, parameters)
+	return s.natOverloadRuleRes().List(parameters)
 }
 
 // GetNATOverloadRulesPaginated retrieves a paginated list of NAT overload rules
 func (s *Service) GetNATOverloadRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NATOverloadRule], error) {
-	body, err := connection.Get[[]NATOverloadRule](s.connection, "/ecloud/v2/nat-overload-rules", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNATOverloadRulesPaginated), err
+	return s.natOverloadRuleRes().ListPaginated(parameters)
 }
 
 // GetNATOverloadRule retrieves a single NAT overload rule by id
 func (s *Service) GetNATOverloadRule(ruleID string) (NATOverloadRule, error) {
-	if ruleID == "" {
-		return NATOverloadRule{}, fmt.Errorf("invalid nat overload rule id")
-	}
-	body, err := connection.Get[NATOverloadRule](s.connection, fmt.Sprintf("/ecloud/v2/nat-overload-rules/%s", ruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NATOverloadRuleNotFoundError{ID: ruleID}))
-	return body.Data, err
+	return s.natOverloadRuleRes().Get(ruleID)
 }
 
 // CreateNATOverloadRule creates a new NAT overload

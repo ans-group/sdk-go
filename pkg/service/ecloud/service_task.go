@@ -1,27 +1,27 @@
 package ecloud
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) taskRes() *resource.Resource[Task, string] {
+	return resource.NewStringResource[Task](s.connection, "/ecloud/v2/tasks", "task", func(id string) error {
+		return &TaskNotFoundError{ID: id}
+	})
+}
 
 // GetTasks retrieves a list of tasks
 func (s *Service) GetTasks(parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(s.GetTasksPaginated, parameters)
+	return s.taskRes().List(parameters)
 }
 
 // GetTasksPaginated retrieves a paginated list of tasks
 func (s *Service) GetTasksPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	body, err := connection.Get[[]Task](s.connection, "/ecloud/v2/tasks", parameters)
-	return connection.NewPaginated(body, parameters, s.GetTasksPaginated), err
+	return s.taskRes().ListPaginated(parameters)
 }
 
 // GetTask retrieves a single task by id
 func (s *Service) GetTask(taskID string) (Task, error) {
-	if taskID == "" {
-		return Task{}, fmt.Errorf("invalid task id")
-	}
-	body, err := connection.Get[Task](s.connection, fmt.Sprintf("/ecloud/v2/tasks/%s", taskID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&TaskNotFoundError{ID: taskID}))
-	return body.Data, err
+	return s.taskRes().Get(taskID)
 }

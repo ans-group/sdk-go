@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vipRes() *resource.Resource[VIP, string] {
+	return resource.NewStringResource[VIP](s.connection, "/ecloud/v2/vips", "vip", func(id string) error {
+		return &VIPNotFoundError{ID: id}
+	})
+}
 
 // GetVIPs retrieves a list of vips
 func (s *Service) GetVIPs(parameters connection.APIRequestParameters) ([]VIP, error) {
-	return connection.InvokeRequestAll(s.GetVIPsPaginated, parameters)
+	return s.vipRes().List(parameters)
 }
 
 // GetVIPsPaginated retrieves a paginated list of vips
 func (s *Service) GetVIPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VIP], error) {
-	body, err := connection.Get[[]VIP](s.connection, "/ecloud/v2/vips", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVIPsPaginated), err
+	return s.vipRes().ListPaginated(parameters)
 }
 
 // GetVIP retrieves a single vip by id
 func (s *Service) GetVIP(vipID string) (VIP, error) {
-	if vipID == "" {
-		return VIP{}, fmt.Errorf("invalid vip id")
-	}
-	body, err := connection.Get[VIP](s.connection, fmt.Sprintf("/ecloud/v2/vips/%s", vipID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VIPNotFoundError{ID: vipID}))
-	return body.Data, err
+	return s.vipRes().Get(vipID)
 }
 
 // CreateVIP creates a new VIP

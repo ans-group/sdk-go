@@ -4,32 +4,33 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) sslRes() *resource.Resource[SSL, string] {
+	return resource.NewStringResource[SSL](s.connection, "/ddosx/v1/ssls", "ssl",
+		func(id string) error { return &SSLNotFoundError{ID: id} })
+}
 
 // GetSSLs retrieves a list of ssls
 func (s *Service) GetSSLs(parameters connection.APIRequestParameters) ([]SSL, error) {
-	return connection.InvokeRequestAll(s.GetSSLsPaginated, parameters)
+	return s.sslRes().List(parameters)
 }
 
 // GetSSLsPaginated retrieves a paginated list of ssls
 func (s *Service) GetSSLsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[SSL], error) {
-	body, err := connection.Get[[]SSL](s.connection, "/ddosx/v1/ssls", parameters)
-	return connection.NewPaginated(body, parameters, s.GetSSLsPaginated), err
+	return s.sslRes().ListPaginated(parameters)
 }
 
 // GetSSL retrieves a single ssl by id
 func (s *Service) GetSSL(sslID string) (SSL, error) {
-	if sslID == "" {
-		return SSL{}, fmt.Errorf("invalid ssl id")
-	}
-	body, err := connection.Get[SSL](s.connection, fmt.Sprintf("/ddosx/v1/ssls/%s", sslID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&SSLNotFoundError{ID: sslID}))
-	return body.Data, err
+	return s.sslRes().Get(sslID)
 }
 
 // CreateSSL retrieves creates an SSL
 func (s *Service) CreateSSL(req CreateSSLRequest) (string, error) {
-	body, err := connection.Post[SSL](s.connection, "/ddosx/v1/ssls", &req)
-	return body.Data.ID, err
+	data, err := s.sslRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchSSL retrieves patches an SSL
@@ -43,10 +44,7 @@ func (s *Service) PatchSSL(sslID string, req PatchSSLRequest) (string, error) {
 
 // DeleteSSL deletes patches an SSL
 func (s *Service) DeleteSSL(sslID string) error {
-	if sslID == "" {
-		return fmt.Errorf("invalid ssl id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ddosx/v1/ssls/%s", sslID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&SSLNotFoundError{ID: sslID}))
+	return s.sslRes().Delete(sslID)
 }
 
 // GetSSLContent retrieves a single ssl by id

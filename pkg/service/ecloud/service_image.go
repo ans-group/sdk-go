@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) imageRes() *resource.Resource[Image, string] {
+	return resource.NewStringResource[Image](s.connection, "/ecloud/v2/images", "image", func(id string) error {
+		return &ImageNotFoundError{ID: id}
+	})
+}
 
 // GetImages retrieves a list of images
 func (s *Service) GetImages(parameters connection.APIRequestParameters) ([]Image, error) {
-	return connection.InvokeRequestAll(s.GetImagesPaginated, parameters)
+	return s.imageRes().List(parameters)
 }
 
 // GetImagesPaginated retrieves a paginated list of images
 func (s *Service) GetImagesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Image], error) {
-	body, err := connection.Get[[]Image](s.connection, "/ecloud/v2/images", parameters)
-	return connection.NewPaginated(body, parameters, s.GetImagesPaginated), err
+	return s.imageRes().ListPaginated(parameters)
 }
 
 // GetImage retrieves a single Image by ID
 func (s *Service) GetImage(imageID string) (Image, error) {
-	if imageID == "" {
-		return Image{}, fmt.Errorf("invalid image id")
-	}
-	body, err := connection.Get[Image](s.connection, fmt.Sprintf("/ecloud/v2/images/%s", imageID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ImageNotFoundError{ID: imageID}))
-	return body.Data, err
+	return s.imageRes().Get(imageID)
 }
 
 // UpdateImage removes a single Image by ID

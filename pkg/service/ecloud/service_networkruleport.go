@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) networkRulePortRes() *resource.Resource[NetworkRulePort, string] {
+	return resource.NewStringResource[NetworkRulePort](s.connection, "/ecloud/v2/network-rule-ports", "network rule", func(id string) error {
+		return &NetworkRulePortNotFoundError{ID: id}
+	})
+}
 
 // GetNetworkRulePorts retrieves a list of network rules
 func (s *Service) GetNetworkRulePorts(parameters connection.APIRequestParameters) ([]NetworkRulePort, error) {
-	return connection.InvokeRequestAll(s.GetNetworkRulePortsPaginated, parameters)
+	return s.networkRulePortRes().List(parameters)
 }
 
 // GetNetworkRulePortsPaginated retrieves a paginated list of network rules
 func (s *Service) GetNetworkRulePortsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
-	body, err := connection.Get[[]NetworkRulePort](s.connection, "/ecloud/v2/network-rule-ports", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNetworkRulePortsPaginated), err
+	return s.networkRulePortRes().ListPaginated(parameters)
 }
 
 // GetNetworkRulePort retrieves a single rule by id
 func (s *Service) GetNetworkRulePort(ruleID string) (NetworkRulePort, error) {
-	if ruleID == "" {
-		return NetworkRulePort{}, fmt.Errorf("invalid network rule id")
-	}
-	body, err := connection.Get[NetworkRulePort](s.connection, fmt.Sprintf("/ecloud/v2/network-rule-ports/%s", ruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NetworkRulePortNotFoundError{ID: ruleID}))
-	return body.Data, err
+	return s.networkRulePortRes().Get(ruleID)
 }
 
 // CreateNetworkRulePort creates a new NetworkRulePort

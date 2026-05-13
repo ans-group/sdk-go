@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpnSessionRes() *resource.Resource[VPNSession, string] {
+	return resource.NewStringResource[VPNSession](s.connection, "/ecloud/v2/vpn-sessions", "vpn session", func(id string) error {
+		return &VPNSessionNotFoundError{ID: id}
+	})
+}
 
 // GetVPNSessions retrieves a list of VPN sessions
 func (s *Service) GetVPNSessions(parameters connection.APIRequestParameters) ([]VPNSession, error) {
-	return connection.InvokeRequestAll(s.GetVPNSessionsPaginated, parameters)
+	return s.vpnSessionRes().List(parameters)
 }
 
 // GetVPNSessionsPaginated retrieves a paginated list of VPN sessions
 func (s *Service) GetVPNSessionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNSession], error) {
-	body, err := connection.Get[[]VPNSession](s.connection, "/ecloud/v2/vpn-sessions", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPNSessionsPaginated), err
+	return s.vpnSessionRes().ListPaginated(parameters)
 }
 
 // GetVPNSession retrieves a single VPN session by id
 func (s *Service) GetVPNSession(sessionID string) (VPNSession, error) {
-	if sessionID == "" {
-		return VPNSession{}, fmt.Errorf("invalid vpn session id")
-	}
-	body, err := connection.Get[VPNSession](s.connection, fmt.Sprintf("/ecloud/v2/vpn-sessions/%s", sessionID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPNSessionNotFoundError{ID: sessionID}))
-	return body.Data, err
+	return s.vpnSessionRes().Get(sessionID)
 }
 
 // CreateVPNSession creates a new VPN session

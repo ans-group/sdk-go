@@ -4,36 +4,38 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) availabilityZoneRes() *resource.Resource[AvailabilityZone, string] {
+	return resource.NewStringResource[AvailabilityZone](s.connection, "/ecloud/v2/availability-zones", "az", func(id string) error {
+		return &AvailabilityZoneNotFoundError{ID: id}
+	})
+}
 
 // GetAvailabilityZones retrieves a list of azs
 func (s *Service) GetAvailabilityZones(parameters connection.APIRequestParameters) ([]AvailabilityZone, error) {
-	return connection.InvokeRequestAll(s.GetAvailabilityZonesPaginated, parameters)
+	return s.availabilityZoneRes().List(parameters)
 }
 
 // GetAvailabilityZonesPaginated retrieves a paginated list of azs
 func (s *Service) GetAvailabilityZonesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error) {
-	body, err := connection.Get[[]AvailabilityZone](s.connection, "/ecloud/v2/availability-zones", parameters)
-	return connection.NewPaginated(body, parameters, s.GetAvailabilityZonesPaginated), err
+	return s.availabilityZoneRes().ListPaginated(parameters)
 }
 
 // GetAvailabilityZone retrieves a single az by id
 func (s *Service) GetAvailabilityZone(azID string) (AvailabilityZone, error) {
-	if azID == "" {
-		return AvailabilityZone{}, fmt.Errorf("invalid az id")
-	}
-	body, err := connection.Get[AvailabilityZone](s.connection, fmt.Sprintf("/ecloud/v2/availability-zones/%s", azID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&AvailabilityZoneNotFoundError{ID: azID}))
-	return body.Data, err
+	return s.availabilityZoneRes().Get(azID)
 }
 
-// GetAvailabilityZones retrieves a list of azs
+// GetAvailabilityZoneIOPSTiers retrieves a list of azs
 func (s *Service) GetAvailabilityZoneIOPSTiers(azID string, parameters connection.APIRequestParameters) ([]IOPSTier, error) {
 	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error) {
 		return s.GetAvailabilityZoneIOPSTiersPaginated(azID, p)
 	}, parameters)
 }
 
-// GetAvailabilityZonesPaginated retrieves a paginated list of azs
+// GetAvailabilityZoneIOPSTiersPaginated retrieves a paginated list of azs
 func (s *Service) GetAvailabilityZoneIOPSTiersPaginated(azID string, parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error) {
 	if azID == "" {
 		return nil, fmt.Errorf("invalid az id")

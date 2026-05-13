@@ -1,27 +1,26 @@
 package draas
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) iopsTierRes() *resource.Resource[IOPSTier, string] {
+	return resource.NewStringResource[IOPSTier](s.connection, "/draas/v1/iops-tiers", "iops tier",
+		func(id string) error { return &IOPSTierNotFoundError{ID: id} })
+}
 
 // GetIOPSTiers retrieves a list of solutions
 func (s *Service) GetIOPSTiers(parameters connection.APIRequestParameters) ([]IOPSTier, error) {
-	return connection.InvokeRequestAll(s.GetIOPSTiersPaginated, parameters)
+	return s.iopsTierRes().List(parameters)
 }
 
 // GetIOPSTiersPaginated retrieves a paginated list of solutions
 func (s *Service) GetIOPSTiersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[IOPSTier], error) {
-	body, err := connection.Get[[]IOPSTier](s.connection, "/draas/v1/iops-tiers", parameters)
-	return connection.NewPaginated(body, parameters, s.GetIOPSTiersPaginated), err
+	return s.iopsTierRes().ListPaginated(parameters)
 }
 
 // GetIOPSTier retrieves a single solution by id
 func (s *Service) GetIOPSTier(iopsTierID string) (IOPSTier, error) {
-	if iopsTierID == "" {
-		return IOPSTier{}, fmt.Errorf("invalid iops tier id")
-	}
-	body, err := connection.Get[IOPSTier](s.connection, fmt.Sprintf("/draas/v1/iops-tiers/%s", iopsTierID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&IOPSTierNotFoundError{ID: iopsTierID}))
-	return body.Data, err
+	return s.iopsTierRes().Get(iopsTierID)
 }

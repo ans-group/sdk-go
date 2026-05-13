@@ -5,34 +5,32 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) clusterRes() *resource.Resource[Cluster, int] {
+	return resource.NewIntResource[Cluster](s.connection, "/loadbalancers/v2/clusters", "cluster",
+		func(id int) error { return &ClusterNotFoundError{ID: id} })
+}
 
 // GetClusters retrieves a list of clusters
 func (s *Service) GetClusters(parameters connection.APIRequestParameters) ([]Cluster, error) {
-	return connection.InvokeRequestAll(s.GetClustersPaginated, parameters)
+	return s.clusterRes().List(parameters)
 }
 
 // GetClustersPaginated retrieves a paginated list of clusters
 func (s *Service) GetClustersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Cluster], error) {
-	body, err := connection.Get[[]Cluster](s.connection, "/loadbalancers/v2/clusters", parameters)
-	return connection.NewPaginated(body, parameters, s.GetClustersPaginated), err
+	return s.clusterRes().ListPaginated(parameters)
 }
 
 // GetCluster retrieves a single cluster by id
 func (s *Service) GetCluster(clusterID int) (Cluster, error) {
-	if clusterID < 1 {
-		return Cluster{}, fmt.Errorf("invalid cluster id")
-	}
-	body, err := connection.Get[Cluster](s.connection, fmt.Sprintf("/loadbalancers/v2/clusters/%d", clusterID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ClusterNotFoundError{ID: clusterID}))
-	return body.Data, err
+	return s.clusterRes().Get(clusterID)
 }
 
 // PatchCluster patches a Cluster
 func (s *Service) PatchCluster(clusterID int, req PatchClusterRequest) error {
-	if clusterID < 1 {
-		return fmt.Errorf("invalid cluster id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/loadbalancers/v2/clusters/%d", clusterID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&ClusterNotFoundError{ID: clusterID}))
+	return s.clusterRes().Patch(clusterID, &req)
 }
 
 // DeployCluster deploys a Cluster

@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) podRes() *resource.Resource[Pod, int] {
+	return resource.NewIntResource[Pod](s.connection, "/ecloud/v1/pods", "pod", func(id int) error {
+		return &PodNotFoundError{ID: id}
+	})
+}
 
 // GetPods retrieves a list of pods
 func (s *Service) GetPods(parameters connection.APIRequestParameters) ([]Pod, error) {
-	return connection.InvokeRequestAll(s.GetPodsPaginated, parameters)
+	return s.podRes().List(parameters)
 }
 
 // GetPodsPaginated retrieves a paginated list of pods
 func (s *Service) GetPodsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Pod], error) {
-	body, err := connection.Get[[]Pod](s.connection, "/ecloud/v1/pods", parameters)
-	return connection.NewPaginated(body, parameters, s.GetPodsPaginated), err
+	return s.podRes().ListPaginated(parameters)
 }
 
 // GetPod retrieves a single pod by ID
 func (s *Service) GetPod(podID int) (Pod, error) {
-	if podID < 1 {
-		return Pod{}, fmt.Errorf("invalid pod id")
-	}
-	body, err := connection.Get[Pod](s.connection, fmt.Sprintf("/ecloud/v1/pods/%d", podID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&PodNotFoundError{ID: podID}))
-	return body.Data, err
+	return s.podRes().Get(podID)
 }
 
 // GetPodTemplates retrieves a list of templates

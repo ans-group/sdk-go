@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) discountPlanRes() *resource.Resource[DiscountPlan, string] {
+	return resource.NewStringResource[DiscountPlan](s.connection, "/ecloud/v2/discount-plans", "discount plan", func(id string) error {
+		return &DiscountPlanNotFoundError{ID: id}
+	})
+}
 
 // GetDiscountPlans retrieves a list of discount plans
 func (s *Service) GetDiscountPlans(parameters connection.APIRequestParameters) ([]DiscountPlan, error) {
-	return connection.InvokeRequestAll(s.GetDiscountPlansPaginated, parameters)
+	return s.discountPlanRes().List(parameters)
 }
 
 // GetDiscountPlansPaginated retrieves a paginated list of discount plans
 func (s *Service) GetDiscountPlansPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[DiscountPlan], error) {
-	body, err := connection.Get[[]DiscountPlan](s.connection, "/ecloud/v2/discount-plans", parameters)
-	return connection.NewPaginated(body, parameters, s.GetDiscountPlansPaginated), err
+	return s.discountPlanRes().ListPaginated(parameters)
 }
 
 // GetDiscountPlan retrieves a single discount plan by id
 func (s *Service) GetDiscountPlan(discID string) (DiscountPlan, error) {
-	if discID == "" {
-		return DiscountPlan{}, fmt.Errorf("invalid discount plan id")
-	}
-	body, err := connection.Get[DiscountPlan](s.connection, fmt.Sprintf("/ecloud/v2/discount-plans/%s", discID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&DiscountPlanNotFoundError{ID: discID}))
-	return body.Data, err
+	return s.discountPlanRes().Get(discID)
 }
 
 // ApproveDiscountPlan approves a floating IP to a resource

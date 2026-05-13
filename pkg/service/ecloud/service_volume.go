@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) volumeRes() *resource.Resource[Volume, string] {
+	return resource.NewStringResource[Volume](s.connection, "/ecloud/v2/volumes", "volume", func(id string) error {
+		return &VolumeNotFoundError{ID: id}
+	})
+}
 
 // GetVolumes retrieves a list of volumes
 func (s *Service) GetVolumes(parameters connection.APIRequestParameters) ([]Volume, error) {
-	return connection.InvokeRequestAll(s.GetVolumesPaginated, parameters)
+	return s.volumeRes().List(parameters)
 }
 
 // GetVolumesPaginated retrieves a paginated list of volumes
 func (s *Service) GetVolumesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error) {
-	body, err := connection.Get[[]Volume](s.connection, "/ecloud/v2/volumes", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVolumesPaginated), err
+	return s.volumeRes().ListPaginated(parameters)
 }
 
 // GetVolume retrieves a single volume by id
 func (s *Service) GetVolume(volumeID string) (Volume, error) {
-	if volumeID == "" {
-		return Volume{}, fmt.Errorf("invalid volume id")
-	}
-	body, err := connection.Get[Volume](s.connection, fmt.Sprintf("/ecloud/v2/volumes/%s", volumeID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VolumeNotFoundError{ID: volumeID}))
-	return body.Data, err
+	return s.volumeRes().Get(volumeID)
 }
 
 // CreateVolume creates a volume

@@ -1,53 +1,52 @@
 package account
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) invoiceRes() *resource.Resource[Invoice, int] {
+	return resource.NewIntResource[Invoice](s.connection, "/account/v1/invoices", "invoice",
+		func(id int) error { return &InvoiceNotFoundError{ID: id} })
+}
+
+func (s *Service) invoiceQueryRes() *resource.Resource[InvoiceQuery, int] {
+	return resource.NewIntResource[InvoiceQuery](s.connection, "/account/v1/invoice-queries", "invoice query",
+		func(id int) error { return &InvoiceQueryNotFoundError{ID: id} })
+}
 
 // GetInvoices retrieves a list of invoices
 func (s *Service) GetInvoices(parameters connection.APIRequestParameters) ([]Invoice, error) {
-	return connection.InvokeRequestAll(s.GetInvoicesPaginated, parameters)
+	return s.invoiceRes().List(parameters)
 }
 
 // GetInvoicesPaginated retrieves a paginated list of invoices
 func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error) {
-	body, err := connection.Get[[]Invoice](s.connection, "/account/v1/invoices", parameters)
-	return connection.NewPaginated(body, parameters, s.GetInvoicesPaginated), err
+	return s.invoiceRes().ListPaginated(parameters)
 }
 
 // GetInvoice retrieves a single invoice by id
 func (s *Service) GetInvoice(invoiceID int) (Invoice, error) {
-	if invoiceID < 1 {
-		return Invoice{}, fmt.Errorf("invalid invoice id")
-	}
-	body, err := connection.Get[Invoice](s.connection, fmt.Sprintf("/account/v1/invoices/%d", invoiceID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InvoiceNotFoundError{ID: invoiceID}))
-	return body.Data, err
+	return s.invoiceRes().Get(invoiceID)
 }
 
 // GetInvoiceQueries retrieves a list of invoice queries
 func (s *Service) GetInvoiceQueries(parameters connection.APIRequestParameters) ([]InvoiceQuery, error) {
-	return connection.InvokeRequestAll(s.GetInvoiceQueriesPaginated, parameters)
+	return s.invoiceQueryRes().List(parameters)
 }
 
 // GetInvoiceQueriesPaginated retrieves a paginated list of invoice queries
 func (s *Service) GetInvoiceQueriesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[InvoiceQuery], error) {
-	body, err := connection.Get[[]InvoiceQuery](s.connection, "/account/v1/invoice-queries", parameters)
-	return connection.NewPaginated(body, parameters, s.GetInvoiceQueriesPaginated), err
+	return s.invoiceQueryRes().ListPaginated(parameters)
 }
 
 // GetInvoiceQuery retrieves a single invoice query by id
 func (s *Service) GetInvoiceQuery(queryID int) (InvoiceQuery, error) {
-	if queryID < 1 {
-		return InvoiceQuery{}, fmt.Errorf("invalid invoice query id")
-	}
-	body, err := connection.Get[InvoiceQuery](s.connection, fmt.Sprintf("/account/v1/invoice-queries/%d", queryID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InvoiceQueryNotFoundError{ID: queryID}))
-	return body.Data, err
+	return s.invoiceQueryRes().Get(queryID)
 }
 
 // CreateInvoiceQuery retrieves creates an InvoiceQuery
 func (s *Service) CreateInvoiceQuery(req CreateInvoiceQueryRequest) (int, error) {
-	body, err := connection.Post[InvoiceQuery](s.connection, "/account/v1/invoice-queries", &req)
-	return body.Data.ID, err
+	data, err := s.invoiceQueryRes().Create(&req)
+	return data.ID, err
 }

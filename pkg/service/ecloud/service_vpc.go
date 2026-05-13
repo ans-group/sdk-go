@@ -4,48 +4,44 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpcRes() *resource.Resource[VPC, string] {
+	return resource.NewStringResource[VPC](s.connection, "/ecloud/v2/vpcs", "vpc", func(id string) error {
+		return &VPCNotFoundError{ID: id}
+	})
+}
 
 // GetVPCs retrieves a list of vpcs
 func (s *Service) GetVPCs(parameters connection.APIRequestParameters) ([]VPC, error) {
-	return connection.InvokeRequestAll(s.GetVPCsPaginated, parameters)
+	return s.vpcRes().List(parameters)
 }
 
 // GetVPCsPaginated retrieves a paginated list of vpcs
 func (s *Service) GetVPCsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPC], error) {
-	body, err := connection.Get[[]VPC](s.connection, "/ecloud/v2/vpcs", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPCsPaginated), err
+	return s.vpcRes().ListPaginated(parameters)
 }
 
 // GetVPC retrieves a single vpc by id
 func (s *Service) GetVPC(vpcID string) (VPC, error) {
-	if vpcID == "" {
-		return VPC{}, fmt.Errorf("invalid vpc id")
-	}
-	body, err := connection.Get[VPC](s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s", vpcID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
-	return body.Data, err
+	return s.vpcRes().Get(vpcID)
 }
 
 // CreateVPC creates a new VPC
 func (s *Service) CreateVPC(req CreateVPCRequest) (string, error) {
-	body, err := connection.Post[VPC](s.connection, "/ecloud/v2/vpcs", &req)
-	return body.Data.ID, err
+	data, err := s.vpcRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchVPC patches a VPC
 func (s *Service) PatchVPC(vpcID string, req PatchVPCRequest) error {
-	if vpcID == "" {
-		return fmt.Errorf("invalid vpc id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s", vpcID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
+	return s.vpcRes().Patch(vpcID, &req)
 }
 
 // DeleteVPC deletes a VPC
 func (s *Service) DeleteVPC(vpcID string) error {
-	if vpcID == "" {
-		return fmt.Errorf("invalid vpc id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s", vpcID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
+	return s.vpcRes().Delete(vpcID)
 }
 
 // DeployVPCDefaults deploys default resources for specified VPC

@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) affinityRuleRes() *resource.Resource[AffinityRule, string] {
+	return resource.NewStringResource[AffinityRule](s.connection, "/ecloud/v2/affinity-rules", "affinity rule", func(id string) error {
+		return &AffinityRuleNotFoundError{ID: id}
+	})
+}
 
 // GetAffinityRules retrieves a list of affinity rules
 func (s *Service) GetAffinityRules(parameters connection.APIRequestParameters) ([]AffinityRule, error) {
-	return connection.InvokeRequestAll(s.GetAffinityRulesPaginated, parameters)
+	return s.affinityRuleRes().List(parameters)
 }
 
 // GetAffinityRulesPaginated retrieves a paginated list of affinity rules
 func (s *Service) GetAffinityRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[AffinityRule], error) {
-	body, err := connection.Get[[]AffinityRule](s.connection, "/ecloud/v2/affinity-rules", parameters)
-	return connection.NewPaginated(body, parameters, s.GetAffinityRulesPaginated), err
+	return s.affinityRuleRes().ListPaginated(parameters)
 }
 
 // GetAffinityRule retrieves a single AffinityRule by id
 func (s *Service) GetAffinityRule(affinityruleID string) (AffinityRule, error) {
-	if affinityruleID == "" {
-		return AffinityRule{}, fmt.Errorf("invalid affinity rule id")
-	}
-	body, err := connection.Get[AffinityRule](s.connection, fmt.Sprintf("/ecloud/v2/affinity-rules/%s", affinityruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&AffinityRuleNotFoundError{ID: affinityruleID}))
-	return body.Data, err
+	return s.affinityRuleRes().Get(affinityruleID)
 }
 
 // CreateAffinityRule creates a new AffinityRule

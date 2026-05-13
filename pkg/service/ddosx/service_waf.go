@@ -4,37 +4,42 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) wafLogRes() *resource.Resource[WAFLog, string] {
+	return resource.NewStringResource[WAFLog](s.connection, "/ddosx/v1/waf/logs", "request",
+		func(id string) error { return &WAFLogNotFoundError{ID: id} })
+}
+
+func (s *Service) wafLogMatchRes() *resource.Resource[WAFLogMatch, string] {
+	return resource.NewStringResource[WAFLogMatch](s.connection, "/ddosx/v1/waf/logs/matches", "match",
+		func(id string) error { return &WAFLogMatchNotFoundError{ID: id} })
+}
 
 // GetWAFLogs retrieves a list of logs
 func (s *Service) GetWAFLogs(parameters connection.APIRequestParameters) ([]WAFLog, error) {
-	return connection.InvokeRequestAll(s.GetWAFLogsPaginated, parameters)
+	return s.wafLogRes().List(parameters)
 }
 
 // GetWAFLogsPaginated retrieves a paginated list of logs
 func (s *Service) GetWAFLogsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[WAFLog], error) {
-	body, err := connection.Get[[]WAFLog](s.connection, "/ddosx/v1/waf/logs", parameters)
-	return connection.NewPaginated(body, parameters, s.GetWAFLogsPaginated), err
+	return s.wafLogRes().ListPaginated(parameters)
 }
 
 // GetWAFLog retrieves a single log by id
 func (s *Service) GetWAFLog(requestID string) (WAFLog, error) {
-	if requestID == "" {
-		return WAFLog{}, fmt.Errorf("invalid request id")
-	}
-	body, err := connection.Get[WAFLog](s.connection, fmt.Sprintf("/ddosx/v1/waf/logs/%s", requestID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&WAFLogNotFoundError{ID: requestID}))
-	return body.Data, err
+	return s.wafLogRes().Get(requestID)
 }
 
 // GetWAFLogMatches retrieves a list of log matches
 func (s *Service) GetWAFLogMatches(parameters connection.APIRequestParameters) ([]WAFLogMatch, error) {
-	return connection.InvokeRequestAll(s.GetWAFLogMatchesPaginated, parameters)
+	return s.wafLogMatchRes().List(parameters)
 }
 
 // GetWAFLogMatchesPaginated retrieves a paginated list of log matches
 func (s *Service) GetWAFLogMatchesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[WAFLogMatch], error) {
-	body, err := connection.Get[[]WAFLogMatch](s.connection, "/ddosx/v1/waf/logs/matches", parameters)
-	return connection.NewPaginated(body, parameters, s.GetWAFLogMatchesPaginated), err
+	return s.wafLogMatchRes().ListPaginated(parameters)
 }
 
 // GetWAFLogRequestMatches retrieves a list of log matches for request
