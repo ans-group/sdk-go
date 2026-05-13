@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) nicRes() *resource.Resource[NIC, string] {
+	return resource.NewStringResource[NIC](s.connection, "/ecloud/v2/nics", "nic", func(id string) error {
+		return &NICNotFoundError{ID: id}
+	})
+}
 
 // GetNICs retrieves a list of nics
 func (s *Service) GetNICs(parameters connection.APIRequestParameters) ([]NIC, error) {
-	return connection.InvokeRequestAll(s.GetNICsPaginated, parameters)
+	return s.nicRes().List(parameters)
 }
 
 // GetNICsPaginated retrieves a paginated list of nics
 func (s *Service) GetNICsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-	body, err := connection.Get[[]NIC](s.connection, "/ecloud/v2/nics", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNICsPaginated), err
+	return s.nicRes().ListPaginated(parameters)
 }
 
 // GetNIC retrieves a single nic by id
 func (s *Service) GetNIC(nicID string) (NIC, error) {
-	if nicID == "" {
-		return NIC{}, fmt.Errorf("invalid nic id")
-	}
-	body, err := connection.Get[NIC](s.connection, fmt.Sprintf("/ecloud/v2/nics/%s", nicID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NICNotFoundError{ID: nicID}))
-	return body.Data, err
+	return s.nicRes().Get(nicID)
 }
 
 // GetNICTasks retrieves a list of NIC tasks

@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) floatingIPRes() *resource.Resource[FloatingIP, string] {
+	return resource.NewStringResource[FloatingIP](s.connection, "/ecloud/v2/floating-ips", "floating ip", func(id string) error {
+		return &FloatingIPNotFoundError{ID: id}
+	})
+}
 
 // GetFloatingIPs retrieves a list of floating ips
 func (s *Service) GetFloatingIPs(parameters connection.APIRequestParameters) ([]FloatingIP, error) {
-	return connection.InvokeRequestAll(s.GetFloatingIPsPaginated, parameters)
+	return s.floatingIPRes().List(parameters)
 }
 
 // GetFloatingIPsPaginated retrieves a paginated list of floating ips
 func (s *Service) GetFloatingIPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FloatingIP], error) {
-	body, err := connection.Get[[]FloatingIP](s.connection, "/ecloud/v2/floating-ips", parameters)
-	return connection.NewPaginated(body, parameters, s.GetFloatingIPsPaginated), err
+	return s.floatingIPRes().ListPaginated(parameters)
 }
 
 // GetFloatingIP retrieves a single floating ip by id
 func (s *Service) GetFloatingIP(fipID string) (FloatingIP, error) {
-	if fipID == "" {
-		return FloatingIP{}, fmt.Errorf("invalid floating ip id")
-	}
-	body, err := connection.Get[FloatingIP](s.connection, fmt.Sprintf("/ecloud/v2/floating-ips/%s", fipID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&FloatingIPNotFoundError{ID: fipID}))
-	return body.Data, err
+	return s.floatingIPRes().Get(fipID)
 }
 
 // CreateFloatingIP creates a new FloatingIP

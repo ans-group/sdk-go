@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) hostGroupRes() *resource.Resource[HostGroup, string] {
+	return resource.NewStringResource[HostGroup](s.connection, "/ecloud/v2/host-groups", "host group", func(id string) error {
+		return &HostGroupNotFoundError{ID: id}
+	})
+}
 
 // GetHostGroups retrieves a list of host groups
 func (s *Service) GetHostGroups(parameters connection.APIRequestParameters) ([]HostGroup, error) {
-	return connection.InvokeRequestAll(s.GetHostGroupsPaginated, parameters)
+	return s.hostGroupRes().List(parameters)
 }
 
 // GetHostGroupsPaginated retrieves a paginated list of host groups
 func (s *Service) GetHostGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[HostGroup], error) {
-	body, err := connection.Get[[]HostGroup](s.connection, "/ecloud/v2/host-groups", parameters)
-	return connection.NewPaginated(body, parameters, s.GetHostGroupsPaginated), err
+	return s.hostGroupRes().ListPaginated(parameters)
 }
 
 // GetHostGroup retrieves a single host group by id
 func (s *Service) GetHostGroup(hostGroupID string) (HostGroup, error) {
-	if hostGroupID == "" {
-		return HostGroup{}, fmt.Errorf("invalid host group id")
-	}
-	body, err := connection.Get[HostGroup](s.connection, fmt.Sprintf("/ecloud/v2/host-groups/%s", hostGroupID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&HostGroupNotFoundError{ID: hostGroupID}))
-	return body.Data, err
+	return s.hostGroupRes().Get(hostGroupID)
 }
 
 // CreateHostGroup creates a host group

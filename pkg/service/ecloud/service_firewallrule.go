@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) firewallRuleRes() *resource.Resource[FirewallRule, string] {
+	return resource.NewStringResource[FirewallRule](s.connection, "/ecloud/v2/firewall-rules", "firewall rule", func(id string) error {
+		return &FirewallRuleNotFoundError{ID: id}
+	})
+}
 
 // GetFirewallRules retrieves a list of firewall rules
 func (s *Service) GetFirewallRules(parameters connection.APIRequestParameters) ([]FirewallRule, error) {
-	return connection.InvokeRequestAll(s.GetFirewallRulesPaginated, parameters)
+	return s.firewallRuleRes().List(parameters)
 }
 
 // GetFirewallRulesPaginated retrieves a paginated list of firewall rules
 func (s *Service) GetFirewallRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FirewallRule], error) {
-	body, err := connection.Get[[]FirewallRule](s.connection, "/ecloud/v2/firewall-rules", parameters)
-	return connection.NewPaginated(body, parameters, s.GetFirewallRulesPaginated), err
+	return s.firewallRuleRes().ListPaginated(parameters)
 }
 
 // GetFirewallRule retrieves a single rule by id
 func (s *Service) GetFirewallRule(ruleID string) (FirewallRule, error) {
-	if ruleID == "" {
-		return FirewallRule{}, fmt.Errorf("invalid firewall rule id")
-	}
-	body, err := connection.Get[FirewallRule](s.connection, fmt.Sprintf("/ecloud/v2/firewall-rules/%s", ruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&FirewallRuleNotFoundError{ID: ruleID}))
-	return body.Data, err
+	return s.firewallRuleRes().Get(ruleID)
 }
 
 // CreateFirewallRule creates a new FirewallRule

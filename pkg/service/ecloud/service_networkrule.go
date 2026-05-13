@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) networkRuleRes() *resource.Resource[NetworkRule, string] {
+	return resource.NewStringResource[NetworkRule](s.connection, "/ecloud/v2/network-rules", "network rule", func(id string) error {
+		return &NetworkRuleNotFoundError{ID: id}
+	})
+}
 
 // GetNetworkRules retrieves a list of network rules
 func (s *Service) GetNetworkRules(parameters connection.APIRequestParameters) ([]NetworkRule, error) {
-	return connection.InvokeRequestAll(s.GetNetworkRulesPaginated, parameters)
+	return s.networkRuleRes().List(parameters)
 }
 
 // GetNetworkRulesPaginated retrieves a paginated list of network rules
 func (s *Service) GetNetworkRulesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRule], error) {
-	body, err := connection.Get[[]NetworkRule](s.connection, "/ecloud/v2/network-rules", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNetworkRulesPaginated), err
+	return s.networkRuleRes().ListPaginated(parameters)
 }
 
 // GetNetworkRule retrieves a single rule by id
 func (s *Service) GetNetworkRule(ruleID string) (NetworkRule, error) {
-	if ruleID == "" {
-		return NetworkRule{}, fmt.Errorf("invalid network rule id")
-	}
-	body, err := connection.Get[NetworkRule](s.connection, fmt.Sprintf("/ecloud/v2/network-rules/%s", ruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NetworkRuleNotFoundError{ID: ruleID}))
-	return body.Data, err
+	return s.networkRuleRes().Get(ruleID)
 }
 
 // CreateNetworkRule creates a new NetworkRule

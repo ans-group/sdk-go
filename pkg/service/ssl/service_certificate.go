@@ -4,26 +4,27 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) certificateRes() *resource.Resource[Certificate, int] {
+	return resource.NewIntResource[Certificate](s.connection, "/ssl/v1/certificates", "certificate",
+		func(id int) error { return &CertificateNotFoundError{ID: id} })
+}
 
 // GetCertificates retrieves a list of certificates
 func (s *Service) GetCertificates(parameters connection.APIRequestParameters) ([]Certificate, error) {
-	return connection.InvokeRequestAll(s.GetCertificatesPaginated, parameters)
+	return s.certificateRes().List(parameters)
 }
 
 // GetCertificatesPaginated retrieves a paginated list of certificates
 func (s *Service) GetCertificatesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Certificate], error) {
-	body, err := connection.Get[[]Certificate](s.connection, "/ssl/v1/certificates", parameters)
-	return connection.NewPaginated(body, parameters, s.GetCertificatesPaginated), err
+	return s.certificateRes().ListPaginated(parameters)
 }
 
 // GetCertificate retrieves a single certificate by id
 func (s *Service) GetCertificate(certificateID int) (Certificate, error) {
-	if certificateID < 1 {
-		return Certificate{}, fmt.Errorf("invalid certificate id")
-	}
-	body, err := connection.Get[Certificate](s.connection, fmt.Sprintf("/ssl/v1/certificates/%d", certificateID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CertificateNotFoundError{ID: certificateID}))
-	return body.Data, err
+	return s.certificateRes().Get(certificateID)
 }
 
 // GetCertificateContent retrieves the content of an SSL certificate

@@ -4,32 +4,33 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) accountRes() *resource.Resource[Account, string] {
+	return resource.NewStringResource[Account](s.connection, "/cloudflare/v1/accounts", "account",
+		func(id string) error { return &AccountNotFoundError{ID: id} })
+}
 
 // GetAccounts retrieves a list of accounts
 func (s *Service) GetAccounts(parameters connection.APIRequestParameters) ([]Account, error) {
-	return connection.InvokeRequestAll(s.GetAccountsPaginated, parameters)
+	return s.accountRes().List(parameters)
 }
 
 // GetAccountsPaginated retrieves a paginated list of accounts
 func (s *Service) GetAccountsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Account], error) {
-	body, err := connection.Get[[]Account](s.connection, "/cloudflare/v1/accounts", parameters)
-	return connection.NewPaginated(body, parameters, s.GetAccountsPaginated), err
+	return s.accountRes().ListPaginated(parameters)
 }
 
 // GetAccount retrieves a single account by id
 func (s *Service) GetAccount(accountID string) (Account, error) {
-	if accountID == "" {
-		return Account{}, fmt.Errorf("invalid account id")
-	}
-	body, err := connection.Get[Account](s.connection, fmt.Sprintf("/cloudflare/v1/accounts/%s", accountID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&AccountNotFoundError{ID: accountID}))
-	return body.Data, err
+	return s.accountRes().Get(accountID)
 }
 
 // CreateAccount creates a new account
 func (s *Service) CreateAccount(req CreateAccountRequest) (string, error) {
-	body, err := connection.Post[Account](s.connection, "/cloudflare/v1/accounts", &req)
-	return body.Data.ID, err
+	data, err := s.accountRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchAccount updates an account

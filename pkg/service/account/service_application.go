@@ -4,35 +4,40 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) applicationRes() *resource.Resource[Application, string] {
+	return resource.NewStringResource[Application](s.connection, "/account/v1/applications", "application",
+		func(id string) error { return &ApplicationNotFoundError{ID: id} })
+}
+
+func (s *Service) serviceRes() *resource.Resource[ApplicationService, string] {
+	return resource.NewStringResource[ApplicationService](s.connection, "/account/v1/services", "service",
+		func(id string) error { return fmt.Errorf("service not found: %s", id) })
+}
 
 // GetApplications retrieves a list of applications
 func (s *Service) GetApplications(parameters connection.APIRequestParameters) ([]Application, error) {
-	return connection.InvokeRequestAll(s.GetApplicationsPaginated, parameters)
+	return s.applicationRes().List(parameters)
 }
 
 func (s *Service) GetApplicationsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Application], error) {
-	body, err := connection.Get[[]Application](s.connection, "/account/v1/applications", parameters)
-	return connection.NewPaginated(body, parameters, s.GetApplicationsPaginated), err
+	return s.applicationRes().ListPaginated(parameters)
 }
 
 // GetApplication retrieves a single application by id
 func (s *Service) GetApplication(appID string) (Application, error) {
-	if appID == "" {
-		return Application{}, fmt.Errorf("invalid application id")
-	}
-	body, err := connection.Get[Application](s.connection, fmt.Sprintf("/account/v1/applications/%s", appID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ApplicationNotFoundError{ID: appID}))
-	return body.Data, err
+	return s.applicationRes().Get(appID)
 }
 
 // GetApplications retrieves a list of applications
 func (s *Service) GetServices(parameters connection.APIRequestParameters) ([]ApplicationService, error) {
-	return connection.InvokeRequestAll(s.GetServicesPaginated, parameters)
+	return s.serviceRes().List(parameters)
 }
 
 func (s *Service) GetServicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[ApplicationService], error) {
-	body, err := connection.Get[[]ApplicationService](s.connection, "/account/v1/services", parameters)
-	return connection.NewPaginated(body, parameters, s.GetServicesPaginated), err
+	return s.serviceRes().ListPaginated(parameters)
 }
 
 func (s *Service) CreateApplication(req CreateApplicationRequest) (CreateApplicationResponse, error) {

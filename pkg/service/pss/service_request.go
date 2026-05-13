@@ -4,40 +4,38 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) requestRes() *resource.Resource[Request, int] {
+	return resource.NewIntResource[Request](s.connection, "/pss/v1/requests", "request",
+		func(id int) error { return &RequestNotFoundError{ID: id} })
+}
 
 // CreateRequest creates a new request
 func (s *Service) CreateRequest(req CreateRequestRequest) (int, error) {
-	body, err := connection.Post[Request](s.connection, "/pss/v1/requests", &req)
-	return body.Data.ID, err
+	data, err := s.requestRes().Create(&req)
+	return data.ID, err
 }
 
 // GetRequests retrieves a list of requests
 func (s *Service) GetRequests(parameters connection.APIRequestParameters) ([]Request, error) {
-	return connection.InvokeRequestAll(s.GetRequestsPaginated, parameters)
+	return s.requestRes().List(parameters)
 }
 
 // GetRequestsPaginated retrieves a paginated list of requests
 func (s *Service) GetRequestsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Request], error) {
-	body, err := connection.Get[[]Request](s.connection, "/pss/v1/requests", parameters)
-	return connection.NewPaginated(body, parameters, s.GetRequestsPaginated), err
+	return s.requestRes().ListPaginated(parameters)
 }
 
 // GetRequest retrieves a single request by id
 func (s *Service) GetRequest(requestID int) (Request, error) {
-	if requestID < 1 {
-		return Request{}, fmt.Errorf("invalid request id")
-	}
-	body, err := connection.Get[Request](s.connection, fmt.Sprintf("/pss/v1/requests/%d", requestID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
-	return body.Data, err
+	return s.requestRes().Get(requestID)
 }
 
 // PatchRequest patches a request
 func (s *Service) PatchRequest(requestID int, req PatchRequestRequest) error {
-	if requestID < 1 {
-		return fmt.Errorf("invalid request id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/pss/v1/requests/%d", requestID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: requestID}))
+	return s.requestRes().Patch(requestID, &req)
 }
 
 // CreateRequestReply creates a new request reply

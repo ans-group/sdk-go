@@ -4,48 +4,44 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) networkRes() *resource.Resource[Network, string] {
+	return resource.NewStringResource[Network](s.connection, "/ecloud/v2/networks", "network", func(id string) error {
+		return &NetworkNotFoundError{ID: id}
+	})
+}
 
 // GetNetworks retrieves a list of networks
 func (s *Service) GetNetworks(parameters connection.APIRequestParameters) ([]Network, error) {
-	return connection.InvokeRequestAll(s.GetNetworksPaginated, parameters)
+	return s.networkRes().List(parameters)
 }
 
 // GetNetworksPaginated retrieves a paginated list of networks
 func (s *Service) GetNetworksPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Network], error) {
-	body, err := connection.Get[[]Network](s.connection, "/ecloud/v2/networks", parameters)
-	return connection.NewPaginated(body, parameters, s.GetNetworksPaginated), err
+	return s.networkRes().ListPaginated(parameters)
 }
 
 // GetNetwork retrieves a single network by id
 func (s *Service) GetNetwork(networkID string) (Network, error) {
-	if networkID == "" {
-		return Network{}, fmt.Errorf("invalid network id")
-	}
-	body, err := connection.Get[Network](s.connection, fmt.Sprintf("/ecloud/v2/networks/%s", networkID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&NetworkNotFoundError{ID: networkID}))
-	return body.Data, err
+	return s.networkRes().Get(networkID)
 }
 
 // CreateNetwork creates a new Network
 func (s *Service) CreateNetwork(req CreateNetworkRequest) (string, error) {
-	body, err := connection.Post[Network](s.connection, "/ecloud/v2/networks", &req)
-	return body.Data.ID, err
+	data, err := s.networkRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchNetwork patches a Network
 func (s *Service) PatchNetwork(networkID string, req PatchNetworkRequest) error {
-	if networkID == "" {
-		return fmt.Errorf("invalid network id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v2/networks/%s", networkID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&NetworkNotFoundError{ID: networkID}))
+	return s.networkRes().Patch(networkID, &req)
 }
 
 // DeleteNetwork deletes a Network
 func (s *Service) DeleteNetwork(networkID string) error {
-	if networkID == "" {
-		return fmt.Errorf("invalid network id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v2/networks/%s", networkID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&NetworkNotFoundError{ID: networkID}))
+	return s.networkRes().Delete(networkID)
 }
 
 // GetNetworkNICs retrieves a list of firewall rule nics

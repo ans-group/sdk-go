@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) volumeGroupRes() *resource.Resource[VolumeGroup, string] {
+	return resource.NewStringResource[VolumeGroup](s.connection, "/ecloud/v2/volume-groups", "volume group", func(id string) error {
+		return &VolumeGroupNotFoundError{ID: id}
+	})
+}
 
 // GetVolumeGroups retrieves a list of volume groups
 func (s *Service) GetVolumeGroups(parameters connection.APIRequestParameters) ([]VolumeGroup, error) {
-	return connection.InvokeRequestAll(s.GetVolumeGroupsPaginated, parameters)
+	return s.volumeGroupRes().List(parameters)
 }
 
 // GetVolumeGroupsPaginated retrieves a paginated list of volume groups
 func (s *Service) GetVolumeGroupsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VolumeGroup], error) {
-	body, err := connection.Get[[]VolumeGroup](s.connection, "/ecloud/v2/volume-groups", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVolumeGroupsPaginated), err
+	return s.volumeGroupRes().ListPaginated(parameters)
 }
 
 // GetVolumeGroup retrieves a single volumeGroup by id
 func (s *Service) GetVolumeGroup(volumeGroupID string) (VolumeGroup, error) {
-	if volumeGroupID == "" {
-		return VolumeGroup{}, fmt.Errorf("invalid volume group id")
-	}
-	body, err := connection.Get[VolumeGroup](s.connection, fmt.Sprintf("/ecloud/v2/volume-groups/%s", volumeGroupID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VolumeGroupNotFoundError{ID: volumeGroupID}))
-	return body.Data, err
+	return s.volumeGroupRes().Get(volumeGroupID)
 }
 
 // CreateVolumeGroup creates a volumeGroup

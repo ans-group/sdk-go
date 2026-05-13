@@ -4,48 +4,44 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) virtualMachineRes() *resource.Resource[VirtualMachine, int] {
+	return resource.NewIntResource[VirtualMachine](s.connection, "/ecloud/v1/vms", "virtual machine", func(id int) error {
+		return &VirtualMachineNotFoundError{ID: id}
+	})
+}
 
 // GetVirtualMachines retrieves a list of vms
 func (s *Service) GetVirtualMachines(parameters connection.APIRequestParameters) ([]VirtualMachine, error) {
-	return connection.InvokeRequestAll(s.GetVirtualMachinesPaginated, parameters)
+	return s.virtualMachineRes().List(parameters)
 }
 
 // GetVirtualMachinesPaginated retrieves a paginated list of vms
 func (s *Service) GetVirtualMachinesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VirtualMachine], error) {
-	body, err := connection.Get[[]VirtualMachine](s.connection, "/ecloud/v1/vms", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVirtualMachinesPaginated), err
+	return s.virtualMachineRes().ListPaginated(parameters)
 }
 
 // GetVirtualMachine retrieves a single virtual machine by ID
 func (s *Service) GetVirtualMachine(vmID int) (VirtualMachine, error) {
-	if vmID < 1 {
-		return VirtualMachine{}, fmt.Errorf("invalid virtual machine id")
-	}
-	body, err := connection.Get[VirtualMachine](s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
-	return body.Data, err
+	return s.virtualMachineRes().Get(vmID)
 }
 
 // DeleteVirtualMachine removes a virtual machine
 func (s *Service) DeleteVirtualMachine(vmID int) error {
-	if vmID < 1 {
-		return fmt.Errorf("invalid virtual machine id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
+	return s.virtualMachineRes().Delete(vmID)
 }
 
 // CreateVirtualMachine creates a new virtual machine
 func (s *Service) CreateVirtualMachine(req CreateVirtualMachineRequest) (int, error) {
-	body, err := connection.Post[VirtualMachine](s.connection, "/ecloud/v1/vms", &req)
-	return body.Data.ID, err
+	data, err := s.virtualMachineRes().Create(&req)
+	return data.ID, err
 }
 
 // PatchVirtualMachine patches an eCloud virtual machine
 func (s *Service) PatchVirtualMachine(vmID int, patch PatchVirtualMachineRequest) error {
-	if vmID < 1 {
-		return fmt.Errorf("invalid virtual machine id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/ecloud/v1/vms/%d", vmID), &patch, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VirtualMachineNotFoundError{ID: vmID}))
+	return s.virtualMachineRes().Patch(vmID, &patch)
 }
 
 // CloneVirtualMachine clones a virtual machine

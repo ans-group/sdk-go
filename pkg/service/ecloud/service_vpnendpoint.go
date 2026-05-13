@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpnEndpointRes() *resource.Resource[VPNEndpoint, string] {
+	return resource.NewStringResource[VPNEndpoint](s.connection, "/ecloud/v2/vpn-endpoints", "vpn endpoint", func(id string) error {
+		return &VPNEndpointNotFoundError{ID: id}
+	})
+}
 
 // GetVPNEndpoints retrieves a list of VPN endpoints
 func (s *Service) GetVPNEndpoints(parameters connection.APIRequestParameters) ([]VPNEndpoint, error) {
-	return connection.InvokeRequestAll(s.GetVPNEndpointsPaginated, parameters)
+	return s.vpnEndpointRes().List(parameters)
 }
 
 // GetVPNEndpointsPaginated retrieves a paginated list of VPN endpoints
 func (s *Service) GetVPNEndpointsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNEndpoint], error) {
-	body, err := connection.Get[[]VPNEndpoint](s.connection, "/ecloud/v2/vpn-endpoints", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPNEndpointsPaginated), err
+	return s.vpnEndpointRes().ListPaginated(parameters)
 }
 
 // GetVPNEndpoint retrieves a single VPN endpoint by id
 func (s *Service) GetVPNEndpoint(endpointID string) (VPNEndpoint, error) {
-	if endpointID == "" {
-		return VPNEndpoint{}, fmt.Errorf("invalid vpn endpoint id")
-	}
-	body, err := connection.Get[VPNEndpoint](s.connection, fmt.Sprintf("/ecloud/v2/vpn-endpoints/%s", endpointID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPNEndpointNotFoundError{ID: endpointID}))
-	return body.Data, err
+	return s.vpnEndpointRes().Get(endpointID)
 }
 
 // CreateVPNEndpoint creates a new VPN endpoint

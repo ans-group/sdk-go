@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) vpnGatewayRes() *resource.Resource[VPNGateway, string] {
+	return resource.NewStringResource[VPNGateway](s.connection, "/ecloud/v2/vpn-gateways", "vpn gateway", func(id string) error {
+		return &VPNGatewayNotFoundError{ID: id}
+	})
+}
 
 // GetVPNGateways retrieves a list of VPN gateways
 func (s *Service) GetVPNGateways(parameters connection.APIRequestParameters) ([]VPNGateway, error) {
-	return connection.InvokeRequestAll(s.GetVPNGatewaysPaginated, parameters)
+	return s.vpnGatewayRes().List(parameters)
 }
 
 // GetVPNGatewaysPaginated retrieves a paginated list of VPN gateways
 func (s *Service) GetVPNGatewaysPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[VPNGateway], error) {
-	body, err := connection.Get[[]VPNGateway](s.connection, "/ecloud/v2/vpn-gateways", parameters)
-	return connection.NewPaginated(body, parameters, s.GetVPNGatewaysPaginated), err
+	return s.vpnGatewayRes().ListPaginated(parameters)
 }
 
 // GetVPNGateway retrieves a single VPN gateway by ID
 func (s *Service) GetVPNGateway(gatewayID string) (VPNGateway, error) {
-	if gatewayID == "" {
-		return VPNGateway{}, fmt.Errorf("invalid vpn gateway id")
-	}
-	body, err := connection.Get[VPNGateway](s.connection, fmt.Sprintf("/ecloud/v2/vpn-gateways/%s", gatewayID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&VPNGatewayNotFoundError{ID: gatewayID}))
-	return body.Data, err
+	return s.vpnGatewayRes().Get(gatewayID)
 }
 
 // CreateVPNGateway creates a new VPN gateway

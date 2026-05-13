@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) firewallRulePortRes() *resource.Resource[FirewallRulePort, string] {
+	return resource.NewStringResource[FirewallRulePort](s.connection, "/ecloud/v2/firewall-rule-ports", "firewall rule", func(id string) error {
+		return &FirewallRulePortNotFoundError{ID: id}
+	})
+}
 
 // GetFirewallRulePorts retrieves a list of firewall rules
 func (s *Service) GetFirewallRulePorts(parameters connection.APIRequestParameters) ([]FirewallRulePort, error) {
-	return connection.InvokeRequestAll(s.GetFirewallRulePortsPaginated, parameters)
+	return s.firewallRulePortRes().List(parameters)
 }
 
 // GetFirewallRulePortsPaginated retrieves a paginated list of firewall rules
 func (s *Service) GetFirewallRulePortsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[FirewallRulePort], error) {
-	body, err := connection.Get[[]FirewallRulePort](s.connection, "/ecloud/v2/firewall-rule-ports", parameters)
-	return connection.NewPaginated(body, parameters, s.GetFirewallRulePortsPaginated), err
+	return s.firewallRulePortRes().ListPaginated(parameters)
 }
 
 // GetFirewallRulePort retrieves a single rule by id
 func (s *Service) GetFirewallRulePort(ruleID string) (FirewallRulePort, error) {
-	if ruleID == "" {
-		return FirewallRulePort{}, fmt.Errorf("invalid firewall rule id")
-	}
-	body, err := connection.Get[FirewallRulePort](s.connection, fmt.Sprintf("/ecloud/v2/firewall-rule-ports/%s", ruleID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&FirewallRulePortNotFoundError{ID: ruleID}))
-	return body.Data, err
+	return s.firewallRulePortRes().Get(ruleID)
 }
 
 // CreateFirewallRulePort creates a new FirewallRulePort

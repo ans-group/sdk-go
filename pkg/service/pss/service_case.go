@@ -5,26 +5,42 @@ import (
 	"net/url"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) caseRes() *resource.Resource[Case, string] {
+	return resource.NewStringResource[Case](s.connection, "/pss/v2/cases", "case",
+		func(id string) error { return &CaseNotFoundError{ID: id} })
+}
+
+func (s *Service) incidentCaseRes() *resource.Resource[IncidentCase, string] {
+	return resource.NewStringResource[IncidentCase](s.connection, "/pss/v2/cases", "incident",
+		func(id string) error { return &CaseNotFoundError{ID: id} })
+}
+
+func (s *Service) changeCaseRes() *resource.Resource[ChangeCase, string] {
+	return resource.NewStringResource[ChangeCase](s.connection, "/pss/v2/cases", "change",
+		func(id string) error { return &CaseNotFoundError{ID: id} })
+}
+
+func (s *Service) problemCaseRes() *resource.Resource[ProblemCase, string] {
+	return resource.NewStringResource[ProblemCase](s.connection, "/pss/v2/cases", "problem",
+		func(id string) error { return &CaseNotFoundError{ID: id} })
+}
 
 // GetCases retrieves a list of cases
 func (s *Service) GetCases(parameters connection.APIRequestParameters) ([]Case, error) {
-	return connection.InvokeRequestAll(s.GetCasesPaginated, parameters)
+	return s.caseRes().List(parameters)
 }
 
 // GetCasesPaginated retrieves a paginated list of cases
 func (s *Service) GetCasesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Case], error) {
-	body, err := connection.Get[[]Case](s.connection, "/pss/v2/cases", parameters)
-	return connection.NewPaginated(body, parameters, s.GetCasesPaginated), err
+	return s.caseRes().ListPaginated(parameters)
 }
 
 // GetCase retrieves a single instance case by id
 func (s *Service) GetCase(caseID string) (Case, error) {
-	if caseID == "" {
-		return Case{}, fmt.Errorf("invalid case id")
-	}
-	body, err := connection.Get[Case](s.connection, fmt.Sprintf("/pss/v2/cases/%s", caseID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: caseID}))
-	return body.Data, err
+	return s.caseRes().Get(caseID)
 }
 
 // CreateIncidentCase creates a incident case
@@ -57,11 +73,7 @@ func (s *Service) GetIncidentCasesPaginated(parameters connection.APIRequestPara
 
 // GetIncidentCase retrieves a single instance case by id
 func (s *Service) GetIncidentCase(incidentID string) (IncidentCase, error) {
-	if incidentID == "" {
-		return IncidentCase{}, fmt.Errorf("invalid incident id")
-	}
-	body, err := connection.Get[IncidentCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", incidentID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: incidentID}))
-	return body.Data, err
+	return s.incidentCaseRes().Get(incidentID)
 }
 
 // CloseIncidentCase approves a incident case by id
@@ -103,11 +115,7 @@ func (s *Service) GetChangeCasesPaginated(parameters connection.APIRequestParame
 
 // GetChangeCase retrieves a single instance case by id
 func (s *Service) GetChangeCase(changeID string) (ChangeCase, error) {
-	if changeID == "" {
-		return ChangeCase{}, fmt.Errorf("invalid change id")
-	}
-	body, err := connection.Get[ChangeCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", changeID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: changeID}))
-	return body.Data, err
+	return s.changeCaseRes().Get(changeID)
 }
 
 // ApproveChangeCase approves a change case by id
@@ -142,11 +150,7 @@ func (s *Service) GetProblemCasesPaginated(parameters connection.APIRequestParam
 
 // GetProblemCase retrieves a single instance case by id
 func (s *Service) GetProblemCase(problemID string) (ProblemCase, error) {
-	if problemID == "" {
-		return ProblemCase{}, fmt.Errorf("invalid problem id")
-	}
-	body, err := connection.Get[ProblemCase](s.connection, fmt.Sprintf("/pss/v2/cases/%s", problemID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&CaseNotFoundError{ID: problemID}))
-	return body.Data, err
+	return s.problemCaseRes().Get(problemID)
 }
 
 // GetCaseUpdates retrieves a list of problem case updates

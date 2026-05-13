@@ -4,34 +4,32 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) solutionRes() *resource.Resource[Solution, string] {
+	return resource.NewStringResource[Solution](s.connection, "/draas/v1/solutions", "solution",
+		func(id string) error { return &SolutionNotFoundError{ID: id} })
+}
 
 // GetSolutions retrieves a list of solutions
 func (s *Service) GetSolutions(parameters connection.APIRequestParameters) ([]Solution, error) {
-	return connection.InvokeRequestAll(s.GetSolutionsPaginated, parameters)
+	return s.solutionRes().List(parameters)
 }
 
 // GetSolutionsPaginated retrieves a paginated list of solutions
 func (s *Service) GetSolutionsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Solution], error) {
-	body, err := connection.Get[[]Solution](s.connection, "/draas/v1/solutions", parameters)
-	return connection.NewPaginated(body, parameters, s.GetSolutionsPaginated), err
+	return s.solutionRes().ListPaginated(parameters)
 }
 
 // GetSolution retrieves a single solution by id
 func (s *Service) GetSolution(solutionID string) (Solution, error) {
-	if solutionID == "" {
-		return Solution{}, fmt.Errorf("invalid solution id")
-	}
-	body, err := connection.Get[Solution](s.connection, fmt.Sprintf("/draas/v1/solutions/%s", solutionID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
-	return body.Data, err
+	return s.solutionRes().Get(solutionID)
 }
 
 // PatchSolution patches a solution by ID
 func (s *Service) PatchSolution(solutionID string, req PatchSolutionRequest) error {
-	if solutionID == "" {
-		return fmt.Errorf("invalid solution id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/draas/v1/solutions/%s", solutionID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&SolutionNotFoundError{ID: solutionID}))
+	return s.solutionRes().Patch(solutionID, &req)
 }
 
 // GetSolutionBackupResources retrieves a collection of backup resources for specified solution

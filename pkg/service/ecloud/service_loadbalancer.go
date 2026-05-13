@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) loadBalancerRes() *resource.Resource[LoadBalancer, string] {
+	return resource.NewStringResource[LoadBalancer](s.connection, "/ecloud/v2/load-balancers", "load balancer", func(id string) error {
+		return &LoadBalancerNotFoundError{ID: id}
+	})
+}
 
 // GetLoadBalancers retrieves a list of load balancers
 func (s *Service) GetLoadBalancers(parameters connection.APIRequestParameters) ([]LoadBalancer, error) {
-	return connection.InvokeRequestAll(s.GetLoadBalancersPaginated, parameters)
+	return s.loadBalancerRes().List(parameters)
 }
 
 // GetLoadBalancersPaginated retrieves a paginated list of lbs
 func (s *Service) GetLoadBalancersPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[LoadBalancer], error) {
-	body, err := connection.Get[[]LoadBalancer](s.connection, "/ecloud/v2/load-balancers", parameters)
-	return connection.NewPaginated(body, parameters, s.GetLoadBalancersPaginated), err
+	return s.loadBalancerRes().ListPaginated(parameters)
 }
 
 // GetLoadBalancer retrieves a single lb by id
 func (s *Service) GetLoadBalancer(loadbalancerID string) (LoadBalancer, error) {
-	if loadbalancerID == "" {
-		return LoadBalancer{}, fmt.Errorf("invalid load balancer id")
-	}
-	body, err := connection.Get[LoadBalancer](s.connection, fmt.Sprintf("/ecloud/v2/load-balancers/%s", loadbalancerID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&LoadBalancerNotFoundError{ID: loadbalancerID}))
-	return body.Data, err
+	return s.loadBalancerRes().Get(loadbalancerID)
 }
 
 // CreateLoadBalancer creates a new LoadBalancer

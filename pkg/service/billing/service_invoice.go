@@ -1,27 +1,26 @@
 package billing
 
 import (
-	"fmt"
-
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) invoiceRes() *resource.Resource[Invoice, int] {
+	return resource.NewIntResource[Invoice](s.connection, "/billing/v1/invoices", "invoice",
+		func(id int) error { return &InvoiceNotFoundError{ID: id} })
+}
 
 // GetInvoices retrieves a list of invoices
 func (s *Service) GetInvoices(parameters connection.APIRequestParameters) ([]Invoice, error) {
-	return connection.InvokeRequestAll(s.GetInvoicesPaginated, parameters)
+	return s.invoiceRes().List(parameters)
 }
 
 // GetInvoicesPaginated retrieves a paginated list of invoices
 func (s *Service) GetInvoicesPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Invoice], error) {
-	body, err := connection.Get[[]Invoice](s.connection, "/billing/v1/invoices", parameters)
-	return connection.NewPaginated(body, parameters, s.GetInvoicesPaginated), err
+	return s.invoiceRes().ListPaginated(parameters)
 }
 
 // GetInvoice retrieves a single invoice by id
 func (s *Service) GetInvoice(invoiceID int) (Invoice, error) {
-	if invoiceID < 1 {
-		return Invoice{}, fmt.Errorf("invalid invoice id")
-	}
-	body, err := connection.Get[Invoice](s.connection, fmt.Sprintf("/billing/v1/invoices/%d", invoiceID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&InvoiceNotFoundError{ID: invoiceID}))
-	return body.Data, err
+	return s.invoiceRes().Get(invoiceID)
 }

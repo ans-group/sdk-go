@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) dhcpRes() *resource.Resource[DHCP, string] {
+	return resource.NewStringResource[DHCP](s.connection, "/ecloud/v2/dhcps", "dhcp", func(id string) error {
+		return &DHCPNotFoundError{ID: id}
+	})
+}
 
 // GetDHCPs retrieves a list of dhcps
 func (s *Service) GetDHCPs(parameters connection.APIRequestParameters) ([]DHCP, error) {
-	return connection.InvokeRequestAll(s.GetDHCPsPaginated, parameters)
+	return s.dhcpRes().List(parameters)
 }
 
 // GetDHCPsPaginated retrieves a paginated list of dhcps
 func (s *Service) GetDHCPsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[DHCP], error) {
-	body, err := connection.Get[[]DHCP](s.connection, "/ecloud/v2/dhcps", parameters)
-	return connection.NewPaginated(body, parameters, s.GetDHCPsPaginated), err
+	return s.dhcpRes().ListPaginated(parameters)
 }
 
 // GetDHCP retrieves a single dhcp by id
 func (s *Service) GetDHCP(dhcpID string) (DHCP, error) {
-	if dhcpID == "" {
-		return DHCP{}, fmt.Errorf("invalid dhcp id")
-	}
-	body, err := connection.Get[DHCP](s.connection, fmt.Sprintf("/ecloud/v2/dhcps/%s", dhcpID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&DHCPNotFoundError{ID: dhcpID}))
-	return body.Data, err
+	return s.dhcpRes().Get(dhcpID)
 }
 
 // GetDHCPTasks retrieves a list of DHCP tasks

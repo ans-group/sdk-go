@@ -4,26 +4,28 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) firewallRes() *resource.Resource[Firewall, int] {
+	return resource.NewIntResource[Firewall](s.connection, "/ecloud/v1/firewalls", "firewall", func(id int) error {
+		return &FirewallNotFoundError{ID: id}
+	})
+}
 
 // GetFirewalls retrieves a list of firewalls
 func (s *Service) GetFirewalls(parameters connection.APIRequestParameters) ([]Firewall, error) {
-	return connection.InvokeRequestAll(s.GetFirewallsPaginated, parameters)
+	return s.firewallRes().List(parameters)
 }
 
 // GetFirewallsPaginated retrieves a paginated list of firewalls
 func (s *Service) GetFirewallsPaginated(parameters connection.APIRequestParameters) (*connection.Paginated[Firewall], error) {
-	body, err := connection.Get[[]Firewall](s.connection, "/ecloud/v1/firewalls", parameters)
-	return connection.NewPaginated(body, parameters, s.GetFirewallsPaginated), err
+	return s.firewallRes().ListPaginated(parameters)
 }
 
 // GetFirewall retrieves a single firewall by ID
 func (s *Service) GetFirewall(firewallID int) (Firewall, error) {
-	if firewallID < 1 {
-		return Firewall{}, fmt.Errorf("invalid firewall id")
-	}
-	body, err := connection.Get[Firewall](s.connection, fmt.Sprintf("/ecloud/v1/firewalls/%d", firewallID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&FirewallNotFoundError{ID: firewallID}))
-	return body.Data, err
+	return s.firewallRes().Get(firewallID)
 }
 
 // GetFirewallConfig retrieves a single firewall config by ID
