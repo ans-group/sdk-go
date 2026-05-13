@@ -12,6 +12,28 @@ func (s *Service) zoneRes() *resource.Resource[Zone, string] {
 		func(id string) error { return &ZoneNotFoundError{ZoneName: id} })
 }
 
+func (s *Service) zoneRecordRes() *resource.SubResource[Record, string, int] {
+	return resource.NewStringIntSubResource[Record](
+		s.connection,
+		func(zoneName string) string { return fmt.Sprintf("/safedns/v1/zones/%s/records", zoneName) },
+		"zone", "name", func(zoneName string) error { return &ZoneNotFoundError{ZoneName: zoneName} },
+		"record", "id", func(zoneName string, recordID int) error {
+			return &ZoneRecordNotFoundError{ZoneName: zoneName, RecordID: recordID}
+		},
+	)
+}
+
+func (s *Service) zoneNoteRes() *resource.SubResource[Note, string, int] {
+	return resource.NewStringIntSubResource[Note](
+		s.connection,
+		func(zoneName string) string { return fmt.Sprintf("/safedns/v1/zones/%s/notes", zoneName) },
+		"zone", "name", func(zoneName string) error { return &ZoneNotFoundError{ZoneName: zoneName} },
+		"note", "id", func(zoneName string, noteID int) error {
+			return &ZoneNoteNotFoundError{ZoneName: zoneName, NoteID: noteID}
+		},
+	)
+}
+
 // GetZones retrieves a list of zones
 func (s *Service) GetZones(parameters connection.APIRequestParameters) ([]Zone, error) {
 	return s.zoneRes().List(parameters)
@@ -47,113 +69,59 @@ func (s *Service) DeleteZone(zoneName string) error {
 
 // GetZoneRecords retrieves a list of records
 func (s *Service) GetZoneRecords(zoneName string, parameters connection.APIRequestParameters) ([]Record, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-		return s.GetZoneRecordsPaginated(zoneName, p)
-	}, parameters)
+	return s.zoneRecordRes().List(zoneName, parameters)
 }
 
 // GetZoneRecordsPaginated retrieves a paginated list of zones
 func (s *Service) GetZoneRecordsPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-	if zoneName == "" {
-		return nil, fmt.Errorf("invalid zone name")
-	}
-	body, err := connection.Get[[]Record](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records", zoneName), parameters, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Record], error) {
-		return s.GetZoneRecordsPaginated(zoneName, p)
-	}), err
+	return s.zoneRecordRes().ListPaginated(zoneName, parameters)
 }
 
 // GetZoneRecord retrieves a single zone record by ID
 func (s *Service) GetZoneRecord(zoneName string, recordID int) (Record, error) {
-	if zoneName == "" {
-		return Record{}, fmt.Errorf("invalid zone name")
-	}
-	if recordID < 1 {
-		return Record{}, fmt.Errorf("invalid record id")
-	}
-	body, err := connection.Get[Record](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records/%d", zoneName, recordID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ZoneRecordNotFoundError{ZoneName: zoneName, RecordID: recordID}))
-	return body.Data, err
+	return s.zoneRecordRes().Get(zoneName, recordID)
 }
 
 // CreateZoneRecord creates a new SafeDNS zone record
 func (s *Service) CreateZoneRecord(zoneName string, req CreateRecordRequest) (int, error) {
-	if zoneName == "" {
-		return 0, fmt.Errorf("invalid zone name")
-	}
-	body, err := connection.Post[Record](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records", zoneName), &req, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
-	return body.Data.ID, err
+	data, err := s.zoneRecordRes().Create(zoneName, &req)
+	return data.ID, err
 }
 
 // UpdateZoneRecord updates a SafeDNS zone record
 func (s *Service) UpdateZoneRecord(zoneName string, record Record) (int, error) {
-	if zoneName == "" {
-		return 0, fmt.Errorf("invalid zone name")
-	}
-	if record.ID < 1 {
-		return 0, fmt.Errorf("invalid record id")
-	}
-	body, err := connection.Put[Record](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records/%d", zoneName, record.ID), &record, connection.NotFoundResponseHandler(&ZoneRecordNotFoundError{ZoneName: zoneName, RecordID: record.ID}))
-	return body.Data.ID, err
+	data, err := s.zoneRecordRes().Update(zoneName, record.ID, &record)
+	return data.ID, err
 }
 
 // PatchZoneRecord patches a SafeDNS zone record
 func (s *Service) PatchZoneRecord(zoneName string, recordID int, patch PatchRecordRequest) (int, error) {
-	if zoneName == "" {
-		return 0, fmt.Errorf("invalid zone name")
-	}
-	if recordID < 1 {
-		return 0, fmt.Errorf("invalid record id")
-	}
-	body, err := connection.Put[Record](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records/%d", zoneName, recordID), &patch, connection.NotFoundResponseHandler(&ZoneRecordNotFoundError{ZoneName: zoneName, RecordID: recordID}))
-	return body.Data.ID, err
+	data, err := s.zoneRecordRes().Update(zoneName, recordID, &patch)
+	return data.ID, err
 }
 
 // DeleteZoneRecord removes a SafeDNS zone record
 func (s *Service) DeleteZoneRecord(zoneName string, recordID int) error {
-	if zoneName == "" {
-		return fmt.Errorf("invalid zone name")
-	}
-	if recordID < 1 {
-		return fmt.Errorf("invalid record id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/safedns/v1/zones/%s/records/%d", zoneName, recordID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&ZoneRecordNotFoundError{ZoneName: zoneName, RecordID: recordID}))
+	return s.zoneRecordRes().Delete(zoneName, recordID)
 }
 
 // GetZoneNotes retrieves a list of notes
 func (s *Service) GetZoneNotes(zoneName string, parameters connection.APIRequestParameters) ([]Note, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Note], error) {
-		return s.GetZoneNotesPaginated(zoneName, p)
-	}, parameters)
+	return s.zoneNoteRes().List(zoneName, parameters)
 }
 
 // GetZoneNotesPaginated retrieves a paginated list of zones
 func (s *Service) GetZoneNotesPaginated(zoneName string, parameters connection.APIRequestParameters) (*connection.Paginated[Note], error) {
-	if zoneName == "" {
-		return nil, fmt.Errorf("invalid zone name")
-	}
-	body, err := connection.Get[[]Note](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/notes", zoneName), parameters, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Note], error) {
-		return s.GetZoneNotesPaginated(zoneName, p)
-	}), err
+	return s.zoneNoteRes().ListPaginated(zoneName, parameters)
 }
 
 // GetZoneNote retrieves a single zone note by ID
 func (s *Service) GetZoneNote(zoneName string, noteID int) (Note, error) {
-	if zoneName == "" {
-		return Note{}, fmt.Errorf("invalid zone name")
-	}
-	if noteID < 1 {
-		return Note{}, fmt.Errorf("invalid note id")
-	}
-	body, err := connection.Get[Note](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/notes/%d", zoneName, noteID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&ZoneNoteNotFoundError{ZoneName: zoneName, NoteID: noteID}))
-	return body.Data, err
+	return s.zoneNoteRes().Get(zoneName, noteID)
 }
 
 // CreateZoneNote creates a new SafeDNS zone note
 func (s *Service) CreateZoneNote(zoneName string, req CreateNoteRequest) (int, error) {
-	if zoneName == "" {
-		return 0, fmt.Errorf("invalid zone name")
-	}
-	body, err := connection.Post[Note](s.connection, fmt.Sprintf("/safedns/v1/zones/%s/notes", zoneName), &req, connection.NotFoundResponseHandler(&ZoneNotFoundError{ZoneName: zoneName}))
-	return body.Data.ID, err
+	data, err := s.zoneNoteRes().Create(zoneName, &req)
+	return data.ID, err
 }

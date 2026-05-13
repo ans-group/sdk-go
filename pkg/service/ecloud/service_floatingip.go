@@ -70,20 +70,18 @@ func (s *Service) UnassignFloatingIP(fipID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) floatingIPTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(fipID string) string { return fmt.Sprintf("/ecloud/v2/floating-ips/%s/tasks", fipID) },
+		"floating ip", "id", func(fipID string) error { return &FloatingIPNotFoundError{ID: fipID} })
+}
+
 // GetFloatingIPTasks retrieves a list of FloatingIP tasks
 func (s *Service) GetFloatingIPTasks(fipID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetFloatingIPTasksPaginated(fipID, p)
-	}, parameters)
+	return s.floatingIPTasksRes().List(fipID, parameters)
 }
 
 // GetFloatingIPTasksPaginated retrieves a paginated list of FloatingIP tasks
 func (s *Service) GetFloatingIPTasksPaginated(fipID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if fipID == "" {
-		return nil, fmt.Errorf("invalid floating ip id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/floating-ips/%s/tasks", fipID), parameters, connection.NotFoundResponseHandler(&FloatingIPNotFoundError{ID: fipID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetFloatingIPTasksPaginated(fipID, p)
-	}), err
+	return s.floatingIPTasksRes().ListPaginated(fipID, parameters)
 }

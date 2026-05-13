@@ -52,20 +52,18 @@ func (s *Service) DeleteHost(hostID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) hostTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(hostID string) string { return fmt.Sprintf("/ecloud/v2/hosts/%s/tasks", hostID) },
+		"host", "id", func(hostID string) error { return &HostNotFoundError{ID: hostID} })
+}
+
 // GetHostTasks retrieves a list of Host tasks
 func (s *Service) GetHostTasks(hostID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetHostTasksPaginated(hostID, p)
-	}, parameters)
+	return s.hostTasksRes().List(hostID, parameters)
 }
 
 // GetHostTasksPaginated retrieves a paginated list of Host tasks
 func (s *Service) GetHostTasksPaginated(hostID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if hostID == "" {
-		return nil, fmt.Errorf("invalid host id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/hosts/%s/tasks", hostID), parameters, connection.NotFoundResponseHandler(&HostNotFoundError{ID: hostID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetHostTasksPaginated(hostID, p)
-	}), err
+	return s.hostTasksRes().ListPaginated(hostID, parameters)
 }

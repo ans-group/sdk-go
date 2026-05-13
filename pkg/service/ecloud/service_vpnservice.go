@@ -52,20 +52,18 @@ func (s *Service) DeleteVPNService(serviceID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) vpnServiceTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(serviceID string) string { return fmt.Sprintf("/ecloud/v2/vpn-services/%s/tasks", serviceID) },
+		"vpn service", "id", func(serviceID string) error { return &VPNServiceNotFoundError{ID: serviceID} })
+}
+
 // GetVPNServiceTasks retrieves a list of VPN service tasks
 func (s *Service) GetVPNServiceTasks(serviceID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPNServiceTasksPaginated(serviceID, p)
-	}, parameters)
+	return s.vpnServiceTasksRes().List(serviceID, parameters)
 }
 
 // GetVPNServiceTasksPaginated retrieves a paginated list of VPN service tasks
 func (s *Service) GetVPNServiceTasksPaginated(serviceID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if serviceID == "" {
-		return nil, fmt.Errorf("invalid vpn service id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/vpn-services/%s/tasks", serviceID), parameters, connection.NotFoundResponseHandler(&VPNServiceNotFoundError{ID: serviceID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVPNServiceTasksPaginated(serviceID, p)
-	}), err
+	return s.vpnServiceTasksRes().ListPaginated(serviceID, parameters)
 }

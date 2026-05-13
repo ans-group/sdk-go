@@ -52,38 +52,36 @@ func (s *Service) DeleteFirewallPolicy(policyID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) firewallPolicyRuleRes() *resource.SubResourceList[FirewallRule, string] {
+	return resource.NewStringSubResourceList[FirewallRule](s.connection,
+		func(policyID string) string {
+			return fmt.Sprintf("/ecloud/v2/firewall-policies/%s/firewall-rules", policyID)
+		},
+		"firewall policy", "id", func(policyID string) error { return &FirewallPolicyNotFoundError{ID: policyID} })
+}
+
 // GetFirewallPolicyFirewallRules retrieves a list of firewall policy rules
 func (s *Service) GetFirewallPolicyFirewallRules(policyID string, parameters connection.APIRequestParameters) ([]FirewallRule, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FirewallRule], error) {
-		return s.GetFirewallPolicyFirewallRulesPaginated(policyID, p)
-	}, parameters)
+	return s.firewallPolicyRuleRes().List(policyID, parameters)
 }
 
 // GetFirewallPolicyFirewallRulesPaginated retrieves a paginated list of firewall policy FirewallRules
 func (s *Service) GetFirewallPolicyFirewallRulesPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[FirewallRule], error) {
-	if policyID == "" {
-		return nil, fmt.Errorf("invalid firewall policy id")
-	}
-	body, err := connection.Get[[]FirewallRule](s.connection, fmt.Sprintf("/ecloud/v2/firewall-policies/%s/firewall-rules", policyID), parameters, connection.NotFoundResponseHandler(&FirewallPolicyNotFoundError{ID: policyID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FirewallRule], error) {
-		return s.GetFirewallPolicyFirewallRulesPaginated(policyID, p)
-	}), err
+	return s.firewallPolicyRuleRes().ListPaginated(policyID, parameters)
+}
+
+func (s *Service) firewallPolicyTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(policyID string) string { return fmt.Sprintf("/ecloud/v2/firewall-policies/%s/tasks", policyID) },
+		"firewall policy", "id", func(policyID string) error { return &FirewallPolicyNotFoundError{ID: policyID} })
 }
 
 // GetFirewallPolicyTasks retrieves a list of FirewallPolicy tasks
 func (s *Service) GetFirewallPolicyTasks(policyID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetFirewallPolicyTasksPaginated(policyID, p)
-	}, parameters)
+	return s.firewallPolicyTasksRes().List(policyID, parameters)
 }
 
 // GetFirewallPolicyTasksPaginated retrieves a paginated list of FirewallPolicy tasks
 func (s *Service) GetFirewallPolicyTasksPaginated(policyID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if policyID == "" {
-		return nil, fmt.Errorf("invalid firewall policy id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/firewall-policies/%s/tasks", policyID), parameters, connection.NotFoundResponseHandler(&FirewallPolicyNotFoundError{ID: policyID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetFirewallPolicyTasksPaginated(policyID, p)
-	}), err
+	return s.firewallPolicyTasksRes().ListPaginated(policyID, parameters)
 }

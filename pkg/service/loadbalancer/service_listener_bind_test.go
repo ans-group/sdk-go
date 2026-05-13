@@ -233,7 +233,7 @@ func TestCreateListenerBind(t *testing.T) {
 		assert.Equal(t, "invalid listener id", err.Error())
 	})
 
-	t.Run("404_ReturnsListenerBindNotFoundError", func(t *testing.T) {
+	t.Run("404_ReturnsListenerNotFoundError", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
@@ -253,7 +253,7 @@ func TestCreateListenerBind(t *testing.T) {
 		_, err := s.CreateListenerBind(123, CreateBindRequest{})
 
 		assert.NotNil(t, err)
-		assert.IsType(t, &BindNotFoundError{}, err)
+		assert.IsType(t, &ListenerNotFoundError{}, err)
 	})
 }
 

@@ -52,17 +52,19 @@ func (s *Service) DeleteNetworkRule(ruleID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) networkRulePortsRes() *resource.SubResourceList[NetworkRulePort, string] {
+	return resource.NewUncheckedStringSubResourceList[NetworkRulePort](s.connection,
+		func(networkRuleID string) string {
+			return fmt.Sprintf("/ecloud/v2/network-rules/%s/ports", networkRuleID)
+		})
+}
+
 // GetNetworkRuleNetworkRulePorts retrieves a list of network rule ports
 func (s *Service) GetNetworkRuleNetworkRulePorts(networkRuleID string, parameters connection.APIRequestParameters) ([]NetworkRulePort, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
-		return s.GetNetworkRuleNetworkRulePortsPaginated(networkRuleID, p)
-	}, parameters)
+	return s.networkRulePortsRes().List(networkRuleID, parameters)
 }
 
 // GetNetworkRuleNetworkRulePortsPaginated retrieves a paginated list of network rule ports
 func (s *Service) GetNetworkRuleNetworkRulePortsPaginated(networkRuleID string, parameters connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
-	body, err := connection.Get[[]NetworkRulePort](s.connection, fmt.Sprintf("/ecloud/v2/network-rules/%s/ports", networkRuleID), parameters)
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NetworkRulePort], error) {
-		return s.GetNetworkRuleNetworkRulePortsPaginated(networkRuleID, p)
-	}), err
+	return s.networkRulePortsRes().ListPaginated(networkRuleID, parameters)
 }

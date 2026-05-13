@@ -28,20 +28,22 @@ func (s *Service) GetVPNGatewaySpecification(specificationID string) (VPNGateway
 	return s.vpnGatewaySpecificationRes().Get(specificationID)
 }
 
+func (s *Service) vpnGatewaySpecAvailabilityZoneRes() *resource.SubResourceList[AvailabilityZone, string] {
+	return resource.NewStringSubResourceList[AvailabilityZone](s.connection,
+		func(specificationID string) string {
+			return fmt.Sprintf("/ecloud/v2/vpn-gateway-specifications/%s/availability-zones", specificationID)
+		},
+		"vpn gateway specification", "id", func(specificationID string) error {
+			return &VPNGatewaySpecificationNotFoundError{ID: specificationID}
+		})
+}
+
 // GetVPNGatewaySpecificationAvailabilityZones retrieves a list of availability zones for a vpn gateway specification
 func (s *Service) GetVPNGatewaySpecificationAvailabilityZones(specificationID string, parameters connection.APIRequestParameters) ([]AvailabilityZone, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error) {
-		return s.GetVPNGatewaySpecificationAvailabilityZonesPaginated(specificationID, p)
-	}, parameters)
+	return s.vpnGatewaySpecAvailabilityZoneRes().List(specificationID, parameters)
 }
 
 // GetVPNGatewaySpecificationAvailabilityZonesPaginated retrieves a paginated list of availability zones for a vpn gateway specification
 func (s *Service) GetVPNGatewaySpecificationAvailabilityZonesPaginated(specificationID string, parameters connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error) {
-	if specificationID == "" {
-		return nil, fmt.Errorf("invalid vpn gateway specification id")
-	}
-	body, err := connection.Get[[]AvailabilityZone](s.connection, fmt.Sprintf("/ecloud/v2/vpn-gateway-specifications/%s/availability-zones", specificationID), parameters, connection.NotFoundResponseHandler(&VPNGatewaySpecificationNotFoundError{ID: specificationID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[AvailabilityZone], error) {
-		return s.GetVPNGatewaySpecificationAvailabilityZonesPaginated(specificationID, p)
-	}), err
+	return s.vpnGatewaySpecAvailabilityZoneRes().ListPaginated(specificationID, parameters)
 }

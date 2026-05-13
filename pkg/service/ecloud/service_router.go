@@ -44,58 +44,52 @@ func (s *Service) DeleteRouter(routerID string) error {
 	return s.routerRes().Delete(routerID)
 }
 
+func (s *Service) routerFirewallPolicyRes() *resource.SubResourceList[FirewallPolicy, string] {
+	return resource.NewStringSubResourceList[FirewallPolicy](s.connection,
+		func(routerID string) string { return fmt.Sprintf("/ecloud/v2/routers/%s/firewall-policies", routerID) },
+		"router", "id", func(routerID string) error { return &RouterNotFoundError{ID: routerID} })
+}
+
 // GetRouterFirewallPolicies retrieves a list of firewall rule policies
 func (s *Service) GetRouterFirewallPolicies(routerID string, parameters connection.APIRequestParameters) ([]FirewallPolicy, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
-		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
-	}, parameters)
+	return s.routerFirewallPolicyRes().List(routerID, parameters)
 }
 
 // GetRouterFirewallPoliciesPaginated retrieves a paginated list of firewall rule policies
 func (s *Service) GetRouterFirewallPoliciesPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
-	if routerID == "" {
-		return nil, fmt.Errorf("invalid router id")
-	}
-	body, err := connection.Get[[]FirewallPolicy](s.connection, fmt.Sprintf("/ecloud/v2/routers/%s/firewall-policies", routerID), parameters, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[FirewallPolicy], error) {
-		return s.GetRouterFirewallPoliciesPaginated(routerID, p)
-	}), err
+	return s.routerFirewallPolicyRes().ListPaginated(routerID, parameters)
+}
+
+func (s *Service) routerNetworkRes() *resource.SubResourceList[Network, string] {
+	return resource.NewStringSubResourceList[Network](s.connection,
+		func(routerID string) string { return fmt.Sprintf("/ecloud/v2/routers/%s/networks", routerID) },
+		"router", "id", func(routerID string) error { return &RouterNotFoundError{ID: routerID} })
 }
 
 // GetRouterNetworks retrieves a list of router networks
 func (s *Service) GetRouterNetworks(routerID string, parameters connection.APIRequestParameters) ([]Network, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Network], error) {
-		return s.GetRouterNetworksPaginated(routerID, p)
-	}, parameters)
+	return s.routerNetworkRes().List(routerID, parameters)
 }
 
 // GetRouterNetworksPaginated retrieves a paginated list of router networks
 func (s *Service) GetRouterNetworksPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[Network], error) {
-	if routerID == "" {
-		return nil, fmt.Errorf("invalid router id")
-	}
-	body, err := connection.Get[[]Network](s.connection, fmt.Sprintf("/ecloud/v2/routers/%s/networks", routerID), parameters, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Network], error) {
-		return s.GetRouterNetworksPaginated(routerID, p)
-	}), err
+	return s.routerNetworkRes().ListPaginated(routerID, parameters)
+}
+
+func (s *Service) routerVPNRes() *resource.SubResourceList[VPN, string] {
+	return resource.NewStringSubResourceList[VPN](s.connection,
+		func(routerID string) string { return fmt.Sprintf("/ecloud/v2/routers/%s/vpns", routerID) },
+		"router", "id", func(routerID string) error { return &RouterNotFoundError{ID: routerID} })
 }
 
 // GetRouterVPNs retrieves a list of router VPNs
 func (s *Service) GetRouterVPNs(routerID string, parameters connection.APIRequestParameters) ([]VPN, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
-		return s.GetRouterVPNsPaginated(routerID, p)
-	}, parameters)
+	return s.routerVPNRes().List(routerID, parameters)
 }
 
 // GetRouterVPNsPaginated retrieves a paginated list of router VPNs
 func (s *Service) GetRouterVPNsPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
-	if routerID == "" {
-		return nil, fmt.Errorf("invalid router id")
-	}
-	body, err := connection.Get[[]VPN](s.connection, fmt.Sprintf("/ecloud/v2/routers/%s/vpns", routerID), parameters, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[VPN], error) {
-		return s.GetRouterVPNsPaginated(routerID, p)
-	}), err
+	return s.routerVPNRes().ListPaginated(routerID, parameters)
 }
 
 // DeployRouterDefaultFirewallPolicies deploys default firewall policy resources for specified router
@@ -106,20 +100,18 @@ func (s *Service) DeployRouterDefaultFirewallPolicies(routerID string) error {
 	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v2/routers/%s/configure-default-policies", routerID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
 }
 
+func (s *Service) routerTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(routerID string) string { return fmt.Sprintf("/ecloud/v2/routers/%s/tasks", routerID) },
+		"router", "id", func(routerID string) error { return &RouterNotFoundError{ID: routerID} })
+}
+
 // GetRouterTasks retrieves a list of Router tasks
 func (s *Service) GetRouterTasks(routerID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetRouterTasksPaginated(routerID, p)
-	}, parameters)
+	return s.routerTasksRes().List(routerID, parameters)
 }
 
 // GetRouterTasksPaginated retrieves a paginated list of Router tasks
 func (s *Service) GetRouterTasksPaginated(routerID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if routerID == "" {
-		return nil, fmt.Errorf("invalid router id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/routers/%s/tasks", routerID), parameters, connection.NotFoundResponseHandler(&RouterNotFoundError{ID: routerID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetRouterTasksPaginated(routerID, p)
-	}), err
+	return s.routerTasksRes().ListPaginated(routerID, parameters)
 }

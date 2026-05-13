@@ -57,22 +57,20 @@ func (s *Service) GetRequestRepliesPaginated(solutionID int, parameters connecti
 	return s.GetRequestConversationPaginated(solutionID, parameters)
 }
 
+func (s *Service) requestConversationRes() *resource.SubResourceList[Reply, int] {
+	return resource.NewIntSubResourceList[Reply](s.connection,
+		func(requestID int) string { return fmt.Sprintf("/pss/v1/requests/%d/conversation", requestID) },
+		"request", "id", func(requestID int) error { return &RequestNotFoundError{ID: requestID} })
+}
+
 // GetRequestConversation retrieves a list of replies
 func (s *Service) GetRequestConversation(solutionID int, parameters connection.APIRequestParameters) ([]Reply, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
-		return s.GetRequestConversationPaginated(solutionID, p)
-	}, parameters)
+	return s.requestConversationRes().List(solutionID, parameters)
 }
 
 // GetRequestConversationPaginated retrieves a paginated list of domains
 func (s *Service) GetRequestConversationPaginated(solutionID int, parameters connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
-	if solutionID < 1 {
-		return nil, fmt.Errorf("invalid request id")
-	}
-	body, err := connection.Get[[]Reply](s.connection, fmt.Sprintf("/pss/v1/requests/%d/conversation", solutionID), parameters, connection.NotFoundResponseHandler(&RequestNotFoundError{ID: solutionID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Reply], error) {
-		return s.GetRequestConversationPaginated(solutionID, p)
-	}), err
+	return s.requestConversationRes().ListPaginated(solutionID, parameters)
 }
 
 // GetRequestFeedback retrieves feedback for a request

@@ -52,38 +52,34 @@ func (s *Service) DeleteVolume(volumeID string) (string, error) {
 	return body.Data.TaskID, err
 }
 
+func (s *Service) volumeInstanceRes() *resource.SubResourceList[Instance, string] {
+	return resource.NewStringSubResourceList[Instance](s.connection,
+		func(volumeID string) string { return fmt.Sprintf("/ecloud/v2/volumes/%s/instances", volumeID) },
+		"volume", "id", func(volumeID string) error { return &VolumeNotFoundError{ID: volumeID} })
+}
+
 // GetVolumeInstances retrieves a list of volume instances
 func (s *Service) GetVolumeInstances(volumeID string, parameters connection.APIRequestParameters) ([]Instance, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-		return s.GetVolumeInstancesPaginated(volumeID, p)
-	}, parameters)
+	return s.volumeInstanceRes().List(volumeID, parameters)
 }
 
 // GetVolumeInstancesPaginated retrieves a paginated list of volume instances
 func (s *Service) GetVolumeInstancesPaginated(volumeID string, parameters connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-	if volumeID == "" {
-		return nil, fmt.Errorf("invalid volume id")
-	}
-	body, err := connection.Get[[]Instance](s.connection, fmt.Sprintf("/ecloud/v2/volumes/%s/instances", volumeID), parameters, connection.NotFoundResponseHandler(&VolumeNotFoundError{ID: volumeID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Instance], error) {
-		return s.GetVolumeInstancesPaginated(volumeID, p)
-	}), err
+	return s.volumeInstanceRes().ListPaginated(volumeID, parameters)
+}
+
+func (s *Service) volumeTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(volumeID string) string { return fmt.Sprintf("/ecloud/v2/volumes/%s/tasks", volumeID) },
+		"volume", "id", func(volumeID string) error { return &VolumeNotFoundError{ID: volumeID} })
 }
 
 // GetVolumeTasks retrieves a list of Volume tasks
 func (s *Service) GetVolumeTasks(volumeID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVolumeTasksPaginated(volumeID, p)
-	}, parameters)
+	return s.volumeTasksRes().List(volumeID, parameters)
 }
 
 // GetVolumeTasksPaginated retrieves a paginated list of Volume tasks
 func (s *Service) GetVolumeTasksPaginated(volumeID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if volumeID == "" {
-		return nil, fmt.Errorf("invalid volume id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/volumes/%s/tasks", volumeID), parameters, connection.NotFoundResponseHandler(&VolumeNotFoundError{ID: volumeID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetVolumeTasksPaginated(volumeID, p)
-	}), err
+	return s.volumeTasksRes().ListPaginated(volumeID, parameters)
 }

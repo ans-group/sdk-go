@@ -44,35 +44,33 @@ func (s *Service) DeleteNetwork(networkID string) error {
 	return s.networkRes().Delete(networkID)
 }
 
+func (s *Service) networkNICRes() *resource.SubResourceList[NIC, string] {
+	return resource.NewUncheckedStringSubResourceList[NIC](s.connection,
+		func(networkID string) string { return fmt.Sprintf("/ecloud/v2/networks/%s/nics", networkID) })
+}
+
 // GetNetworkNICs retrieves a list of firewall rule nics
 func (s *Service) GetNetworkNICs(networkID string, parameters connection.APIRequestParameters) ([]NIC, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-		return s.GetNetworkNICsPaginated(networkID, p)
-	}, parameters)
+	return s.networkNICRes().List(networkID, parameters)
 }
 
 // GetNetworkNICsPaginated retrieves a paginated list of firewall rule nics
 func (s *Service) GetNetworkNICsPaginated(networkID string, parameters connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-	body, err := connection.Get[[]NIC](s.connection, fmt.Sprintf("/ecloud/v2/networks/%s/nics", networkID), parameters)
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[NIC], error) {
-		return s.GetNetworkNICsPaginated(networkID, p)
-	}), err
+	return s.networkNICRes().ListPaginated(networkID, parameters)
+}
+
+func (s *Service) networkTasksRes() *resource.SubResourceList[Task, string] {
+	return resource.NewStringSubResourceList[Task](s.connection,
+		func(networkID string) string { return fmt.Sprintf("/ecloud/v2/networks/%s/tasks", networkID) },
+		"network", "id", func(networkID string) error { return &NetworkNotFoundError{ID: networkID} })
 }
 
 // GetNetworkTasks retrieves a list of Network tasks
 func (s *Service) GetNetworkTasks(networkID string, parameters connection.APIRequestParameters) ([]Task, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNetworkTasksPaginated(networkID, p)
-	}, parameters)
+	return s.networkTasksRes().List(networkID, parameters)
 }
 
 // GetNetworkTasksPaginated retrieves a paginated list of Network tasks
 func (s *Service) GetNetworkTasksPaginated(networkID string, parameters connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-	if networkID == "" {
-		return nil, fmt.Errorf("invalid network id")
-	}
-	body, err := connection.Get[[]Task](s.connection, fmt.Sprintf("/ecloud/v2/networks/%s/tasks", networkID), parameters, connection.NotFoundResponseHandler(&NetworkNotFoundError{ID: networkID}))
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Task], error) {
-		return s.GetNetworkTasksPaginated(networkID, p)
-	}), err
+	return s.networkTasksRes().ListPaginated(networkID, parameters)
 }

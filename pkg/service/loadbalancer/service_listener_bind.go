@@ -4,65 +4,43 @@ import (
 	"fmt"
 
 	"github.com/ans-group/sdk-go/pkg/connection"
+	"github.com/ans-group/sdk-go/pkg/service/internal/resource"
 )
+
+func (s *Service) listenerBindRes() *resource.SubResource[Bind, int, int] {
+	return resource.NewIntIntSubResource[Bind](s.connection,
+		func(listenerID int) string { return fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds", listenerID) },
+		"listener", "id", func(listenerID int) error { return &ListenerNotFoundError{ID: listenerID} },
+		"bind", "id", func(_, bindID int) error { return &BindNotFoundError{ID: bindID} })
+}
 
 // GetListenerBinds retrieves a list of binds
 func (s *Service) GetListenerBinds(listenerID int, parameters connection.APIRequestParameters) ([]Bind, error) {
-	return connection.InvokeRequestAll(func(p connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
-		return s.GetListenerBindsPaginated(listenerID, p)
-	}, parameters)
+	return s.listenerBindRes().List(listenerID, parameters)
 }
 
 // GetListenerBindsPaginated retrieves a paginated list of binds
 func (s *Service) GetListenerBindsPaginated(listenerID int, parameters connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
-	if listenerID < 1 {
-		return nil, fmt.Errorf("invalid listener id")
-	}
-	body, err := connection.Get[[]Bind](s.connection, fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds", listenerID), parameters)
-	return connection.NewPaginated(body, parameters, func(p connection.APIRequestParameters) (*connection.Paginated[Bind], error) {
-		return s.GetListenerBindsPaginated(listenerID, p)
-	}), err
+	return s.listenerBindRes().ListPaginated(listenerID, parameters)
 }
 
 // GetListenerBind retrieves a single bind by id
 func (s *Service) GetListenerBind(listenerID int, bindID int) (Bind, error) {
-	if listenerID < 1 {
-		return Bind{}, fmt.Errorf("invalid listener id")
-	}
-	if bindID < 1 {
-		return Bind{}, fmt.Errorf("invalid bind id")
-	}
-	body, err := connection.Get[Bind](s.connection, fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds/%d", listenerID, bindID), connection.APIRequestParameters{}, connection.NotFoundResponseHandler(&BindNotFoundError{ID: listenerID}))
-	return body.Data, err
+	return s.listenerBindRes().Get(listenerID, bindID)
 }
 
 // CreateListenerBind creates an bind
 func (s *Service) CreateListenerBind(listenerID int, req CreateBindRequest) (int, error) {
-	if listenerID < 1 {
-		return 0, fmt.Errorf("invalid listener id")
-	}
-	body, err := connection.Post[Bind](s.connection, fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds", listenerID), &req, connection.NotFoundResponseHandler(&BindNotFoundError{ID: listenerID}))
-	return body.Data.ID, err
+	bind, err := s.listenerBindRes().Create(listenerID, &req)
+	return bind.ID, err
 }
 
 // PatchListenerBind patches an bind
 func (s *Service) PatchListenerBind(listenerID int, bindID int, req PatchBindRequest) error {
-	if listenerID < 1 {
-		return fmt.Errorf("invalid listener id")
-	}
-	if bindID < 1 {
-		return fmt.Errorf("invalid bind id")
-	}
-	return connection.PatchRaw(s.connection, fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds/%d", listenerID, bindID), &req, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&BindNotFoundError{ID: listenerID}))
+	return s.listenerBindRes().Patch(listenerID, bindID, &req)
 }
 
 // DeleteListenerBind deletes a bind
 func (s *Service) DeleteListenerBind(listenerID int, bindID int) error {
-	if listenerID < 1 {
-		return fmt.Errorf("invalid listener id")
-	}
-	if bindID < 1 {
-		return fmt.Errorf("invalid bind id")
-	}
-	return connection.DeleteRaw(s.connection, fmt.Sprintf("/loadbalancers/v2/listeners/%d/binds/%d", listenerID, bindID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&BindNotFoundError{ID: listenerID}))
+	return s.listenerBindRes().Delete(listenerID, bindID)
 }
