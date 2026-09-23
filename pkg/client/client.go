@@ -15,7 +15,6 @@ import (
 	"github.com/ans-group/sdk-go/pkg/service/safedns"
 	"github.com/ans-group/sdk-go/pkg/service/sharedexchange"
 	"github.com/ans-group/sdk-go/pkg/service/ssl"
-	"github.com/ans-group/sdk-go/pkg/service/storage"
 )
 
 type Client interface {
@@ -32,7 +31,6 @@ type Client interface {
 	SafeDNSService() safedns.SafeDNSService
 	SharedExchangeService() sharedexchange.SharedExchangeService
 	SSLService() ssl.SSLService
-	StorageService() storage.StorageService
 }
 
 type UKFastClient struct {
@@ -95,8 +93,4 @@ func (c *UKFastClient) SharedExchangeService() sharedexchange.SharedExchangeServ
 
 func (c *UKFastClient) SSLService() ssl.SSLService {
 	return ssl.NewService(c.connection)
-}
-
-func (c *UKFastClient) StorageService() storage.StorageService {
-	return storage.NewService(c.connection)
 }
