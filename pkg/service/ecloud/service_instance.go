@@ -30,6 +30,11 @@ func (s *Service) GetInstance(instanceID string) (Instance, error) {
 
 // CreateInstance creates a new instance
 func (s *Service) CreateInstance(req CreateInstanceRequest) (string, error) {
+	if req.CustomIPAddress != "" {
+		// If a custom IP address is provided, use it as the instance IP address
+		req.IPAddress = req.CustomIPAddress
+	}
+
 	data, err := s.instanceRes().Create(&req)
 	return data.ID, err
 }
