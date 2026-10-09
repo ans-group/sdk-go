@@ -258,8 +258,10 @@ type CreateInstanceRequest struct {
 	SSHKeyPairIDs       []string               `json:"ssh_key_pair_ids,omitempty"`
 	HostGroupID         string                 `json:"host_group_id,omitempty"`
 	ResourceTierID      string                 `json:"resource_tier_id,omitempty"`
-	CustomIPAddress     connection.IPAddress   `json:"custom_ip_address,omitempty"`
+	IPAddress           connection.IPAddress   `json:"ip_address,omitempty"`
 	TagIDs              []string               `json:"tag_ids,omitempty"`
+	// CustomIPAddress field has been deprecated and is no longer included in the JSON payload. Use IPAddress instead.
+	CustomIPAddress connection.IPAddress `json:"-"`
 }
 
 // PatchInstanceRequest represents a request to patch an instance
