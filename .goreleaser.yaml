@@ -1,0 +1,23 @@
+version: 2
+
+project_name: sdk-go
+
+# Library only: no binaries to build
+builds:
+  - skip: true
+
+checksum:
+  disable: true
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: ans-group
+    name: sdk-go
