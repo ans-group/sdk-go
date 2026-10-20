@@ -189,6 +189,11 @@ type PatchVPCRequest struct {
 	ClientID *int   `json:"client_id,omitempty"`
 }
 
+// DeployVPCDefaultsRequest represents a request to deploy default resources for a VPC
+type DeployVPCDefaultsRequest struct {
+	AvailabilityZoneID string `json:"availability_zone_id"`
+}
+
 // CreateNetworkRequest represents a request to create a network
 type CreateNetworkRequest struct {
 	Name     string `json:"name,omitempty"`
@@ -250,6 +255,7 @@ type CreateInstanceRequest struct {
 	MonitoringGatewayID string                 `json:"monitoring_gateway_id,omitempty"`
 	BackupEnabled       bool                   `json:"backup_enabled"`
 	BackupGatewayID     string                 `json:"backup_gateway_id,omitempty"`
+	BackupAgentEnabled  bool                   `json:"backup_agent_enabled,omitempty"`
 	IsEncrypted         bool                   `json:"is_encrypted"`
 	NetworkID           string                 `json:"network_id,omitempty"`
 	FloatingIPID        string                 `json:"floating_ip_id,omitempty"`
@@ -273,6 +279,7 @@ type PatchInstanceRequest struct {
 	RAMCapacity         int       `json:"ram_capacity,omitempty"`
 	VolumeGroupID       *string   `json:"volume_group_id,omitempty"`
 	BackupGatewayID     string    `json:"backup_gateway_id,omitempty"`
+	BackupAgentEnabled  *bool     `json:"backup_agent_enabled,omitempty"`
 	TagIDs              *[]string `json:"tag_ids,omitempty"`
 	MonitoringEnabled   *bool     `json:"monitoring_enabled,omitempty"`
 	MonitoringGatewayID *string   `json:"monitoring_gateway_id,omitempty"`

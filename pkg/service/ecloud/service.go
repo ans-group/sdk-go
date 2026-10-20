@@ -115,7 +115,7 @@ type ECloudService interface {
 	CreateVPC(req CreateVPCRequest) (string, error)
 	PatchVPC(vpcID string, patch PatchVPCRequest) error
 	DeleteVPC(vpcID string) error
-	DeployVPCDefaults(vpcID string) error
+	DeployVPCDefaults(vpcID string, req DeployVPCDefaultsRequest) (string, error)
 	GetVPCVolumes(vpcID string, parameters connection.APIRequestParameters) ([]Volume, error)
 	GetVPCVolumesPaginated(vpcID string, parameters connection.APIRequestParameters) (*connection.Paginated[Volume], error)
 	GetVPCInstances(vpcID string, parameters connection.APIRequestParameters) ([]Instance, error)
