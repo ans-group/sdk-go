@@ -370,19 +370,23 @@ type VPN struct {
 
 // Instance represents an eCloud instance
 type Instance struct {
-	ID                  string              `json:"id"`
-	Name                string              `json:"name"`
-	VPCID               string              `json:"vpc_id"`
-	AvailabilityZoneID  string              `json:"availability_zone_id"`
-	ImageID             string              `json:"image_id"`
-	VCPUCores           int                 `json:"vcpu_cores"`
-	VCPUSockets         int                 `json:"vcpu_sockets"`
-	VCPUCoresPerSocket  int                 `json:"vcpu_cores_per_socket"`
-	RAMCapacity         int                 `json:"ram_capacity"`
-	Locked              bool                `json:"locked"`
-	BackupEnabled       bool                `json:"backup_enabled"`
-	BackupGatewayID     string              `json:"backup_gateway_id"`
-	BackupAgentEnabled  bool                `json:"backup_agent_enabled"`
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	VPCID              string `json:"vpc_id"`
+	AvailabilityZoneID string `json:"availability_zone_id"`
+	ImageID            string `json:"image_id"`
+	VCPUCores          int    `json:"vcpu_cores"`
+	VCPUSockets        int    `json:"vcpu_sockets"`
+	VCPUCoresPerSocket int    `json:"vcpu_cores_per_socket"`
+	RAMCapacity        int    `json:"ram_capacity"`
+	Locked             bool   `json:"locked"`
+	// Deprecated: BackupEnabled is a legacy alias computed as BackupAgentEnabled || BackupVMEnabled. Use BackupVMEnabled and BackupAgentEnabled.
+	BackupEnabled      bool   `json:"backup_enabled"`
+	BackupVMEnabled    bool   `json:"backup_vm_enabled"`
+	BackupGatewayID    string `json:"backup_gateway_id"`
+	BackupAgentEnabled bool   `json:"backup_agent_enabled"`
+	// SecureBackup is true once the backup agent has been installed. Read-only, managed by the platform.
+	SecureBackup        bool                `json:"secure_backup"`
 	MonitoringEnabled   bool                `json:"monitoring_enabled"`
 	MonitoringGatewayID string              `json:"monitoring_gateway_id"`
 	IsEncrypted         bool                `json:"is_encrypted"`
