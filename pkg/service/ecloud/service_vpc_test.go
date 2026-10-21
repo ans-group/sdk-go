@@ -353,6 +353,10 @@ func TestDeleteVPC(t *testing.T) {
 }
 
 func TestDeployVPCDefaults(t *testing.T) {
+	req := DeployVPCDefaultsRequest{
+		AvailabilityZoneID: "az-abcdef12",
+	}
+
 	t.Run("Valid", func(t *testing.T) {
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
@@ -363,16 +367,17 @@ func TestDeployVPCDefaults(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", nil).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
-				Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
-				StatusCode: 200,
+				Body:       io.NopCloser(bytes.NewReader([]byte("{\"data\":{\"id\":\"vpc-abcdef12\",\"task_id\":\"task-abcdef12\"},\"meta\":{\"location\":\"\"}}"))),
+				StatusCode: 202,
 			},
 		}, nil).Times(1)
 
-		err := s.DeployVPCDefaults("vpc-abcdef12")
+		taskID, err := s.DeployVPCDefaults("vpc-abcdef12", req)
 
 		assert.Nil(t, err)
+		assert.Equal(t, "task-abcdef12", taskID)
 	})
 
 	t.Run("ConnectionError_ReturnsError", func(t *testing.T) {
@@ -385,9 +390,9 @@ func TestDeployVPCDefaults(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", nil).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
+		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", &req).Return(&connection.APIResponse{}, errors.New("test error 1")).Times(1)
 
-		err := s.DeployVPCDefaults("vpc-abcdef12")
+		_, err := s.DeployVPCDefaults("vpc-abcdef12", req)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "test error 1", err.Error())
@@ -403,7 +408,7 @@ func TestDeployVPCDefaults(t *testing.T) {
 			connection: c,
 		}
 
-		err := s.DeployVPCDefaults("")
+		_, err := s.DeployVPCDefaults("", req)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid vpc id", err.Error())
@@ -419,14 +424,14 @@ func TestDeployVPCDefaults(t *testing.T) {
 			connection: c,
 		}
 
-		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", nil).Return(&connection.APIResponse{
+		c.EXPECT().Post("/ecloud/v2/vpcs/vpc-abcdef12/deploy-defaults", &req).Return(&connection.APIResponse{
 			Response: &http.Response{
 				Body:       io.NopCloser(bytes.NewReader([]byte(""))),
 				StatusCode: 404,
 			},
 		}, nil).Times(1)
 
-		err := s.DeployVPCDefaults("vpc-abcdef12")
+		_, err := s.DeployVPCDefaults("vpc-abcdef12", req)
 
 		assert.NotNil(t, err)
 		assert.IsType(t, &VPCNotFoundError{}, err)

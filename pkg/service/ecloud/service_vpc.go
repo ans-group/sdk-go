@@ -44,12 +44,14 @@ func (s *Service) DeleteVPC(vpcID string) error {
 	return s.vpcRes().Delete(vpcID)
 }
 
-// DeployVPCDefaults deploys default resources for specified VPC
-func (s *Service) DeployVPCDefaults(vpcID string) error {
+// DeployVPCDefaults deploys default resources for specified VPC in the requested availability zone,
+// returning the ID of the task performing the deployment
+func (s *Service) DeployVPCDefaults(vpcID string, req DeployVPCDefaultsRequest) (string, error) {
 	if vpcID == "" {
-		return fmt.Errorf("invalid vpc id")
+		return "", fmt.Errorf("invalid vpc id")
 	}
-	return connection.PostRaw(s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/deploy-defaults", vpcID), nil, &connection.APIResponseBody{}, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
+	body, err := connection.Post[TaskReference](s.connection, fmt.Sprintf("/ecloud/v2/vpcs/%s/deploy-defaults", vpcID), &req, connection.NotFoundResponseHandler(&VPCNotFoundError{ID: vpcID}))
+	return body.Data.TaskID, err
 }
 
 // GetVPCVolumes retrieves a list of firewall rule volumes
