@@ -46,6 +46,6 @@ Docs index: <https://developers.ukfast.io/documentation>. Fetch the OpenAPI YAML
 | `safedns` | https://developers.ukfast.io/api/documentation/safedns |
 | `ssl` | https://developers.ukfast.io/api/documentation/ssl |
 
-Published specs without an SDK package: `datacentres`, `monitoring`, `threat-monitoring` (same URL pattern). `ecloudflex` and `sharedexchange` are out of service and slated for removal; leave them untouched and add nothing to them.
+Published specs without an SDK package: `datacentres`, `monitoring`, `threat-monitoring` (same URL pattern).
 
 General API behaviour (auth, filtering, sorting, pagination, errors): <https://developers.ukfast.io/api-guide>.
