@@ -36,7 +36,6 @@ Docs index: <https://developers.ukfast.io/documentation>. Fetch the OpenAPI YAML
 |---|---|
 | `account` | https://developers.ukfast.io/api/documentation/account |
 | `billing` | https://developers.ukfast.io/api/documentation/billing |
-| `ddosx` | https://developers.ukfast.io/api/documentation/ddosx |
 | `draas` | https://developers.ukfast.io/api/documentation/draas/2 (v1: `/1`) |
 | `ecloud` | https://developers.ukfast.io/api/documentation/ecloud/2 (v1: `/1`) |
 | `loadbalancer` | https://developers.ukfast.io/api/documentation/load-balancers |

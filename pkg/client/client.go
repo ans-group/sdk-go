@@ -5,7 +5,6 @@ import (
 	"github.com/ans-group/sdk-go/pkg/service/account"
 	"github.com/ans-group/sdk-go/pkg/service/billing"
 	"github.com/ans-group/sdk-go/pkg/service/cloudflare"
-	"github.com/ans-group/sdk-go/pkg/service/ddosx"
 	"github.com/ans-group/sdk-go/pkg/service/draas"
 	"github.com/ans-group/sdk-go/pkg/service/ecloud"
 	"github.com/ans-group/sdk-go/pkg/service/loadbalancer"
@@ -18,7 +17,6 @@ import (
 type Client interface {
 	AccountService() account.AccountService
 	BillingService() billing.BillingService
-	DDoSXService() ddosx.DDoSXService
 	DRaaSService() draas.DRaaSService
 	ECloudService() ecloud.ECloudService
 	LoadBalancerService() loadbalancer.LoadBalancerService
@@ -45,10 +43,6 @@ func (c *UKFastClient) AccountService() account.AccountService {
 
 func (c *UKFastClient) BillingService() billing.BillingService {
 	return billing.NewService(c.connection)
-}
-
-func (c *UKFastClient) DDoSXService() ddosx.DDoSXService {
-	return ddosx.NewService(c.connection)
 }
 
 func (c *UKFastClient) DRaaSService() draas.DRaaSService {
